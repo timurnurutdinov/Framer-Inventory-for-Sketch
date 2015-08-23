@@ -1,0 +1,57 @@
+@import 'framer-inventory.js'
+@import 'framer-inventory-write.js'
+
+
+var fileName = "/layers.coffie"
+var layerHasBeenExported = 0
+
+
+var exportLayers = function(context) {
+		
+	var doc = context.document
+	var selection = context.selection
+	
+	var selectedLayer = nil
+	var output = NSMutableArray.new()
+	
+	if (selection.count() == 0) {
+		[doc showMessage:"Failed. Select one or more layers, groups or slices, please."]
+	}
+	else {
+		for (var i = 0; i < selection.count(); i++) {
+			selectedLayer = [selection objectAtIndex: i]
+			selectedLayerType = [selectedLayer className]
+			if (selectedLayerType == "MSSliceLayer" || selectedLayerType == "MSLayerGroup") {
+				layerHasBeenExported++
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+			}
+			else if (selectedLayerType == "MSShapeGroup") {
+				layerHasBeenExported++
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
+			}
+		}
+		
+		if (layerHasBeenExported > 0) {
+
+			var string = NSMutableString.new()
+			for (var i = 0; i < output.count(); i++) { string += [output objectAtIndex: i] }
+			string += "\r"
+			
+			framerInventoryOutput(string, fileName)
+			[[NSPasteboard generalPasteboard] clearContents];
+			[[NSPasteboard generalPasteboard] setString:string  forType:NSStringPboardType];
+			
+			var successMessage = "Copied to Clipboard. CMD+V into Framer Studio"
+			[doc showMessage:successMessage]
+		}
+		else {
+			var supportedTypesErrorMessage = "Failed. Select layer, group or slice, please"
+			[doc showMessage:supportedTypesErrorMessage]
+		}
+
+	}
+	
+	
+}
+
+
