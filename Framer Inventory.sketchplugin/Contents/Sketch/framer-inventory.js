@@ -172,6 +172,7 @@ var getWidth = function(layer) {
 
 var getOpacity = function(layer) {
 	var opacity = 1
+	if (![layer isVisible]) { return ", opacity: 0" }
 	if ([layer className] != "MSSliceLayer") { opacity = [[[layer style] contextSettings] opacity] }
 	if (opacity == 1) {  return "" }
 	if (opacity == 0) { return ", opacity: 0" }
@@ -180,6 +181,7 @@ var getOpacity = function(layer) {
 
 var getAbsoluteOpacity = function(layer) {
 	var opacity = 1
+	if (![layer isVisible]) { return ", opacity: 0" }
 	if ([layer className] != "MSSliceLayer") { opacity = [[[layer style] contextSettings] opacity] }
 	if (opacity == 1) {  return ", opacity: 1" }
 	if (opacity == 0) { return ", opacity: 0" }
