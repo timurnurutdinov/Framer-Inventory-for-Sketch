@@ -38,7 +38,7 @@ function createExportWindow(context){
 	[exportWindow setBackgroundColor:[NSColor whiteColor]];
 	
 	
-	var imagePath = pluginPath + '/images/' + 'logo' + isRetinaRequired() + '.png';
+	var imagePath = pluginPath + '/images/' + 'export' + isRetinaRequired() + '.png';
 	var image = NSImage.alloc().initByReferencingFile(imagePath);
 	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(30, 60, 200, 200)];
 	[imageView setImage: image];

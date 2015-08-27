@@ -9,25 +9,25 @@
   "compatibleVersion": 3.3,
   "commands" : [
     {
-      "script" : "export-imaged-layers.cocoascript",
+      "script" : "export-layers-action.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "Export Layers",
-      "identifier" : "export-imaged-layers"
+      "identifier" : "export-layers-action"
     },
     {
-      "script" : "export-keynote.cocoascript",
+      "script" : "simulate-keynote-action.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "Simulate Keynote",
-      "identifier" : "keynote"
+      "identifier" : "simulate-keynote-action"
     }
   ],
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "export-imaged-layers",
-		  "keynote"
+		  "export-layers-action",
+		  "simulate-keynote-action"
       ]
     }
 }
