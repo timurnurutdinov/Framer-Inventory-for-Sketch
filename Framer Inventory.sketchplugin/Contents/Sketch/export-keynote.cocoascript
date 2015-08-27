@@ -13,7 +13,6 @@ var exportKeynote = function(context) {
 	var selectedLayer = nil
 	var selection = context.selection
 	var artboards = [[doc currentPage] artboards]
-	log("a: " + artboards.count())
 	
 	var output = NSMutableArray.new()
 	var statesNames = NSMutableArray.new()
@@ -21,108 +20,166 @@ var exportKeynote = function(context) {
 	var layerName = nil
 	
 	
+	
+	var currentPage = doc.currentPage()
+	var arrayExportable = [currentPage exportableLayers]
+	var arraySlices = findLayersMatchingPredicate_inContainer_filterByType(NSPredicate.predicateWithFormat("className == 'MSSliceLayer'"), currentPage)
+	
+	
+	var layerNames = []
+	for (var i = 0; i < arrayExportable.count(); i++) {
+		var localExportableName = [[arrayExportable objectAtIndex: i] name]
+		log("EXPORTABLE FOUND: " + localExportableName)
 
-	if (selection.count() == 0) {
-		[doc showMessage:"Failed. Select one or more layers, groups or slices, please."]
-	}
-	else {
-		for (var i = 0; i < artboards.count(); i++) {
-			statesNames = statesNames.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(clearName([[artboards objectAtIndex: i] name]), nil))
-		}
-		for (var i = 0; i < selection.count(); i++) {
-			for (var q = 0; q < output.count(); q++) { log("FF" + i + ": " + [output objectAtIndex: q]) }
-			
-			selectedLayer = [selection objectAtIndex: i]
-			selectedLayerType = [selectedLayer className]
-			
-			if (selectedLayerType == "MSSliceLayer" || selectedLayerType == "MSLayerGroup" || selectedLayerType == "MSShapeGroup") {
-				if (selectedLayerType == "MSSliceLayer" || selectedLayerType == "MSLayerGroup") {
-					output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
-				}
-				else { output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil)) }
-				for (var q = 0; q < output.count(); q++) { log("II: " + [output objectAtIndex: q]) }
-				
-				var outputStates = NSMutableArray.new()
-				var outputStatesTitles = NSMutableArray.new()
-				outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitle(selectedLayer), nil))
-				log("cst: " + createStateTitle(selectedLayer))
-				
-				for (var a = 0; a < artboards.count(); a++) {
-					currentArtboard = [artboards objectAtIndex: a]
-					var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(removePath(selectedLayer.name()), currentArtboard, selectedLayerType)
-
-					if (foundLayerOnCurrentArtboard.count() > 0) {
-						var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
-						outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(currentState, nil))
-					}
-					else {
-						outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(badString, nil))
-					}
-				}
-				
-				outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitleEnd(), nil))
-				outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateSwitchInstant(selectedLayer, clearName([artboards objectAtIndex: 0].name())), nil))
-				
-				// add more states
-				var fixedStates = replaceBadStates(outputStates)
-				var start = fixedStates.length - 1
-				if (start < 0) { start = 0 }
-				var artboardForStateName = ""
-				
-				outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([outputStatesTitles objectAtIndex: 0], nil))
-				
-				for (var counter = start; counter >= 0; counter--) {
-					artboardForStateName = [artboards objectAtIndex: (start - counter)]
-					outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects("\t" + clearName(artboardForStateName.name()) + fixedStates[counter], nil))
-					log("compose: " + "\t" + clearName(artboardForStateName.name()) + fixedStates[counter])
-				}
-				outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([outputStatesTitles objectAtIndex: 1], nil))
-				outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([outputStatesTitles objectAtIndex: 2], nil))
-				
-				outputStates = NSMutableArray.new()
+		var isFound = false
+		for (var f = 0; f < layerNames.length; f++) {
+			if (layerNames[f] == localExportableName) {
+				isFound = true
+				break
 			}
 		}
-		
-		
-		// output
-		log("OUTPUT")
-		var string = NSMutableString.new()
-		string += createRetinaVariable([selection objectAtIndex: 0])
-		for (var i = 0; i < output.count(); i++) { string += [output objectAtIndex: i] 
-			log("OO: " + [output objectAtIndex: i])
+	
+		if (!isFound) ) {
+	    	layerNames.push(localExportableName)
+			log("Added")
 		}
-		string += "\r"
-		for (var i = 0; i < outputStatesGlobal.count(); i++) { string += [outputStatesGlobal objectAtIndex: i] }
-		string += "\r"
-		for (var i = 0; i < statesNames.count(); i++) { string += getStateNameVariable(i, [statesNames objectAtIndex: i]) }
-		
-		var layerString = "layers = ["
-		for (var i = 0; i < selection.count(); i++) {
-			layerString += clearName([[selection objectAtIndex: i] name])
-			if (i == selection.count() - 1) { layerString += "]"}
-			else { layerString += ", "}
-		}
-		string = string + ln() + ln() + layerString + ln()
-		
-		var generatedStatesString = "generatedStates = ["
-		for (var i = 0; i < artboards.count(); i++) {
-			var generatedStringIndex = i + 1
-			generatedStatesString += "generatedState" + generatedStringIndex
-			if (i == artboards.count() - 1) { generatedStatesString = generatedStatesString + "]" + ln() }
-			else { generatedStatesString += ", " }
-		}
-		string = string + generatedStatesString + ln()
-		
-		var cycler = generateCycler()
-		string += cycler
-
-		framerInventoryOutput(string, fileName)
-		[[NSPasteboard generalPasteboard] clearContents];
-		[[NSPasteboard generalPasteboard] setString:string  forType:NSStringPboardType];
-		
-		var successMessage = "Copied to Clipboard. CMD+V into Framer Studio"
-		[doc showMessage:successMessage]
 	}
+	for (var i = 0; i < arraySlices.count(); i++) {
+		var localExportableName = [[arraySlices objectAtIndex: i] name]
+		log("SLICE FOUND: " + localExportableName)
+
+		var isFound = false
+		for (var f = 0; f < layerNames.length; f++) {
+			if (layerNames[f] == localExportableName) {
+				isFound = true
+				break
+			}
+		}
+	
+		if (!isFound) ) {
+	    	layerNames.push(localExportableName)
+			log("Added")
+		}	
+	}
+	
+	log("Found " + layerNames.length + " exportable layers")
+	log("//////////////////////////")
+	for (var i = 0; i < layerNames.length; i++) {
+		log(layerNames[i])
+	}
+	
+	
+
+	for (var i = 0; i < artboards.count(); i++) {
+		statesNames = statesNames.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(clearName([[artboards objectAtIndex: i] name]), nil))
+	}
+	for (var i = 0; i < layerNames.length; i++) {
+		log("ITERATING LAYER NAMES")
+		var notSlicesWithNamePredicate = NSPredicate.predicateWithFormat("name == %@ && (className == 'MSLayerGroup' || className == 'MSShapeGroup')", layerNames[i])
+		
+		// selectedLayer = [selection objectAtIndex: i]
+		tempSelectedLayers = findLayersNamed_inContainer_filterByType(layerNames[i], currentPage)
+		log("HAS FOUND " + tempSelectedLayers.count() + " layers of " + layerNames[i])
+		if (tempSelectedLayers != nil && tempSelectedLayers.count() > 0) { 
+			selectedLayer = tempSelectedLayers[0]
+		}
+		else { break }
+		selectedLayerType = [selectedLayer className]
+		
+		if (selectedLayerType == "MSSliceLayer" || selectedLayerType == "MSLayerGroup") {
+			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+		}
+		else { output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil)) }
+		
+		log("DETECTED TYPE")
+		
+		var outputStates = NSMutableArray.new()
+		var outputStatesTitles = NSMutableArray.new()
+		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitle(selectedLayer), nil))
+		log("CREATED STATE TITLE: " + createStateTitle(selectedLayer))
+		
+		for (var a = 0; a < artboards.count(); a++) {
+			log("HERE")
+			currentArtboard = [artboards objectAtIndex: a]
+			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(removePath(selectedLayer.name()), currentArtboard, selectedLayerType)
+			
+			log("HERE2")
+			
+			if (foundLayerOnCurrentArtboard.count() > 0) {
+				var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
+				outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(currentState, nil))
+			}
+			else {
+				outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(badString, nil))
+			}
+			log("HERE3")
+		}
+		
+		
+		log("GO FOR STATES TITLES")
+		
+		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitleEnd(), nil))
+		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateSwitchInstant(selectedLayer, clearName([artboards objectAtIndex: 0].name())), nil))
+		
+		// add more states
+		var fixedStates = replaceBadStates(outputStates)
+		var start = fixedStates.length - 1
+		if (start < 0) { start = 0 }
+		var artboardForStateName = ""
+		
+		outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([outputStatesTitles objectAtIndex: 0], nil))
+		
+		for (var counter = start; counter >= 0; counter--) {
+			artboardForStateName = [artboards objectAtIndex: (start - counter)]
+			outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects("\t" + clearName(artboardForStateName.name()) + fixedStates[counter], nil))
+			log("compose: " + "\t" + clearName(artboardForStateName.name()) + fixedStates[counter])
+		}
+		outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([outputStatesTitles objectAtIndex: 1], nil))
+		outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([outputStatesTitles objectAtIndex: 2], nil))
+		
+		outputStates = NSMutableArray.new()
+	}
+
+	
+	
+	// output
+	log("OUTPUT")
+	var string = NSMutableString.new()
+	string += createRetinaVariable([[[artboards objectAtIndex: 0] layers] objectAtIndex: 0])
+	for (var i = 0; i < output.count(); i++) { string += [output objectAtIndex: i] 
+		log("OO: " + [output objectAtIndex: i])
+	}
+	string += "\r"
+	for (var i = 0; i < outputStatesGlobal.count(); i++) { string += [outputStatesGlobal objectAtIndex: i] }
+	string += "\r"
+	for (var i = 0; i < statesNames.count(); i++) { string += getStateNameVariable(i, [statesNames objectAtIndex: i]) }
+	
+	var layerString = "layers = ["
+	for (var i = 0; i < layerNames.length; i++) {
+		layerString += clearName(layerNames[i])
+		if (i == layerNames.length - 1) { layerString += "]"}
+		else { layerString += ", "}
+	}
+	string = string + ln() + ln() + layerString + ln()
+	
+	var generatedStatesString = "generatedStates = ["
+	for (var i = 0; i < artboards.count(); i++) {
+		var generatedStringIndex = i + 1
+		generatedStatesString += "generatedState" + generatedStringIndex
+		if (i == artboards.count() - 1) { generatedStatesString = generatedStatesString + "]" + ln() }
+		else { generatedStatesString += ", " }
+	}
+	string = string + generatedStatesString + ln()
+	
+	var cycler = generateCycler()
+	string += cycler
+
+	framerInventoryOutput(string, fileName)
+	[[NSPasteboard generalPasteboard] clearContents];
+	[[NSPasteboard generalPasteboard] setString:string  forType:NSStringPboardType];
+	
+	var successMessage = "Copied to Clipboard. CMD+V into Framer Studio"
+	[doc showMessage:successMessage]
 
 }
 
