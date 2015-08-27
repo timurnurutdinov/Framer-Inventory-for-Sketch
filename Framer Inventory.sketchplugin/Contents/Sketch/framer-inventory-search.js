@@ -61,8 +61,7 @@ var findLayersNamed_inContainer_filterByType = function(layerName, container, la
 
 // Mine
 
-var findNotSlicesTogetStates_inContainer = function(layerName, container, classToFind) {
-	selectedLayerType 
+var findNotSlicesTogetStates_inContainer = function(layerName, container, classToFind) { 
 	if (classToFind == "MSLayerGroup") {
 		return findLayersMatchingPredicate_inContainer_filterByType(groupPredicate(layerName), container)
 	}
