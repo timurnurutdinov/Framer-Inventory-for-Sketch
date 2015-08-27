@@ -7,7 +7,7 @@ var fileName = "/keynote.coffie"
 var layerHasBeenExported = 0
 var badString = "no such artboard"
 
-var onRun = function(context) {
+var exportKeynote = function(context) {
 	
 	var doc = context.document
 	var selectedLayer = nil
