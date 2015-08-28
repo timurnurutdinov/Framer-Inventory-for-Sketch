@@ -233,3 +233,57 @@ var replaceBadStates = function(baseArray) {
 	
 	return finallyFixedOutputStates
 }
+
+
+
+
+function readyToExportAmount(context) {
+	var doc = context.document
+	var currentPage = doc.currentPage()
+	var arrayExportable = [currentPage exportableLayers]
+	var arraySlices = findLayersMatchingPredicate_inContainer_filterByType(NSPredicate.predicateWithFormat("className == 'MSSliceLayer'"), currentPage)
+	
+	
+	var layerNames = []
+	for (var i = 0; i < arrayExportable.count(); i++) {
+		var localExportableName = [[arrayExportable objectAtIndex: i] name]
+		log("EXPORTABLE FOUND: " + localExportableName)
+
+		var isFound = false
+		for (var f = 0; f < layerNames.length; f++) {
+			if (layerNames[f] == localExportableName) {
+				isFound = true
+				break
+			}
+		}
+	
+		if (!isFound) ) {
+	    	layerNames.push(localExportableName)
+			log("Added")
+		}
+	}
+	for (var i = 0; i < arraySlices.count(); i++) {
+		var localExportableName = [[arraySlices objectAtIndex: i] name]
+		log("SLICE FOUND: " + localExportableName)
+
+		var isFound = false
+		for (var f = 0; f < layerNames.length; f++) {
+			if (layerNames[f] == localExportableName) {
+				isFound = true
+				break
+			}
+		}
+	
+		if (!isFound) ) {
+	    	layerNames.push(localExportableName)
+			log("Added")
+		}	
+	}
+	
+	log("Found " + layerNames.length + " exportable layers")
+	log("//////////////////////////")
+	for (var i = 0; i < layerNames.length; i++) {
+		log(layerNames[i])
+	}
+	return layerNames
+}
