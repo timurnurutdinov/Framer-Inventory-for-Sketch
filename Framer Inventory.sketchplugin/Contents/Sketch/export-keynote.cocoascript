@@ -1,6 +1,7 @@
 @import 'framer-inventory.js'
 @import 'framer-inventory-write.js'
 @import 'framer-inventory-search.js'
+@import 'framer-inventory-text.js'
 
 
 var fileName = "/keynote.coffie"
@@ -178,7 +179,7 @@ var exportKeynote = function(context) {
 	[[NSPasteboard generalPasteboard] clearContents];
 	[[NSPasteboard generalPasteboard] setString:string  forType:NSStringPboardType];
 	
-	var successMessage = "Copied to Clipboard. CMD+V into Framer Studio"
+	var successMessage = inventorySuccessMessage
 	[doc showMessage:successMessage]
 
 }

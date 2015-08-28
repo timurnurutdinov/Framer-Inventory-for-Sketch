@@ -1,5 +1,7 @@
 @import 'framer-inventory.js'
 @import 'framer-inventory-write.js'
+@import 'framer-inventory-text.js'
+
 
 
 var fileName = "/layers.coffie"
@@ -15,7 +17,7 @@ var exportLayers = function(context) {
 	var output = NSMutableArray.new()
 	
 	if (selection.count() == 0) {
-		[doc showMessage:"Failed. Select one or more layers, groups or slices, please."]
+		[doc showMessage:inventoryNoLayersSelectedMessage]
 	}
 	else {
 		for (var i = 0; i < selection.count(); i++) {
@@ -41,12 +43,11 @@ var exportLayers = function(context) {
 			[[NSPasteboard generalPasteboard] clearContents];
 			[[NSPasteboard generalPasteboard] setString:string  forType:NSStringPboardType];
 			
-			var successMessage = "Copied to Clipboard. CMD+V into Framer Studio"
+			var successMessage = inventorySuccessMessage
 			[doc showMessage:successMessage]
 		}
 		else {
-			var supportedTypesErrorMessage = "Failed. Select layer, group or slice, please"
-			[doc showMessage:supportedTypesErrorMessage]
+			[doc showMessage:inventoryNoLayersSelectedMessage]
 		}
 
 	}

@@ -8,6 +8,9 @@
 
 var pluginPath = ""
 
+var pluginTitleNameText = "Replicate Selected"
+var descriptionText = "Generates FramerJS layers for selected groups,\rrectangles and ovals. Supports @2x, @3x and\rothers with modifier variable."
+
 
 var onRun = function(context) {
     pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"));
@@ -44,12 +47,12 @@ function createExportWindow(context){
 	[imageView setImage: image];
 	[[exportWindow contentView] addSubview:imageView];
 	
-	var commandText = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 235, columnWidth, 16)];
+	var commandText = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 235, columnWidth*2, 16)];
 	[commandText setEditable:false];
 	[commandText setBordered:false];
 	[commandText setDrawsBackground:false];
 	[commandText setFont:[NSFont boldSystemFontOfSize:15]];
-	[commandText setStringValue:"Export Framer Layers"];
+	[commandText setStringValue:pluginTitleNameText];
 	[[exportWindow contentView] addSubview:commandText];
 	
 	
@@ -60,13 +63,12 @@ function createExportWindow(context){
     [description setFont:[NSFont boldSystemFontOfSize:11]];
     [description setTextColor:lightColor];
     [description setDrawsBackground:false];
-    [description setStringValue:"Generate FramerJS code for layers. Export\rsupports modifier for 2x and 3x resolutions.\rYou can export states as well."];
+    [description setStringValue:descriptionText];
     [description sizeToFit];
     [[exportWindow contentView] addSubview:description];
 	
 	
-// field 1
-    
+	// field 1
 	var titleRetina = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, 156, columnWidth, 16)];
     [titleRetina setEditable:false];
     [titleRetina setBordered:false];
@@ -80,7 +82,8 @@ function createExportWindow(context){
 	var retinaInput = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, 130, columnWidth, 20)];
     [[retinaInput cell] setPlaceholderString:"Ex: \"retina\", \"2\", \"3\""];
     [retinaInput setBordered:false];
-    [retinaInput setBackgroundColor:semiWhiteColor];
+	// [retinaInput setDrawsBackground:false];
+    // [retinaInput setBackgroundColor:semiWhiteColor];
     [retinaInput setStringValue:getScale()];
     [[exportWindow contentView] addSubview:retinaInput];
     

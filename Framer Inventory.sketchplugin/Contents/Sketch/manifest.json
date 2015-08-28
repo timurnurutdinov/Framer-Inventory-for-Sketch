@@ -12,7 +12,7 @@
       "script" : "export-layers-action.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Export Layers",
+      "name" : "Replicate Selected",
       "identifier" : "export-layers-action"
     },
     {

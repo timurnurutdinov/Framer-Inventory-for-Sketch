@@ -1,12 +1,12 @@
 @import 'export-keynote.cocoascript'
 
 
-// todo: Allow to write in a custom folder with sandbox.js ?
-// todo: Use Set instead of Array to prevent dublicated export ?
-
-
 var pluginPath = ""
-var infoMessage = "Generate code for Keynote like FramerJS prototype\rfor selected layers. Don't forget to export\rassets manually!"
+
+var pluginCommandNameText = "Simulate Keynote"
+var supportMessage = "Generate FramerJS code to simulate Keynote"
+var infoMessage = "Determines exportable layers and slices.\rGenerates clickable linear prototype\rbased on your artboards.\r\r"
+var tipText = "Don't forget to export assets manually!"
 
 var onRun = function(context) {
     pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"));
@@ -22,6 +22,8 @@ function createKeynoteExportWindow(context){
 	var columnWidth = 136;
 	var smallFontSize = 9;
 	
+	var tpd = 6
+	
 	var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1];
 	var semiWhiteColor = [NSColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1];
 		
@@ -36,17 +38,25 @@ function createKeynoteExportWindow(context){
 	[imageView setImage: image];
 	[[exportWindow contentView] addSubview:imageView];
 	
-	var commandText = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 235, columnWidth, 16)];
+	var commandText = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 235-tpd, columnWidth, 16)];
 	[commandText setEditable:false];
 	[commandText setBordered:false];
 	[commandText setDrawsBackground:false];
 	[commandText setFont:[NSFont boldSystemFontOfSize:15]];
-	[commandText setStringValue:"Simulate Keynote"];
+	[commandText setStringValue:pluginCommandNameText];
 	[[exportWindow contentView] addSubview:commandText];
+	
+	var commandSupportText = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 235-19-tpd, columnWidth*2, 16)];
+	[commandSupportText setEditable:false];
+	[commandSupportText setBordered:false];
+	[commandSupportText setDrawsBackground:false];
+	[commandSupportText setFont:[NSFont systemFontOfSize:11]];
+	[commandSupportText setStringValue:supportMessage];
+	[[exportWindow contentView] addSubview:commandSupportText];
 	
 	
 	//All sizes will be multiply with this const. Type const name or a number instead!
-    var description = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 186, columnWidth, 42)];
+    var description = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 186-50+4-tpd, columnWidth, 42)];
     [description setEditable:false];
     [description setBordered:false];
     [description setFont:[NSFont boldSystemFontOfSize:11]];
@@ -57,78 +67,29 @@ function createKeynoteExportWindow(context){
     [[exportWindow contentView] addSubview:description];
 	
 	
-// field 1
-    
-	// var titleRetina = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, 156, columnWidth, 16)];
-//     [titleRetina setEditable:false];
-//     [titleRetina setBordered:false];
-//     [titleRetina setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-//     [titleRetina setTextColor:lightColor];
-//     [titleRetina setDrawsBackground:false];
-//     [titleRetina setStringValue:"Modifier"];
-//     [titleRetina sizeToFit];
-//     [[exportWindow contentView] addSubview:titleRetina];
-//
-// 	var retinaInput = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, 130, columnWidth, 20)];
-//     [[retinaInput cell] setPlaceholderString:"Ex: \"retina\", \"2\", \"3\""];
-//     [retinaInput setBordered:false];
-//     [retinaInput setBackgroundColor:semiWhiteColor];
-//     [retinaInput setStringValue:getScale()];
-//     [[exportWindow contentView] addSubview:retinaInput];
-//
-//
-//     // field 2
-// 	var titleRelative = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft + 150, 156, columnWidth, 16)];
-//     [titleRelative setEditable:false];
-//     [titleRelative setBordered:false];
-//     [titleRelative setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-//     [titleRelative setTextColor:lightColor];
-//     [titleRelative setDrawsBackground:false];
-//     [titleRelative setStringValue:"Relative to"];
-//     [titleRelative sizeToFit];
-//     [[exportWindow contentView] addSubview:titleRelative];
-//
-// 	var relativeDropdown = [[NSComboBox alloc] initWithFrame:NSMakeRect(paddingLeft + 150, 130-6+2, columnWidth, 26)];
-//     [relativeDropdown addItemsWithObjectValues:items];
-//     [relativeDropdown selectItemAtIndex:selectedItemIndex];
-//     [[exportWindow contentView] addSubview:relativeDropdown];
-//     [relativeDropdown setEditable:false];
-	
-	
-	
-	// checkbox
-	// var exportStatesCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, 100-4, columnWidth * 2, 16)];
-	// [exportStatesCheckbox setButtonType:NSSwitchButton];
-	// [exportStatesCheckbox setTitle:"Export states from Artboards"];
-	// [exportStatesCheckbox setState:rememberState()];
-	// exportStatesCheckbox.setCOSJSTargetFunction(function(sender){
-	// 	checkboxExportState = checkboxExportState == 0 ? 1 : 0
-	// })
-	// [[exportWindow contentView] addSubview:exportStatesCheckbox];
-	
-	
 	var buttonsBottomOffset = 40;
     
 	var exportButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 78, 50)];
 	[exportButton setTitle:"Export"];
 	[exportButton setBezelStyle:NSRoundedBezelStyle];
 	[exportButton setKeyEquivalent:"\r"];
-	   [exportButton setCOSJSTargetFunction:function(sender) {
-	       [exportWindow orderOut:nil]
-	       [NSApp stopModal]
-		   exportKeynote(context)
-	   }];
-	   [exportButton setAction:"callAction:"];
+	[exportButton setCOSJSTargetFunction:function(sender) {
+		[exportWindow orderOut:nil]
+		[NSApp stopModal]
+		exportKeynote(context)
+	}];
+	[exportButton setAction:"callAction:"];
 	[[exportWindow contentView] addSubview:exportButton];
     
     
 	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 78-4, buttonsBottomOffset-20, 68, 50)];
 	[cancelButton setTitle:"Cancel"];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];
-		[cancelButton setCOSJSTargetFunction:function(sender) {
-			[exportWindow orderOut:nil]
-			[NSApp stopModal]
-		}];
+	// [exportButton setKeyEquivalent:"\033"];
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[exportWindow orderOut:nil]
+		[NSApp stopModal]
+	}];
 	[cancelButton setAction:"callAction:"]
 	[[exportWindow contentView] addSubview:cancelButton];
     
