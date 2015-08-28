@@ -19,7 +19,6 @@ var onRun = function(context) {
 
 
 function createKeynoteExportWindow(context){
-	var readyLayerNames = readyToExportAmount(context)
 	
 	var paddingLeft = 288;
 	var columnWidth = 136;
@@ -72,25 +71,7 @@ function createKeynoteExportWindow(context){
     [[exportWindow contentView] addSubview:description];
 	
 	
-	var readyColor = redColor
-	var readyMessage = inventoryNoExportablesForKeynote
-	if (readyLayerNames != nil && readyLayerNames.length > 0) {
-	    readyColor = greenColor
-		readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayers and all their states"
-		if (readyLayerNames.length == 1) {
-			readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayer and its states"
-		}
-	}
-
-    var foundLayers = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 80, columnWidth, 42)];
-    [foundLayers setEditable:false];
-    [foundLayers setBordered:false];
-    [foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
-    [foundLayers setTextColor:readyColor];
-    [foundLayers setDrawsBackground:false];
-    [foundLayers setStringValue:readyMessage];
-    [foundLayers sizeToFit];
-    [[exportWindow contentView] addSubview:foundLayers];
+	
 	
 	
 
@@ -126,16 +107,41 @@ function createKeynoteExportWindow(context){
     var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(556-30+6, 30, 32, 32)];
 	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
 	[helpButton setTitle:nil];
-	   [helpButton setCOSJSTargetFunction:function(sender) {
-	       var url = [NSURL URLWithString:@"http://medium.com"];
-		   [[NSWorkspace sharedWorkspace] openURL:url]
-	   }];
-	   [helpButton setAction:"callAction:"]
+	[helpButton setCOSJSTargetFunction:function(sender) {
+		var url = [NSURL URLWithString:@"http://medium.com"];
+		[[NSWorkspace sharedWorkspace] openURL:url]
+	}];
+	[helpButton setAction:"callAction:"]
 	[[exportWindow contentView] addSubview:helpButton];
     
     
 	[exportWindow setDefaultButtonCell:[exportButton cell]];
 	[NSApp runModalForWindow:exportWindow];
+	
+	
+	
+	// var readyLayerNames = readyToExportAmount(context)
+// 	log("READY: " + readyLayerNames.length)
+// 	var readyColor = redColor
+// 	var readyMessage = inventoryNoExportablesForKeynote
+// 	if (readyLayerNames != nil && readyLayerNames.length > 0) {
+// 	    readyColor = greenColor
+// 		readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayers and all their states"
+// 		if (readyLayerNames.length == 1) {
+// 			readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayer and its states"
+// 		}
+// 	}
+//
+//     var foundLayers = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 80, columnWidth, 42)];
+//     [foundLayers setEditable:false];
+//     [foundLayers setBordered:false];
+//     [foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
+//     [foundLayers setTextColor:readyColor];
+//     [foundLayers setDrawsBackground:false];
+//     [foundLayers setStringValue:readyMessage];
+//     [foundLayers sizeToFit];
+// 	[[exportWindow contentView] addSubview:foundLayers];
+// 	NSLog([foundLayers description])
 	
 }
 
