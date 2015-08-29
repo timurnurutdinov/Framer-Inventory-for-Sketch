@@ -114,13 +114,13 @@ var exportKeynote = function(context) {
 		for (var i = 0; i < output.count(); i++) { 
 			string += [output objectAtIndex: i]
 		}
-		string += "\r"
+		string += ln()
 		
 		// CREATE STATES LIST
 		for (var i = 0; i < outputStatesGlobal.count(); i++) {
 			string += [outputStatesGlobal objectAtIndex: i] 
 		}
-		string += "\r"
+		string += ln()
 		
 		// CREATE STATES VARIABLES LIST
 		for (var i = 0; i < statesNames.count(); i++) {

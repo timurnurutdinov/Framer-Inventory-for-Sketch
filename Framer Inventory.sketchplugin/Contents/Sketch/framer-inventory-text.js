@@ -1,6 +1,7 @@
 var inventorySuccessMessage = "Copied to Clipboard. ⌘CMD+V into Framer Studio"
-var inventoryNoLayersSelectedMessage = "Failed. Select one or more layers, groups or slices, please."
+var inventoryNoLayersSelectedMessage = "Failed. Select any layers, groups or slices, please."
 var inventoryNoExportablesForKeynote = "Nothing has been exported. Make exportable groups or create slices on this page."
+var inventoryBadTypesSelectedMessage = "Nothing has been exported. Choose Shapes or Groups, please."
 
 
 function inventorySuccessMessageNumberedGetter(localNumber) {
@@ -11,5 +12,15 @@ function inventorySuccessMessageNumberedGetter(localNumber) {
 
 
 function inventorySuccessMessageParametricNumberedGetter(localNumber, imagesNumber, shapesNumber) {
-	return "Exported " + localNumber + " layers (" + imagesNumber  + " by images). ⌘CMD+V into Framer Studio and export assets if needed."
+	if (localNumber == nil || localNumber == 0) { return inventoryNoExportablesForKeynote }
+	else if (localNumber == 1 && imagesNumber == 1) {
+		return "Exported 1 layer. ⌘CMD+V into Framer Studio and update 1 asset if needed."
+	}
+	else if (localNumber == 1 && shapesNumber == 1) {
+		return "Exported 1 layer. ⌘CMD+V into Framer Studio."
+	}
+	else if (imagesNumber == 1) {
+		return "Exported " + localNumber + " layers. ⌘CMD+V into Framer Studio and update 1 asset if needed."
+	}
+	return "Exported " + localNumber + " layers. ⌘CMD+V into Framer Studio and update " + imagesNumber + " assets if needed."
 }

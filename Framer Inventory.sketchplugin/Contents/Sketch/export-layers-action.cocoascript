@@ -35,6 +35,7 @@ function createExportWindow(context){
 	var items = ['Artboard', 'Parent']
 	var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1];
 	var semiWhiteColor = [NSColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1];
+	var fieldColor = [NSColor colorWithSRGBRed:0.99 green:0.99 blue:0.99 alpha:1]
 		
 	var exportWindow = [[NSWindow alloc] init];
 	[exportWindow setFrame:NSMakeRect(0, 0, 600, 320) display:false];
@@ -66,6 +67,9 @@ function createExportWindow(context){
     [description setStringValue:descriptionText];
     [description sizeToFit];
     [[exportWindow contentView] addSubview:description];
+
+	
+	
 	
 	
 	// field 1
@@ -81,9 +85,10 @@ function createExportWindow(context){
     
 	var retinaInput = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, 130, columnWidth, 20)];
     [[retinaInput cell] setPlaceholderString:"Ex: \"retina\", \"2\", \"3\""];
+	[retinaInput setFocusRingType:NSFocusRingTypeNone]; 
     [retinaInput setBordered:false];
 	// [retinaInput setDrawsBackground:false];
-    // [retinaInput setBackgroundColor:semiWhiteColor];
+    [retinaInput setBackgroundColor:fieldColor];
     [retinaInput setStringValue:getScale()];
     [[exportWindow contentView] addSubview:retinaInput];
     
@@ -106,7 +111,6 @@ function createExportWindow(context){
     [relativeDropdown setEditable:false];
 	
 	
-	
 	// checkbox
 	var exportStatesCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, 100-4, columnWidth * 2, 16)];
 	[exportStatesCheckbox setButtonType:NSSwitchButton];
@@ -116,6 +120,7 @@ function createExportWindow(context){
 		checkboxExportState = checkboxExportState == 0 ? 1 : 0
 	})
 	[[exportWindow contentView] addSubview:exportStatesCheckbox];
+	
 	
 	
 	var buttonsBottomOffset = 40;
