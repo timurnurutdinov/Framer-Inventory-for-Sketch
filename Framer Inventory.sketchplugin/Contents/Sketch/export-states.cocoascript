@@ -34,7 +34,11 @@ var exportStates = function(context) {
 		selectedLayer = [selection objectAtIndex: i]
 		selectedLayerType = [selectedLayer className]
 		
-		if (selectedLayer.isKindOfClass(MSShapeGroup)) {
+		if (selectedLayer.isKindOfClass(MSArtboardGroup)) {
+			howManyOthers++
+			continue
+		}
+		else if (selectedLayer.isKindOfClass(MSShapeGroup)) {
 			if (isExportableWithoutImage(selectedLayer)) {
 				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
 				howManyShapes++
@@ -61,8 +65,10 @@ var exportStates = function(context) {
 		
 		for (var a = 0; a < artboards.count(); a++) {
 			currentArtboard = [artboards objectAtIndex: a]
+			var nameToFind = selectedLayer.name()
+			if (selectedLayer.isKindOfClass(MSSliceLayer)) { nameToFind = removePath(selectedLayer.name()) }
 			
-			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(removePath(selectedLayer.name()), currentArtboard, selectedLayerType)
+			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(nameToFind, currentArtboard, selectedLayerType)
 			if (foundLayerOnCurrentArtboard != nil && foundLayerOnCurrentArtboard.count() > 0) {
 				if (outputStates.count() > 0) {
 					var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
@@ -95,18 +101,22 @@ var exportStates = function(context) {
 	}
 	
 	
-	// PREPATE OUTPUT
-	var string = NSMutableString.new()
-	for (var i = 0; i < output.count(); i++) { string += [output objectAtIndex: i] }
-	string += ln()
-	for (var i = 0; i < outputStatesGlobal.count(); i++) { string += [outputStatesGlobal objectAtIndex: i] }
-	string += ln()
+	if (howManyOthers < selection.count()) {
+		var string = NSMutableString.new()
+		for (var i = 0; i < output.count(); i++) { string += [output objectAtIndex: i] }
+		string += ln()
+		for (var i = 0; i < outputStatesGlobal.count(); i++) { string += [outputStatesGlobal objectAtIndex: i] }
+		string += ln()
 
-	framerInventoryOutput(string, fileName)
-	[[NSPasteboard generalPasteboard] clearContents];
-	[[NSPasteboard generalPasteboard] setString:string  forType:NSStringPboardType];
+		framerInventoryOutput(string, fileName)
+		[[NSPasteboard generalPasteboard] clearContents];
+		[[NSPasteboard generalPasteboard] setString:string  forType:NSStringPboardType];
 	
-	var successMessage = inventorySuccessMessageParametricNumberedGetter(selection.count(), howManyImages, howManyShapes)
-	[doc showMessage:successMessage]
+		var successMessage = inventorySuccessMessageParametricNumberedGetter(selection.count(), howManyImages, howManyShapes)
+		[doc showMessage:successMessage]
+	}
+	else {
+		[doc showMessage:inventoryBadTypesSelectedMessage]
+	}
 
 }

@@ -24,7 +24,6 @@ var clearName = function(longName) {
 
 var findParent = function(layer) {
 	if (axisMode == 0) { return findParentArtboard(layer) }
-	log("OPOSPDOSPDOPSO")
 	return findParentGroup(layer)
 }
 

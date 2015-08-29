@@ -22,5 +22,8 @@ function inventorySuccessMessageParametricNumberedGetter(localNumber, imagesNumb
 	else if (imagesNumber == 1) {
 		return "Exported " + localNumber + " layers. ⌘CMD+V into Framer Studio and update 1 asset if needed."
 	}
+	else if (imagesNumber == 0) {
+		return "Exported " + localNumber + " layers. ⌘CMD+V into Framer Studio."
+	}
 	return "Exported " + localNumber + " layers. ⌘CMD+V into Framer Studio and update " + imagesNumber + " assets if needed."
 }

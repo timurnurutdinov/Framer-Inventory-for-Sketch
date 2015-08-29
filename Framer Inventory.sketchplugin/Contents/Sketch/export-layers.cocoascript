@@ -35,7 +35,10 @@ var exportLayers = function(context) {
 		selectedLayer = [selection objectAtIndex: i]
 		selectedLayerType = [selectedLayer className]
 		
-		if (selectedLayer.isKindOfClass(MSShapeGroup)) {
+		if (selectedLayer.isKindOfClass(MSArtboardGroup)) {
+			howManyOthers++
+		}
+		else if (selectedLayer.isKindOfClass(MSShapeGroup)) {
 			if (isExportableWithoutImage(selectedLayer)) {
 				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
 				howManyShapes++
