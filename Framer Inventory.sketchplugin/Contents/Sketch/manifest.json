@@ -9,25 +9,33 @@
   "compatibleVersion": 3.3,
   "commands" : [
     {
-      "script" : "export-layers-action.cocoascript",
+      "script" : "action-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "Replicate Selected",
-      "identifier" : "export-layers-action"
+      "identifier" : "action-replicate-layers"
     },
     {
-      "script" : "simulate-keynote-action.cocoascript",
+      "script" : "action-simulate-keynote.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "Simulate Keynote",
-      "identifier" : "simulate-keynote-action"
+      "identifier" : "action-simulate-keynote"
+    },
+    {
+      "script" : "action-select-inventorable.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Update Assets",
+      "identifier" : "action-select-inventorable"
     }
   ],
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "export-layers-action",
-		  "simulate-keynote-action"
+		  "action-replicate-layers",
+		  "action-simulate-keynote",
+		  "action-select-inventorable"
       ]
     }
 }

@@ -1,0 +1,13 @@
+
+var onRun = function(context) {
+	var doc = context.document
+	[[doc currentPage] deselectAllLayers]
+
+	var arrayExportable = [[doc currentPage] exportableLayers]
+	for(var i = 0; i < arrayExportable.count(); i++){
+	      var layer = arrayExportable.objectAtIndex(i)
+	      [layer select:true byExpandingSelection:true]
+	}
+}
+	
+	
