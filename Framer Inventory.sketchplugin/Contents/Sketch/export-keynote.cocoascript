@@ -18,41 +18,53 @@ var exportKeynote = function(context) {
 	var statesNames = NSMutableArray.new()
 	var outputStatesGlobal = NSMutableArray.new()
 	
-	
 	var layerNames = readyToExportAmount(context)
-
 	for (var i = 0; i < artboards.count(); i++) {
 		statesNames = statesNames.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(clearName([[artboards objectAtIndex: i] name]), nil))
 	}
+	
+	var howManyImages = 0
+	var howManyShapes = 0
+	
+	
 	for (var i = 0; i < layerNames.length; i++) {
+		
+		// FIND NAMED LAYERS
 		var notSlicesWithNamePredicate = NSPredicate.predicateWithFormat("name == %@ && (className == 'MSLayerGroup' || className == 'MSShapeGroup')", layerNames[i])
+		tempSelectedLayers = findLayersMatchingPredicate_inContainer_filterByType(notSlicesWithNamePredicate, currentPage)
 		
-		tempSelectedLayers = findLayersNamed_inContainer_filterByType(layerNames[i], currentPage)
-		log("HAS FOUND " + tempSelectedLayers.count() + " layers of " + layerNames[i])
-		if (tempSelectedLayers != nil && tempSelectedLayers.count() > 0) { 
-			selectedLayer = tempSelectedLayers[0]
-		}
+		// WE NEED ONE STATE PER ARTBOARD
+		if (tempSelectedLayers != nil && tempSelectedLayers.count() > 0) { selectedLayer = tempSelectedLayers[0] }
 		else { break }
-		selectedLayerType = [selectedLayer className]
 		
-		if (selectedLayerType == "MSSliceLayer" || selectedLayerType == "MSLayerGroup") {
-			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+		// EXPORT WITHOUT IMAGE IF POSSIBLE
+		if (selectedLayer.isKindOfClass(MSShapeGroup)) {
+			if (isExportableWithoutImage(selectedLayer)) {
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
+				howManyShapes++
+			}
+			else {
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+				howManyImages++
+			}
 		}
-		else { output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil)) }
+		else {
+			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+			howManyImages++
+		}
 		
-		log("DETECTED TYPE")
+
 		
 		var outputStates = NSMutableArray.new()
 		var outputStatesTitles = NSMutableArray.new()
-		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitle(selectedLayer), nil))
-		log("CREATED STATE TITLE: " + createStateTitle(selectedLayer))
 		
+		// CREATE STATE: TITLE
+		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitle(selectedLayer), nil))
+		
+		// CREATE STATE OR PUT TEMPORARY "BADSTRING"
 		for (var a = 0; a < artboards.count(); a++) {
-			log("HERE")
 			currentArtboard = [artboards objectAtIndex: a]
-			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(removePath(selectedLayer.name()), currentArtboard, selectedLayerType)
-			
-			log("HERE2")
+			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(removePath(selectedLayer.name()), currentArtboard, [selectedLayer className])
 			
 			if (foundLayerOnCurrentArtboard.count() > 0) {
 				var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
@@ -61,11 +73,8 @@ var exportKeynote = function(context) {
 			else {
 				outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(badString, nil))
 			}
-			log("HERE3")
 		}
 		
-		
-		log("GO FOR STATES TITLES")
 		
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitleEnd(), nil))
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateSwitchInstant(selectedLayer, clearName([artboards objectAtIndex: 0].name())), nil))
@@ -84,7 +93,6 @@ var exportKeynote = function(context) {
 		for (var counter = start; counter >= 0; counter--) {
 			artboardForStateName = [artboards objectAtIndex: (start - counter)]
 			outputStatesGlobal = outputStatesGlobal.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects("\t" + clearName(artboardForStateName.name()) + fixedStates[counter], nil))
-			// log("compose: " + "\t" + clearName(artboardForStateName.name()) + fixedStates[counter])
 		}
 		
 		// STATES: CLOSER AND SWITCHINSTANT
@@ -152,7 +160,7 @@ var exportKeynote = function(context) {
 	}
 	
 	
-	var successMessage = inventorySuccessMessageNumberedGetter(layerNames.length)
+	var successMessage = inventorySuccessMessageParametricNumberedGetter(layerNames.length, howManyImages, howManyShapes)
 	[doc showMessage:successMessage]
 
 }
@@ -252,3 +260,4 @@ function readyToExportAmount(context) {
 	}
 	return layerNames
 }
+

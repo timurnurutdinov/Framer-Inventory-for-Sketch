@@ -8,3 +8,8 @@ function inventorySuccessMessageNumberedGetter(localNumber) {
 	else if (localNumber == 1) { return "FramerJS prototype with one layer was copied to Clipboard. ⌘CMD+V into Framer Studio." }
 	return "FramerJS prototype with " + localNumber + " layers was copied to Clipboard. ⌘CMD+V into Framer Studio."
 }
+
+
+function inventorySuccessMessageParametricNumberedGetter(localNumber, imagesNumber, shapesNumber) {
+	return "Exported " + localNumber + " layers (" + imagesNumber  + " by images). ⌘CMD+V into Framer Studio and export assets if needed."
+}
