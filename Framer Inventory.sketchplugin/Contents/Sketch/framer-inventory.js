@@ -47,7 +47,6 @@ var findParentGroup = function(layer) {
 	return [layer parentGroup]
 }
 
-
 var convertHex = function(hex, opacity) {
     hex = hex.replace('#','');
     r = parseInt(hex.substring(0,2), 16);
@@ -57,6 +56,20 @@ var convertHex = function(hex, opacity) {
     result = 'rgba('+r+','+g+','+b+','+opacity+')';
     return result;
 }
+
+function isExportableWithoutImage(layerToAnalyse) {
+	var magicLayers = layerToAnalyse.layers()
+	if (magicLayers.count() > 1) { return false }
+
+	var shape = magicLayers.firstObject()
+	if(shape && (shape.isKindOfClass(MSRectangleShape) || shape.isKindOfClass(MSOvalShape))) {
+		if ([[[shape path] points] count] != 4) { return false }
+		return true
+	}
+	return false
+}
+
+
 
 
 
@@ -262,6 +275,7 @@ var getShadowX = function(layer) {
 	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
 		var localShadow = [shadowsCollection objectAtIndex:s]
 		if ([localShadow isEnabled]) {
+			if ([localShadow offsetX] == 0) { return ", shadowX: 0" }
 			return ", shadowX: " + [localShadow offsetX] + "*" + scale
 		}
 	}
@@ -273,6 +287,7 @@ var getShadowY = function(layer) {
 	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
 		var localShadow = [shadowsCollection objectAtIndex:s]
 		if ([localShadow isEnabled]) {
+			if ([localShadow offsetY] == 0) { return ", shadowY: 0" }
 			return ", shadowY: " + [localShadow offsetY] + "*" + scale
 		}
 	}
@@ -284,6 +299,7 @@ var getShadowBlur = function(layer) {
 	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
 		var localShadow = [shadowsCollection objectAtIndex:s]
 		if ([localShadow isEnabled]) {
+			if ([localShadow blurRadius] == 0) { return ", shadowBlur: 0" }
 			return ", shadowBlur: " + [localShadow blurRadius] + "*" + scale
 		}
 	}
@@ -295,6 +311,7 @@ var getShadowSpread = function(layer) {
 	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
 		var localShadow = [shadowsCollection objectAtIndex:s]
 		if ([localShadow isEnabled]) {
+			if ([localShadow spread] == 0) { return ", shadowSpread: 0" }
 			return ", shadowSpread: " + [localShadow spread] + "*" + scale
 		}
 	}
