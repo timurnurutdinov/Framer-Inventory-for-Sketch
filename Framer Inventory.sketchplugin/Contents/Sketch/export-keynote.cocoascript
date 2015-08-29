@@ -64,7 +64,7 @@ var exportKeynote = function(context) {
 		// CREATE STATE OR PUT TEMPORARY "BADSTRING"
 		for (var a = 0; a < artboards.count(); a++) {
 			currentArtboard = [artboards objectAtIndex: a]
-			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(removePath(selectedLayer.name()), currentArtboard, [selectedLayer className])
+			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(selectedLayer.name(), currentArtboard, [selectedLayer className])
 			
 			if (foundLayerOnCurrentArtboard.count() > 0) {
 				var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
@@ -219,45 +219,32 @@ function readyToExportAmount(context) {
 	var doc = context.document
 	var currentPage = doc.currentPage()
 	var arrayExportable = [currentPage exportableLayers]
-	var arraySlices = findLayersMatchingPredicate_inContainer_filterByType(NSPredicate.predicateWithFormat("className == 'MSSliceLayer'"), currentPage)
-	
 	
 	var layerNames = []
+	var layerType = nil
 	for (var i = 0; i < arrayExportable.count(); i++) {
-		var localExportableName = [[arrayExportable objectAtIndex: i] name]
+		layerType = [[arrayExportable objectAtIndex: i] className]
 
-		var isFound = false
-		for (var f = 0; f < layerNames.length; f++) {
-			if (layerNames[f] == localExportableName) {
-				isFound = true
-				break
+		if (layerType == "MSSliceLayer" || layerType == "MSShapeGroup" || layerType == "MSLayerGroup") {
+
+			var localExportableName = [[arrayExportable objectAtIndex: i] name]
+			if (layerType == "MSSliceLayer") { localExportableName = removePath(localExportableName) }
+			var isFound = false
+
+			for (var f = 0; f < layerNames.length; f++) {
+				if (layerNames[f] == localExportableName) {
+					isFound = true
+					break
+				}
+			}
+
+			if (!isFound) ) {
+		    	layerNames.push(localExportableName)
 			}
 		}
-	
-		if (!isFound) ) {
-	    	layerNames.push(localExportableName)
-		}
 	}
 	
-	for (var i = 0; i < arraySlices.count(); i++) {
-		var localExportableName = [[arraySlices objectAtIndex: i] name]
-
-		var isFound = false
-		for (var f = 0; f < layerNames.length; f++) {
-			if (layerNames[f] == localExportableName) {
-				isFound = true
-				break
-			}
-		}
 	
-		if (!isFound) ) {
-	    	layerNames.push(localExportableName)
-		}	
-	}
-	
-	for (var i = 0; i < layerNames.length; i++) {
-		log(layerNames[i])
-	}
 	return layerNames
 }
 
