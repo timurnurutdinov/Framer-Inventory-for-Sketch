@@ -1,4 +1,5 @@
-// HELPERS
+// My Utils <3
+
 var scale = "retina"
 var axisMode = 0
 
@@ -9,6 +10,10 @@ var getScale = function() { return scale }
 
 var setAxisMode = function(newValue) { axisMode = newValue }
 var getAxisMode = function() { return axisMode }
+
+
+
+
 
 
 // Utilities
@@ -56,7 +61,7 @@ var convertHex = function(hex, opacity) {
     return result;
 }
 
-function isExportableWithoutImage(layerToAnalyse) {
+var isExportableWithoutImage = function(layerToAnalyse) {
 	if ([layerToAnalyse className] == "MSSliceLayer") { return false }
 	var magicLayers = layerToAnalyse.layers()
 	if (magicLayers.count() > 1) { return false }
@@ -68,7 +73,6 @@ function isExportableWithoutImage(layerToAnalyse) {
 	}
 	return false
 }
-
 
 
 
@@ -88,7 +92,6 @@ var createRetinaRectangle = function(layer, radius, currentPage) {
 	var p = findParent(layer)
 	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getSuperLayer(l) + getCornerRadius(l) + getOpacity(l) + ln()
 }
-
 
 
 

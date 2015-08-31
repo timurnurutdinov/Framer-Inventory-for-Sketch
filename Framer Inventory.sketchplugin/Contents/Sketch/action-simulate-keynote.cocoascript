@@ -10,6 +10,7 @@ var supportMessage = "Generate FramerJS code to simulate Keynote"
 var infoMessage = "Determines exportable layers and slices.\rGenerates clickable linear prototype\rbased on your artboards.\r\r"
 var tipText = "Don't forget to export assets manually!"
 
+
 var onRun = function(context) {
     pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"));
 	var doc = context.document
@@ -22,6 +23,8 @@ function createKeynoteExportWindow(context){
 	
 	var paddingLeft = 288;
 	var columnWidth = 136;
+	var buttonsBottomOffset = 40;
+	
 	var smallFontSize = 9;
 	
 	var tpd = 6
@@ -71,36 +74,6 @@ function createKeynoteExportWindow(context){
     [[exportWindow contentView] addSubview:description];
 	
 	
-
-	
-	
-	var buttonsBottomOffset = 40;
-    
-	var exportButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 78, 50)];
-	[exportButton setTitle:"Export"];
-	[exportButton setBezelStyle:NSRoundedBezelStyle];
-	[exportButton setKeyEquivalent:"\r"];
-	[exportButton setCOSJSTargetFunction:function(sender) {
-		[exportWindow orderOut:nil]
-		[NSApp stopModal]
-		exportKeynote(context)
-	}];
-	[exportButton setAction:"callAction:"];
-	[[exportWindow contentView] addSubview:exportButton];
-    
-    
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 78-4, buttonsBottomOffset-20, 68, 50)];
-	[cancelButton setTitle:"Cancel"];
-	[cancelButton setBezelStyle:NSRoundedBezelStyle];
-	[cancelButton setKeyEquivalent:"\033"]
-	[cancelButton setCOSJSTargetFunction:function(sender) {
-		[exportWindow orderOut:nil]
-		[NSApp stopModal]
-	}];
-	[cancelButton setAction:"callAction:"]
-	[[exportWindow contentView] addSubview:cancelButton];
-    
-    
     var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(556-30+6, 30, 32, 32)];
 	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
 	[helpButton setTitle:nil];
@@ -110,35 +83,94 @@ function createKeynoteExportWindow(context){
 	}];
 	[helpButton setAction:"callAction:"]
 	[[exportWindow contentView] addSubview:helpButton];
+	
+	
+	
+	
+	
+	
+	
+	
+	var doc = context.document
+	var thisPageArtboards = [[doc currentPage] artboards]
+
+	var checkNames = []
+	for (var n = 0; n < [thisPageArtboards count]; n++) {
+		checkNames.push([[thisPageArtboards objectAtIndex: n] name])
+	}
+
+	if (isArtboardsNamesRepeated(checkNames)) {
+		var foundLayers = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 80, columnWidth * 2, 42)];
+		[foundLayers setEditable:false];
+		[foundLayers setBordered:false];
+		[foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
+		[foundLayers setTextColor:redColor];
+		[foundLayers setDrawsBackground:false];
+		[foundLayers setStringValue:warningRepeatedArtboards];
+		[[exportWindow contentView] addSubview:foundLayers];
+		
+		var revealRepeatedButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 180, 50)];
+		[revealRepeatedButton setTitle:"Show Repeated Artboards"];
+		[revealRepeatedButton setBezelStyle:NSRoundedBezelStyle];
+		[revealRepeatedButton setKeyEquivalent:"\r"];
+		[revealRepeatedButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+			showRepeated(context)
+		}];
+		[revealRepeatedButton setAction:"callAction:"];
+		[[exportWindow contentView] addSubview:revealRepeatedButton];
     
     
-	[exportWindow setDefaultButtonCell:[exportButton cell]];
+		var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 170, buttonsBottomOffset-20, 68, 50)];
+		[cancelButton setTitle:"Cancel"];
+		[cancelButton setBezelStyle:NSRoundedBezelStyle];
+		[cancelButton setKeyEquivalent:"\033"]
+		[cancelButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+		}];
+		[cancelButton setAction:"callAction:"]
+		[[exportWindow contentView] addSubview:cancelButton];
+			
+			
+		
+	}
+	else {
+		var exportButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 78, 50)];
+		[exportButton setTitle:"Export"];
+		[exportButton setBezelStyle:NSRoundedBezelStyle];
+		[exportButton setKeyEquivalent:"\r"];
+		[exportButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+			exportKeynote(context)
+		}];
+		[exportButton setAction:"callAction:"];
+		[[exportWindow contentView] addSubview:exportButton];
+    
+    
+		var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 78-4, buttonsBottomOffset-20, 68, 50)];
+		[cancelButton setTitle:"Cancel"];
+		[cancelButton setBezelStyle:NSRoundedBezelStyle];
+		[cancelButton setKeyEquivalent:"\033"]
+		[cancelButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+		}];
+		[cancelButton setAction:"callAction:"]
+		[[exportWindow contentView] addSubview:cancelButton];
+		
+		[exportWindow setDefaultButtonCell:[exportButton cell]];
+	}
+
+    
+    
+    
+    
+    
 	[NSApp runModalForWindow:exportWindow];
 	
-	
-	
-	// var readyLayerNames = readyToExportAmount(context)
-// 	log("READY: " + readyLayerNames.length)
-// 	var readyColor = redColor
-// 	var readyMessage = inventoryNoExportablesForKeynote
-// 	if (readyLayerNames != nil && readyLayerNames.length > 0) {
-// 	    readyColor = greenColor
-// 		readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayers and all their states"
-// 		if (readyLayerNames.length == 1) {
-// 			readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayer and its states"
-// 		}
-// 	}
-//
-//     var foundLayers = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 80, columnWidth, 42)];
-//     [foundLayers setEditable:false];
-//     [foundLayers setBordered:false];
-//     [foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
-//     [foundLayers setTextColor:readyColor];
-//     [foundLayers setDrawsBackground:false];
-//     [foundLayers setStringValue:readyMessage];
-//     [foundLayers sizeToFit];
-// 	[[exportWindow contentView] addSubview:foundLayers];
-// 	NSLog([foundLayers description])
 	
 }
 
