@@ -12,6 +12,7 @@ var exportLayers = function(context) {
 		
 	var doc = context.document
 	var selection = context.selection
+	var cp = [doc currentPage]
 	
 	var selectedLayer = nil
 	var output = NSMutableArray.new()
@@ -38,18 +39,21 @@ var exportLayers = function(context) {
 		if (selectedLayer.isKindOfClass(MSArtboardGroup)) {
 			howManyOthers++
 		}
+		else if (selectedLayer.isKindOfClass(MSSliceLayer)) {
+			howManyOthers++
+		}
 		else if (selectedLayer.isKindOfClass(MSShapeGroup)) {
 			if (isExportableWithoutImage(selectedLayer)) {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer, cp), nil))
 				howManyShapes++
 			}
 			else {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 				howManyImages++
 			}
 		}
-		else if (selectedLayer.isKindOfClass(MSLayerGroup) || selectedLayer.isKindOfClass(MSSliceLayer)) {
-			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+		else if (selectedLayer.isKindOfClass(MSLayerGroup)) {
+			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 			howManyImages++
 		}
 		else {

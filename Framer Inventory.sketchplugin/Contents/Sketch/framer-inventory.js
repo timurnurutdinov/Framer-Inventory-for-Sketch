@@ -57,6 +57,7 @@ var convertHex = function(hex, opacity) {
 }
 
 function isExportableWithoutImage(layerToAnalyse) {
+	if ([layerToAnalyse className] == "MSSliceLayer") { return false }
 	var magicLayers = layerToAnalyse.layers()
 	if (magicLayers.count() > 1) { return false }
 
@@ -76,16 +77,16 @@ function isExportableWithoutImage(layerToAnalyse) {
 
 // LAYERS
 
-var createRetinaLayer = function(layer) {
+var createRetinaLayer = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return "" + clearName(layer.name()) + " = new Layer " + getWidth(l) + getHeight(l) + ", image: \"images/" + removePath(l.name()) + ".png\"" + getX(l, p) + getY(l, p) + getSuperLayer(l) + getOpacity(l) + ln()
+	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + ", image: \"images/" + removePath(l.name()) + ".png\"" + getSuperLayer(l) + getOpacity(l) + ln()
 }
 
-var createRetinaRectangle = function(layer, radius) {
+var createRetinaRectangle = function(layer, radius, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return "" + clearName(layer.name()) + " = new Layer " + getWidth(l) + getHeight(l) + getX(l, p) + getY(l, p) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getSuperLayer(l) + getCornerRadius(l) + getOpacity(l) + ln()
+	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getSuperLayer(l) + getCornerRadius(l) + getOpacity(l) + ln()
 }
 
 
@@ -94,10 +95,10 @@ var createRetinaRectangle = function(layer, radius) {
 
 // STATES
 
-var createRetinaState = function(layer) {
+var createRetinaState = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return ": " + getWidth(l) + getHeight(l) + getX(l, p) + getY(l, p) + getAbsoluteOpacity(l) + ln()
+	return ": " + getPlace(l, p, currentPage) + getAbsoluteOpacity(l) + ln()
 }
 
 var createStateTitle = function(layer) {
@@ -111,6 +112,8 @@ var createStateTitleEnd = function() {
 var createStateSwitchInstant = function(layer, stateName) {
 	return "" + clearName(layer.name()) + ".states.switchInstant '" + stateName + "'" + ln() + ln()
 }
+
+
 
 
 
@@ -156,9 +159,87 @@ var generateCycler = function() {
 
 // PARAMS: SIZES
 
+var getPlace = function(layer, axisLayer, currentPage) {
+	if (isExportableWithoutImage(layer)) { return getPlaceRect(layer, axisLayer) }
+	return getPlaceImage(layer, axisLayer, currentPage)
+}
+
+var getPlaceImage = function(layer, axisLayer, currentPage) {
+	
+	var baseLayerFrame = [layer absoluteRect]
+	var parentArtboard = axisLayer
+	if ([axisLayer className] != "MSArtboardGroup") {
+		parentArtboard = findParentArtboard(layer)
+	}
+
+	var layer_copy = [layer duplicate]
+	if (![layer_copy isVisible]) {
+		[layer_copy setIsVisible:true]
+	}
+	[layer_copy removeFromParent]
+	[currentPage addLayers: [layer_copy]]
+
+	var frame = [layer_copy frame]
+	[frame setX: [[layer absoluteRect] x]]
+	[frame setY: [[layer absoluteRect] y]]
+
+	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
+	var valueX = temp.origin.x
+	var valueX = temp.origin.y
+	var valueWidth = temp.size.width
+	var valueHeight = temp.size.height
+	
+	var values = [temp.size.width, temp.size.height, temp.origin.x - [[axisLayer absoluteRect] x], temp.origin.y - [[axisLayer absoluteRect] y]]
+	var stringValues = []
+	for (var v = 0; v < values.length; v++) {
+		if (values[v] == 0) {
+			stringValues.push("0")
+		}
+		else {
+			stringValues.push("" + values[v] + "*" + scale)
+		}
+			
+	}
+	
+	var valueString = ""
+	for (var v = 0; v < stringValues.length; v++) {
+		if (v == 0) {
+			valueString += "width: " + stringValues[v]
+		}
+		else if (v == 1) {
+			valueString += ", height: " + stringValues[v]
+		}
+		else if (v == 2) {
+			valueString += ", x: " + stringValues[v]
+		}
+		else if (v == 3) {
+			valueString += ", y: " + stringValues[v]
+		}
+		else {
+			log("Error in place detection")
+			break
+		}		
+	}
+
+	[layer_copy removeFromParent]
+	
+	return valueString
+}
+
+var getPlaceRect = function(layer, axisLayer) {
+	return getWidth(layer) + getHeight(layer) + getX(layer, axisLayer) + getY(layer, axisLayer)
+}
+
+
+
+
+
+// OLD SCHOOL FOR EXPORTABLE BY CODE LAYERS
+
 var getY = function(layer, parentLayer) {
 	var parentY = [[parentLayer absoluteRect] y]
 	var layerY = [[layer absoluteRect] y]
+	
 	if (parentY - layerY == 0) { return ", y: 0"}
 	return ", y: " + -(parentY - layerY) + "*" + scale
 }
@@ -166,6 +247,7 @@ var getY = function(layer, parentLayer) {
 var getX = function(layer, parentLayer) {
 	var parentX = [[parentLayer absoluteRect] x]
 	var layerX = [[layer absoluteRect] x]
+	
 	if (parentX - layerX == 0) { return ", x: 0"}
 	return ", x: " + -(parentX - layerX) + "*" + scale
 }

@@ -13,6 +13,7 @@ var exportKeynote = function(context) {
 	var selection = context.selection
 	var artboards = [[doc currentPage] artboards]
 	var currentPage = doc.currentPage()
+	var cp = [doc currentPage]
 	
 	var output = NSMutableArray.new()
 	var statesNames = NSMutableArray.new()
@@ -29,9 +30,9 @@ var exportKeynote = function(context) {
 	
 	for (var i = 0; i < layerNames.length; i++) {
 		
-		// FIND NAMED LAYERS
-		var notSlicesWithNamePredicate = NSPredicate.predicateWithFormat("name == %@ && (className == 'MSLayerGroup' || className == 'MSShapeGroup')", layerNames[i])
-		tempSelectedLayers = findLayersMatchingPredicate_inContainer_filterByType(notSlicesWithNamePredicate, currentPage)
+		// FIND NAMED LAYERS (DEPRICATED BECAUSE OF PRE DETECTION CHECKS?)
+		var predicateShapeOrGroup = NSPredicate.predicateWithFormat("name == %@ && (className == 'MSLayerGroup' || className == 'MSShapeGroup')", layerNames[i])
+		tempSelectedLayers = findLayersMatchingPredicate_inContainer_filterByType(predicateShapeOrGroup, currentPage)
 		
 		// WE NEED ONE STATE PER ARTBOARD
 		if (tempSelectedLayers != nil && tempSelectedLayers.count() > 0) { selectedLayer = tempSelectedLayers[0] }
@@ -40,16 +41,16 @@ var exportKeynote = function(context) {
 		// EXPORT WITHOUT IMAGE IF POSSIBLE
 		if (selectedLayer.isKindOfClass(MSShapeGroup)) {
 			if (isExportableWithoutImage(selectedLayer)) {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer, cp), nil))
 				howManyShapes++
 			}
 			else {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 				howManyImages++
 			}
 		}
 		else {
-			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 			howManyImages++
 		}
 		
@@ -67,7 +68,7 @@ var exportKeynote = function(context) {
 			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(selectedLayer.name(), currentArtboard, [selectedLayer className])
 			
 			if (foundLayerOnCurrentArtboard.count() > 0) {
-				var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
+				var currentState = createRetinaState(foundLayerOnCurrentArtboard[0], cp)
 				outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(currentState, nil))
 			}
 			else {
@@ -75,9 +76,10 @@ var exportKeynote = function(context) {
 			}
 		}
 		
-		
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitleEnd(), nil))
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateSwitchInstant(selectedLayer, clearName([artboards objectAtIndex: 0].name())), nil))
+		
+		log(outputStates)
 		
 		// REPLACE BAD STATES
 		var fixedStates = replaceBadStates(outputStates)
@@ -189,10 +191,8 @@ var replaceBadStates = function(baseArray) {
 			fixedOutputStates.push(currentState)
 		}
 	}
-
-
-	currentState = badString
 	
+	currentState = badString
 	for (var counter = fixedOutputStates.length - 1; counter >= 0; counter--) {
 		if (fixedOutputStates[counter] == badString) {
 			if (currentState != badString) {
@@ -214,7 +214,7 @@ var replaceBadStates = function(baseArray) {
 
 
 
-
+// DISABLE SLICES
 function readyToExportAmount(context) {
 	var doc = context.document
 	var currentPage = doc.currentPage()
@@ -225,10 +225,8 @@ function readyToExportAmount(context) {
 	for (var i = 0; i < arrayExportable.count(); i++) {
 		layerType = [[arrayExportable objectAtIndex: i] className]
 
-		if (layerType == "MSSliceLayer" || layerType == "MSShapeGroup" || layerType == "MSLayerGroup") {
-
+		if (layerType == "MSShapeGroup" || layerType == "MSLayerGroup") {
 			var localExportableName = [[arrayExportable objectAtIndex: i] name]
-			if (layerType == "MSSliceLayer") { localExportableName = removePath(localExportableName) }
 			var isFound = false
 
 			for (var f = 0; f < layerNames.length; f++) {
