@@ -4,11 +4,9 @@ var inventoryNoExportablesForKeynote = "Nothing has been exported. Make exportab
 var inventoryBadTypesSelectedMessage = "Nothing has been exported. Choose Shapes or Groups, please."
 
 
-function inventorySuccessMessageNumberedGetter(localNumber) {
-	if (localNumber == nil || localNumber == 0) { return inventoryNoExportablesForKeynote }
-	else if (localNumber == 1) { return "FramerJS prototype with one layer was copied to Clipboard. ⌘CMD+V into Framer Studio." }
-	return "FramerJS prototype with " + localNumber + " layers was copied to Clipboard. ⌘CMD+V into Framer Studio."
-}
+
+var warningRepeatedArtboards = "WARNING!\rPage contains artboards with the same name.\rExport will not be correct."
+
 
 
 function inventorySuccessMessageParametricNumberedGetter(localNumber, imagesNumber, shapesNumber) {
@@ -27,3 +25,24 @@ function inventorySuccessMessageParametricNumberedGetter(localNumber, imagesNumb
 	}
 	return "Exported " + localNumber + " layers. ⌘CMD+V into Framer Studio and update " + imagesNumber + " assets if needed."
 }
+
+
+
+
+var isArtboardsNamesRepeated = function(artboardsNames) {
+	var namesSet = []
+	
+	for (var a = 0; a < artboardsNames.length; a++) {
+		currentName = artboardsNames[a]
+		if (a == 0) {
+			namesSet.push(currentName)
+			continue
+		}
+		
+		for (var s = 0; s < namesSet.length; s++) {
+			if (namesSet[s] == currentName) { return true }
+		}
+		namesSet.push(currentName)
+	}	
+	return false
+} 

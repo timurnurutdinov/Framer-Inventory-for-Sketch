@@ -10,6 +10,7 @@ var supportMessage = "Generate FramerJS code to simulate Keynote"
 var infoMessage = "Determines exportable layers and slices.\rGenerates clickable linear prototype\rbased on your artboards.\r\r"
 var tipText = "Don't forget to export assets manually!"
 
+
 var onRun = function(context) {
     pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"));
 	var doc = context.document
@@ -71,6 +72,31 @@ function createKeynoteExportWindow(context){
     [[exportWindow contentView] addSubview:description];
 	
 	
+	
+	var doc = context.document
+	var thisPageArtboards = [[doc currentPage] artboards]
+
+	var checkNames = []
+	for (var n = 0; n < [thisPageArtboards count]; n++) {
+		checkNames.push([[thisPageArtboards objectAtIndex: n] name])
+	}
+
+	if (isArtboardsNamesRepeated(checkNames)) {
+		var foundLayers = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 80, columnWidth * 2, 42)];
+		    [foundLayers setEditable:false];
+		    [foundLayers setBordered:false];
+		    [foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
+		    [foundLayers setTextColor:redColor];
+		    [foundLayers setDrawsBackground:false];
+		    [foundLayers setStringValue:warningRepeatedArtboards];
+			[[exportWindow contentView] addSubview:foundLayers];
+	}
+
+
+
+
+
+
 
 	
 	
