@@ -30,9 +30,9 @@ var exportKeynote = function(context) {
 	
 	for (var i = 0; i < layerNames.length; i++) {
 		
-		// FIND NAMED LAYERS
-		var notSlicesWithNamePredicate = NSPredicate.predicateWithFormat("name == %@ && (className == 'MSLayerGroup' || className == 'MSShapeGroup')", layerNames[i])
-		tempSelectedLayers = findLayersMatchingPredicate_inContainer_filterByType(notSlicesWithNamePredicate, currentPage)
+		// FIND NAMED LAYERS (DEPRICATED BECAUSE OF PRE DETECTION CHECKS?)
+		var predicateShapeOrGroup = NSPredicate.predicateWithFormat("name == %@ && (className == 'MSLayerGroup' || className == 'MSShapeGroup')", layerNames[i])
+		tempSelectedLayers = findLayersMatchingPredicate_inContainer_filterByType(predicateShapeOrGroup, currentPage)
 		
 		// WE NEED ONE STATE PER ARTBOARD
 		if (tempSelectedLayers != nil && tempSelectedLayers.count() > 0) { selectedLayer = tempSelectedLayers[0] }
@@ -191,10 +191,8 @@ var replaceBadStates = function(baseArray) {
 			fixedOutputStates.push(currentState)
 		}
 	}
-
-
-	currentState = badString
 	
+	currentState = badString
 	for (var counter = fixedOutputStates.length - 1; counter >= 0; counter--) {
 		if (fixedOutputStates[counter] == badString) {
 			if (currentState != badString) {
@@ -228,9 +226,7 @@ function readyToExportAmount(context) {
 		layerType = [[arrayExportable objectAtIndex: i] className]
 
 		if (layerType == "MSShapeGroup" || layerType == "MSLayerGroup") {
-
 			var localExportableName = [[arrayExportable objectAtIndex: i] name]
-			//if (layerType == "MSSliceLayer") { localExportableName = removePath(localExportableName) }
 			var isFound = false
 
 			for (var f = 0; f < layerNames.length; f++) {
