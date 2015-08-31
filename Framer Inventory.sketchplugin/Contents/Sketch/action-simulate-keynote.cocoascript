@@ -23,6 +23,8 @@ function createKeynoteExportWindow(context){
 	
 	var paddingLeft = 288;
 	var columnWidth = 136;
+	var buttonsBottomOffset = 40;
+	
 	var smallFontSize = 9;
 	
 	var tpd = 6
@@ -72,6 +74,22 @@ function createKeynoteExportWindow(context){
     [[exportWindow contentView] addSubview:description];
 	
 	
+    var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(556-30+6, 30, 32, 32)];
+	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
+	[helpButton setTitle:nil];
+	[helpButton setCOSJSTargetFunction:function(sender) {
+		var url = [NSURL URLWithString:@"http://medium.com"];
+		[[NSWorkspace sharedWorkspace] openURL:url]
+	}];
+	[helpButton setAction:"callAction:"]
+	[[exportWindow contentView] addSubview:helpButton];
+	
+	
+	
+	
+	
+	
+	
 	
 	var doc = context.document
 	var thisPageArtboards = [[doc currentPage] artboards]
@@ -83,88 +101,76 @@ function createKeynoteExportWindow(context){
 
 	if (isArtboardsNamesRepeated(checkNames)) {
 		var foundLayers = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 80, columnWidth * 2, 42)];
-		    [foundLayers setEditable:false];
-		    [foundLayers setBordered:false];
-		    [foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
-		    [foundLayers setTextColor:redColor];
-		    [foundLayers setDrawsBackground:false];
-		    [foundLayers setStringValue:warningRepeatedArtboards];
-			[[exportWindow contentView] addSubview:foundLayers];
+		[foundLayers setEditable:false];
+		[foundLayers setBordered:false];
+		[foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
+		[foundLayers setTextColor:redColor];
+		[foundLayers setDrawsBackground:false];
+		[foundLayers setStringValue:warningRepeatedArtboards];
+		[[exportWindow contentView] addSubview:foundLayers];
+		
+		var revealRepeatedButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 180, 50)];
+		[revealRepeatedButton setTitle:"Show Repeated Artboards"];
+		[revealRepeatedButton setBezelStyle:NSRoundedBezelStyle];
+		[revealRepeatedButton setKeyEquivalent:"\r"];
+		[revealRepeatedButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+			showRepeated(context)
+		}];
+		[revealRepeatedButton setAction:"callAction:"];
+		[[exportWindow contentView] addSubview:revealRepeatedButton];
+    
+    
+		var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 170, buttonsBottomOffset-20, 68, 50)];
+		[cancelButton setTitle:"Cancel"];
+		[cancelButton setBezelStyle:NSRoundedBezelStyle];
+		[cancelButton setKeyEquivalent:"\033"]
+		[cancelButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+		}];
+		[cancelButton setAction:"callAction:"]
+		[[exportWindow contentView] addSubview:cancelButton];
+			
+			
+		
+	}
+	else {
+		var exportButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 78, 50)];
+		[exportButton setTitle:"Export"];
+		[exportButton setBezelStyle:NSRoundedBezelStyle];
+		[exportButton setKeyEquivalent:"\r"];
+		[exportButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+			exportKeynote(context)
+		}];
+		[exportButton setAction:"callAction:"];
+		[[exportWindow contentView] addSubview:exportButton];
+    
+    
+		var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 78-4, buttonsBottomOffset-20, 68, 50)];
+		[cancelButton setTitle:"Cancel"];
+		[cancelButton setBezelStyle:NSRoundedBezelStyle];
+		[cancelButton setKeyEquivalent:"\033"]
+		[cancelButton setCOSJSTargetFunction:function(sender) {
+			[exportWindow orderOut:nil]
+			[NSApp stopModal]
+		}];
+		[cancelButton setAction:"callAction:"]
+		[[exportWindow contentView] addSubview:cancelButton];
+		
+		[exportWindow setDefaultButtonCell:[exportButton cell]];
 	}
 
-
-
-
-
-
-
-	
-	
-	var buttonsBottomOffset = 40;
-    
-	var exportButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 78, 50)];
-	[exportButton setTitle:"Export"];
-	[exportButton setBezelStyle:NSRoundedBezelStyle];
-	[exportButton setKeyEquivalent:"\r"];
-	[exportButton setCOSJSTargetFunction:function(sender) {
-		[exportWindow orderOut:nil]
-		[NSApp stopModal]
-		exportKeynote(context)
-	}];
-	[exportButton setAction:"callAction:"];
-	[[exportWindow contentView] addSubview:exportButton];
     
     
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 78-4, buttonsBottomOffset-20, 68, 50)];
-	[cancelButton setTitle:"Cancel"];
-	[cancelButton setBezelStyle:NSRoundedBezelStyle];
-	[cancelButton setKeyEquivalent:"\033"]
-	[cancelButton setCOSJSTargetFunction:function(sender) {
-		[exportWindow orderOut:nil]
-		[NSApp stopModal]
-	}];
-	[cancelButton setAction:"callAction:"]
-	[[exportWindow contentView] addSubview:cancelButton];
     
     
-    var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(556-30+6, 30, 32, 32)];
-	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
-	[helpButton setTitle:nil];
-	[helpButton setCOSJSTargetFunction:function(sender) {
-		var url = [NSURL URLWithString:@"http://medium.com"];
-		[[NSWorkspace sharedWorkspace] openURL:url]
-	}];
-	[helpButton setAction:"callAction:"]
-	[[exportWindow contentView] addSubview:helpButton];
     
-    
-	[exportWindow setDefaultButtonCell:[exportButton cell]];
 	[NSApp runModalForWindow:exportWindow];
 	
-	
-	
-	// var readyLayerNames = readyToExportAmount(context)
-// 	log("READY: " + readyLayerNames.length)
-// 	var readyColor = redColor
-// 	var readyMessage = inventoryNoExportablesForKeynote
-// 	if (readyLayerNames != nil && readyLayerNames.length > 0) {
-// 	    readyColor = greenColor
-// 		readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayers and all their states"
-// 		if (readyLayerNames.length == 1) {
-// 			readyMessage = "Ready to export " + readyLayerNames.length + " FramerJS\rlayer and its states"
-// 		}
-// 	}
-//
-//     var foundLayers = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft-1, 80, columnWidth, 42)];
-//     [foundLayers setEditable:false];
-//     [foundLayers setBordered:false];
-//     [foundLayers setFont:[NSFont boldSystemFontOfSize:11]];
-//     [foundLayers setTextColor:readyColor];
-//     [foundLayers setDrawsBackground:false];
-//     [foundLayers setStringValue:readyMessage];
-//     [foundLayers sizeToFit];
-// 	[[exportWindow contentView] addSubview:foundLayers];
-// 	NSLog([foundLayers description])
 	
 }
 

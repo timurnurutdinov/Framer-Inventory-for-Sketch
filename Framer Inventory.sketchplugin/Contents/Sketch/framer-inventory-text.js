@@ -1,3 +1,9 @@
+@import 'framer-inventory-search.js'
+
+
+var repeatedName = ""
+
+
 var inventorySuccessMessage = "Copied to Clipboard. ⌘CMD+V into Framer Studio"
 var inventoryNoLayersSelectedMessage = "Failed. Select any layers, groups or slices, please."
 var inventoryNoExportablesForKeynote = "Nothing has been exported. Make exportable groups or create slices on this page."
@@ -5,7 +11,7 @@ var inventoryBadTypesSelectedMessage = "Nothing has been exported. Choose Shapes
 
 
 
-var warningRepeatedArtboards = "WARNING!\rPage contains artboards with the same name.\rExport will not be correct."
+var warningRepeatedArtboards = "WARNING!\rPage contains artboards with the same name,\rrename repeated arboards to proceed."
 
 
 
@@ -40,9 +46,30 @@ var isArtboardsNamesRepeated = function(artboardsNames) {
 		}
 		
 		for (var s = 0; s < namesSet.length; s++) {
-			if (namesSet[s] == currentName) { return true }
+			if (namesSet[s] == currentName) { 
+				repeatedName = currentName
+				return true
+			}
 		}
 		namesSet.push(currentName)
 	}	
 	return false
-} 
+}
+
+
+var showRepeated = function(context) {
+	var doc = context.document
+	
+	[[doc currentPage] deselectAllLayers]
+	[NSApp sendAction:"collapseGroupsInLayerList:" to:nil from:doc];
+	
+	if (repeatedName != "") {
+		var foundArtboards = findLayersNamed_inContainer_filterByType(repeatedName, [doc currentPage], MSArtboardGroup)
+		if (foundArtboards != nil) {
+			for (var i = 0; i < foundArtboards.count(); i++) {
+				log("here")
+				[[foundArtboards objectAtIndex:i] select:true byExpandingSelection:true]
+			}
+		}
+	}
+}
