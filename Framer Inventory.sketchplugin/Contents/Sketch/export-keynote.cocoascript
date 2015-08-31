@@ -13,6 +13,7 @@ var exportKeynote = function(context) {
 	var selection = context.selection
 	var artboards = [[doc currentPage] artboards]
 	var currentPage = doc.currentPage()
+	var cp = [doc currentPage]
 	
 	var output = NSMutableArray.new()
 	var statesNames = NSMutableArray.new()
@@ -40,16 +41,16 @@ var exportKeynote = function(context) {
 		// EXPORT WITHOUT IMAGE IF POSSIBLE
 		if (selectedLayer.isKindOfClass(MSShapeGroup)) {
 			if (isExportableWithoutImage(selectedLayer)) {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer, cp), nil))
 				howManyShapes++
 			}
 			else {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 				howManyImages++
 			}
 		}
 		else {
-			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 			howManyImages++
 		}
 		
@@ -67,7 +68,7 @@ var exportKeynote = function(context) {
 			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(selectedLayer.name(), currentArtboard, [selectedLayer className])
 			
 			if (foundLayerOnCurrentArtboard.count() > 0) {
-				var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
+				var currentState = createRetinaState(foundLayerOnCurrentArtboard[0], cp)
 				outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(currentState, nil))
 			}
 			else {

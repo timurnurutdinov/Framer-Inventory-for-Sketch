@@ -76,16 +76,16 @@ function isExportableWithoutImage(layerToAnalyse) {
 
 // LAYERS
 
-var createRetinaLayer = function(layer) {
+var createRetinaLayer = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return "" + clearName(layer.name()) + " = new Layer " + getWidth(l) + getHeight(l) + ", image: \"images/" + removePath(l.name()) + ".png\"" + getX(l, p) + getY(l, p) + getSuperLayer(l) + getOpacity(l) + ln()
+	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + ", image: \"images/" + removePath(l.name()) + ".png\"" + getSuperLayer(l) + getOpacity(l) + ln()
 }
 
-var createRetinaRectangle = function(layer, radius) {
+var createRetinaRectangle = function(layer, radius, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return "" + clearName(layer.name()) + " = new Layer " + getWidth(l) + getHeight(l) + getX(l, p) + getY(l, p) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getSuperLayer(l) + getCornerRadius(l) + getOpacity(l) + ln()
+	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getSuperLayer(l) + getCornerRadius(l) + getOpacity(l) + ln()
 }
 
 
@@ -94,10 +94,10 @@ var createRetinaRectangle = function(layer, radius) {
 
 // STATES
 
-var createRetinaState = function(layer) {
+var createRetinaState = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return ": " + getWidth(l) + getHeight(l) + getX(l, p) + getY(l, p) + getAbsoluteOpacity(l) + ln()
+	return ": " + getPlace(l, p, currentPage) + getAbsoluteOpacity(l) + ln()
 }
 
 var createStateTitle = function(layer) {
@@ -164,7 +164,7 @@ var getPlace = function(layer, axisLayer, currentPage) {
 var getPlaceImage = function(layer, axisLayer, currentPage) {
 	
 	var baseLayerFrame = [layer absoluteRect]
-	var parentArtboard = parentLayer
+	var parentArtboard = axisLayer
 	if ([axisLayer className] != "MSArtboardGroup") {
 		parentArtboard = findParentArtboard(layer)
 	}
