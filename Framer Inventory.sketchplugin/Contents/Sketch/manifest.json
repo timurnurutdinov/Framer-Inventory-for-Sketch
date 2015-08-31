@@ -12,22 +12,29 @@
       "script" : "action-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Replicate Selected",
+      "name" : "1. Replicate Selected",
       "identifier" : "action-replicate-layers"
     },
     {
       "script" : "action-simulate-keynote.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Simulate Keynote",
+      "name" : "2. Simulate Keynote",
       "identifier" : "action-simulate-keynote"
     },
     {
       "script" : "action-select-inventorable.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Update Assets",
+      "name" : "Select Exportables",
       "identifier" : "action-select-inventorable"
+    },
+    {
+      "script" : "action-collapse-artboards.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Collapse Artboards",
+      "identifier" : "action-collapse-artboards"
     }
   ],
   "menu": {
@@ -35,7 +42,13 @@
       "items": [
 		  "action-replicate-layers",
 		  "action-simulate-keynote",
-		  "action-select-inventorable"
+		  {
+		         "title": "3. Utils",
+		         "items": [
+		           "action-select-inventorable",
+				   "action-collapse-artboards"
+		         ],
+		       }
       ]
     }
 }
