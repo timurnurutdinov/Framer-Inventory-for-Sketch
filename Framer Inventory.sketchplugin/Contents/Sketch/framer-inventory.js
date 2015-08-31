@@ -57,6 +57,7 @@ var convertHex = function(hex, opacity) {
 }
 
 function isExportableWithoutImage(layerToAnalyse) {
+	if ([layerToAnalyse className] == "MSSliceLayer") { return false }
 	var magicLayers = layerToAnalyse.layers()
 	if (magicLayers.count() > 1) { return false }
 

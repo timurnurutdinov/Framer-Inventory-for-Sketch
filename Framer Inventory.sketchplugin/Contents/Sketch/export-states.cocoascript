@@ -13,6 +13,7 @@ var exportStates = function(context) {
 	var selectedLayer = nil
 	var selection = context.selection
 	var artboards = [[doc currentPage] artboards]
+	var cp = [doc currentPage]
 	
 	var output = NSMutableArray.new()
 	var outputStatesGlobal = NSMutableArray.new()
@@ -36,20 +37,22 @@ var exportStates = function(context) {
 		
 		if (selectedLayer.isKindOfClass(MSArtboardGroup)) {
 			howManyOthers++
-			continue
+		}
+		else if (selectedLayer.isKindOfClass(MSSliceLayer)) {
+			howManyOthers++
 		}
 		else if (selectedLayer.isKindOfClass(MSShapeGroup)) {
 			if (isExportableWithoutImage(selectedLayer)) {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaRectangle(selectedLayer, cp), nil))
 				howManyShapes++
 			}
 			else {
-				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+				output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 				howManyImages++
 			}
 		}
-		else if (selectedLayer.isKindOfClass(MSLayerGroup) || selectedLayer.isKindOfClass(MSSliceLayer)) {
-			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer), nil))
+		else if (selectedLayer.isKindOfClass(MSLayerGroup)) {
+			output = output.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createRetinaLayer(selectedLayer, cp), nil))
 			howManyImages++
 		}
 		else {
@@ -71,7 +74,7 @@ var exportStates = function(context) {
 			var foundLayerOnCurrentArtboard = findNotSlicesTogetStates_inContainer(nameToFind, currentArtboard, selectedLayerType)
 			if (foundLayerOnCurrentArtboard != nil && foundLayerOnCurrentArtboard.count() > 0) {
 				if (outputStates.count() > 0) {
-					var currentState = createRetinaState(foundLayerOnCurrentArtboard[0])
+					var currentState = createRetinaState(foundLayerOnCurrentArtboard[0], cp)
 					
 					if (currentState != prevState) {
 						currentStateNumber++
@@ -80,7 +83,7 @@ var exportStates = function(context) {
 					}
 				}
 				else {
-					var firstState = createRetinaState(foundLayerOnCurrentArtboard[0])
+					var firstState = createRetinaState(foundLayerOnCurrentArtboard[0], cp)
 					firstStateName = clearName(currentArtboard.name())
 					outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitle(selectedLayer), nil))
 					outputStates = outputStates.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects("\t" + clearName(currentArtboard.name()) + firstState, nil))
