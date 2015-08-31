@@ -2,7 +2,7 @@
   "name" : "Framer Inventory",
   "author" : "Timur Nurutdinov",
   "authorEmail" : "addleimb@gmail.com",
-  "description": "Set of commands to help Framer stay up-to-date",
+  "description": "Export FramerJS layers and states from Sketch",
   "homepage": "https://github.com/timurnurutdinov/Framer-Inventory",
   "identifier": "com.tilllur.framer-inventory",
   "version": 1.0,
