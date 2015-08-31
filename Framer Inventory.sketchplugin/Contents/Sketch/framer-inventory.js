@@ -114,6 +114,8 @@ var createStateSwitchInstant = function(layer, stateName) {
 
 
 
+
+
 // KEYNOTE
 
 var createRetinaVariable = function(layer) {
@@ -168,20 +170,17 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 	if ([axisLayer className] != "MSArtboardGroup") {
 		parentArtboard = findParentArtboard(layer)
 	}
-	
-	log("Parent absolute frame: " + parentArtboard)
-	log("Layer frame: " + baseLayerFrame)
 
 	var layer_copy = [layer duplicate]
+	if (![layer_copy isVisible]) {
+		[layer_copy setIsVisible:true]
+	}
 	[layer_copy removeFromParent]
 	[currentPage addLayers: [layer_copy]]
-	log("Copied frame: " + [layer_copy absoluteRect])
 
 	var frame = [layer_copy frame]
 	[frame setX: [[layer absoluteRect] x]]
 	[frame setY: [[layer absoluteRect] y]]
-	log("Fixed frame: " + [layer_copy absoluteRect])
-
 
 	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
 	var valueX = temp.origin.x
@@ -200,7 +199,6 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 		}
 			
 	}
-	log(stringValues)
 	
 	var valueString = ""
 	for (var v = 0; v < stringValues.length; v++) {
@@ -217,11 +215,11 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 			valueString += ", y: " + stringValues[v]
 		}
 		else {
-			log("error in place detection")
+			log("Error in place detection")
+			break
 		}		
 	}
-		 
-	log(valueString)
+
 	[layer_copy removeFromParent]
 	
 	return valueString

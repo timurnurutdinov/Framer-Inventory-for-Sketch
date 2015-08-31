@@ -76,9 +76,10 @@ var exportKeynote = function(context) {
 			}
 		}
 		
-		
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitleEnd(), nil))
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateSwitchInstant(selectedLayer, clearName([artboards objectAtIndex: 0].name())), nil))
+		
+		log(outputStates)
 		
 		// REPLACE BAD STATES
 		var fixedStates = replaceBadStates(outputStates)
@@ -215,7 +216,7 @@ var replaceBadStates = function(baseArray) {
 
 
 
-
+// DISABLE SLICES
 function readyToExportAmount(context) {
 	var doc = context.document
 	var currentPage = doc.currentPage()
@@ -226,10 +227,10 @@ function readyToExportAmount(context) {
 	for (var i = 0; i < arrayExportable.count(); i++) {
 		layerType = [[arrayExportable objectAtIndex: i] className]
 
-		if (layerType == "MSSliceLayer" || layerType == "MSShapeGroup" || layerType == "MSLayerGroup") {
+		if (layerType == "MSShapeGroup" || layerType == "MSLayerGroup") {
 
 			var localExportableName = [[arrayExportable objectAtIndex: i] name]
-			if (layerType == "MSSliceLayer") { localExportableName = removePath(localExportableName) }
+			//if (layerType == "MSSliceLayer") { localExportableName = removePath(localExportableName) }
 			var isFound = false
 
 			for (var f = 0; f < layerNames.length; f++) {
