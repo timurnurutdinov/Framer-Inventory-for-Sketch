@@ -156,9 +156,91 @@ var generateCycler = function() {
 
 // PARAMS: SIZES
 
+var getPlace = function(layer, axisLayer, currentPage) {
+	if (isExportableWithoutImage(layer)) { return getPlaceRect(layer, axisLayer) }
+	return getPlaceImage(layer, axisLayer, currentPage)
+}
+
+var getPlaceImage = function(layer, axisLayer, currentPage) {
+	
+	var baseLayerFrame = [layer absoluteRect]
+	var parentArtboard = parentLayer
+	if ([axisLayer className] != "MSArtboardGroup") {
+		parentArtboard = findParentArtboard(layer)
+	}
+	
+	log("Parent absolute frame: " + parentArtboard)
+	log("Layer frame: " + baseLayerFrame)
+
+	var layer_copy = [layer duplicate]
+	[layer_copy removeFromParent]
+	[currentPage addLayers: [layer_copy]]
+	log("Copied frame: " + [layer_copy absoluteRect])
+
+	var frame = [layer_copy frame]
+	[frame setX: [[layer absoluteRect] x]]
+	[frame setY: [[layer absoluteRect] y]]
+	log("Fixed frame: " + [layer_copy absoluteRect])
+
+
+	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
+	var valueX = temp.origin.x
+	var valueX = temp.origin.y
+	var valueWidth = temp.size.width
+	var valueHeight = temp.size.height
+	
+	var values = [temp.size.width, temp.size.height, temp.origin.x - [[axisLayer absoluteRect] x], temp.origin.y - [[axisLayer absoluteRect] y]]
+	var stringValues = []
+	for (var v = 0; v < values.length; v++) {
+		if (values[v] == 0) {
+			stringValues.push("0")
+		}
+		else {
+			stringValues.push("" + values[v] + "*" + scale)
+		}
+			
+	}
+	log(stringValues)
+	
+	var valueString = ""
+	for (var v = 0; v < stringValues.length; v++) {
+		if (v == 0) {
+			valueString += "width: " + stringValues[v]
+		}
+		else if (v == 1) {
+			valueString += ", height: " + stringValues[v]
+		}
+		else if (v == 2) {
+			valueString += ", x: " + stringValues[v]
+		}
+		else if (v == 3) {
+			valueString += ", y: " + stringValues[v]
+		}
+		else {
+			log("error in place detection")
+		}		
+	}
+		 
+	log(valueString)
+	[layer_copy removeFromParent]
+	
+	return valueString
+}
+
+var getPlaceRect = function(layer, axisLayer) {
+	return getWidth(layer) + getHeight(layer) + getX(layer, axisLayer) + getY(layer, axisLayer)
+}
+
+
+
+
+
+// OLD SCHOOL FOR EXPORTABLE BY CODE LAYERS
+
 var getY = function(layer, parentLayer) {
 	var parentY = [[parentLayer absoluteRect] y]
 	var layerY = [[layer absoluteRect] y]
+	
 	if (parentY - layerY == 0) { return ", y: 0"}
 	return ", y: " + -(parentY - layerY) + "*" + scale
 }
@@ -166,6 +248,7 @@ var getY = function(layer, parentLayer) {
 var getX = function(layer, parentLayer) {
 	var parentX = [[parentLayer absoluteRect] x]
 	var layerX = [[layer absoluteRect] x]
+	
 	if (parentX - layerX == 0) { return ", x: 0"}
 	return ", x: " + -(parentX - layerX) + "*" + scale
 }
