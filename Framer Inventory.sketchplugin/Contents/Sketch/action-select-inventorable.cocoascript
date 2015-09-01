@@ -10,7 +10,6 @@ var onRun = function(context) {
 	var successMessage = ""
 	
 	if (selection != nil && [selection count] == 1) {
-		log("1 object selected")
 		for(var i = 0; i < arrayExportable.count(); i++){
 			var layer = arrayExportable.objectAtIndex(i)
 			var parentArtboard = findParentArtboard(layer)
