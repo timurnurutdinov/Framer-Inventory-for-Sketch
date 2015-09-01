@@ -1,13 +1,39 @@
+@import 'framer-inventory.js'
 
 var onRun = function(context) {
 	var doc = context.document
 	[[doc currentPage] deselectAllLayers]
-
+	
+	var selection = context.selection
 	var arrayExportable = [[doc currentPage] exportableLayers]
-	for(var i = 0; i < arrayExportable.count(); i++){
-	      var layer = arrayExportable.objectAtIndex(i)
-	      [layer select:true byExpandingSelection:true]
+	var selectedNumber = 0
+	var successMessage = ""
+	
+	if (selection != nil && [selection count] == 1) {
+		log("1 object selected")
+		for(var i = 0; i < arrayExportable.count(); i++){
+			var layer = arrayExportable.objectAtIndex(i)
+			var parentArtboard = findParentArtboard(layer)
+			if ([parentArtboard className] == "MSArtboardGroup" && [parentArtboard name] == [[selection firstObject] name]) {
+				[layer select:true byExpandingSelection:true]
+				selectedNumber++
+			}			
+		}
+		successMessage = "Selected " + selectedNumber + " in Artboard. Run script without selection to get all exportables on this Page."
+		if (selectedNumber == 0) { successMessage = "Nothing selected. Run script without selection to get all exportables on this Page."}
 	}
+	else {
+		for(var i = 0; i < arrayExportable.count(); i++){
+			var layer = arrayExportable.objectAtIndex(i)
+			if ([layer className] != "MSArtboardGroup") {
+				[layer select:true byExpandingSelection:true]
+				selectedNumber++
+			}
+		}
+		successMessage = "Selected " + selectedNumber + " in Page. Run script on Artboard to choose its exportables only."
+		if (selectedNumber == 0) { successMessage = "Nothing selected. Create exportable groups first."}
+	}
+	[doc showMessage:successMessage]
 }
 	
 	
