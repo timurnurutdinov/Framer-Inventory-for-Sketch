@@ -84,13 +84,13 @@ var isExportableWithoutImage = function(layerToAnalyse) {
 var createRetinaLayer = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + ", image: \"images/" + removePath(l.name()) + ".png\"" + getSuperLayer(l) + getOpacity(l) + ln()
+	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + ", image: \"images/" + removePath(l.name()) + ".png\"" + getSuperLayer(l) + getRotation(l) + getOpacity(l) + ln()
 }
 
 var createRetinaRectangle = function(layer, radius, currentPage) {
 	var l = layer
 	var p = findParent(layer)
-	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getSuperLayer(l) + getCornerRadius(l) + getOpacity(l) + ln()
+	return "" + clearName(layer.name()) + " = new Layer " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getSuperLayer(l) + getCornerRadius(l) + getRotation(l) + getOpacity(l) + ln()
 }
 
 
@@ -102,9 +102,9 @@ var createRetinaState = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
 	if (isExportableWithoutImage(layer)) { 
-		return ": " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getCornerRadius(l) + getAbsoluteOpacity(l)  + ln()
+		return ": " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getCornerRadius(l) + getAbsoluteRotation(l) + getAbsoluteOpacity(l) + ln()
 	}
-	return ": " + getPlace(l, p, currentPage) + getAbsoluteOpacity(l) + ln()
+	return ": " + getPlace(l, p, currentPage) + getAbsoluteRotation(l) + getAbsoluteOpacity(l) + ln()
 }
 
 var createStateTitle = function(layer) {
@@ -179,6 +179,7 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 	}
 
 	var layer_copy = [layer duplicate]
+	[layer_copy setRotation: 0]
 	if (![layer_copy isVisible]) {
 		[layer_copy setIsVisible:true]
 	}
@@ -418,6 +419,15 @@ var getShadowColor = function(layer) {
 	return ""
 }
 
+
+var getRotation = function(layer) {
+	if ([layer rotation] == 0) { return "" }
+	return ", rotation: " + (-[layer rotation])
+}
+
+var getAbsoluteRotation = function(localLayer) {
+	return ", rotation: " + (-[localLayer rotation])
+}
 
 
 
