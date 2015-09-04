@@ -101,6 +101,9 @@ var createRetinaRectangle = function(layer, radius, currentPage) {
 var createRetinaState = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
+	if (isExportableWithoutImage(layer)) { 
+		return ": " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getCornerRadius(l) + getAbsoluteOpacity(l)  + ln()
+	}
 	return ": " + getPlace(l, p, currentPage) + getAbsoluteOpacity(l) + ln()
 }
 
