@@ -79,7 +79,7 @@ var exportKeynote = function(context) {
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateTitleEnd(), nil))
 		outputStatesTitles = outputStatesTitles.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(createStateSwitchInstant(selectedLayer, clearName([artboards objectAtIndex: 0].name())), nil))
 		
-		log(outputStates)
+		//log(outputStates)
 		
 		// REPLACE BAD STATES
 		var fixedStates = replaceBadStates(outputStates)

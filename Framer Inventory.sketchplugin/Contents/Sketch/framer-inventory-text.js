@@ -67,7 +67,6 @@ var showRepeated = function(context) {
 		var foundArtboards = findLayersNamed_inContainer_filterByType(repeatedName, [doc currentPage], MSArtboardGroup)
 		if (foundArtboards != nil) {
 			for (var i = 0; i < foundArtboards.count(); i++) {
-				log("here")
 				[[foundArtboards objectAtIndex:i] select:true byExpandingSelection:true]
 			}
 		}
