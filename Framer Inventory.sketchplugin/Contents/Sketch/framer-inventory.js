@@ -152,8 +152,14 @@ var getStateNameVariable = function(generatedNumber, stateName) {
 
 var generateCycler = function() {
 	var cycleString = "cycler = Utils.cycle(generatedStates)" + ln()
-	cycleString += "generatedButton = new Layer width: Screen.width, height: Screen.height, opacity: 0" + ln() + ln() + ln()
-	cycleString += "generatedButton.on Events.Click, ->" + ln() + "\tnextState = cycler()" + ln() + "\tfor item in layers" + ln() + "\t\titem.states.switch nextState" + ln()
+	
+	if (rememberAutoplayState == 0) {
+		cycleString += "generatedButton = new Layer width: Screen.width, height: Screen.height, opacity: 0" + ln() + ln() + ln()
+		cycleString += "generatedButton.on Events.Click, ->" + ln() + "\tnextState = cycler()" + ln() + "\tfor item in layers" + ln() + "\t\titem.states.switch nextState" + ln()
+	}
+	else {
+		cycleString += "justdoit = () ->" + ln() + "\tUtils.delay 1, ->" + ln()+ "\t\tnextState = cycler()" + ln() + "\t\tfor item in layers" + ln() + "\t\t\titem.states.switch nextState" + ln() + "\t\tjustdoit()" + ln() + ln() + "justdoit()" + ln()	
+	}
 	return cycleString
 }
 
