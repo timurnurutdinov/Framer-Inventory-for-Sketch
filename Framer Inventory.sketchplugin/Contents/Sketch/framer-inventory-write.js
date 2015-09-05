@@ -3,6 +3,7 @@ var cashesDirectory = "/.cashes"
 var stateFile = "/state.txt"
 var retinaFile = "/retina.txt"
 var relativeFile = "/relative.txt"
+var autoplayFile = "/autoplay.txt"
 
 
 var framerInventoryOutput = function(streamString, fileName) {
@@ -25,6 +26,27 @@ var studyState = function(newState) {
 	var cashesFolderName = createTempFolderNamed(homeDirectory + cashesDirectory)
 	writeTextToFile(newState, "" + cashesFolderName + stateFile)
 }
+
+
+
+var rememberAutoplayState = function() {
+	var folderName = createTempFolderNamed(homeDirectory)
+	var cashesFolderName = createTempFolderNamed(homeDirectory + cashesDirectory)
+	var readState = readTextFromFile("" + cashesFolderName + autoplayFile)
+	if (readState == null) { log("CBAS: read 1"); return 1 }
+	else if (readState == "1") { log("CBAS: read 1"); return 1 }
+	else { log("CBAS: read 0"); return 0 }
+}
+
+var studyAutoplayState = function(newState) {
+	log("CBAS: write " + newState)
+	var folderName = createTempFolderNamed(homeDirectory)
+	var cashesFolderName = createTempFolderNamed(homeDirectory + cashesDirectory)
+	writeTextToFile(newState, "" + cashesFolderName + autoplayFile)
+}
+
+
+
 
 var rememberRetina = function() {
 	var folderName = createTempFolderNamed(homeDirectory)

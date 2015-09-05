@@ -21,6 +21,8 @@ var onRun = function(context) {
 
 function createKeynoteExportWindow(context){
 	
+	var checkboxAutoplayState = rememberAutoplayState()
+	
 	var paddingLeft = 288;
 	var columnWidth = 136;
 	var buttonsBottomOffset = 40;
@@ -137,6 +139,17 @@ function createKeynoteExportWindow(context){
 		
 	}
 	else {
+		var autoplayCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, 130, columnWidth * 2, 16)];
+		[autoplayCheckbox setButtonType:NSSwitchButton];
+		[autoplayCheckbox setTitle:"Autoplay"];
+		[autoplayCheckbox setState:checkboxAutoplayState];
+		autoplayCheckbox.setCOSJSTargetFunction(function(sender){
+			checkboxAutoplayState = checkboxAutoplayState == 0 ? 1 : 0
+			log("LOADED CHECKBOX WITH " + checkboxAutoplayState)
+		})
+		[[exportWindow contentView] addSubview:autoplayCheckbox];
+		
+		
 		var exportButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft-4, buttonsBottomOffset-20, 78, 50)];
 		[exportButton setTitle:"Export"];
 		[exportButton setBezelStyle:NSRoundedBezelStyle];
@@ -144,6 +157,8 @@ function createKeynoteExportWindow(context){
 		[exportButton setCOSJSTargetFunction:function(sender) {
 			[exportWindow orderOut:nil]
 			[NSApp stopModal]
+			
+			studyAutoplayState(checkboxAutoplayState)
 			exportKeynote(context)
 		}];
 		[exportButton setAction:"callAction:"];
