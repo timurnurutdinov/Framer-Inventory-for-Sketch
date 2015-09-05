@@ -12,14 +12,14 @@
       "script" : "action-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "1. Replicate Selected",
+      "name" : "2. Replicate Selected",
       "identifier" : "action-replicate-layers"
     },
     {
       "script" : "action-simulate-keynote.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "2. Simulate Keynote",
+      "name" : "1. Simulate Keynote",
       "identifier" : "action-simulate-keynote"
     },
     {
