@@ -1,7 +1,5 @@
 # Framer Inventory for Sketch
-- Page: http://medium.com
 - Video: http://timurnurutdinov.github.io/framerinventory/
-- Thoughts & tricks: http://medium.com
 
 
 >Framer Inventory performs actions on a current Sketch page and handles only code generation. You should export assets manually and then iterate with plugin. Actually, exporting assets is not a deal because Sketch already does it great;)
@@ -22,10 +20,12 @@ This Framer Inventory action mimics Keynote and its Magic Move transition. But y
 
 #### Works with shapes and groups on the current page
 Some shapes such as Rectangle or Oval with sumple styling can be replicated with FramerJS code without an image:
-![Alt text](/../images/readme/simulate-shapes?raw=true “Simulate Shapes”)
+
+![Alt text](/../images/readme/simulate-shapes.png?raw=true “Simulate Shapes”)
 
 Other shapes and groups need assets to work properly in Framer Studio. Export them manually with the help of Sketch and **Select Exportables** (read below). Plugin helps to estimate the amount of required assets:
-![Alt text](/../images/readme/simulate-groups?raw=true “Simulate Groups”)
+
+![Alt text](/../images/readme/simulate-groups.png?raw=true “Simulate Groups”)
 
 >In order to generate states, artboards should have unique names. At very beginning Framer Inventory checks names and notifies you with a message. It also helps to find dublicates ;)
 
@@ -72,7 +72,7 @@ Select all exportable layers on this page.
 
 
 # Future
-You are welcome to suggest ideas or create bug reports. They will shape the future of a Framer Inventory. You can read tip & tricks on Medium: http://medium.com
+You are welcome to suggest ideas or create bug reports. They will shape the future of a Framer Inventory. I'll add some tips & tricks soon.
 
 
 
