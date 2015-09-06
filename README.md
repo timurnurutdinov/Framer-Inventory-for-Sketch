@@ -20,9 +20,11 @@ This Framer Inventory action mimics Keynote and its Magic Move transition. But y
 
 #### Works with shapes and groups on the current page
 Some shapes such as Rectangle or Oval with sumple styling can be replicated with FramerJS code without an image:
+
 ![Alt text](/../images/readme/simulate-shapes.png?raw=true “Simulate Shapes”)
 
 Other shapes and groups need assets to work properly in Framer Studio. Export them manually with the help of Sketch and **Select Exportables** (read below). Plugin helps to estimate the amount of required assets:
+
 ![Alt text](/../images/readme/simulate-groups.png?raw=true “Simulate Groups”)
 
 >In order to generate states, artboards should have unique names. At very beginning Framer Inventory checks names and notifies you with a message. It also helps to find dublicates ;)
