@@ -5,7 +5,7 @@
 >Framer Inventory performs actions on a current Sketch page and handles only code generation. You should export assets manually and then iterate with plugin. Actually, exporting assets is not a deal because Sketch already does it great;)
 
 ## 1. Simulate Keynote
-![Alt text](/../images/readme/simulate.png?raw=true “Simulate Keynote plugin window”)
+![Alt text](/../readme-images/readme/simulate.png?raw=true “Simulate Keynote plugin window”)
 
 This Framer Inventory action mimics Keynote and its Magic Move transition. But you **don’t need to write a single line of code** to arrange layers in FramerJS because you’ve done it in Sketch. Think the way artboards are our slides in presentation.
 
@@ -20,18 +20,17 @@ This Framer Inventory action mimics Keynote and its Magic Move transition. But y
 
 #### Works with shapes and groups on the current page
 Some shapes such as Rectangle or Oval with sumple styling can be replicated with FramerJS code without an image:
-![Alt text](/../images/readme/simulate-shapes?raw=true “Simulate Shapes”)
-![Alt text](/../images/readme/replicate.png?raw=true “Replicate Selected plugin window”)
+![Alt text](/../readme-images/readme/simulate-shapes?raw=true “Simulate Shapes”)
 
 Other shapes and groups need assets to work properly in Framer Studio. Export them manually with the help of Sketch and **Select Exportables** (read below). Plugin helps to estimate the amount of required assets:
-![Alt text](/../images/readme/simulate-groups?raw=true “Simulate Groups”)
+![Alt text](/../readme-images/readme/simulate-groups?raw=true “Simulate Groups”)
 
 >In order to generate states, artboards should have unique names. At very beginning Framer Inventory checks names and notifies you with a message. It also helps to find dublicates ;)
 
 
 
 ## 2. Replicate Selected
-![Alt text](/../images/readme/replicate.png?raw=true “Replicate Selected plugin window”)
+![Alt text](/../readme-images/readme/replicate.png?raw=true “Replicate Selected plugin window”)
 Generates code to place layers in proper place in Framer Studio (like a native Framer Studio import) but:
 - Supports @1x Sketch files to generate @2x, @3x or any other code
 - Generates code for states (if layer position from artboard A to artboard B has changed, Framer Inventory generates a new state)
