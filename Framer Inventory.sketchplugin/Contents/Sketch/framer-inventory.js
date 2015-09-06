@@ -102,7 +102,7 @@ var createRetinaState = function(layer, currentPage) {
 	var l = layer
 	var p = findParent(layer)
 	if (isExportableWithoutImage(layer)) { 
-		return ": " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getCornerRadius(l) + getAbsoluteRotation(l) + getAbsoluteOpacity(l) + ln()
+		return ": " + getPlace(l, p, currentPage) + getBackgroundColor(l) + getBorderColor(l) + getBorderWidth(l) + getShadowX(l) + getShadowY(l) + getShadowBlur(l) + getShadowSpread(l) + getShadowColor(l) + getAbsoluteCornerRadius(l) + getAbsoluteRotation(l) + getAbsoluteOpacity(l) + ln()
 	}
 	return ": " + getPlace(l, p, currentPage) + getAbsoluteRotation(l) + getAbsoluteOpacity(l) + ln()
 }
@@ -153,7 +153,7 @@ var getStateNameVariable = function(generatedNumber, stateName) {
 var generateCycler = function() {
 	var cycleString = "cycler = Utils.cycle(generatedStates)" + ln()
 	
-	if (rememberAutoplayState == 0) {
+	if (rememberAutoplayState() == 0) {
 		cycleString += "generatedButton = new Layer width: Screen.width, height: Screen.height, opacity: 0" + ln() + ln() + ln()
 		cycleString += "generatedButton.on Events.Click, ->" + ln() + "\tnextState = cycler()" + ln() + "\tfor item in layers" + ln() + "\t\titem.states.switch nextState" + ln()
 	}
@@ -349,6 +349,20 @@ var getCornerRadius = function(layer) {
 	if(shape && shape.isKindOfClass(MSRectangleShape)) {
 		var radiusNumber = shape.cornerRadiusFloat()
 		if (radiusNumber == 0) { return "" }
+		return ", cornerRadius: " + radiusNumber + "*" + scale
+	}
+	else if(shape && shape.isKindOfClass(MSOvalShape)) {
+		var radiusNumber = [[layer frame] width] * 5
+		return ", cornerRadius: " + Math.ceil(radiusNumber) + "*" + scale
+	}
+	else return ""
+	
+}
+
+var getAbsoluteCornerRadius = function(layer) {
+	var shape = layer.layers().firstObject()
+	if(shape && shape.isKindOfClass(MSRectangleShape)) {
+		var radiusNumber = shape.cornerRadiusFloat()
 		return ", cornerRadius: " + radiusNumber + "*" + scale
 	}
 	else if(shape && shape.isKindOfClass(MSOvalShape)) {
