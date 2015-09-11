@@ -240,7 +240,21 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 }
 
 var getPlaceRect = function(layer, axisLayer) {
-	return getWidth(layer) + getHeight(layer) + getX(layer, axisLayer) + getY(layer, axisLayer)
+	
+	var parentArtboard = axisLayer
+	if ([axisLayer className] != "MSArtboardGroup") {
+		parentArtboard = findParentArtboard(layer)
+	}
+
+	var layer_copy = [layer duplicate]
+	[layer_copy setRotation: 0]
+	
+	var copied_x = getX(layer_copy, axisLayer)
+	var copied_y = getY(layer_copy, axisLayer)
+	
+	[layer_copy removeFromParent]
+	
+	return getWidth(layer) + getHeight(layer) + copied_x + copied_y
 }
 
 
