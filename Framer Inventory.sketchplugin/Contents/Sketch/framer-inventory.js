@@ -186,6 +186,9 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 
 	var layer_copy = [layer duplicate]
 	[layer_copy setRotation: 0]
+	if ([[[layer_copy style] contextSettings] opacity] == 0) {
+		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
+	}
 	if (![layer_copy isVisible]) {
 		[layer_copy setIsVisible:true]
 	}
