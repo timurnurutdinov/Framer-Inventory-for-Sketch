@@ -369,8 +369,9 @@ var getCornerRadius = function(layer) {
 		return ", cornerRadius: " + radiusNumber + "*" + scale
 	}
 	else if(shape && shape.isKindOfClass(MSOvalShape)) {
-		var radiusNumber = [[layer frame] width] * 5
-		return ", cornerRadius: " + Math.ceil(radiusNumber) + "*" + scale
+		// var radiusNumber = [[layer frame] width] * 5
+		// return ", cornerRadius: " + Math.ceil(radiusNumber) + "*" + scale
+		return ", cornerRadius: '100%'"
 	}
 	else return ""
 	
@@ -383,8 +384,9 @@ var getAbsoluteCornerRadius = function(layer) {
 		return ", cornerRadius: " + radiusNumber + "*" + scale
 	}
 	else if(shape && shape.isKindOfClass(MSOvalShape)) {
-		var radiusNumber = [[layer frame] width] * 5
-		return ", cornerRadius: " + Math.ceil(radiusNumber) + "*" + scale
+		// var radiusNumber = [[layer frame] width] * 5
+		// return ", cornerRadius: " + Math.ceil(radiusNumber) + "*" + scale
+		return ""
 	}
 	else return ""
 	
