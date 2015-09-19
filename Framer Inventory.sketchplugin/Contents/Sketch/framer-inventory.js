@@ -19,11 +19,11 @@ var getAxisMode = function() { return axisMode }
 // Utilities
 
 var removePath = function(longPath) {
-	return longPath.replace(/^.*[\\\/]/, '')
+	return longPath.replace(/^.*[\\\/]/, '').trim()
 }
 
 var clearName = function(longName) {
-	var clearedName = removePath(longName).split(' ').join('_')
+	var clearedName = removePath(longName).trim().split(' ').join('_')
 	return clearedName.toLowerCase()
 }
 
