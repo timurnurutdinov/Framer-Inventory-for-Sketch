@@ -1,5 +1,6 @@
 # Framer Inventory for Sketch
 - Video: http://timurnurutdinov.github.io/framerinventory/
+I've got an awesome feedback and soon will release v1.1 with Medium article. You should wait for a while but.. it will be earlier than Comet release ;)
 
 
 >Framer Inventory performs actions on a current Sketch page and handles only code generation. You should export assets manually and then iterate with plugin. Actually, exporting assets is not a deal because Sketch already does it great;)
