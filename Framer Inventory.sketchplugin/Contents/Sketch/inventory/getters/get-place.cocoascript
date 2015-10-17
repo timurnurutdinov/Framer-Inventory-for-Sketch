@@ -1,0 +1,106 @@
+// @import 'inventory/getters/exportable.cocoascript'
+
+
+// relative to artboard on current page
+function getPosition(layer) {
+	var parentArtboard = findParentArtboard(layer)
+	return getPlace(layer, parentArtboard, [parentArtboard parentGroup])
+}
+
+
+// choose from layer/group
+// returns width, height, x, y
+function getPlace(layer, axisLayer, currentPage) {
+	if (isExportableWithoutImage(layer)) { return getPlaceRect(layer, axisLayer) }
+	return getPlaceImage(layer, axisLayer, currentPage)
+}
+
+
+
+
+
+
+
+var getPlaceImage = function(layer, axisLayer, currentPage) {
+	
+	var baseLayerFrame = [layer absoluteRect]
+	var parentArtboard = axisLayer
+	if ([axisLayer className] != "MSArtboardGroup") {
+		parentArtboard = findParentArtboard(layer)
+	}
+
+	var layer_copy = [layer duplicate]
+	[layer_copy setRotation: 0]
+	if ([[[layer_copy style] contextSettings] opacity] == 0) {
+		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
+	}
+	if (![layer_copy isVisible]) {
+		[layer_copy setIsVisible:true]
+	}
+	[layer_copy removeFromParent]
+	[currentPage addLayers: [layer_copy]]
+
+	var frame = [layer_copy frame]
+	[frame setX: [[layer absoluteRect] x]]
+	[frame setY: [[layer absoluteRect] y]]
+
+	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
+	var valueX = temp.origin.x
+	var valueX = temp.origin.y
+	var valueWidth = temp.size.width
+	var valueHeight = temp.size.height
+	
+	var values = [temp.size.width, temp.size.height, temp.origin.x - [[axisLayer absoluteRect] x], temp.origin.y - [[axisLayer absoluteRect] y]]
+
+	[layer_copy removeFromParent]
+	
+	return values
+}
+
+
+
+var getPlaceRect = function(layer, axisLayer) {
+	
+	var parentArtboard = axisLayer
+	if ([axisLayer className] != "MSArtboardGroup") {
+		parentArtboard = findParentArtboard(layer)
+	}
+
+	var layer_copy = [layer duplicate]
+	[layer_copy setRotation: 0]
+	
+	var copied_x = getX(layer_copy, axisLayer)
+	var copied_y = getY(layer_copy, axisLayer)
+	
+	var values = [getWidth(layer), getHeight(layer), copied_x, copied_y]
+	
+	[layer_copy removeFromParent]
+	
+	return values
+}
+
+
+
+
+
+
+
+// support
+
+var getY = function(layer, parentLayer) {
+	var parentY = [[parentLayer absoluteRect] y]
+	return [[layer absoluteRect] y]
+}
+
+var getX = function(layer, parentLayer) {
+	var parentX = [[parentLayer absoluteRect] x]
+	return [[layer absoluteRect] x]
+}
+
+var getHeight = function(layer) {
+	return [[layer frame] height]
+}
+
+var getWidth = function(layer) {
+	return [[layer frame] width]
+}

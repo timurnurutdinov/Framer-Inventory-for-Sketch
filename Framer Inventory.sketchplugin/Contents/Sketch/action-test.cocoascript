@@ -1,0 +1,18 @@
+@import 'inventory/layer-compilation.cocoascript'
+
+var onRun = function(context) {
+	var doc = context.document
+	var selection = context.selection
+
+	var layerCompilation = new LayerCompilation("name")
+
+	if (selection != nil) {
+		for (var i = 0; i < [selection count]; i++) {
+			layerCompilation.addState([selection objectAtIndex: i])
+		}
+	}
+	
+	layerCompilation.getStates()
+	[doc showMessage:"Done"]
+}
+	

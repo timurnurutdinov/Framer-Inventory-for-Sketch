@@ -1,0 +1,14 @@
+
+
+// return -1 if Oval
+var getCorners = function(layer) {
+	var shape = layer.layers().firstObject()
+	if(shape && shape.isKindOfClass(MSRectangleShape)) {
+		return shape.cornerRadiusFloat()
+	}
+	else if(shape && shape.isKindOfClass(MSOvalShape)) {
+		return -1
+	}
+	else return 0
+	
+}

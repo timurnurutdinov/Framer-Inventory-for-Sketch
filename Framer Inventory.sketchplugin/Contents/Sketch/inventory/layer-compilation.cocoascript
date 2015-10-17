@@ -1,0 +1,61 @@
+@import 'inventory/getters/exportable.cocoascript'
+
+@import 'inventory/getters/get-place.cocoascript'
+@import 'inventory/getters/get-opacity.cocoascript'
+@import 'inventory/getters/get-shadows.cocoascript'
+@import 'inventory/getters/get-borders.cocoascript'
+@import 'inventory/getters/get-corners.cocoascript'
+@import 'inventory/getters/get-background-color.cocoascript'
+
+
+function LayerCompilation (layerName) {
+	this.name = layerName;
+	this.axisMode = 0
+
+	this.matrix = []
+}
+
+LayerCompilation.prototype.getName = function() {
+    return this.name;
+}
+
+LayerCompilation.prototype.addState = function(layer) {
+	var positionVariables = getPosition(layer)
+	var opacityVariable = getOpacity(layer)
+	var rotationVariable = (-[layer rotation])
+	var shadowVariables = getShadows(layer)
+	
+	if (isExportableWithoutImage(layer)) {
+		var bordersVariables = getBorders(layer)
+		var cornersVariable = getCorners(layer)
+		var backgroundColorVariable = getBackgroundColor(layer)
+	}
+	
+	
+	
+	var params = positionVariables.concat(opacityVariable)
+	params = params.concat(rotationVariable)
+	params = params.concat(shadowVariables)
+	
+	if (isExportableWithoutImage(layer)) {
+		params = params.concat(bordersVariables)
+		params = params.concat(cornersVariable)
+		params = params.concat(backgroundColorVariable)
+	}
+	
+	
+	this.matrix.push(params)
+}
+
+
+LayerCompilation.prototype.getStates = function() {
+
+	for (var i = 0; i < this.matrix.length; i++) {
+		
+		var tempString = ""
+		for (var s = 0; s < this.matrix[i].length; s++) {
+			tempString += this.matrix[i][s]) + " "
+		}
+		log(tempString)
+	}
+}

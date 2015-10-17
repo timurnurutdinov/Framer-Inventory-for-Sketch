@@ -16,6 +16,13 @@
       "identifier" : "action-replicate-layers"
     },
     {
+      "script" : "action-test.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "0. Test",
+      "identifier" : "action-test"
+    },
+    {
       "script" : "action-simulate-keynote.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
@@ -41,6 +48,7 @@
 	  "title": "Framer Inventory",
       "items": [
 		  "action-replicate-layers",
+		  "action-test",
 		  "action-simulate-keynote",
 		  {
 		         "title": "3. Utils",

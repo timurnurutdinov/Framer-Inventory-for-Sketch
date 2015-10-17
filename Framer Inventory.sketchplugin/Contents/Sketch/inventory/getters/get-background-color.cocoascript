@@ -1,0 +1,14 @@
+
+
+var getBackgroundColor = function(layer) {
+	var fillCollection = [[layer style] fills]
+	for (var f = fillCollection.count() - 1; f >= 0; f--) {
+		var localFill = [fillCollection objectAtIndex:f]
+		if ([localFill isEnabled]) {
+			var hexComponent = [[localFill color] hexValue] + ""
+			var alphaComponent = [[localFill color] alpha]
+			return convertHex(hexComponent, alphaComponent.toFixed(2))
+		}
+	}
+	return convertHex(localBlackColor(), 0)
+}

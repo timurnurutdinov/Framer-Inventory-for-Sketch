@@ -1,0 +1,69 @@
+
+
+var getShadows = function(layer) {
+	return [getShadowX(layer), getShadowY(layer), getShadowBlur(layer), getShadowSpread(layer), getShadowColor(layer)]
+}
+
+
+
+
+
+
+var getShadowX = function(layer) {
+	var shadowsCollection = [[layer style] shadows]
+	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
+		var localShadow = [shadowsCollection objectAtIndex:s]
+		if ([localShadow isEnabled]) {
+			return [localShadow offsetX]
+		}
+	}
+	return 0
+}
+
+var getShadowY = function(layer) {
+	var shadowsCollection = [[layer style] shadows]
+	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
+		var localShadow = [shadowsCollection objectAtIndex:s]
+		if ([localShadow isEnabled]) {
+			return [localShadow offsetY]
+		}
+	}
+	return 0
+}
+
+var getShadowBlur = function(layer) {
+	var shadowsCollection = [[layer style] shadows]
+	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
+		var localShadow = [shadowsCollection objectAtIndex:s]
+		if ([localShadow isEnabled]) {
+			return [localShadow blurRadius]
+		}
+	}
+	return 0
+}
+
+var getShadowSpread = function(layer) {
+	var shadowsCollection = [[layer style] shadows]
+	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
+		var localShadow = [shadowsCollection objectAtIndex:s]
+		if ([localShadow isEnabled]) {
+			return [localShadow spread]
+		}
+	}
+	return 0
+}
+
+
+var getShadowColor = function(layer) {
+	var shadowsCollection = [[layer style] shadows]
+	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
+		var localShadow = [shadowsCollection objectAtIndex:s]
+		if ([localShadow isEnabled]) {
+			var hexComponent = [[localShadow color] hexValue] + ""
+			var alphaComponent = [[localShadow color] alpha]
+			return convertHex(hexComponent, alphaComponent.toFixed(2))
+		}
+	}
+	return convertHex(localBlackColor(), 0)
+}
+
