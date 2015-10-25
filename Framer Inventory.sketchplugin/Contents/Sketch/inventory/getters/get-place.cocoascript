@@ -84,17 +84,18 @@ var getPlaceRect = function(layer, axisLayer) {
 
 
 
-
 // support
 
 var getY = function(layer, parentLayer) {
 	var parentY = [[parentLayer absoluteRect] y]
-	return [[layer absoluteRect] y]
+	var layerY = [[layer absoluteRect] y]
+	return -(parentY - layerY)
 }
 
 var getX = function(layer, parentLayer) {
 	var parentX = [[parentLayer absoluteRect] x]
-	return [[layer absoluteRect] x]
+	var layerX = [[layer absoluteRect] x]
+	return -(parentX - layerX)
 }
 
 var getHeight = function(layer) {
