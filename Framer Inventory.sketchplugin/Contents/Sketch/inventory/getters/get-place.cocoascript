@@ -11,8 +11,17 @@ function getPosition(layer) {
 // choose from layer/group
 // returns width, height, x, y
 function getPlace(layer, axisLayer, currentPage) {
-	if (isExportableWithoutImage(layer)) { return getPlaceRect(layer, axisLayer) }
-	return getPlaceImage(layer, axisLayer, currentPage)
+	var localType = exportableType(layer)
+	if (localType == 1) {
+		return getPlaceImage(layer, axisLayer, currentPage)
+	}
+	else if (localType == 2 || localType == 3) {
+		return getPlaceRect(layer, axisLayer)
+	}
+	else {
+		log("Unknown place getter for this place")
+		return getPlaceRect(layer, axisLayer)
+	}
 }
 
 

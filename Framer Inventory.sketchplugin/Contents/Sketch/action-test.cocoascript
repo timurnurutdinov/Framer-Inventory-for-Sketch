@@ -1,18 +1,24 @@
 @import 'inventory/layer-compilation.cocoascript'
+@import 'framer-inventory-search.cocoascript'
 
 var onRun = function(context) {
 	var doc = context.document
 	var selection = context.selection
-
-	var layerCompilation = new LayerCompilation("name")
+	var layerCompilationCollection = []
 
 	if (selection != nil) {
 		for (var i = 0; i < [selection count]; i++) {
-			layerCompilation.addState([selection objectAtIndex: i])
+			var currentLayer = [selection objectAtIndex: i]
+			var layerCompilation = new LayerCompilation(currentLayer)
+			layerCompilation.addState(currentLayer)
+			layerCompilationCollection.push(layerCompilation)
 		}
 	}
 	
-	layerCompilation.getStates()
+	log("LENGTH IS " + [layerCompilationCollection.length])
+	for (var i = 0; i < [layerCompilationCollection.length]; i++) {
+		layerCompilationCollection[i].printCompilation()
+	}
 	[doc showMessage:"Done"]
 }
 	

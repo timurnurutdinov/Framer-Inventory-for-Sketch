@@ -7,75 +7,225 @@
 @import 'inventory/getters/get-corners.cocoascript'
 @import 'inventory/getters/get-background-color.cocoascript'
 
+@import 'inventory/strings/framer.cocoascript'
+@import 'inventory/strings/paths.cocoascript'
 
-function LayerCompilation (layerName) {
-	this.name = layerName;
+
+function LayerCompilation (layer) {
+	// name of layer
+	this.name = [layer name];
+	
+	// 0 - relative to Artboard, 1 - relative to Parent
 	this.axisMode = 0
+	
+	
+	// types:
+	// -1 - unsupported
+	// 1  - group, image, shape
+	// 2  - rectangle 
+	// 3  - oval
+	// 4  - text layer
+	this.type = exportableType(layer)
+	this.usedProperties = []
+	for (var i = 0; i < propertiesForType(this.type); i++) {
+		if (i < 5) {
+			this.usedProperties.push(true)
+		}
+		else {
+			this.usedProperties.push(false)
+		}
+	}
+	
+	
+	// 0 - normal, 1 - masked
+	this.isMask = 0
+	this.children = []
 
 	this.matrix = []
 }
+
+
+LayerCompilation.prototype.applyMask = function(children) {
+	this.isMask = 1
+	this.children = children
+}
+
 
 LayerCompilation.prototype.getName = function() {
     return this.name;
 }
 
+
+
+// ADD STATE
+
 LayerCompilation.prototype.addState = function(layer) {
-	// 4 items
-	var positionVariables = getPosition(layer)
-	var opacityVariable = getOpacity(layer)
-	var rotationVariable = (-[layer rotation])
-	// 5 items
-	var shadowVariables = getShadows(layer)
-	
-	if (isExportableWithoutImage(layer)) {
-		// 2 items
-		var bordersVariables = getBorders(layer)
-		var cornersVariable = getCorners(layer)
-		var backgroundColorVariable = getBackgroundColor(layer)
+	if (this.type == 1) {
+		this.addStateImage(layer)
 	}
-	
-	
-	
+	else if (this.type == 2) {
+		this.addStateRectangle(layer)
+	}
+	else {
+		log("Unknown type! " + this.type)
+	}
+}
+
+
+LayerCompilation.prototype.addStateImage = function(layer) {
+	// 0 - 4
+	var positionVariables = getPosition(layer)
+	// 5
+	var opacityVariable = getOpacity(layer)
+	// 6
+	var rotationVariable = 0
+	if ([layer rotation] != 0) {
+		rotationVariable = (-[layer rotation])
+	}
+
 	var params = positionVariables.concat(opacityVariable)
 	params = params.concat(rotationVariable)
-	params = params.concat(shadowVariables)
-	
-	if (isExportableWithoutImage(layer)) {
-		params = params.concat(bordersVariables)
-		params = params.concat(cornersVariable)
-		params = params.concat(backgroundColorVariable)
-	}
-	
-	
+
 	this.matrix.push(params)
 }
 
 
-LayerCompilation.prototype.getStates = function() {
+LayerCompilation.prototype.addStateRectangle = function(layer) {
+	// 0 - 4
+	var positionVariables = getPosition(layer)
+	// 5
+	var opacityVariable = getOpacity(layer)
+	// 6
+	var rotationVariable = 0
+	if ([layer rotation] != 0) {
+		rotationVariable = (-[layer rotation])
+	}
+	// 7 - 10
+	var shadowVariables = getShadows(layer)
 
-	for (var i = 0; i < this.matrix.length; i++) {
-		
-		var tempString = ""
-		var prefix = ""
-		for (var s = 0; s < this.matrix[i].length; s++) {
-			if (s == 0) { prefix = "w:" }
-			else if (s == 1) { prefix = "h:" }
-			else if (s == 2) { prefix = "x:" }
-			else if (s == 3) { prefix = "y:" }
-			else if (s == 4) { prefix = "op:" }
-			else if (s == 5) { prefix = "ro:" }
-			else if (s == 6) { prefix = "sh(X):" }
-			else if (s == 7) { prefix = "sh(Y):" }
-			else if (s == 8) { prefix = "sh(Bl):" }
-			else if (s == 9) { prefix = "sh(Sp):" }
-			else if (s == 10) { prefix = "sh(#):" }
-			else if (s == 11) { prefix = "bo(th):" }
-			else if (s == 12) { prefix = "bo(#):" }
-			else if (s == 13) { prefix = "cor:" }
-			else if (s == 14) { prefix = "###:" }
-			else { prefix = "" }
-			tempString += prefix + this.matrix[i][s]) + "  "
-		}
-		log(tempString)
+	// 11 - 12
+	var bordersVariables = getBorders(layer)
+	// 13
+	var cornersVariable = getCorners(layer)
+	// 14
+	var backgroundColorVariable = getBackgroundColor(layer)
+
+
+
+	var params = positionVariables.concat(opacityVariable)
+	params = params.concat(rotationVariable)
+	params = params.concat(shadowVariables)
+	
+	params = params.concat(bordersVariables)
+	params = params.concat(cornersVariable)
+	params = params.concat(backgroundColorVariable)
+
+	this.matrix.push(params)
+}
+
+
+// PRINT
+
+LayerCompilation.prototype.printCompilation = function() {
+	if (this.matrix.length == 0) {
+		log("Matrix is empty for |" + this.name + "|")
+	}
+	else if (this.matrix.length == 1) {
+		log(this.printLayer())
+	}
+	else {
+		log("states? " + this.matrix.length)
 	}
 }
+
+
+LayerCompilation.prototype.printLayer = function() {
+	if (this.type == 0) {
+		log("No layer to printLayer")
+	}
+	else if (this.type == 1) {
+		return this.printLayerForImage()
+	}
+	else if (this.type == 2) {
+		return this.printLayerForRectangle()
+	}
+	else {
+		log("Unknown type to printLayer")
+	}
+}
+
+
+LayerCompilation.prototype.printLayerForImage = function() {
+	var composedOutput = ""
+	composedOutput += returnLayerName(this.name)
+	
+	for (var i = 0; i < this.matrix[0].length; i++) {
+		var value = this.matrix[0][i]
+		composedOutput += isDefault(value, i, this.type)
+		if (i == 3) {
+			var imagePathValue = removePath(this.name)
+			log("imimagePathValue is " + imagePathValue)
+			composedOutput += isDefault(imagePathValue, 6, this.type)
+		}
+	}
+	
+	return composedOutput
+}
+
+LayerCompilation.prototype.printLayerForRectangle = function() {
+	var composedOutput = ""
+	composedOutput += returnLayerName(this.name)
+	
+	for (var i = 0; i < this.matrix[0].length; i++) {
+		var value = this.matrix[0][i]
+		// log("For rectangle value is " + value + " for " + i)
+		composedOutput += isDefault(value, i, this.type)
+		// log("For rectangle default is " + isDefault(value, i, this.type) + " for " + i + "\n\n")
+	}
+	
+	return composedOutput
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // TEMP
+//
+// LayerCompilation.prototype.getStates = function() {
+//
+// 	for (var i = 0; i < this.matrix.length; i++) {
+//
+// 		var tempString = ""
+// 		var prefix = ""
+// 		for (var s = 0; s < this.matrix[i].length; s++) {
+// 			if (s == 0) { prefix = "w:" }
+// 			else if (s == 1) { prefix = "h:" }
+// 			else if (s == 2) { prefix = "x:" }
+// 			else if (s == 3) { prefix = "y:" }
+// 			else if (s == 4) { prefix = "op:" }
+// 			else if (s == 5) { prefix = "ro:" }
+// 			else if (s == 6) { prefix = "sh(X):" }
+// 			else if (s == 7) { prefix = "sh(Y):" }
+// 			else if (s == 8) { prefix = "sh(Bl):" }
+// 			else if (s == 9) { prefix = "sh(Sp):" }
+// 			else if (s == 10) { prefix = "sh(#):" }
+// 			else if (s == 11) { prefix = "bo(th):" }
+// 			else if (s == 12) { prefix = "bo(#):" }
+// 			else if (s == 13) { prefix = "cor:" }
+// 			else if (s == 14) { prefix = "###:" }
+// 			else { prefix = "" }
+// 			tempString += prefix + this.matrix[i][s]) + "  "
+// 		}
+// 		log(tempString)
+// 	}
+// }

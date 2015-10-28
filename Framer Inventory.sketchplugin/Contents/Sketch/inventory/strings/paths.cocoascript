@@ -1,0 +1,8 @@
+var removePath = function(longPath) {
+	return longPath.replace(/^.*[\\\/]/, '').trim()
+}
+
+var clearName = function(longName) {
+	var clearedName = removePath(longName).trim().split(' ').join('_')
+	return clearedName.toLowerCase()
+}

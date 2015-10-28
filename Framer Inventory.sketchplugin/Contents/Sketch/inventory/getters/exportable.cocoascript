@@ -1,22 +1,42 @@
 
 
-//should be improved
-function isExportableWithoutImage(layerToAnalyse) {
-	if ([layerToAnalyse className] == "MSSliceLayer") { return false }
-	var magicLayers = layerToAnalyse.layers()
-	if (magicLayers.count() > 1) { return false }
+// types:
+// -1 - unsupported
+// 1  - group, image, shape
+// 2  - rectangle 
+// 3  - oval
+// 4  - text layer
 
+function exportableType(layerToAnalyse) {
+	if ([layerToAnalyse className] == "MSSliceLayer") { return -1 }
+	var magicLayers = layerToAnalyse.layers()
+	if (magicLayers.count() > 1) { return 1 }
+	
 	var shape = magicLayers.firstObject()
 	if(shape && (shape.isKindOfClass(MSRectangleShape) || shape.isKindOfClass(MSOvalShape))) {
-		if ([[[shape path] points] count] != 4) { return false }
-		return true
+		if ([[[shape path] points] count] != 4) { return 1 }
+		return 2
 	}
-	return false
+	else if(shape && shape.isKindOfClass(MSOvalShape))) {
+		if ([[[shape path] points] count] != 4) { return 1 }
+		return 3
+	}
+	return 1
+}
+
+
+function propertiesForType(typeNumber) {
+	if (typeNumber == 0) { return 0 }
+	else if (typeNumber == 1) { return 6 }
+	else if (typeNumber == 2) { return 14 }
+	else if (typeNumber == 3) { return 14 }
+	else if (typeNumber == 4) { return 0 }
 }
 
 
 
 
+// COLORS
 
 var localBlackColor = function() {
 	return "#000000"
@@ -40,6 +60,7 @@ var convertHex = function(hex, opacity) {
 
 
 // relative to Parent/Artboard
+
 function findParent(layer, localAxis) {
 	if (localAxis == 0) { return findParentArtboard(layer) }
 	return findParentGroup(layer)
