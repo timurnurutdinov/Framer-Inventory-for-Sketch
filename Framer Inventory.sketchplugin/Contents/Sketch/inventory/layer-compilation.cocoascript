@@ -131,7 +131,8 @@ LayerCompilation.prototype.printCompilation = function() {
 		log("Matrix is empty for |" + this.name + "|")
 	}
 	else if (this.matrix.length == 1) {
-		log(this.printLayer())
+		log("printed layer| " + this.printLayer())
+		return this.printLayer()
 	}
 	else {
 		log("states? " + this.matrix.length)
@@ -188,44 +189,3 @@ LayerCompilation.prototype.printLayerForRectangle = function() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-// // TEMP
-//
-// LayerCompilation.prototype.getStates = function() {
-//
-// 	for (var i = 0; i < this.matrix.length; i++) {
-//
-// 		var tempString = ""
-// 		var prefix = ""
-// 		for (var s = 0; s < this.matrix[i].length; s++) {
-// 			if (s == 0) { prefix = "w:" }
-// 			else if (s == 1) { prefix = "h:" }
-// 			else if (s == 2) { prefix = "x:" }
-// 			else if (s == 3) { prefix = "y:" }
-// 			else if (s == 4) { prefix = "op:" }
-// 			else if (s == 5) { prefix = "ro:" }
-// 			else if (s == 6) { prefix = "sh(X):" }
-// 			else if (s == 7) { prefix = "sh(Y):" }
-// 			else if (s == 8) { prefix = "sh(Bl):" }
-// 			else if (s == 9) { prefix = "sh(Sp):" }
-// 			else if (s == 10) { prefix = "sh(#):" }
-// 			else if (s == 11) { prefix = "bo(th):" }
-// 			else if (s == 12) { prefix = "bo(#):" }
-// 			else if (s == 13) { prefix = "cor:" }
-// 			else if (s == 14) { prefix = "###:" }
-// 			else { prefix = "" }
-// 			tempString += prefix + this.matrix[i][s]) + "  "
-// 		}
-// 		log(tempString)
-// 	}
-// }

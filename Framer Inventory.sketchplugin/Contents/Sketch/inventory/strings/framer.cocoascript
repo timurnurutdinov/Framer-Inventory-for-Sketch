@@ -4,7 +4,7 @@ function returnLayerName(layerName) {
 
 
 function normalizeName(layerName) {
-	return layerName
+	return clearName(layerName)
 }
 
 
@@ -47,11 +47,11 @@ var isDefaultForRectangle = function(value, index) {
 	else if (index == 7 && value != 0) { return ", shadowY: " + value}
 	else if (index == 8 && value != 0) { return ", shadowBlur: " + value}
 	else if (index == 9 && value != 0) { return ", shadowSpread: " + value}
-	else if (index == 10 && value != convertHex(localBlackColor(), 0)) { return ", shadowColor: " + value}
+	else if (index == 10 && value != convertHex(localBlackColor(), 0)) { return ", shadowColor: " + colorValue(value)}
 	else if (index == 11 && value != 0) { return ", borderWidth: " + value}
-	else if (index == 12 && value != convertHex(localBlackColor(), 0)) { return ", borderColor: " + value}
+	else if (index == 12 && value != convertHex(localBlackColor(), 0)) { return ", borderColor: " + colorValue(value)}
 	else if (index == 13 && value != 0) { return ", cornerRadius: " + value}
-	else if (index == 14 && value != convertHex(localBlackColor(), 0)) { return ", backgroundColor: " + value}
+	else if (index == 14 && value != convertHex(localBlackColor(), 0)) { return ", backgroundColor: " + colorValue(value)}
 	
 	return ""
 }
@@ -64,4 +64,11 @@ var isDefaultForImage = function(value, index) {
 	else if (index == 6) { return ", image: \"images/" + value + ".png\""}
 	
 	return ""
+}
+
+
+
+
+var colorValue = function(value) {
+	return "\"" + value + "\""
 }

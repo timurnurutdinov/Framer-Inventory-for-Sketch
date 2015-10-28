@@ -5,6 +5,7 @@ var onRun = function(context) {
 	var doc = context.document
 	var selection = context.selection
 	var layerCompilationCollection = []
+	var pasteboardContent = []
 
 	if (selection != nil) {
 		for (var i = 0; i < [selection count]; i++) {
@@ -17,8 +18,11 @@ var onRun = function(context) {
 	
 	log("LENGTH IS " + [layerCompilationCollection.length])
 	for (var i = 0; i < [layerCompilationCollection.length]; i++) {
-		layerCompilationCollection[i].printCompilation()
+		pasteboardContent += layerCompilationCollection[i].printCompilation()
 	}
+	
+	[[NSPasteboard generalPasteboard] clearContents];
+	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 	[doc showMessage:"Done"]
 }
 	
