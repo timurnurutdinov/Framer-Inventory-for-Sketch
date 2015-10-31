@@ -11,13 +11,16 @@
 @import 'inventory/strings/paths.cocoascript'
 
 
-function LayerCompilation (layer) {
+function LayerCompilation (layer, retina) {
 	// name of layer
 	this.name = [layer name];
 	
 	// 0 - relative to Artboard, 1 - relative to Parent
 	this.axisMode = 0
-	
+	this.retina = 1
+	if (retina != nil) {
+		this.retina = retina
+	}
 	
 	// types:
 	// -1 - unsupported
@@ -26,34 +29,25 @@ function LayerCompilation (layer) {
 	// 3  - oval
 	// 4  - text layer
 	this.type = exportableType(layer)
-	this.usedProperties = []
-	for (var i = 0; i < propertiesForType(this.type); i++) {
-		if (i < 5) {
-			this.usedProperties.push(true)
-		}
-		else {
-			this.usedProperties.push(false)
-		}
-	}
-	
-	
-	// 0 - normal, 1 - masked
-	this.isMask = 0
-	this.children = []
+	log("init type: " + this.type)
 
 	this.matrix = []
 }
 
 
-LayerCompilation.prototype.applyMask = function(children) {
-	this.isMask = 1
-	this.children = children
-}
-
 
 LayerCompilation.prototype.getName = function() {
     return this.name;
 }
+
+var ln = function() { return "\n" }
+var dln = function() { return ln() + ln() }
+
+
+
+
+
+
 
 
 
@@ -66,10 +60,19 @@ LayerCompilation.prototype.addState = function(layer) {
 	else if (this.type == 2) {
 		this.addStateRectangle(layer)
 	}
+	else if (this.type == 3) {
+		this.addStateRectangle(layer)
+	}
+	else if (this.type == 4) {
+		this.addStateImage(layer)
+	}
 	else {
 		log("Unknown type! " + this.type)
 	}
 }
+
+
+
 
 
 LayerCompilation.prototype.addStateImage = function(layer) {
@@ -124,6 +127,13 @@ LayerCompilation.prototype.addStateRectangle = function(layer) {
 }
 
 
+
+
+
+
+
+
+
 // PRINT
 
 LayerCompilation.prototype.printCompilation = function() {
@@ -150,28 +160,64 @@ LayerCompilation.prototype.printLayer = function() {
 	else if (this.type == 2) {
 		return this.printLayerForRectangle()
 	}
+	else if (this.type == 3) {
+		return this.printLayerForOval()
+	}
+	else if (this.type == 4) {
+		return this.printLayerForText()
+	}
 	else {
 		log("Unknown type to printLayer")
 	}
 }
 
 
+
+
+
+
+
+
+
+
 LayerCompilation.prototype.printLayerForImage = function() {
 	var composedOutput = ""
 	composedOutput += returnLayerName(this.name)
+	log("going to print imaged layer")
 	
 	for (var i = 0; i < this.matrix[0].length; i++) {
 		var value = this.matrix[0][i]
-		composedOutput += isDefault(value, i, this.type)
+		composedOutput += isDefault(value, i, this.type, this.retina)
 		if (i == 3) {
 			var imagePathValue = removePath(this.name)
 			log("imimagePathValue is " + imagePathValue)
-			composedOutput += isDefault(imagePathValue, 6, this.type)
+			composedOutput += isDefault(imagePathValue, 6, this.type, this.retina)
 		}
 	}
 	
 	return composedOutput
 }
+
+
+
+LayerCompilation.prototype.printLayerForText = function() {
+	var composedOutput = ""
+	composedOutput += returnLayerName(this.name)
+	log("........going to print text layer")
+	
+	for (var i = 0; i < this.matrix[0].length; i++) {
+		var value = this.matrix[0][i]
+		composedOutput += isDefault(value, i, this.type, this.retina)
+		if (i == 3) {
+			var imagePathValue = removePath(this.name)
+			log("imimagePathValue is " + imagePathValue)
+			composedOutput += isDefault(imagePathValue, 6, this.type, this.retina)
+		}
+	}
+	
+	return composedOutput
+}
+
 
 LayerCompilation.prototype.printLayerForRectangle = function() {
 	var composedOutput = ""
@@ -179,13 +225,26 @@ LayerCompilation.prototype.printLayerForRectangle = function() {
 	
 	for (var i = 0; i < this.matrix[0].length; i++) {
 		var value = this.matrix[0][i]
-		// log("For rectangle value is " + value + " for " + i)
-		composedOutput += isDefault(value, i, this.type)
-		// log("For rectangle default is " + isDefault(value, i, this.type) + " for " + i + "\n\n")
+		composedOutput += isDefault(value, i, this.type, this.retina)
 	}
 	
 	return composedOutput
 }
 
 
-
+LayerCompilation.prototype.printLayerForOval = function() {
+	var composedOutput = ""
+	composedOutput += returnLayerName(this.name)
+	
+	for (var i = 0; i < this.matrix[0].length; i++) {
+		var value = this.matrix[0][i]
+		if (i == 13) {
+			composedOutput += ", cornerRadius: \"100%\""
+			continue
+		}
+		composedOutput += isDefault(value, i, this.type, this.retina)
+	}
+	composedOutput += dln()
+	
+	return composedOutput
+}

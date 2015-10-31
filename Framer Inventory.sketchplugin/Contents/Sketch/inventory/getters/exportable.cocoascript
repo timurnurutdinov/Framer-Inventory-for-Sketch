@@ -8,19 +8,56 @@
 // 4  - text layer
 
 function exportableType(layerToAnalyse) {
-	if ([layerToAnalyse className] == "MSSliceLayer") { return -1 }
-	var magicLayers = layerToAnalyse.layers()
-	if (magicLayers.count() > 1) { return 1 }
+	var type = [layerToAnalyse className]
+	var answer = 0
 	
-	var shape = magicLayers.firstObject()
-	if(shape && (shape.isKindOfClass(MSRectangleShape) || shape.isKindOfClass(MSOvalShape))) {
-		if ([[[shape path] points] count] != 4) { return 1 }
-		return 2
+	if (type == "MSSliceLayer") { answer = -1 }
+	else if (type == "MSTextLayer") { answer = 4 }
+	else if (type == "MSLayerGroup") { 
+		log("Group type is detected")
+		answer =  1
 	}
-	else if(shape && shape.isKindOfClass(MSOvalShape))) {
+	else if (type == "MSBitmapLayer") { answer = 1 }
+	else if (type == "MSShapeGroup") {
+		log("Exportable shape?")
+		answer = exportableShape(layerToAnalyse)
+	}
+	else {
+		log("Unrecognised object in exportables")
+		asnwer = -1
+	}
+	
+	log("answer: " + answer)
+	return answer
+}
+
+
+function exportableShape(layerToAnalyse) {
+	if ([layerToAnalyse className] != "MSShapeGroup") { return -1 }
+	var magicLayers = layerToAnalyse.layers()
+	
+	// do not export combined shapes
+	if (magicLayers.count() > 1) { return 1 }
+	log("Using 1 layer!")
+	
+	// if shape is made with one layer
+	var shape = magicLayers.firstObject()
+	
+	// if it's a Rectangle or Oval
+	if(shape && shape.isKindOfClass(MSOvalShape)) {
+		log("It's Oval")
 		if ([[[shape path] points] count] != 4) { return 1 }
 		return 3
 	}
+	else if(shape && shape.isKindOfClass(MSRectangleShape)) {
+		log("It's Rect")
+		if ([[[shape path] points] count] != 4) { return 1 }
+		return 2
+	}
+	else {
+		log("STRANGE! NO RECT OR OVAL")
+	}
+	
 	return 1
 }
 

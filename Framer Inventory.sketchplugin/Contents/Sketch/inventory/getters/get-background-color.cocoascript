@@ -4,6 +4,8 @@ var getBackgroundColor = function(layer) {
 	var fillCollection = [[layer style] fills]
 	for (var f = fillCollection.count() - 1; f >= 0; f--) {
 		var localFill = [fillCollection objectAtIndex:f]
+		log([localFill fillType])
+		
 		if ([localFill isEnabled]) {
 			var hexComponent = [[localFill color] hexValue] + ""
 			var alphaComponent = [[localFill color] alpha]

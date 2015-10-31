@@ -4,6 +4,10 @@
 // relative to artboard on current page
 function getPosition(layer) {
 	var parentArtboard = findParentArtboard(layer)
+	log("parentArtboard: " + parentArtboard)
+	if ([parentArtboard className] == "MSPage") {
+		return getPlace(layer, parentArtboard, parentArtboard)
+	}
 	return getPlace(layer, parentArtboard, [parentArtboard parentGroup])
 }
 
