@@ -36,37 +36,37 @@ function getPlace(layer, axisLayer, currentPage) {
 
 var getPlaceImage = function(layer, axisLayer, currentPage) {
 	
-	var baseLayerFrame = [layer absoluteRect]
 	var parentArtboard = axisLayer
 	if ([axisLayer className] != "MSArtboardGroup") {
 		parentArtboard = findParentArtboard(layer)
 	}
 
+
+	// copy layer and place it to artboard
 	var layer_copy = [layer duplicate]
+	[layer_copy removeFromParent]
+	[currentPage addLayers: [layer_copy]]
+	
+	
+	// normalize layer for export
 	[layer_copy setRotation: 0]
 	if ([[[layer_copy style] contextSettings] opacity] == 0) {
 		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
 	}
-	if (![layer_copy isVisible]) {
-		[layer_copy setIsVisible:true]
-	}
-	[layer_copy removeFromParent]
-	[currentPage addLayers: [layer_copy]]
-
-	var frame = [layer_copy frame]
-	[frame setX: [[layer absoluteRect] x]]
-	[frame setY: [[layer absoluteRect] y]]
-
+	if (![layer_copy isVisible]) { [layer_copy setIsVisible:true] }
+		
+		
+	var values = []
 	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
-	var valueX = temp.origin.x
-	var valueX = temp.origin.y
-	var valueWidth = temp.size.width
-	var valueHeight = temp.size.height
+	if ([axisLayer className] == "MSArtboardGroup" ) {
+		values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
+	}
+	else {
+		log("WARNING! UNEXPECTED BEHAVIOUR")
+		values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
+	}
 	
-	var values = [temp.size.width, temp.size.height, temp.origin.x - [[axisLayer absoluteRect] x], temp.origin.y - [[axisLayer absoluteRect] y]]
-
-	[layer_copy removeFromParent]
-	
+	[layer_copy removeFromParent]	
 	return values
 }
 
@@ -118,3 +118,7 @@ var getHeight = function(layer) {
 var getWidth = function(layer) {
 	return [[layer frame] width]
 }
+
+
+
+
