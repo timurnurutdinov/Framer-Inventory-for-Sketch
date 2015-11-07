@@ -2,10 +2,11 @@
 
 // types:
 // -1 - unsupported
-// 1  - group, image, shape
-// 2  - rectangle 
-// 3  - oval
-// 4  - text layer
+//  1 - group, image
+//  2 - rectangle 
+//  3 - oval
+//  4 - text layer
+//  5 - other shape
 
 function exportableType(layerToAnalyse) {
 	var type = [layerToAnalyse className]
@@ -37,7 +38,7 @@ function exportableShape(layerToAnalyse) {
 	var magicLayers = layerToAnalyse.layers()
 	
 	// do not export combined shapes
-	if (magicLayers.count() > 1) { return 1 }
+	if (magicLayers.count() > 1) { return 5 }
 	log("Using 1 layer!")
 	
 	// if shape is made with one layer
@@ -46,28 +47,32 @@ function exportableShape(layerToAnalyse) {
 	// if it's a Rectangle or Oval
 	if(shape && shape.isKindOfClass(MSOvalShape)) {
 		log("It's Oval")
-		if ([[[shape path] points] count] != 4) { return 1 }
+		if ([[[shape path] points] count] != 4) { return 5 }
 		return 3
 	}
 	else if(shape && shape.isKindOfClass(MSRectangleShape)) {
 		log("It's Rect")
-		if ([[[shape path] points] count] != 4) { return 1 }
+		if ([[[shape path] points] count] != 4) { return 5 }
 		return 2
 	}
 	else {
 		log("STRANGE! NO RECT OR OVAL")
 	}
 	
-	return 1
+	return 5
 }
 
 
-function propertiesForType(typeNumber) {
-	if (typeNumber == 0) { return 0 }
-	else if (typeNumber == 1) { return 6 }
-	else if (typeNumber == 2) { return 14 }
-	else if (typeNumber == 3) { return 14 }
-	else if (typeNumber == 4) { return 0 }
+
+
+
+var removePath = function(longPath) {
+	return longPath.replace(/^.*[\\\/]/, '').trim()
+}
+
+var clearName = function(longName) {
+	var clearedName = removePath(longName).trim().split(' ').join('_')
+	return clearedName.toLowerCase()
 }
 
 
@@ -98,11 +103,6 @@ var convertHex = function(hex, opacity) {
 
 // relative to Parent/Artboard
 
-function findParent(layer, localAxis) {
-	if (localAxis == 0) { return findParentArtboard(layer) }
-	return findParentGroup(layer)
-}
-
 function findParentArtboard(layer) {
 	var lookingForParentArtboard = true
 	var localParent = layer
@@ -118,6 +118,10 @@ function findParentArtboard(layer) {
 	return localParent
 }
 
-function findParentGroup(layer) {
-	return [layer parentGroup]
+function findParentPage(layer) {
+	var parentArtboard = findParentArtboard(layer)
+	if ([parentArtboard className] == "MSPage") {
+		return parentArtboard
+	}
+	return [parentArtboard parentGroup]
 }

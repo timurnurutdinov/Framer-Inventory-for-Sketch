@@ -1,0 +1,112 @@
+@import 'inventory/getters/exportable.cocoascript'
+
+@import 'inventory/getters/get-place.cocoascript'
+@import 'inventory/getters/get-opacity.cocoascript'
+@import 'inventory/getters/get-corners.cocoascript'
+@import 'inventory/getters/get-shadows.cocoascript'
+@import 'inventory/getters/get-borders.cocoascript'
+@import 'inventory/getters/get-background-color.cocoascript'
+
+@import 'inventory/strings/generate.cocoascript'
+
+
+
+
+function State (layer) {
+	
+	var parentArtboard = findParentArtboard(layer)
+	this.stateName = [parentArtboard name]
+	
+	this.position = []
+	this.position = getPosition(layer)
+
+	this.opacity = getOpacity(layer)
+	this.corner = getCornerRadius(layer)
+	this.rotation = 0
+	if ([layer rotation] != 0) { this.rotation = (-[layer rotation]) }
+
+	this.shadows = getShadows(layer)
+	this.inners = getInners(layer)
+	this.borders = getBorders(layer)
+
+	this.backgrounds = getBackgroundColors(layer)
+	
+}
+
+State.prototype.printState = function() {
+	log(" ")
+	log("NAME: " + this.stateName)
+	
+	log("Position " + this.position)
+	log("Opacity: " + this.opacity)
+	log("Corner: " + this.corner)
+	log("Rotation: " + this.rotation)
+	
+	log("Shadows: S=" + this.shadows.length + "| " + this.shadows)
+	log("Inners: I=" + this.inners.length + "| " + this.inners)
+	log("Borders: Bo=" + this.borders.length + "| " + this.borders)
+	log("Backgrounds: Ba=" + this.backgrounds.length + "| " + this.backgrounds)
+}
+
+State.prototype.generateFramerLayer = function(layerName) {
+	var outputString = returnLayerName(layerName) + dln()
+	
+	// useful for both shapes and images
+	outputString += generateOpacity(this.opacity)
+	outputString += generateRotation(this.rotation)
+	
+	if (this.isGeneratable) {
+		outputString += generateCorner(this.corner)
+	}
+	
+	log(outputString)
+	return outputString
+}
+
+
+
+
+
+
+
+State.prototype.isGeneratable = function() {
+	if (this.isShadowsExportale, this.isInnersExportale, this.isBordersExportale, this.isBackgroundsExportale) {
+		return true
+	}
+	else return false
+}
+
+
+
+State.prototype.isShadowsExportale = function() {
+	if (this.shadows == nil || this.shadows.length == 1) { return true }
+	else return false
+}
+
+State.prototype.isInnersExportale = function() {
+	if (this.inners == nil) { return true}
+	else return false
+}
+
+State.prototype.isBordersExportale = function() {
+	if (this.borders == nil) { return true}
+	else if (this.borders.length == 1) {
+		if (this.borders[0][0] == 1) {
+			if (this.borders[0][2] == 0) { return true }
+			else return false
+		}
+		else return false
+	}
+	else return false
+}
+
+State.prototype.isBackgroundsExportale = function() {
+	if (this.backgrounds == nil) { return true }
+	else if (this.backgrounds.length == 1) {
+		if (this.backgrounds[0][0] == 0) {
+			return true
+		}
+		else return false
+	}
+	else return false
+}

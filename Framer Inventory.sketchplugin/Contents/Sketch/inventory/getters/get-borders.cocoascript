@@ -1,33 +1,15 @@
+
 var getBorders = function(layer) {
-	return [getBorderWidth(layer), getBorderColor(layer)]
-}
-
-
-
-
-
-
-
-var getBorderColor = function(layer) {
+	var enabledBorders = []
+	
 	var bordersCollection = [[layer style] borders]
 	for (var b = bordersCollection.count() - 1; b >= 0; b--) {
-		var localColor = [bordersCollection objectAtIndex:b]
-		if ([localColor isEnabled]) {
-			var hexComponent = [[localColor color] hexValue] + ""
-			var alphaComponent = [[localColor color] alpha]
-			return convertHex(hexComponent, alphaComponent.toFixed(2))
+		var localBorder = [bordersCollection objectAtIndex:b]
+		if ([localBorder isEnabled]) {
+			var border = [[localBorder position], [localBorder thickness], [localBorder fillType], [[localBorder color] alpha], [[localBorder color] hexValue]];
+			enabledBorders.push(border)
 		}
 	}
-	return convertHex(localBlackColor(), 0)
-}
-
-var getBorderWidth = function(layer) {
-	var bordersCollection = [[layer style] borders]
-	for (var b = bordersCollection.count() - 1; b >= 0; b--) {
-		var localColor = [bordersCollection objectAtIndex:b]
-		if ([localColor isEnabled]) {
-			return [localColor thickness]
-		}
-	}
-	return 0
+	
+	return enabledBorders
 }

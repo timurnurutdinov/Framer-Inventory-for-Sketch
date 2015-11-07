@@ -1,29 +1,47 @@
-@import 'inventory/layer-compilation.cocoascript'
-@import 'framer-inventory-search.cocoascript'
+// @import 'inventory/layer-compilation.cocoascript'
+
+@import 'inventory/classes/layer.cocoascript'
+@import 'inventory/libs/pluginDefaults.js'
+
+var presets = {
+    myRetina: "retina",
+}
+
+var pluginDomain = "com.addleimb.framer-inventory.retina"
+var userRetinaDefaults = initDefaults(pluginDomain, presets)
+
 
 var onRun = function(context) {
+	log("\n")
 	var doc = context.document
 	var selection = context.selection
-	var layerCompilationCollection = []
+	var layers = []
 	var pasteboardContent = []
-	var retinaProperty = 2
+	
+	var retinaProperty = userRetinaDefaults.myRetina || "retina"
 
+	
+	userRetinaDefaults.myRetina = retinaProperty
+	saveDefaults(userRetinaDefaults)
+	
 	if (selection != nil) {
 		for (var i = 0; i < [selection count]; i++) {
 			var currentLayer = [selection objectAtIndex: i]
-			var layerCompilation = new LayerCompilation(currentLayer, retinaProperty)
-			layerCompilation.addState(currentLayer)
-			layerCompilationCollection.push(layerCompilation)
+			var layer = new Layer([currentLayer name])
+			layer.addState(currentLayer)
+			layers.push(layer)
 		}
 	}
 	
-	log("LENGTH IS " + [layerCompilationCollection.length])
-	for (var i = 0; i < [layerCompilationCollection.length]; i++) {
-		pasteboardContent += layerCompilationCollection[i].printCompilation()
+
+	for (var i = 0; i < layers.length; i++) {
+		pasteboardContent += layers[i].printLayer()
 	}
 	
 	[[NSPasteboard generalPasteboard] clearContents];
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 	[doc showMessage:"Done"]
 }
+
+
 	

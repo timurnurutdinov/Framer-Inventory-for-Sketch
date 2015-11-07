@@ -1,69 +1,24 @@
-
-
 var getShadows = function(layer) {
-	return [getShadowX(layer), getShadowY(layer), getShadowBlur(layer), getShadowSpread(layer), getShadowColor(layer)]
+	var collection = [[layer style] shadows]
+	return getBothShadows(layer, collection)
+}
+
+var getInners = function(layer) {
+	var collection = [[layer style] innerShadows]
+	return getBothShadows(layer, collection)
 }
 
 
-
-
-
-
-var getShadowX = function(layer) {
-	var shadowsCollection = [[layer style] shadows]
+var getBothShadows = function(layer, shadowsCollection) {
+	var enabledShadows = []
+	
 	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
-		var localShadow = [shadowsCollection objectAtIndex:s]
+		var localShadow = [shadowsCollection objectAtIndex: s]
 		if ([localShadow isEnabled]) {
-			return [localShadow offsetX]
+			var shadowParams = [[localShadow offsetX],[localShadow offsetY], [localShadow blurRadius], [localShadow spread], [[localShadow color] alpha], [[localShadow color] hexValue]]
+			enabledShadows.push(shadowParams)
 		}
 	}
-	return 0
+	
+	return enabledShadows
 }
-
-var getShadowY = function(layer) {
-	var shadowsCollection = [[layer style] shadows]
-	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
-		var localShadow = [shadowsCollection objectAtIndex:s]
-		if ([localShadow isEnabled]) {
-			return [localShadow offsetY]
-		}
-	}
-	return 0
-}
-
-var getShadowBlur = function(layer) {
-	var shadowsCollection = [[layer style] shadows]
-	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
-		var localShadow = [shadowsCollection objectAtIndex:s]
-		if ([localShadow isEnabled]) {
-			return [localShadow blurRadius]
-		}
-	}
-	return 0
-}
-
-var getShadowSpread = function(layer) {
-	var shadowsCollection = [[layer style] shadows]
-	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
-		var localShadow = [shadowsCollection objectAtIndex:s]
-		if ([localShadow isEnabled]) {
-			return [localShadow spread]
-		}
-	}
-	return 0
-}
-
-
-var getShadowColor = function(layer) {
-	var shadowsCollection = [[layer style] shadows]
-	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
-		var localShadow = [shadowsCollection objectAtIndex:s]
-		if ([localShadow isEnabled]) {
-			var hexComponent = [[localShadow color] hexValue] + ""
-			var alphaComponent = [[localShadow color] alpha]
-			return convertHex(hexComponent, alphaComponent.toFixed(2))
-		}
-	}
-	return convertHex(localBlackColor(), 0)
-}
-

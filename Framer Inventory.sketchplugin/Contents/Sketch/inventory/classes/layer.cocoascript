@@ -1,0 +1,53 @@
+@import 'inventory/classes/state.cocoascript'
+@import 'inventory/strings/framer.cocoascript'
+// @import 'inventory/strings/paths.cocoascript'
+
+
+function Layer (layerName) {
+	// name of layer
+	this.layerName = layerName;
+	this.states = [];
+	
+	log("layer created: " + this.layerName)
+}
+
+
+
+Layer.prototype.getName = function() {
+    return this.layerName;
+}
+
+var ln = function() { return "\n" }
+var dln = function() { return ln() + ln() }
+
+
+
+
+Layer.prototype.addState = function(layer) {
+	var state = new State(layer)
+	this.states.push(state)
+}
+
+
+
+
+
+// PRINT
+
+Layer.prototype.printLayer = function() {
+	if (this.states.length == 1) {
+		this.states[0].printState()
+		return this.printLayerOneState()
+	}
+	
+	for (var i = 0; i < this.states.length; i++) {
+		this.states[i].printState()
+	}
+	return "temporary nil"
+}
+
+Layer.prototype.printLayerOneState = function() {
+	return this.states[0].generateFramerLayer(this.layerName)
+}
+
+

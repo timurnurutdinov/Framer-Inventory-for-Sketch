@@ -1,16 +1,14 @@
-
-
-var getBackgroundColor = function(layer) {
+var getBackgroundColors = function(layer) {
+	var enabledFills = []
+	
 	var fillCollection = [[layer style] fills]
 	for (var f = fillCollection.count() - 1; f >= 0; f--) {
 		var localFill = [fillCollection objectAtIndex:f]
-		log([localFill fillType])
 		
 		if ([localFill isEnabled]) {
-			var hexComponent = [[localFill color] hexValue] + ""
-			var alphaComponent = [[localFill color] alpha]
-			return convertHex(hexComponent, alphaComponent.toFixed(2))
+			var fill = [[localFill fillType], [[localFill color] alpha], [[localFill color] hexValue]]
+			enabledFills.push(fill)
 		}
 	}
-	return convertHex(localBlackColor(), 0)
+	return enabledFills
 }

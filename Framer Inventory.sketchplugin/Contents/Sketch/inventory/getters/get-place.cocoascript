@@ -1,30 +1,28 @@
-// @import 'inventory/getters/exportable.cocoascript'
+// types:
+// -1 - unsupported
+// 1  - group, image, shape
+// 2  - rectangle 
+// 3  - oval
+// 4  - text layer
 
 
-// relative to artboard on current page
-function getPosition(layer) {
-	var parentArtboard = findParentArtboard(layer)
-	log("parentArtboard: " + parentArtboard)
-	if ([parentArtboard className] == "MSPage") {
-		return getPlace(layer, parentArtboard, parentArtboard)
-	}
-	return getPlace(layer, parentArtboard, [parentArtboard parentGroup])
-}
 
-
-// choose from layer/group
 // returns width, height, x, y
-function getPlace(layer, axisLayer, currentPage) {
+function getPosition(layer) {
 	var localType = exportableType(layer)
+	
 	if (localType == 1) {
-		return getPlaceImage(layer, axisLayer, currentPage)
+		return getPlaceImage(layer)
 	}
 	else if (localType == 2 || localType == 3) {
-		return getPlaceRect(layer, axisLayer)
+		return getPlaceRect(layer)
+	}
+	else if (localType == 5) {
+		return getPlaceRect(layer)
 	}
 	else {
 		log("Unknown place getter for this place")
-		return getPlaceRect(layer, axisLayer)
+		return nil
 	}
 }
 
@@ -34,13 +32,10 @@ function getPlace(layer, axisLayer, currentPage) {
 
 
 
-var getPlaceImage = function(layer, axisLayer, currentPage) {
+var getPlaceImage = function(layer) {
 	
-	var parentArtboard = axisLayer
-	if ([axisLayer className] != "MSArtboardGroup") {
-		parentArtboard = findParentArtboard(layer)
-	}
-
+	var parentArtboard = findParentArtboard(layer)
+	var currentPage = findParentPage(layer)
 
 	// copy layer and place it to artboard
 	var layer_copy = [layer duplicate]
@@ -58,13 +53,7 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 		
 	var values = []
 	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
-	if ([axisLayer className] == "MSArtboardGroup" ) {
-		values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
-	}
-	else {
-		log("WARNING! UNEXPECTED BEHAVIOUR")
-		values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
-	}
+	values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
 	
 	[layer_copy removeFromParent]	
 	return values
@@ -72,18 +61,15 @@ var getPlaceImage = function(layer, axisLayer, currentPage) {
 
 
 
-var getPlaceRect = function(layer, axisLayer) {
+var getPlaceRect = function(layer) {
 	
-	var parentArtboard = axisLayer
-	if ([axisLayer className] != "MSArtboardGroup") {
-		parentArtboard = findParentArtboard(layer)
-	}
+	var parentArtboard = findParentArtboard(layer)
 
 	var layer_copy = [layer duplicate]
 	[layer_copy setRotation: 0]
 	
-	var copied_x = getX(layer_copy, axisLayer)
-	var copied_y = getY(layer_copy, axisLayer)
+	var copied_x = getX(layer_copy, parentArtboard)
+	var copied_y = getY(layer_copy, parentArtboard)
 	
 	var values = [getWidth(layer), getHeight(layer), copied_x, copied_y]
 	

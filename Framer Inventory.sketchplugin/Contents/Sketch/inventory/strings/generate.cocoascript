@@ -11,6 +11,44 @@ function normalizeName(layerName) {
 
 
 
+
+function generateOpacity(value) {
+	if (value == 1) { return "" }
+	else return ", opacity: " + value
+}
+
+
+function generateRotation(value) {
+	if (value == 0) { return "" }
+	else return ", rotation: " + value
+}
+
+function generateCorner(value) {
+	if (value == 0) { return "" }
+	else return ", cornerRadius: " + value + "*" + userRetinaDefaults.myRetina
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// SO BAD
+
+
+
+
 var isDefault = function(value, index, type, retina) {
 	if (type == nil) {
 		log("isDefault type is unknown")
