@@ -1,14 +1,15 @@
 @import 'inventory/classes/state.cocoascript'
-@import 'inventory/strings/framer.cocoascript'
-// @import 'inventory/strings/paths.cocoascript'
+
+@import 'inventory/getters/normalize.cocoascript'
+@import 'inventory/getters/get-place.cocoascript'
+@import 'inventory/strings/generate.cocoascript'
 
 
-function Layer (layerName) {
+function Layer (layerName, currentPage) {
 	// name of layer
 	this.layerName = layerName;
 	this.states = [];
-	
-	log("layer created: " + this.layerName)
+
 }
 
 
@@ -36,8 +37,7 @@ Layer.prototype.addState = function(layer) {
 
 Layer.prototype.printLayer = function() {
 	if (this.states.length == 1) {
-		this.states[0].printState()
-		return this.printLayerOneState()
+		return this.generateFramerLayer()
 	}
 	
 	for (var i = 0; i < this.states.length; i++) {
@@ -46,8 +46,53 @@ Layer.prototype.printLayer = function() {
 	return "temporary nil"
 }
 
-Layer.prototype.printLayerOneState = function() {
-	return this.states[0].generateFramerLayer(this.layerName)
+
+Layer.prototype.generateFramerLayer = function() {
+	var outputString = ""
+	var outputPosition = returnLayerName(this.layerName)
+	
+	var currentState = this.states[0]
+	
+	// useful for both shapes and images
+	outputString += generateOpacity(currentState.opacity)
+	// outputString += generateRotation(currentState.rotation)
+	
+	
+	if (currentState.isShadowsExportale()) { outputString += generateShadows(currentState.shadows) }
+	if (currentState.isBordersExportale()) { outputString += generateBorders(currentState.borders) }
+	
+	if (currentState.isGeneratable()) {
+		outputString += generateCorner(currentState.corner)
+		outputString += generateBackgrounds(currentState.backgrounds)
+		outputString += generateRotation(currentState.rotation)
+		
+		outputPosition += generatePosition(currentState.position)
+	}
+	else {
+		var normalizedLayer = this.normalizeCopyForState(currentState)
+		
+		var temp = getPosition(normalizedLayer)
+		log("!!!!!!!!!!!!!!!!!!!!!" + temp)
+		outputPosition += generatePosition(temp)
+		outputPosition += generateImagePath(this.layerName)
+	}
+	
+	
+	log("" + outputPosition + outputString)
+	
+	return "" + outputPosition + outputString + dln()
 }
 
 
+Layer.prototype.normalizeCopyForState = function(state) {
+	var baseLayer = state.layer
+	var copiedLayer = [baseLayer duplicate]
+	[copiedLayer removeFromParent]
+
+	var newPage = addPage(getCurrentPage())
+	[newPage addLayers: [copiedLayer]]
+	if (state.isShadowsExportale()) { cleanShadows(copiedLayer) }
+	if (state.isBordersExportale()) { cleanBorders(copiedLayer) }
+	return copiedLayer
+
+}

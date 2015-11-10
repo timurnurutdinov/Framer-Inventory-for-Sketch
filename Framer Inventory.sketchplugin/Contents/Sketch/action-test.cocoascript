@@ -10,11 +10,16 @@ var presets = {
 var pluginDomain = "com.addleimb.framer-inventory.retina"
 var userRetinaDefaults = initDefaults(pluginDomain, presets)
 
+var currentDocument = nil
+
 
 var onRun = function(context) {
 	log("\n")
 	var doc = context.document
 	var selection = context.selection
+	
+	currentDocument = doc
+	
 	var layers = []
 	var pasteboardContent = []
 	
@@ -41,6 +46,41 @@ var onRun = function(context) {
 	[[NSPasteboard generalPasteboard] clearContents];
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 	[doc showMessage:"Done"]
+}
+
+
+
+
+
+
+var getCurrentPage = function() {
+	return [currentDocument currentPage]
+}
+
+
+var addPage = function(oldPage) {
+	var newPage = nil
+	var pageExistsIndex = -1
+	var newPageName = "[NE] " + [oldPage name]
+	
+	var pages = [currentDocument pages]
+	for (var i = 0; i < pages.count(); i++) {
+		if ([[pages objectAtIndex: i] name] == newPageName) {
+			pageExistsIndex = i
+			break
+		}
+	}
+	
+	if (pageExistsIndex != -1) {
+		newPage = [pages objectAtIndex: pageExistsIndex]
+	}
+	else {
+	    newPage = currentDocument.addBlankPage();
+	    newPage.setName(newPageName);
+	}
+    
+	currentDocument.setCurrentPage(oldPage);
+    return newPage;
 }
 
 

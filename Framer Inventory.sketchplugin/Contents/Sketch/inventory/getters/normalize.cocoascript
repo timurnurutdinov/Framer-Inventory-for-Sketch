@@ -1,0 +1,14 @@
+var cleanShadows = function(layer) {
+	var shadowsCollection = [[layer style] shadows]
+	for (var i = 0; i < shadowsCollection.count(); i++) {
+		[shadowsCollection removeStylePartAtIndex: i]
+	}
+}
+
+
+var cleanBorders = function(layer) {
+	var bordersCollection = [[layer style] borders]
+	for (var i = 0; i < bordersCollection.count(); i++) {
+		[bordersCollection removeStylePartAtIndex: i]
+	}
+}

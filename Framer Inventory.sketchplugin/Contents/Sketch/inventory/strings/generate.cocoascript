@@ -8,6 +8,29 @@ function normalizeName(layerName) {
 }
 
 
+var convertHex = function(hex, opacity) {
+    hex = hex.replace('#','');
+    r = parseInt(hex.substring(0,2), 16);
+    g = parseInt(hex.substring(2,4), 16);
+    b = parseInt(hex.substring(4,6), 16);
+
+    result = 'rgba('+r+','+g+','+b+','+opacity+')';
+    return "\"" + result + "\"";
+}
+
+
+var calc = function(value) {
+	return "calc(" + value + "px*\" + " + userRetinaDefaults.myRetina + " + \") "
+}
+
+
+var calcColor = function(value) {
+	log("VALUE: " + value)
+	var deleteLastScobe = value.replace(/\)\"/, '')
+	log(deleteLastScobe)
+	return "\" + " + deleteLastScobe + "))\""
+}
+
 
 
 
@@ -23,11 +46,96 @@ function generateRotation(value) {
 	else return ", rotation: " + value
 }
 
+
 function generateCorner(value) {
 	if (value == 0) { return "" }
+	else if (value == "100%") { return ", cornerRadius: " + value }
 	else return ", cornerRadius: " + value + "*" + userRetinaDefaults.myRetina
 }
 
+
+function generateShadows(values) {
+	return generateFilterShadows(values)
+	
+	// if (values == nil) { return "" }
+// 	else if (values.length == 1) {
+// 		var value = values[0]
+// 		var composedShadow = ""
+// 		if (value[0] != 0) { composedShadow += ", shadowX: " + value[0] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[1] != 0) { composedShadow += ", shadowY: " + value[1] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[2] != 0) { composedShadow += ", shadowBlur: " + value[2] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[3] != 0) { composedShadow += ", shadowSpread: " + value[3] + "*" + userRetinaDefaults.myRetina }
+// 		composedShadow += ", shadowColor: "  + convertHex(value[5], value[4])
+// 		return composedShadow
+// 	}
+// 	else return ""
+}
+
+
+function generateFilterShadows(values) {
+	if (values == nil) { return "" }
+	else if (values.length == 1) {
+		var value = values[0]
+		var color = convertHex(value[5], value[4])
+		
+		var shadowVariable = ", style: {\"-webkit-filter\": \"drop-shadow(" + calc(value[0])
+		shadowVariable += calc(value[1]) + calc(value[2]) + calcColor(color)
+		shadowVariable += "}"
+		// var shadowVariable = "style = {\"-webkit-filter\":\"drop-shadow(" + calc(value[0]) + "\""
+		// shadowVariable += calc(value[1]) + calc(value[2]) + calc(value[3]) + calcColor(color) + "\"}"
+		return shadowVariable
+		
+		// var composedShadow = ""
+// 		if (value[0] != 0) { composedShadow += ", shadowX: " + value[0] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[1] != 0) { composedShadow += ", shadowY: " + value[1] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[2] != 0) { composedShadow += ", shadowBlur: " + value[2] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[3] != 0) { composedShadow += ", shadowSpread: " + value[3] + "*" + userRetinaDefaults.myRetina }
+// 		composedShadow += ", shadowColor: "  + convertHex(value[5], value[4])
+// 		return composedShadow
+	}
+	else return ""
+}
+
+
+function generateBorders(values) {
+	if (values == nil) { return "" }
+	else if (values.length == 1) {
+		var value = values[0]
+		var composedBorder = ""
+		composedBorder += ", borderWidth: " + value[1] + "*" + userRetinaDefaults.myRetina
+		composedBorder += ", borderColor: "  + convertHex(value[4], value[3])
+		return composedBorder
+	}
+	else return ""
+}
+
+
+function generateBackgrounds(values) {
+	if (values == nil) { return "" }
+	else if (values.length == 1) {
+		var value = values[0]
+		var composedBackground = ", backgroundColor: "  + convertHex(value[2], value[1])
+		return composedBackground
+	}
+	else return ""
+}
+
+
+function generatePosition(values) {
+	if (values == nil || values.length < 4) { return "width: 100, height: 100" }
+	else {
+		var width = " width: " + values[0] + "*" + userRetinaDefaults.myRetina
+		var height = ", height: " + values[1] + "*" + userRetinaDefaults.myRetina
+		var x = ", x: " + values[2] + "*" + userRetinaDefaults.myRetina
+		var y = ", y: " + values[3] + "*" + userRetinaDefaults.myRetina
+		return "" + width + height + x + y
+	}
+}
+
+
+function generateImagePath(dirtyPath) {
+	return ", image: \"images/" + removePath(dirtyPath) + ".png\""
+}
 
 
 
@@ -45,9 +153,6 @@ function generateCorner(value) {
 
 
 // SO BAD
-
-
-
 
 var isDefault = function(value, index, type, retina) {
 	if (type == nil) {

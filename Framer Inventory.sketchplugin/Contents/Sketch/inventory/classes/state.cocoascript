@@ -6,6 +6,7 @@
 @import 'inventory/getters/get-shadows.cocoascript'
 @import 'inventory/getters/get-borders.cocoascript'
 @import 'inventory/getters/get-background-color.cocoascript'
+// @import 'inventory/getters/normalize.cocoascript'
 
 @import 'inventory/strings/generate.cocoascript'
 
@@ -16,6 +17,9 @@ function State (layer) {
 	
 	var parentArtboard = findParentArtboard(layer)
 	this.stateName = [parentArtboard name]
+	
+	this.layer = layer
+	// this.normalizedLayer = nil
 	
 	this.position = []
 	this.position = getPosition(layer)
@@ -33,6 +37,11 @@ function State (layer) {
 	
 }
 
+
+
+
+
+
 State.prototype.printState = function() {
 	log(" ")
 	log("NAME: " + this.stateName)
@@ -48,34 +57,64 @@ State.prototype.printState = function() {
 	log("Backgrounds: Ba=" + this.backgrounds.length + "| " + this.backgrounds)
 }
 
-State.prototype.generateFramerLayer = function(layerName) {
-	var outputString = returnLayerName(layerName) + dln()
-	
-	// useful for both shapes and images
-	outputString += generateOpacity(this.opacity)
-	outputString += generateRotation(this.rotation)
-	
-	if (this.isGeneratable) {
-		outputString += generateCorner(this.corner)
-	}
-	
-	log(outputString)
-	return outputString
-}
 
 
+
+
+
+// DELETE?
+//
+// State.prototype.generateFramerLayer = function(layerName) {
+// 	var outputString = returnLayerName(layerName) + dln()
+//
+// 	// useful for both shapes and images
+// 	outputString += generateOpacity(this.opacity)
+// 	outputString += generateRotation(this.rotation)
+//
+//
+// 	if (this.isShadowsExportale()) { outputString += generateShadows(this.shadows) }
+// 	if (this.isBordersExportale()) { outputString += generateBorders(this.borders) }
+//
+// 	if (this.isGeneratable()) {
+// 		outputString += generateCorner(this.corner)
+// 		outputString += generateBackgrounds(this.backgrounds)
+// 	}
+// 	else {
+// 		this.normalizeCopy()
+// 		// this.createNormalizedExportableLayer()
+// 	}
+//
+// 	log(outputString)
+// 	return outputString
+// }
+
+
+
+
+
+
+// State.prototype.normalizeCopy = function() {
+// 	// if (this.isShadowsExportale()) { cleanShadows(this.normalizedLayer) }
+// 	// if (this.isBordersExportale()) { cleanBorders(this.normalizedLayer) }
+//
+// 	this.position = getPosition(this.normalizedLayer)
+// }
+
+
+// State.prototype.createNormalizedExportableLayer = function() {
+// 	var pageName = findParentPage(this.layer)
+// 	var newPage = addPage(pageName)
+// 	[newPage addLayer:this.normalizedLayer]
+// }
 
 
 
 
 
 State.prototype.isGeneratable = function() {
-	if (this.isShadowsExportale, this.isInnersExportale, this.isBordersExportale, this.isBackgroundsExportale) {
-		return true
-	}
+	if (this.isShadowsExportale(), this.isInnersExportale(), this.isBordersExportale(), this.isBackgroundsExportale()) { return true }
 	else return false
 }
-
 
 
 State.prototype.isShadowsExportale = function() {
@@ -83,13 +122,15 @@ State.prototype.isShadowsExportale = function() {
 	else return false
 }
 
+
 State.prototype.isInnersExportale = function() {
 	if (this.inners == nil) { return true}
 	else return false
 }
 
+
 State.prototype.isBordersExportale = function() {
-	if (this.borders == nil) { return true}
+	if (this.borders == nil) { return true }
 	else if (this.borders.length == 1) {
 		if (this.borders[0][0] == 1) {
 			if (this.borders[0][2] == 0) { return true }
@@ -99,6 +140,7 @@ State.prototype.isBordersExportale = function() {
 	}
 	else return false
 }
+
 
 State.prototype.isBackgroundsExportale = function() {
 	if (this.backgrounds == nil) { return true }
