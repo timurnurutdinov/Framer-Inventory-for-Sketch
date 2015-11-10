@@ -8,8 +8,13 @@
 
 
 // returns width, height, x, y
-function getPosition(layer) {
-	var localType = exportableType(layer)
+function getPosition(layer, type) {
+	var localType = 0
+	
+	if (type == nil) { localType = exportableType(layer) }
+	else {
+		localType = type
+	}
 	
 	if (localType == 1) {
 		return getPlaceImage(layer)
@@ -21,7 +26,7 @@ function getPosition(layer) {
 		return getPlaceRect(layer)
 	}
 	else {
-		log("Unknown place getter for this place")
+		log("ERROR: Unsupported type for position")
 		return nil
 	}
 }

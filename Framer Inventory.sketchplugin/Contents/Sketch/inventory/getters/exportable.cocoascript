@@ -14,21 +14,19 @@ function exportableType(layerToAnalyse) {
 	
 	if (type == "MSSliceLayer") { answer = -1 }
 	else if (type == "MSTextLayer") { answer = 4 }
-	else if (type == "MSLayerGroup") { 
-		log("Group type is detected")
+	else if (type == "MSLayerGroup") {
 		answer =  1
 	}
 	else if (type == "MSBitmapLayer") { answer = 1 }
 	else if (type == "MSShapeGroup") {
-		log("Exportable shape?")
 		answer = exportableShape(layerToAnalyse)
 	}
 	else {
-		log("Unrecognised object in exportables")
+		log("ERROR: Unrecognised object type")
 		asnwer = -1
 	}
 	
-	log("answer: " + answer)
+	log("TYPE IS: " + answer)
 	return answer
 }
 
@@ -39,24 +37,21 @@ function exportableShape(layerToAnalyse) {
 	
 	// do not export combined shapes
 	if (magicLayers.count() > 1) { return 5 }
-	log("Using 1 layer!")
 	
 	// if shape is made with one layer
 	var shape = magicLayers.firstObject()
 	
 	// if it's a Rectangle or Oval
 	if(shape && shape.isKindOfClass(MSOvalShape)) {
-		log("It's Oval")
 		if ([[[shape path] points] count] != 4) { return 5 }
 		return 3
 	}
 	else if(shape && shape.isKindOfClass(MSRectangleShape)) {
-		log("It's Rect")
 		if ([[[shape path] points] count] != 4) { return 5 }
 		return 2
 	}
 	else {
-		log("STRANGE! NO RECT OR OVAL")
+		log("ERROR STRANGE! SEEMS LIKE SHAPE")
 	}
 	
 	return 5
@@ -74,25 +69,6 @@ var clearName = function(longName) {
 	var clearedName = removePath(longName).trim().split(' ').join('_')
 	return clearedName.toLowerCase()
 }
-
-
-
-
-// COLORS
-//
-// var localBlackColor = function() {
-// 	return "#000000"
-// }
-//
-// var convertHex = function(hex, opacity) {
-//     hex = hex.replace('#','');
-//     r = parseInt(hex.substring(0,2), 16);
-//     g = parseInt(hex.substring(2,4), 16);
-//     b = parseInt(hex.substring(4,6), 16);
-//
-//     result = 'rgba('+r+','+g+','+b+','+opacity+')';
-//     return result;
-// }
 
 
 

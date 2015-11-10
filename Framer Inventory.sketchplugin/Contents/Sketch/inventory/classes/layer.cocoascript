@@ -52,47 +52,88 @@ Layer.prototype.generateFramerLayer = function() {
 	var outputPosition = returnLayerName(this.layerName)
 	
 	var currentState = this.states[0]
+	var currentType = currentState.type
 	
 	// useful for both shapes and images
 	outputString += generateOpacity(currentState.opacity)
-	// outputString += generateRotation(currentState.rotation)
 	
-	
-	if (currentState.isShadowsExportale()) { outputString += generateShadows(currentState.shadows) }
-	if (currentState.isBordersExportale()) { outputString += generateBorders(currentState.borders) }
-	
-	if (currentState.isGeneratable()) {
-		outputString += generateCorner(currentState.corner)
-		outputString += generateBackgrounds(currentState.backgrounds)
-		outputString += generateRotation(currentState.rotation)
+	if (currentType == 2 || currentType == 3) {
+		if (currentState.isGeneratable()) {
+			log("SHAPE [EXPORTABLE]")
+			outputString += generateCorner(currentState.corner)
+			outputString += generateBackgrounds(currentState.backgrounds)
+			outputString += generateRotation(currentState.rotation)
+			outputString += generateShadows(currentState.shadows)
 		
-		outputPosition += generatePosition(currentState.position)
+			outputPosition += generatePosition(currentState.position)
+		}
+		else {
+			log("SHAPE [IMAGE]")
+
+			var normalizedLayer = this.normalizeCopyForState(currentState)
+			var temp = getPosition(normalizedLayer)
+			
+			outputPosition += generatePosition(temp)
+			outputPosition += generateImagePath(this.layerName)
+		}
+	}
+	else if (currentType == 1) {
+		if (currentState.isShadowsExportale()) {
+			outputString += generateFilterShadows(currentState.shadows)
+			
+			var normalizedLayer = this.normalizeCopyForState(currentState)
+			cleanShadows(normalizedLayer)
+			var temp = getPosition(normalizedLayer)
+			
+			outputPosition += generatePosition(temp)
+			outputPosition += generateImagePath(this.layerName)
+		}
+		else {
+			var normalizedLayer = this.normalizeCopyForState(currentState)
+			var temp = getPosition(normalizedLayer)
+			
+			outputPosition += generatePosition(temp)
+			outputPosition += generateImagePath(this.layerName)
+		}
+	}
+	else if (currentType == 5) {
+			var normalizedLayer = this.normalizeCopyForState(currentState)
+			var temp = getPosition(normalizedLayer)
+			
+			outputPosition += generatePosition(temp)
+			outputPosition += generateImagePath(this.layerName)
 	}
 	else {
-		var normalizedLayer = this.normalizeCopyForState(currentState)
-		
-		var temp = getPosition(normalizedLayer)
-		log("!!!!!!!!!!!!!!!!!!!!!" + temp)
-		outputPosition += generatePosition(temp)
-		outputPosition += generateImagePath(this.layerName)
+		log("ERROR. CANT PRINT THIS TYPE.")
 	}
 	
 	
-	log("" + outputPosition + outputString)
 	
 	return "" + outputPosition + outputString + dln()
 }
 
 
+
+
 Layer.prototype.normalizeCopyForState = function(state) {
+	var size_data = {
+	    "format": "png",
+	    "scale": 2,
+	    "suffix": ""
+	}
+	 
 	var baseLayer = state.layer
 	var copiedLayer = [baseLayer duplicate]
 	[copiedLayer removeFromParent]
 
 	var newPage = addPage(getCurrentPage())
 	[newPage addLayers: [copiedLayer]]
-	if (state.isShadowsExportale()) { cleanShadows(copiedLayer) }
-	if (state.isBordersExportale()) { cleanBorders(copiedLayer) }
+	
+	var size = [[copiedLayer exportOptions] addExportSize]
+ 	[size setFormat:size_data.format]
+    [size setScale:size_data.scale]
+    [size setName:size_data.suffix]
+
 	return copiedLayer
 
 }

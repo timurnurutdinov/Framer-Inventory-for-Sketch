@@ -10,6 +10,5 @@ var getBorders = function(layer) {
 			enabledBorders.push(border)
 		}
 	}
-	
 	return enabledBorders
 }

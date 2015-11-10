@@ -6,7 +6,6 @@
 @import 'inventory/getters/get-shadows.cocoascript'
 @import 'inventory/getters/get-borders.cocoascript'
 @import 'inventory/getters/get-background-color.cocoascript'
-// @import 'inventory/getters/normalize.cocoascript'
 
 @import 'inventory/strings/generate.cocoascript'
 
@@ -19,10 +18,10 @@ function State (layer) {
 	this.stateName = [parentArtboard name]
 	
 	this.layer = layer
-	// this.normalizedLayer = nil
+	this.type = exportableType(layer)
 	
 	this.position = []
-	this.position = getPosition(layer)
+	this.position = getPosition(layer, this.type)
 
 	this.opacity = getOpacity(layer)
 	this.corner = getCornerRadius(layer)
@@ -112,25 +111,26 @@ State.prototype.printState = function() {
 
 
 State.prototype.isGeneratable = function() {
-	if (this.isShadowsExportale(), this.isInnersExportale(), this.isBordersExportale(), this.isBackgroundsExportale()) { return true }
+	if (this.isShadowsExportale() && this.isInnersExportale() && this.isBordersExportale() && this.isBackgroundsExportale()) { return true }
 	else return false
 }
 
 
 State.prototype.isShadowsExportale = function() {
-	if (this.shadows == nil || this.shadows.length == 1) { return true }
+	if (this.shadows == nil || this.shadows == '' || this.shadows.length == 1) { return true }
 	else return false
 }
 
 
 State.prototype.isInnersExportale = function() {
-	if (this.inners == nil) { return true}
+	log("BITCH: " + this.inners)
+	if (this.inners == nil || this.inners == '') { return true }
 	else return false
 }
 
 
 State.prototype.isBordersExportale = function() {
-	if (this.borders == nil) { return true }
+	if (this.borders == nil || this.borders == '') { return true }
 	else if (this.borders.length == 1) {
 		if (this.borders[0][0] == 1) {
 			if (this.borders[0][2] == 0) { return true }
@@ -143,7 +143,7 @@ State.prototype.isBordersExportale = function() {
 
 
 State.prototype.isBackgroundsExportale = function() {
-	if (this.backgrounds == nil) { return true }
+	if (this.backgrounds == nil || this.backgrounds == '') { return true }
 	else if (this.backgrounds.length == 1) {
 		if (this.backgrounds[0][0] == 0) {
 			return true
