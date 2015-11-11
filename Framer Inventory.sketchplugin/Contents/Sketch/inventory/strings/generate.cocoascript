@@ -51,7 +51,7 @@ function generateRotation(value) {
 
 function generateCorner(value) {
 	if (value == 0) { return "" }
-	else if (value == "100%") { return ", cornerRadius: " + value }
+	else if (value == "100%") { return ", cornerRadius: \"" + value + "\"" }
 	else return ", cornerRadius: " + value + "*" + userRetinaDefaults.myRetina
 }
 
@@ -125,96 +125,3 @@ function generatePosition(values) {
 function generateImagePath(dirtyPath) {
 	return ", image: \"images/" + removePath(dirtyPath) + ".png\""
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// SO BAD
-//
-// var isDefault = function(value, index, type, retina) {
-// 	if (type == nil) {
-// 		log("isDefault type is unknown")
-// 		return ""
-// 	}
-//
-// 	if (type == 1) {
-// 		return isDefaultForImage(value, index, retina)
-// 	}
-// 	else if (type == 2) {
-// 		return isDefaultForRectangle(value, index, retina)
-// 	}
-// 	else if (type == 3) {
-// 		return isDefaultForRectangle(value, index, retina)
-// 	}
-// 	else if (type == 4) {
-// 		return isDefaultForImage(value, index, retina)
-// 	}
-// 	else {
-// 		log("Type is numeric but unknown")
-// 		return ""
-// 	}
-//
-// }
-//
-//
-//
-//
-//
-//
-// var isDefaultForAll = function(value, index, retina) {
-//
-// 	if (index == 0) { return " width: " + value + "*" + retina}
-// 	else if (index == 1) { return ", height: " + value + "*" + retina}
-// 	else if (index == 2) { return ", x: " + value + "*" + retina}
-// 	else if (index == 3) { return ", y: " + value + "*" + retina}
-// 	else if (index == 4 && value != 1.0) { return ", opacity: " + value}
-// 	else if (index == 5 && value != 0) { return ", rotation: " + value}
-// 	return ""
-// }
-//
-// var isDefaultForRectangle = function(value, index, retina) {
-// 	if (index >= 0 && index < 6) {
-// 		return isDefaultForAll(value, index, retina)
-// 	}
-//
-// 	else if (index == 6 && value != 0) { return ", shadowX: " + value + "*" + retina}
-// 	else if (index == 7 && value != 0) { return ", shadowY: " + value + "*" + retina}
-// 	else if (index == 8 && value != 0) { return ", shadowBlur: " + value + "*" + retina}
-// 	else if (index == 9 && value != 0) { return ", shadowSpread: " + value + "*" + retina}
-// 	else if (index == 10 && value != convertHex(localBlackColor(), 0)) { return ", shadowColor: " + colorValue(value)}
-// 	else if (index == 11 && value != 0) { return ", borderWidth: " + value + "*" + retina}
-// 	else if (index == 12 && value != convertHex(localBlackColor(), 0)) { return ", borderColor: " + colorValue(value)}
-// 	else if (index == 13 && value != 0) { return ", cornerRadius: " + value + "*" + retina}
-// 	else if (index == 14 && value != convertHex(localBlackColor(), 0)) { return ", backgroundColor: " + colorValue(value)}
-//
-// 	return ""
-// }
-//
-//
-// var isDefaultForImage = function(value, index, retina) {
-// 	if (index >= 0 && index < 6) {
-// 		return isDefaultForAll(value, index, retina)
-// 	}
-// 	else if (index == 6) { return ", image: \"images/" + value + ".png\""}
-//
-// 	return ""
-// }
-//
-//
-//
-//
-// var colorValue = function(value) {
-// 	return "\"" + value + "\""
-// }

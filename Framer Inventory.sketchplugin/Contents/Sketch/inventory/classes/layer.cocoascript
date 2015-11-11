@@ -125,9 +125,12 @@ Layer.prototype.normalizeCopyForState = function(state) {
 	var baseLayer = state.layer
 	var copiedLayer = [baseLayer duplicate]
 	[copiedLayer removeFromParent]
-
+	
+	
 	var newPage = addPage(getCurrentPage())
+	deleteLayerOnPage(copiedLayer, newPage)
 	[newPage addLayers: [copiedLayer]]
+
 	
 	var size = [[copiedLayer exportOptions] addExportSize]
  	[size setFormat:size_data.format]

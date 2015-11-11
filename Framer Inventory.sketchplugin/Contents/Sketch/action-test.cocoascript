@@ -1,7 +1,9 @@
 // @import 'inventory/layer-compilation.cocoascript'
 
 @import 'inventory/classes/layer.cocoascript'
+
 @import 'inventory/libs/pluginDefaults.js'
+@import 'inventory/libs/search.js'
 
 var presets = {
     myRetina: "retina",
@@ -84,4 +86,16 @@ var addPage = function(oldPage) {
 }
 
 
+var deleteLayerOnPage = function(layer, page) {
+	var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
+	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
+	log("Found " + deleteLayers.count() + "layers")
 	
+	for (var i = 0; i < deleteLayers.count(); i++) {
+		if ([deleteLayers objectAtIndex: i] != nil) {
+			[[deleteLayers objectAtIndex: i] removeFromParent]
+		}
+	}
+
+	return
+}
