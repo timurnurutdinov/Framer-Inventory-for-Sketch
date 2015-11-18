@@ -101,3 +101,17 @@ function findParentPage(layer) {
 	}
 	return [parentArtboard parentGroup]
 }
+
+
+
+function compareArrays(left, right) {
+	var sizeLeft = left.length
+	var sizeRight = right.length
+	if (sizeLeft != sizeRight) { return false }
+	
+	for (var i = 0; i < size; i++) {
+		if (left[i] != right[i]) { return false }
+	}
+	
+	return true
+}

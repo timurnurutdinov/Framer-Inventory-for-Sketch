@@ -9,18 +9,25 @@
   "compatibleVersion": 3.3,
   "commands" : [
     {
+      "script" : "action-test.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Test Replicate",
+      "identifier" : "action-test"
+    },
+    {
+      "script" : "action-test-2.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Test States",
+      "identifier" : "action-test-2"
+    },
+    {
       "script" : "action-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "2. Replicate Selected",
       "identifier" : "action-replicate-layers"
-    },
-    {
-      "script" : "action-test.cocoascript",
-      "handler" : "onRun",
-      "shortcut" : "",
-      "name" : "0. Test",
-      "identifier" : "action-test"
     },
     {
       "script" : "action-simulate-keynote.cocoascript",
@@ -49,6 +56,7 @@
       "items": [
 		  "action-replicate-layers",
 		  "action-test",
+		  "action-test-2",
 		  "action-simulate-keynote",
 		  {
 		         "title": "3. Utils",

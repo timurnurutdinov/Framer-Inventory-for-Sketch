@@ -33,20 +33,21 @@ Layer.prototype.addState = function(layer) {
 
 
 
+
+
+
+
+
 // PRINT
 
 Layer.prototype.printLayer = function() {
-	if (this.states.length == 1) {
-		return this.generateFramerLayer()
-	}
-	
-	for (var i = 0; i < this.states.length; i++) {
-		this.states[i].printState()
-	}
-	return "temporary nil"
+	if (this.states.length == 1) { return this.generateFramerLayer() }
+	return this.generateFramerStates()
 }
 
 
+
+// print just one layer
 Layer.prototype.generateFramerLayer = function() {
 	var outputString = ""
 	var outputPosition = returnLayerName(this.layerName)
@@ -104,7 +105,7 @@ Layer.prototype.generateFramerLayer = function() {
 			outputPosition += generateImagePath(this.layerName)
 	}
 	else {
-		log("ERROR. CANT PRINT THIS TYPE.")
+		log("ERROR. CANT PRINT LAYER OF THIS TYPE.")
 	}
 	
 	
@@ -114,7 +115,112 @@ Layer.prototype.generateFramerLayer = function() {
 
 
 
+Layer.prototype.generateFramerStates = function() {
+	var outputString = ""
+	var outputPosition = returnLayerName(this.layerName)
+	
+	// analyse resulting type
+	var currentState = nil
+	var currentType = this.states[0].type
+	
+	var areAllShadowsGeneratable = this.states.length
+	var areAllInnersGeneratable = this.states.length
+	var areAllBordersGeneratable = this.states.length
+	var areAllBackgroundsGeneratable = this.states.length
+	
+	
+	for (var i = 0; i < this.states.length; i++) {
+		currentState = this.states[i]
+		
+		if (currentState.type != currentType) {
+			log("WARNING! CHECK " + this.layerName + "LAYER")
+			return ""
+		}
+		
+		if (currentState.isShadowsExportale()) {
+			areAllShadowsGeneratable--
+		}
+		if (currentState.isInnersExportale()) {
+			areAllInnersGeneratable--
+		}
+		if (currentState.isBordersExportale()) {
+			areAllBordersGeneratable--
+		}
+		if (currentState.isBackgroundsExportale()) {
+			areAllBackgroundsGeneratable--
+		}
+		
+	}
+	
+	var areAllGeneratable = (areAllShadowsGeneratable == 0 && areAllInnersGeneratable == 0 && areAllBordersGeneratable == 0 && areAllBackgroundsGeneratable == 0) ? 0 : -1
+	
+	log("all: " + areAllShadowsGeneratable + " " + areAllInnersGeneratable + " " + areAllBordersGeneratable + " " + areAllBackgroundsGeneratable + " " + areAllGeneratable)
+	
+	
+	
+	
+	// now we can understand exportable scenarious 
+	
+	var currentState = nil
+	for (var i = 0; i < this.states.length; i++) {
+		currentState = this.states[i]
 
+		if (currentType == 2 || currentType == 3) {
+			if (areAllGeneratable == 0) {
+				outputString += generateCorner(currentState.corner)
+				outputString += generateBackgrounds(currentState.backgrounds)
+				outputString += generateRotation(currentState.rotation)
+				outputString += generateShadows(currentState.shadows)
+		
+				outputPosition += generatePosition(currentState.position)
+			}
+			else {
+
+				var normalizedLayer = this.normalizeCopyForState(currentState)
+				var temp = getPosition(normalizedLayer)
+			
+				outputPosition += generatePosition(temp)
+				outputPosition += generateImagePath(this.layerName)
+			}
+		}
+		else if (currentType == 1) {
+		}
+		else if (currentType == 5) {
+		}
+		else {
+			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
+		}
+
+	}
+	
+	return "" + outputPosition + outputString + dln()
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// return exportable copy of current layer
 Layer.prototype.normalizeCopyForState = function(state) {
 	var size_data = {
 	    "format": "png",
