@@ -64,16 +64,18 @@ State.prototype.printState = function() {
 
 
 State.prototype.isEqualToState = function(state) {
+	if (state == nil) { return false }
+	
 	if (this.type != state.type) { return false }
 	if (this.opacity != state.opacity) { return false }
 	if (this.corner != state.corner) { return false }
 	if (this.rotation != state.rotation) { return false }
 	
 	if (!compareArrays(this.position, state.position)) { return false }
-	if (!compareArrays(this.shadows, state.shadows)) { return false }
-	if (!compareArrays(this.inners, state.inners)) { return false }
-	if (!compareArrays(this.borders, state.borders)) { return false }
-	if (!compareArrays(this.backgrounds, state.backgrounds)) { return false }
+	if (!compareMatrices(this.shadows, state.shadows)) { return false }
+	if (!compareMatrices(this.inners, state.inners)) { return false }
+	if (!compareMatrices(this.borders, state.borders)) { return false }
+	if (!compareMatrices(this.backgrounds, state.backgrounds)) { return false }
 	
 	return true
 }

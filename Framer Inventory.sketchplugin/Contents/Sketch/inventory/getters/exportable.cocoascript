@@ -109,12 +109,36 @@ function findParentPage(layer) {
 // common
 
 function compareArrays(left, right) {
+	if (left == nil && right == nil) { return true }
+	else if (left == nil || right == nil) { return false }
+	
 	var sizeLeft = left.length
 	var sizeRight = right.length
 	if (sizeLeft != sizeRight) { return false }
 	
-	for (var i = 0; i < size; i++) {
-		if (left[i] != right[i]) { return false }
+	for (var i = 0; i < sizeLeft; i++) {
+		log(left[i] + " " + right[i])
+		if (left[i] != right[i]) { 
+			return false
+		}
+	}
+
+	return true
+}
+
+
+function compareMatrices(left, right) {
+	if (left == nil && right == nil) { return true }
+	else if (left == nil || right == nil) { return false }
+	
+	var sizeLeft = left.length
+	var sizeRight = right.length
+	if (sizeLeft != sizeRight) { return false }
+	
+	for (var i = 0; i < sizeLeft; i++) {
+		if (!compareArrays(left[i], right[i])) {
+			return false
+		}
 	}
 	
 	return true

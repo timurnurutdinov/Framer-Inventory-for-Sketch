@@ -141,9 +141,15 @@ Layer.prototype.generateFramerStates = function() {
 	
 	
 	var currentState = nil
+	var prevState = nil
 	
 	for (var i = 0; i < this.states.length; i++) {
 		currentState = this.states[i]
+		if (currentState.isEqualToState(prevState)) {
+			log("SAME STATES")
+			break
+		}
+		
 		outputString = ""
 		outputPositionString = ""
 
@@ -172,6 +178,8 @@ Layer.prototype.generateFramerStates = function() {
 		else {
 			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
 		}
+		
+		prevState = currentState
 		
 		var generatedState = generateState(currentState.stateName, outputPositionString + outputString)
 		generatedStates.push(generatedState)

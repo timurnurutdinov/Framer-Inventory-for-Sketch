@@ -45,11 +45,11 @@ var onRun = function(context) {
 				}
 			}
 			
-			log(layer.states.length)
-			for (var j = 0; j < layer.states.length; j++) {
-				log("print:")
-				layer.states[j].printState()
-			}
+			// log(layer.states.length)
+// 			for (var j = 0; j < layer.states.length; j++) {
+// 				log("print:")
+// 				layer.states[j].printState()
+// 			}
 			
 			layers.push(layer)
 		}
