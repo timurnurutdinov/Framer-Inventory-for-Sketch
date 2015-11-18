@@ -34,6 +34,14 @@ function State (layer) {
 
 	this.backgrounds = getBackgroundColors(layer)
 	
+	
+	// exportable conditions
+	this.shadowsExportable = this.isShadowsExportale()
+	this.innersExportable = this.isInnersExportale()
+	this.bordersExportable = this.isBordersExportale()
+	this.backgroundsExportable = this.isBackgroundsExportale()
+	this.generatable = this.isGeneratable()
+	
 }
 
 
@@ -75,9 +83,8 @@ State.prototype.isEqualToState = function(state) {
 
 
 
-
 State.prototype.isGeneratable = function() {
-	if (this.isShadowsExportale() && this.isInnersExportale() && this.isBordersExportale() && this.isBackgroundsExportale()) { return true }
+	if (this.shadowsExportable && this.innersExportable && this.bordersExportable && this.backgroundsExportable) { return true }
 	else return false
 }
 

@@ -104,6 +104,10 @@ function findParentPage(layer) {
 
 
 
+
+
+// common
+
 function compareArrays(left, right) {
 	var sizeLeft = left.length
 	var sizeRight = right.length

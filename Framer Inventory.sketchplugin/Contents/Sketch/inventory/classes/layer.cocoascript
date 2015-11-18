@@ -9,17 +9,24 @@ function Layer (layerName, currentPage) {
 	// name of layer
 	this.layerName = layerName;
 	this.states = [];
+	
+	
+	
+	// exportable conditions
+	this.areAllShadowsExportable = true
+	this.areAllInnersExportable = true
+	this.areAllBordersExportable = true
+	this.areAllBackgroundsExportable = true
 
 }
 
 
 
-Layer.prototype.getName = function() {
-    return this.layerName;
-}
+Layer.prototype.getName = function() { return this.layerName }
 
 var ln = function() { return "\n" }
 var dln = function() { return ln() + ln() }
+var tln = function() { return "\t" }
 
 
 
@@ -27,6 +34,11 @@ var dln = function() { return ln() + ln() }
 Layer.prototype.addState = function(layer) {
 	var state = new State(layer)
 	this.states.push(state)
+	
+	this.areAllShadowsExportable = this.areAllShadowsExportable && state.shadowsExportale
+	this.areAllInnersExportable = this.areAllInnersExportable && state.innersExportale
+	this.areAllBordersExportable = this.areAllBordersExportable && state.bordersExportable
+	this.areAllBackgroundsExportable = this.areAllBackgroundsExportable && state.backgroundsExportable
 }
 
 
@@ -50,7 +62,7 @@ Layer.prototype.printLayer = function() {
 // print just one layer
 Layer.prototype.generateFramerLayer = function() {
 	var outputString = ""
-	var outputPosition = returnLayerName(this.layerName)
+	var outputPositionString = returnLayerName(this.layerName)
 	
 	var currentState = this.states[0]
 	var currentType = currentState.type
@@ -59,14 +71,14 @@ Layer.prototype.generateFramerLayer = function() {
 	outputString += generateOpacity(currentState.opacity)
 	
 	if (currentType == 2 || currentType == 3) {
-		if (currentState.isGeneratable()) {
+		if (currentState.generatable) {
 			log("SHAPE [EXPORTABLE]")
 			outputString += generateCorner(currentState.corner)
 			outputString += generateBackgrounds(currentState.backgrounds)
 			outputString += generateRotation(currentState.rotation)
 			outputString += generateShadows(currentState.shadows)
 		
-			outputPosition += generatePosition(currentState.position)
+			outputPositionString += generatePosition(currentState.position)
 		}
 		else {
 			log("SHAPE [IMAGE]")
@@ -74,35 +86,35 @@ Layer.prototype.generateFramerLayer = function() {
 			var normalizedLayer = this.normalizeCopyForState(currentState)
 			var temp = getPosition(normalizedLayer)
 			
-			outputPosition += generatePosition(temp)
-			outputPosition += generateImagePath(this.layerName)
+			outputPositionString += generatePosition(temp)
+			outputPositionString += generateImagePath(this.layerName)
 		}
 	}
 	else if (currentType == 1) {
-		if (currentState.isShadowsExportale()) {
+		if (currentState.shadowsExportable)) {
 			outputString += generateFilterShadows(currentState.shadows)
 			
 			var normalizedLayer = this.normalizeCopyForState(currentState)
 			cleanShadows(normalizedLayer)
 			var temp = getPosition(normalizedLayer)
 			
-			outputPosition += generatePosition(temp)
-			outputPosition += generateImagePath(this.layerName)
+			outputPositionString += generatePosition(temp)
+			outputPositionString += generateImagePath(this.layerName)
 		}
 		else {
 			var normalizedLayer = this.normalizeCopyForState(currentState)
 			var temp = getPosition(normalizedLayer)
 			
-			outputPosition += generatePosition(temp)
-			outputPosition += generateImagePath(this.layerName)
+			outputPositionString += generatePosition(temp)
+			outputPositionString += generateImagePath(this.layerName)
 		}
 	}
 	else if (currentType == 5) {
 			var normalizedLayer = this.normalizeCopyForState(currentState)
 			var temp = getPosition(normalizedLayer)
 			
-			outputPosition += generatePosition(temp)
-			outputPosition += generateImagePath(this.layerName)
+			outputPositionString += generatePosition(temp)
+			outputPositionString += generateImagePath(this.layerName)
 	}
 	else {
 		log("ERROR. CANT PRINT LAYER OF THIS TYPE.")
@@ -110,60 +122,30 @@ Layer.prototype.generateFramerLayer = function() {
 	
 	
 	
-	return "" + outputPosition + outputString + dln()
+	return "" + outputPositionString + outputString + dln()
 }
 
 
 
 Layer.prototype.generateFramerStates = function() {
-	var outputString = ""
-	var outputPosition = returnLayerName(this.layerName)
 	
-	// analyse resulting type
-	var currentState = nil
 	var currentType = this.states[0].type
+	var areAllGeneratable = this.areAllGeneratable()
+	var generatedStates = []
 	
-	var areAllShadowsGeneratable = this.states.length
-	var areAllInnersGeneratable = this.states.length
-	var areAllBordersGeneratable = this.states.length
-	var areAllBackgroundsGeneratable = this.states.length
+	// store values
+	var outputNameString = returnLayerName(this.layerName)
+	var outputPositionString = ""
 	
+	var outputStateString = ""
 	
-	for (var i = 0; i < this.states.length; i++) {
-		currentState = this.states[i]
-		
-		if (currentState.type != currentType) {
-			log("WARNING! CHECK " + this.layerName + "LAYER")
-			return ""
-		}
-		
-		if (currentState.isShadowsExportale()) {
-			areAllShadowsGeneratable--
-		}
-		if (currentState.isInnersExportale()) {
-			areAllInnersGeneratable--
-		}
-		if (currentState.isBordersExportale()) {
-			areAllBordersGeneratable--
-		}
-		if (currentState.isBackgroundsExportale()) {
-			areAllBackgroundsGeneratable--
-		}
-		
-	}
-	
-	var areAllGeneratable = (areAllShadowsGeneratable == 0 && areAllInnersGeneratable == 0 && areAllBordersGeneratable == 0 && areAllBackgroundsGeneratable == 0) ? 0 : -1
-	
-	log("all: " + areAllShadowsGeneratable + " " + areAllInnersGeneratable + " " + areAllBordersGeneratable + " " + areAllBackgroundsGeneratable + " " + areAllGeneratable)
-	
-	
-	
-	
-	// now we can understand exportable scenarious 
 	
 	var currentState = nil
+	
 	for (var i = 0; i < this.states.length; i++) {
 		currentState = this.states[i]
+		outputString = ""
+		outputPositionString = ""
 
 		if (currentType == 2 || currentType == 3) {
 			if (areAllGeneratable == 0) {
@@ -172,15 +154,15 @@ Layer.prototype.generateFramerStates = function() {
 				outputString += generateRotation(currentState.rotation)
 				outputString += generateShadows(currentState.shadows)
 		
-				outputPosition += generatePosition(currentState.position)
+				outputPositionString += generatePosition(currentState.position)
 			}
 			else {
 
 				var normalizedLayer = this.normalizeCopyForState(currentState)
 				var temp = getPosition(normalizedLayer)
 			
-				outputPosition += generatePosition(temp)
-				outputPosition += generateImagePath(this.layerName)
+				outputPositionString += generatePosition(temp)
+				outputPositionString += generateImagePath(this.layerName)
 			}
 		}
 		else if (currentType == 1) {
@@ -190,10 +172,13 @@ Layer.prototype.generateFramerStates = function() {
 		else {
 			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
 		}
+		
+		var generatedState = generateState(currentState.stateName, outputPositionString + outputString)
+		generatedStates.push(generatedState)
 
 	}
 	
-	return "" + outputPosition + outputString + dln()
+	return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
 
 }
 
@@ -214,7 +199,13 @@ Layer.prototype.generateFramerStates = function() {
 
 
 
-
+Layer.prototype.areAllGeneratable = function(state) {
+	var areAllGeneratable = (this.areAllShadowsExportable || this.areAllInnersExportable || this.areAllBordersExportable || this.areAllBackgroundsExportable) ? 0 : -1
+	
+	// log("all: " + this.areAllShadowsExportable + " " + this.areAllInnersExportable + " " + this.areAllBordersExportable + " " + this.areAllBackgroundsExportable + " " + this.areAllGeneratable)
+	
+	return areAllGeneratable
+}
 
 
 
