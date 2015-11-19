@@ -53,7 +53,7 @@ Layer.prototype.addState = function(layer) {
 // PRINT
 
 Layer.prototype.printLayer = function() {
-	if (this.states.length == 1) { return this.generateFramerLayer() }
+	// if (this.states.length == 1) { return this.generateFramerLayer() }
 	return this.generateFramerStates()
 }
 
@@ -77,6 +77,7 @@ Layer.prototype.generateFramerLayer = function() {
 			outputString += generateBackgrounds(currentState.backgrounds)
 			outputString += generateRotation(currentState.rotation)
 			outputString += generateShadows(currentState.shadows)
+			outputString += generateBorders(currentState.borders)
 		
 			outputPositionString += generatePosition(currentState.position)
 		}
@@ -131,12 +132,14 @@ Layer.prototype.generateFramerStates = function() {
 	
 	var currentType = this.states[0].type
 	var areAllGeneratable = this.areAllGeneratable()
+	
 	var generatedStates = []
+	var statesDescriptions = []
+	var statesNames = []
 	
 	// store values
 	var outputNameString = returnLayerName(this.layerName)
 	var outputPositionString = ""
-	
 	var outputStateString = ""
 	
 	
@@ -159,6 +162,7 @@ Layer.prototype.generateFramerStates = function() {
 				outputString += generateBackgrounds(currentState.backgrounds)
 				outputString += generateRotation(currentState.rotation)
 				outputString += generateShadows(currentState.shadows)
+				outputString += generateBorders(currentState.borders)
 		
 				outputPositionString += generatePosition(currentState.position)
 			}
@@ -181,9 +185,22 @@ Layer.prototype.generateFramerStates = function() {
 		
 		prevState = currentState
 		
-		var generatedState = generateState(currentState.stateName, outputPositionString + outputString)
-		generatedStates.push(generatedState)
+		statesDescriptions.push(outputPositionString + outputString)
+		statesNames.push(currentState.stateName)
+		
+		// var generatedState = generateState(currentState.stateName, outputPositionString + outputString)
+		// generatedStates.push(generatedState)
 
+	}
+	
+	if (statesDescriptions.length > 0) {
+		outputNameString += statesDescriptions[0]
+	}
+	
+	if (statesDescriptions.length > 1) {
+		for (var i = 1; i < statesDescriptions.length; i++) {
+			generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
+		}
 	}
 	
 	return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
