@@ -35,6 +35,16 @@ function State (layer) {
 	this.backgrounds = getBackgroundColors(layer)
 	
 	
+	// active properties
+	this.cornerActive = (this.corner == nil || this.corner == 0) ? false : true
+	this.rotationActive = (this.rotation == 0) ? false : true
+	
+	this.shadowsActive = (this.shadows == nil || this.shadows == '') ? false : true
+	this.innersActive = (this.inners == nil || this.inners == '') ? false : true
+	this.bordersActive = (this.borders == nil || this.borders == '') ? false : true
+	this.backgroundsActive = (this.backgrounds == nil || this.backgrounds == '') ? false : true
+	
+	
 	// exportable conditions
 	this.shadowsExportable = this.isShadowsExportale()
 	this.innersExportable = this.isInnersExportale()
@@ -44,22 +54,6 @@ function State (layer) {
 	
 }
 
-
-
-State.prototype.printState = function() {
-	log(" ")
-	log("NAME: " + this.stateName)
-	
-	log("Position " + this.position)
-	log("Opacity: " + this.opacity)
-	log("Corner: " + this.corner)
-	log("Rotation: " + this.rotation)
-	
-	log("Shadows: S=" + this.shadows.length + "| " + this.shadows)
-	log("Inners: I=" + this.inners.length + "| " + this.inners)
-	log("Borders: Bo=" + this.borders.length + "| " + this.borders)
-	log("Backgrounds: Ba=" + this.backgrounds.length + "| " + this.backgrounds)
-}
 
 
 
@@ -125,4 +119,26 @@ State.prototype.isBackgroundsExportale = function() {
 		else return false
 	}
 	else return false
+}
+
+
+
+
+
+
+
+
+// a little helper
+State.prototype.printState = function() {
+	log("NAME: " + this.stateName)
+	
+	log("Position " + this.position)
+	log("Opacity: " + this.opacity)
+	log("Corner: " + this.corner)
+	log("Rotation: " + this.rotation)
+	
+	log("Shadows: S=" + this.shadows.length + "| " + this.shadows)
+	log("Inners: I=" + this.inners.length + "| " + this.inners)
+	log("Borders: Bo=" + this.borders.length + "| " + this.borders)
+	log("Backgrounds: Ba=" + this.backgrounds.length + "| " + this.backgrounds)
 }

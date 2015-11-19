@@ -12,6 +12,16 @@ function Layer (layerName, currentPage) {
 	
 	
 	
+	// active conditions
+	this.areAllCornersActive = false
+	this.areAllRotationsActive = false
+	
+	this.areAllShadowsActive = false
+	this.areAllInnersActive = false
+	this.areAllBordersActive = false
+	this.areAllBackgroundsActive = false
+	
+	
 	// exportable conditions
 	this.areAllShadowsExportable = true
 	this.areAllInnersExportable = true
@@ -33,16 +43,28 @@ var tln = function() { return "\t" }
 
 Layer.prototype.addState = function(layer) {
 	var state = new State(layer)
+	this.updateConditions(state)
 	this.states.push(state)
+}
+
+
+Layer.prototype.updateConditions = function(state) {
+	// active
+	this.areAllCornersActive = this.areAllCornersActive || state.cornerActive
+	this.areAllRotationsActive = this.areAllRotationsActive || state.rotationActive
 	
+	this.areAllShadowsActive = this.areAllShadowsActive || state.shadowsActive
+	this.areAllInnersActive = this.areAllInnersActive || state.innersActive
+	this.areAllBordersActive = this.areAllBordersActive || state.bordersActive
+	this.areAllBackgroundsActive = this.areAllBackgroundsActive || state.backgroundsActive
+	
+	
+	// exportable
 	this.areAllShadowsExportable = this.areAllShadowsExportable && state.shadowsExportale
 	this.areAllInnersExportable = this.areAllInnersExportable && state.innersExportale
 	this.areAllBordersExportable = this.areAllBordersExportable && state.bordersExportable
 	this.areAllBackgroundsExportable = this.areAllBackgroundsExportable && state.backgroundsExportable
 }
-
-
-
 
 
 
