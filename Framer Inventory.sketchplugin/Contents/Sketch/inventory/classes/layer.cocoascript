@@ -20,7 +20,7 @@ function Layer (layerName, currentPage) {
 	this.areAllShadowsActive = false
 	this.areAllInnersActive = false
 	this.areAllBordersActive = false
-	this.areAllBackgroundsActive = false
+	this.areAllBackgroundsActive = true
 	
 	
 	// exportable conditions
@@ -179,10 +179,11 @@ Layer.prototype.generateFramerStates = function() {
 		
 		outputString = ""
 		outputPositionString = ""
+		outputOpacityString = ""
 		
 		if (this.areAllOpacityActive) {
-			if (!currentState.opacityActive) { outputString += generateAbsoluteOpacity() }
-			else { outputString += generateOpacity(currentState.opacity) }
+			if (!currentState.opacityActive) { outputOpacityString = generateAbsoluteOpacity() }
+			else { outputOpacityString = generateOpacity(currentState.opacity) }
 		}
 		
 		if (currentType == 2 || currentType == 3) {
@@ -198,17 +199,27 @@ Layer.prototype.generateFramerStates = function() {
 					else { outputString += generateRotation(currentState.rotation) }
 				}
 				
-				// TODO
-				outputString += generateBackgrounds(currentState.backgrounds)
-				
-				if (this.areAllShadowsActive) {
-					if (!currentState.shadowsActive) { outputString += generatePassiveShadowsWithColor(this.getSuggestedColor(i)) }
-					else { outputString += generateShadows(currentState.shadows) }
+				if (this.areAllBackgroundsActive) {
+					if (!currentState.backgroundsActive) {
+						outputString += generatePassiveBackgroundsWithColor(this.getSuggestedBackgroundColor(i))
+						outputOpacityString = generateTransparentOpacity()
+					}
+					else { 
+						outputString += generateBackgrounds(currentState.backgrounds)
+						if (!currentState.opacityActive) { outputOpacityString = generateAbsoluteOpacity() }
+						else { outputOpacityString = generateOpacity(currentState.opacity) }
+					}
 				}
 				
+				if (this.areAllShadowsActive) {
+					if (!currentState.shadowsActive) { outputString += generatePassiveShadowsWithColor(this.getSuggestedShadowColor(i)) }
+					else { outputString += generateShadows(currentState.shadows) }
+				}	
 				
-				// TODO
-				outputString += generateBorders(currentState.borders)
+				if (this.areAllBordersActive) {
+					if (!currentState.bordersActive) { outputString += generatePassiveBordersWithColor(this.getSuggestedBorderColor(i)) }
+					else { outputString += generateBorders(currentState.borders) }
+				}
 		
 				outputPositionString += generatePosition(currentState.position)
 			}
@@ -231,11 +242,8 @@ Layer.prototype.generateFramerStates = function() {
 		
 		prevState = currentState
 		
-		statesDescriptions.push(outputPositionString + outputString)
+		statesDescriptions.push(outputPositionString + outputString + outputOpacityString)
 		statesNames.push(currentState.stateName)
-		
-		// var generatedState = generateState(currentState.stateName, outputPositionString + outputString)
-		// generatedStates.push(generatedState)
 
 	}
 	
@@ -262,6 +270,9 @@ Layer.prototype.generateFramerStates = function() {
 
 
 
+Layer.prototype.areAllGeneratable = function(state) {
+	return (this.areAllShadowsExportable || this.areAllInnersExportable || this.areAllBordersExportable || this.areAllBackgroundsExportable) ? 0 : -1
+}
 
 
 
@@ -269,7 +280,10 @@ Layer.prototype.generateFramerStates = function() {
 
 
 
-Layer.prototype.getSuggestedColor = function(currentStateNumber) {
+
+
+
+Layer.prototype.getSuggestedShadowColor = function(currentStateNumber) {
 	
 	for (var i = currentStateNumber; i < this.states.length; i++) {
 		if (this.states[i].shadowsActive && (this.states[i].shadow != '' || this.states[i].shadow != nil)) {
@@ -285,10 +299,41 @@ Layer.prototype.getSuggestedColor = function(currentStateNumber) {
 	
 }
 
-
-Layer.prototype.areAllGeneratable = function(state) {
-	return (this.areAllShadowsExportable || this.areAllInnersExportable || this.areAllBordersExportable || this.areAllBackgroundsExportable) ? 0 : -1
+Layer.prototype.getSuggestedBorderColor = function(currentStateNumber) {
+	
+	for (var i = currentStateNumber; i < this.states.length; i++) {
+		if (this.states[i].bordersActive && (this.states[i].borders != '' || this.states[i].borders != nil)) {
+			return this.states[i].borders[0]
+		}
+	}
+	for (var i = currentStateNumber; i >= 0; i--) {
+		if (this.states[i].bordersActive && (this.states[i].borders != '' || this.states[i].borders != nil)) {
+			return this.states[i].borders[0]
+		}
+	}
+	return nil
+	
 }
+
+Layer.prototype.getSuggestedBackgroundColor = function(currentStateNumber) {
+	
+	for (var i = currentStateNumber; i < this.states.length; i++) {
+		if (this.states[i].backgroundsActive && (this.states[i].backgrounds != '' || this.states[i].backgrounds != nil)) {
+			return this.states[i].backgrounds[0]
+		}
+	}
+	for (var i = currentStateNumber; i >= 0; i--) {
+		if (this.states[i].backgroundsActive && (this.states[i].backgrounds != '' || this.states[i].backgrounds != nil)) {
+			return this.states[i].backgrounds[0]
+		}
+	}
+	log("NO BGS FOR SHAPE")
+	return nil
+	
+}
+
+
+
 
 
 

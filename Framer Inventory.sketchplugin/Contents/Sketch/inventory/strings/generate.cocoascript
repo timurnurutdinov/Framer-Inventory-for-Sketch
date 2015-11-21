@@ -48,6 +48,10 @@ function generateAbsoluteOpacity() {
 	return ", opacity: 1"
 }
 
+function generateTransparentOpacity() {
+	return ", opacity: 0"
+}
+
 
 
 function generateRotation(value) {
@@ -126,6 +130,12 @@ function generateBorders(values) {
 	else return ""
 }
 
+function generatePassiveBordersWithColor(colorValue) {
+	if (colorValue == nil) { return ", borderWidth: 0, borderColor: \"rgba(0,0,0,0)\"" }
+	return  ", borderWidth: 0, borderColor: " + convertHex(colorValue[4], colorValue[3])
+}
+
+
 
 function generateBackgrounds(values) {
 	if (values == nil) { return "" }
@@ -136,6 +146,12 @@ function generateBackgrounds(values) {
 	}
 	else return ""
 }
+
+function generatePassiveBackgroundsWithColor(colorValue) {
+	if (colorValue == nil || colorValue == '') { return ", backgroundColor: \"rgba(0,0,0,0)\"" }
+	return ", backgroundColor: "  + convertHex(colorValue[2], colorValue[1])
+}
+
 
 
 function generatePosition(values) {
