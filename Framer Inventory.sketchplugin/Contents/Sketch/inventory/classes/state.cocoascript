@@ -20,6 +20,8 @@ function State (layer) {
 	this.layer = layer
 	this.type = exportableType(layer)
 	
+	
+	// active properties
 	this.position = []
 	this.position = getPosition(layer, this.type)
 
@@ -35,7 +37,9 @@ function State (layer) {
 	this.backgrounds = getBackgroundColors(layer)
 	
 	
-	// active properties
+	
+	// active conditions
+	this.opacityActive = (this.opacity == 1) ? false : true
 	this.cornerActive = (this.corner == nil || this.corner == 0) ? false : true
 	this.rotationActive = (this.rotation == 0) ? false : true
 	

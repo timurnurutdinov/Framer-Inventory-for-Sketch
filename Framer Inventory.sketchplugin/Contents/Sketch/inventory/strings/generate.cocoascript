@@ -37,26 +37,48 @@ var calcColor = function(value) {
 
 
 function generateOpacity(value) {
+	// if (isAbsolute && value == 1) { return ", opacity: 1" }
+	// else
 	if (value == 1) { return "" }
-	else return ", opacity: " + value
+	else if (value == 0) { return ", opacity: 0" }
+	return ", opacity: " + value
 }
+
+function generateAbsoluteOpacity() {
+	return ", opacity: 1"
+}
+
 
 
 function generateRotation(value) {
+	// if (isAbsolute && value == 0) { return ", rotation: 0" }
+	// else
 	if (value == 0) { return "" }
-	else return ", rotation: " + value
+	return ", rotation: " + value
 }
+
+function generateAbsoluteRotation() {
+	return ", rotation: 0"
+}
+
 
 
 function generateCorner(value) {
+	// if (isAbsolute && value == 0) { return ", cornerRadius: 0" }
+	// else
 	if (value == 0) { return "" }
 	else if (value == "100%") { return ", cornerRadius: \"" + value + "\"" }
-	else return ", cornerRadius: " + value + "*" + userRetinaDefaults.myRetina
+	return ", cornerRadius: " + value + "*" + userRetinaDefaults.myRetina
+}
+
+function generateAbsoluteCorner() {
+	return ", cornerRadius: 0"
 }
 
 
+
 function generateShadows(values) {
-	if (values == nil) { return "" }
+	if (values == nil || values == '') { return "" }
 	else if (values.length == 1) {
 		var value = values[0]
 		var composedShadow = ""
@@ -69,6 +91,12 @@ function generateShadows(values) {
 	}
 	else return ""
 }
+
+function generatePassiveShadowsWithColor(colorValue) {
+	if (colorValue == nil) { return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: \"rgba(0,0,0,0)\"" }
+	return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: " + convertHex(colorValue[5], colorValue[4])
+}
+
 
 
 function generateFilterShadows(values) {
@@ -83,6 +111,7 @@ function generateFilterShadows(values) {
 	}
 	else return ""
 }
+
 
 
 function generateBorders(values) {
