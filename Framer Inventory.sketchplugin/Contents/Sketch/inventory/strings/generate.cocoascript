@@ -26,7 +26,6 @@ var calc = function(value) {
 
 var calcColor = function(value) {
 	var deleteLastScobe = value.replace(/\)\"/, '')
-	log(deleteLastScobe)
 	return "\" + " + deleteLastScobe + "))\""
 }
 
@@ -114,6 +113,14 @@ function generateFilterShadows(values) {
 		return shadowVariable
 	}
 	else return ""
+}
+
+function generatePassiveFilterShadowsWithColor(colorValue) {
+	if (colorValue == nil) { return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 rbga(0,0,0,0))\"}" }
+	var color = convertHex(colorValue[5], 0)
+	var fixed = color.replace('\"', '')
+	log("COLOR FILTER: " + fixed)
+	return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 " + fixed + ")\"}"
 }
 
 

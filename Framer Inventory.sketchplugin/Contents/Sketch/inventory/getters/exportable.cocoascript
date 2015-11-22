@@ -26,7 +26,7 @@ function exportableType(layerToAnalyse) {
 		asnwer = -1
 	}
 	
-	log("TYPE IS: " + answer)
+	// log("TYPE IS: " + answer)
 	return answer
 }
 

@@ -28,6 +28,9 @@ function Layer (layerName, currentPage) {
 	this.areAllInnersExportable = true
 	this.areAllBordersExportable = true
 	this.areAllBackgroundsExportable = true
+	
+	// for groups, images and custom shapes
+	this.areAllShadowsEqual = true
 
 }
 
@@ -62,10 +65,13 @@ Layer.prototype.updateConditions = function(state) {
 	
 	
 	// exportable
-	this.areAllShadowsExportable = this.areAllShadowsExportable && state.shadowsExportale
-	this.areAllInnersExportable = this.areAllInnersExportable && state.innersExportale
+	this.areAllShadowsExportable = this.areAllShadowsExportable && state.shadowsExportable
+	this.areAllInnersExportable = this.areAllInnersExportable && state.innersExportable
 	this.areAllBordersExportable = this.areAllBordersExportable && state.bordersExportable
 	this.areAllBackgroundsExportable = this.areAllBackgroundsExportable && state.backgroundsExportable
+	
+	// exportable for groups and images
+	this.areAllShadowsEqual = this.areAllShadowsEqual && this.compareShadows(state)
 }
 
 
@@ -166,6 +172,8 @@ Layer.prototype.generateFramerStates = function() {
 	var outputNameString = returnLayerName(this.layerName)
 	var outputPositionString = ""
 	var outputStateString = ""
+	var outputImageNameString = ""
+	var outputFilterShadowsString = ""
 	
 	
 	var currentState = nil
@@ -187,7 +195,7 @@ Layer.prototype.generateFramerStates = function() {
 		}
 		
 		if (currentType == 2 || currentType == 3) {
-			if (areAllGeneratable == 0) {
+			if (areAllGeneratable) {
 				
 				if (this.areAllCornersActive) {
 					if (!currentState.cornerActive) { outputString += generateAbsoluteCorner() }
@@ -224,17 +232,35 @@ Layer.prototype.generateFramerStates = function() {
 				outputPositionString += generatePosition(currentState.position)
 			}
 			else {
-
 				var normalizedLayer = this.normalizeCopyForState(currentState)
 				var temp = getPosition(normalizedLayer)
 			
 				outputPositionString += generatePosition(temp)
-				outputPositionString += generateImagePath(this.layerName)
+				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
 		}
-		else if (currentType == 1) {
-		}
-		else if (currentType == 5) {
+		else if (currentType == 1 || currentType == 5) {
+			if (this.areAllShadowsEqual) {
+
+				if (this.areAllShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
+						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
+				}
+
+				var normalizedLayer = this.normalizeCopyForState(currentState)
+				cleanShadows(normalizedLayer)
+				var temp = getPosition(normalizedLayer)
+
+				outputPositionString += generatePosition(temp)
+				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+			}
+			else {
+				var normalizedLayer = this.normalizeCopyForState(currentState)
+				var temp = getPosition(normalizedLayer)
+
+				outputPositionString += generatePosition(temp)
+				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+			}
+			
 		}
 		else {
 			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
@@ -248,7 +274,7 @@ Layer.prototype.generateFramerStates = function() {
 	}
 	
 	if (statesDescriptions.length > 0) {
-		outputNameString += statesDescriptions[0]
+		outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
 	}
 	
 	if (statesDescriptions.length > 1) {
@@ -271,8 +297,15 @@ Layer.prototype.generateFramerStates = function() {
 
 
 Layer.prototype.areAllGeneratable = function(state) {
-	return (this.areAllShadowsExportable || this.areAllInnersExportable || this.areAllBordersExportable || this.areAllBackgroundsExportable) ? 0 : -1
+	return (this.areAllShadowsExportable && this.areAllInnersExportable && this.areAllBordersExportable && this.areAllBackgroundsExportable) ? true : false
 }
+
+Layer.prototype.compareShadows = function(state) {
+	if (this.states == nil || state == nil || this.states.length < 1) { return true }
+	if (!compareMatrices(this.states[0].shadows, state.shadows)) { return false }
+	return true
+}
+
 
 
 
@@ -327,7 +360,6 @@ Layer.prototype.getSuggestedBackgroundColor = function(currentStateNumber) {
 			return this.states[i].backgrounds[0]
 		}
 	}
-	log("NO BGS FOR SHAPE")
 	return nil
 	
 }
