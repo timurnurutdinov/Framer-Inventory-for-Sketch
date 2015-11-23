@@ -12,11 +12,19 @@ var userRetinaDefaults = initDefaults(pluginDomain, presets)
 
 var currentDocument = nil
 
+var isTestingEnvironment = true
+
 
 var onRun = function(context) {
+	isTestingEnvironment = false
+	generateStatesAction(context)
+}
+
+var generateStatesAction = function(context) {
 	log("\n")
 	var doc = context.document
 	var selection = context.selection
+	if (isTestingEnvironment) { selection = getTestingSelection() }
 	
 	currentDocument = doc
 	
@@ -45,12 +53,6 @@ var onRun = function(context) {
 				}
 			}
 			
-			// log(layer.states.length)
-// 			for (var j = 0; j < layer.states.length; j++) {
-// 				log("print:")
-// 				layer.states[j].printState()
-// 			}
-			
 			layers.push(layer)
 		}
 	}
@@ -58,15 +60,15 @@ var onRun = function(context) {
 	for (var i = 0; i < layers.length; i++) {
 		pasteboardContent += layers[i].printLayer()
 	}
-	// for (var i = 0; i < layers.length; i++) {
-// 		var content = layers[i].printLayer()
-// 		log("CONTENT: " + content)
-// 		pasteboardContent += content
-// 	}
+
 	
-	[[NSPasteboard generalPasteboard] clearContents];
-	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
-	[doc showMessage:"Done"]
+	if (!isTestingEnvironment) {
+		[[NSPasteboard generalPasteboard] clearContents];
+		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
+		[doc showMessage:"Done"]
+	}
+	
+	return pasteboardContent
 }
 
 

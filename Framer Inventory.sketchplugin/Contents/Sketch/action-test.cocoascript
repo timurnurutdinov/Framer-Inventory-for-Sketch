@@ -16,6 +16,11 @@ var currentDocument = nil
 
 
 var onRun = function(context) {
+	replicateAction(context)
+}
+
+
+var replicateAction = function(context) {
 	log("\n")
 	var doc = context.document
 	var selection = context.selection
@@ -48,8 +53,9 @@ var onRun = function(context) {
 	[[NSPasteboard generalPasteboard] clearContents];
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 	[doc showMessage:"Done"]
+	
+	return pasteboardContent
 }
-
 
 
 

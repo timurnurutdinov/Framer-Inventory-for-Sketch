@@ -76,86 +76,13 @@ Layer.prototype.updateConditions = function(state) {
 
 
 
-
-
-
-
 // PRINT
 
 Layer.prototype.printLayer = function() {
-	// if (this.states.length == 1) { return this.generateFramerLayer() }
 	return this.generateFramerStates()
 }
 
 
-
-// print just one layer
-// Layer.prototype.generateFramerLayer = function() {
-// 	var outputString = ""
-// 	var outputPositionString = returnLayerName(this.layerName)
-//
-// 	var currentState = this.states[0]
-// 	var currentType = currentState.type
-//
-// 	// useful for both shapes and images
-// 	outputString += generateOpacity(currentState.opacity, this.areAllOpacityActive)
-// 	log("ACTIVE???" + this.areAllOpacityActive)
-//
-// 	if (currentType == 2 || currentType == 3) {
-// 		if (currentState.generatable) {
-// 			log("SHAPE [EXPORTABLE]")
-// 			outputString += generateCorner(currentState.corner)
-// 			outputString += generateBackgrounds(currentState.backgrounds)
-// 			outputString += generateRotation(currentState.rotation)
-// 			outputString += generateShadows(currentState.shadows)
-// 			outputString += generateBorders(currentState.borders)
-//
-// 			outputPositionString += generatePosition(currentState.position)
-// 		}
-// 		else {
-// 			log("SHAPE [IMAGE]")
-//
-// 			var normalizedLayer = this.normalizeCopyForState(currentState)
-// 			var temp = getPosition(normalizedLayer)
-//
-// 			outputPositionString += generatePosition(temp)
-// 			outputPositionString += generateImagePath(this.layerName)
-// 		}
-// 	}
-// 	else if (currentType == 1) {
-// 		if (currentState.shadowsExportable)) {
-// 			outputString += generateFilterShadows(currentState.shadows)
-//
-// 			var normalizedLayer = this.normalizeCopyForState(currentState)
-// 			cleanShadows(normalizedLayer)
-// 			var temp = getPosition(normalizedLayer)
-//
-// 			outputPositionString += generatePosition(temp)
-// 			outputPositionString += generateImagePath(this.layerName)
-// 		}
-// 		else {
-// 			var normalizedLayer = this.normalizeCopyForState(currentState)
-// 			var temp = getPosition(normalizedLayer)
-//
-// 			outputPositionString += generatePosition(temp)
-// 			outputPositionString += generateImagePath(this.layerName)
-// 		}
-// 	}
-// 	else if (currentType == 5) {
-// 			var normalizedLayer = this.normalizeCopyForState(currentState)
-// 			var temp = getPosition(normalizedLayer)
-//
-// 			outputPositionString += generatePosition(temp)
-// 			outputPositionString += generateImagePath(this.layerName)
-// 	}
-// 	else {
-// 		log("ERROR. CANT PRINT LAYER OF THIS TYPE.")
-// 	}
-//
-//
-//
-// 	return "" + outputPositionString + outputString + dln()
-// }
 
 
 

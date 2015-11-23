@@ -23,6 +23,13 @@
       "identifier" : "action-test-2"
     },
     {
+      "script" : "action-testing-environment.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Run testing environment",
+      "identifier" : "action-testing-environment"
+    },
+    {
       "script" : "action-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
@@ -57,6 +64,7 @@
 		  "action-replicate-layers",
 		  "action-test",
 		  "action-test-2",
+		  "action-testing-environment",
 		  "action-simulate-keynote",
 		  {
 		         "title": "3. Utils",

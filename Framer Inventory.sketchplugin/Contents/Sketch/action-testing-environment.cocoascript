@@ -1,0 +1,162 @@
+@import 'action-test-2.cocoascript'
+@import 'inventory/libs/search.js'
+@import 'inventory/libs/file.js'
+
+
+var environmentLayersNames = []
+var environmentPagesNames = []
+
+var testingSelection = NSMutableArray.array()
+
+var onRun = function(context) {
+	var doc = context.document
+	var pages = [doc pages]
+	var runningPage = [doc currentPage]
+	
+	log("-----------------------------")
+	log("STARTING TESTING ENVIRONMENT")
+	log("-----------------------------")
+	
+	var skippedPagesNames = 0
+	var skippedLayersNames = 0
+	
+	var pairs = generatePairs()
+	var answer = ""
+	var answers = []
+	var errorAnswers = []
+	
+	for (var i = 0; i < pairs.length; i++) {
+		testingSelection = NSMutableArray.array()
+		answer = ""
+		
+		var operatingPage = findPageWithName(pairs[i][0], pages)
+		
+		if (operatingPage != nil) {
+			
+			doc.setCurrentPage(operatingPage)
+			[[doc currentPage] deselectAllLayers]
+
+			for (var n = 0; n < pairs[i][1].length; n++) {
+				var layerName = pairs[i][1][n]
+				
+				var layersOnPagePredicate = NSPredicate.predicateWithFormat("name == %@ && class != %@", layerName, "MSArtboardGroup")
+				var layersOnPage = findLayersMatchingPredicate_inContainer_filterByType(layersOnPagePredicate, operatingPage)
+				
+				if (layersOnPage != nil && [layersOnPage count] != 0) {
+					[[layersOnPage firstObject] select:true byExpandingSelection:true]
+					
+					testingSelection = testingSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([layersOnPage firstObject]))
+				}
+				else {
+					log("Warning: skipped " + layerName)
+					skippedLayersNames++
+				}
+			}
+			
+			answer = generateStatesAction(context)
+			answers.push(answer)
+			
+		}
+		else {
+			skippedPagesNames++
+		}
+	}
+	
+
+	for (var i = 0; i < answers.length; i++) {
+		var isTestCorrect = compareAnswer(answers[i], pairs[i][0])
+		if (!isTestCorrect) {
+			log("Test failed: " + pairs[i][0])
+			errorAnswers.push(i)
+		}
+	}
+	
+	doc.setCurrentPage(runningPage)
+	
+	if (skippedPagesNames == 0 && skippedLayersNames == 0) {
+		[doc showMessage:"Passed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests"]
+		
+	}
+	else {
+		[doc showMessage:"Warning: skipped " + skippedPagesNames + " pages & " + skippedLayersNames + " layers"]
+	}
+	
+	
+}
+
+
+
+
+
+
+
+var findPageWithName = function(pageName, pages) {
+	for (var p = 0; p < [pages count]; p++) {
+		if ([[pages objectAtIndex:p] name] == pageName) { return [pages objectAtIndex:p] }
+	}
+	return nil
+}
+
+
+var getTestingSelection = function() {
+	return testingSelection
+}
+
+
+var compareAnswer = function(answer, fileName) {
+	var readText = readFileForAnswer(fileName)
+	if (readText == "" || readText == '' || readText == nil) { return false }
+	else return (compareTexts(answer, "" + readText)) ? true : false
+}
+
+
+var compareTexts = function(text1, text2) {
+	if (text1 == "" || text2 == "") { return false }
+	if (text1.length != text2.length) { return false }
+	for (var i = 0; i < text1.length; i++) {
+		if (text1[i] != text2[i]) { return false }
+	}
+	return true
+}
+
+
+
+
+
+
+
+
+var generatePairs = function() {
+	var pairs = []
+	
+	var paramsShapesPage = ["selection 1", "selection 2", "selection 3", "selection 4", "selection 5", "selection 6", "selection 7", "selection 8", "selection 9", "oval 1", "oval 2"]
+	pairs.push(["shapes", paramsShapesPage])
+	
+	pairs.push(["states predict opacity", ["nice"]])
+	pairs.push(["states predict no opacity", ["nice"]])
+	
+	pairs.push(["states predict rotation", ["nice"]])
+	pairs.push(["states predict no rotation", ["nice"]])
+	
+	pairs.push(["states predict corners", ["nice"]])
+	pairs.push(["states predict no corners", ["nice"]])
+	
+	pairs.push(["states predict borders", ["nice"]])
+	pairs.push(["states predict no borders", ["nice"]])
+	
+	pairs.push(["states predict shadows", ["nice"]])
+	pairs.push(["states predict no shadows", ["nice"]])
+	
+	pairs.push(["states predict backgrounds", ["nice"]])
+	pairs.push(["states predict no backgrounds", ["nice"]])
+	
+	pairs.push(["states unexportable rectangle", ["nice"]])
+	
+	pairs.push(["states groups shadows same", ["nice"]])
+	pairs.push(["states groups shadows scaled", ["nice"]])
+	
+	pairs.push(["layer out artboard position", ["nice"]])
+	pairs.push(["layer out artboard position group", ["nice"]])
+	
+	return pairs
+}
