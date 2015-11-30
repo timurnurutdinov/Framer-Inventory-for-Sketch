@@ -1,6 +1,6 @@
 @import 'action-test-2.cocoascript'
 @import 'inventory/libs/search.js'
-@import 'inventory/libs/file.js'
+@import 'inventory/libs/testing/write.js'
 
 
 var environmentLayersNames = []

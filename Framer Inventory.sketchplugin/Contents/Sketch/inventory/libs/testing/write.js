@@ -2,7 +2,11 @@ var homeDirectory = "Framer Inventory"
 var testsDirectory = "/tests"
 
 
-// /Users/TillluR/Library/Containers/com.bohemiancoding.sketch3/Data/Library/Caches/Framer Inventory/
+/*
+ /Users/TillluR/Library/Containers/com.bohemiancoding.sketch3/Data/Library/Caches/Framer Inventory/
+*/
+
+
 var readFileForAnswer = function(fileName) {
 	var folderName = createTempFolderNamed(homeDirectory)
 	var tests = createTempFolderNamed(homeDirectory + testsDirectory)
@@ -10,6 +14,11 @@ var readFileForAnswer = function(fileName) {
 	if (text == nil) { log("No test found: " + fileName) }
 	return text
 }
+
+
+
+
+
 
 
 var getTempFolderPath = function(withName) {

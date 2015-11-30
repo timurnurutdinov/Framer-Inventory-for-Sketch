@@ -2,24 +2,24 @@
   "name" : "Framer Inventory",
   "author" : "Timur Nurutdinov",
   "authorEmail" : "addleimb@gmail.com",
-  "description": "Export FramerJS layers and states from Sketch",
+  "description": "Export FramerJS layers & states from Sketch",
   "homepage": "https://github.com/timurnurutdinov/Framer-Inventory",
   "identifier": "com.tilllur.framer-inventory",
-  "version": 1.0,
-  "compatibleVersion": 3.3,
+  "version": 2.0,
+  "compatibleVersion": 4.2,
   "commands" : [
     {
       "script" : "action-test.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Test Replicate",
+      "name" : "1. Test Replicate",
       "identifier" : "action-test"
     },
     {
       "script" : "action-test-2.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Test States",
+      "name" : "2. Test States",
       "identifier" : "action-test-2"
     },
     {
@@ -28,51 +28,19 @@
       "shortcut" : "",
       "name" : "Run testing environment",
       "identifier" : "action-testing-environment"
-    },
-    {
-      "script" : "action-replicate-layers.cocoascript",
-      "handler" : "onRun",
-      "shortcut" : "",
-      "name" : "2. Replicate Selected",
-      "identifier" : "action-replicate-layers"
-    },
-    {
-      "script" : "action-simulate-keynote.cocoascript",
-      "handler" : "onRun",
-      "shortcut" : "",
-      "name" : "1. Simulate Keynote",
-      "identifier" : "action-simulate-keynote"
-    },
-    {
-      "script" : "action-select-inventorable.cocoascript",
-      "handler" : "onRun",
-      "shortcut" : "",
-      "name" : "Select Exportables",
-      "identifier" : "action-select-inventorable"
-    },
-    {
-      "script" : "action-collapse-artboards.cocoascript",
-      "handler" : "onRun",
-      "shortcut" : "",
-      "name" : "Collapse Artboards",
-      "identifier" : "action-collapse-artboards"
     }
   ],
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "action-replicate-layers",
 		  "action-test",
 		  "action-test-2",
-		  "action-testing-environment",
-		  "action-simulate-keynote",
 		  {
 		         "title": "3. Utils",
 		         "items": [
-		           "action-select-inventorable",
-				   "action-collapse-artboards"
+		           "action-testing-environment"
 		         ],
-		       }
+		  }
       ]
     }
 }
