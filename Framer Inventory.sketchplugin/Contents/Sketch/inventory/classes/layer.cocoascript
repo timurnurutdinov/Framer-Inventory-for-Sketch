@@ -13,24 +13,25 @@ function Layer (layerName, currentPage) {
 	
 	
 	// active conditions
-	this.areAllOpacityActive = false
-	this.areAllCornersActive = false
-	this.areAllRotationsActive = false
+	this.areOpacityActive = false
+	this.areCornersActive = false
+	this.areRotationsActive = false
 	
-	this.areAllShadowsActive = false
-	this.areAllInnersActive = false
-	this.areAllBordersActive = false
-	this.areAllBackgroundsActive = true
+	this.areShadowsActive = false
+	this.areInnersActive = false
+	this.areBordersActive = false
+	this.areBackgroundsActive = true // always export bg
 	
 	
 	// exportable conditions
-	this.areAllShadowsExportable = true
-	this.areAllInnersExportable = true
-	this.areAllBordersExportable = true
-	this.areAllBackgroundsExportable = true
+	this.areShadowsExportable = true
+	this.areInnersExportable = true
+	this.areBordersExportable = true
+	this.areBackgroundsExportable = true
 	
-	// for groups, images and custom shapes
+	// if equals -> css-filter, else -> imagesг
 	this.areAllShadowsEqual = true
+	this.areAllBackgroundsExist = true
 
 }
 
@@ -54,24 +55,26 @@ Layer.prototype.addState = function(layer) {
 
 Layer.prototype.updateConditions = function(state) {
 	// active
-	this.areAllOpacityActive = this.areAllOpacityActive || state.opacityActive
-	this.areAllCornersActive = this.areAllCornersActive || state.cornerActive
-	this.areAllRotationsActive = this.areAllRotationsActive || state.rotationActive
+	this.areOpacityActive = this.areOpacityActive || state.opacityActive
+	this.areCornersActive = this.areCornersActive || state.cornerActive
+	this.areRotationsActive = this.areRotationsActive || state.rotationActive
 	
-	this.areAllShadowsActive = this.areAllShadowsActive || state.shadowsActive
-	this.areAllInnersActive = this.areAllInnersActive || state.innersActive
-	this.areAllBordersActive = this.areAllBordersActive || state.bordersActive
-	this.areAllBackgroundsActive = this.areAllBackgroundsActive || state.backgroundsActive
+	this.areShadowsActive = this.areShadowsActive || state.shadowsActive
+	this.areInnersActive = this.areInnersActive || state.innersActive
+	this.areBordersActive = this.areBordersActive || state.bordersActive
+	this.areBackgroundsActive = this.areBackgroundsActive || state.backgroundsActive
+	
 	
 	
 	// exportable
-	this.areAllShadowsExportable = this.areAllShadowsExportable && state.shadowsExportable
-	this.areAllInnersExportable = this.areAllInnersExportable && state.innersExportable
-	this.areAllBordersExportable = this.areAllBordersExportable && state.bordersExportable
-	this.areAllBackgroundsExportable = this.areAllBackgroundsExportable && state.backgroundsExportable
+	this.areShadowsExportable = this.areShadowsExportable && state.shadowsExportable
+	this.areInnersExportable = this.areInnersExportable && state.innersExportable
+	this.areBordersExportable = this.areBordersExportable && state.bordersExportable
+	this.areBackgroundsExportable = this.areBackgroundsExportable && state.backgroundsExportable
 	
 	// exportable for groups and images
 	this.areAllShadowsEqual = this.areAllShadowsEqual && this.compareShadows(state)
+	this.areAllBackgroundsExist = this.areAllBackgroundsExist && state.backgroundsActive
 }
 
 
@@ -116,7 +119,7 @@ Layer.prototype.generateFramerStates = function() {
 		outputPositionString = ""
 		outputOpacityString = ""
 		
-		if (this.areAllOpacityActive) {
+		if (this.areOpacityActive) {
 			if (!currentState.opacityActive) { outputOpacityString = generateAbsoluteOpacity() }
 			else { outputOpacityString = generateOpacity(currentState.opacity) }
 		}
@@ -124,34 +127,40 @@ Layer.prototype.generateFramerStates = function() {
 		if (currentType == 2 || currentType == 3) {
 			if (areAllGeneratable) {
 				
-				if (this.areAllCornersActive) {
+				if (this.areCornersActive) {
 					if (!currentState.cornerActive) { outputString += generateAbsoluteCorner() }
 					else { outputString += generateCorner(currentState.corner) }
 				}
 				
-				if (this.areAllRotationsActive) {
+				if (this.areRotationsActive) {
 					if (!currentState.rotationActive) { outputString += generateAbsoluteRotation() }
 					else { outputString += generateRotation(currentState.rotation) }
 				}
 				
-				if (this.areAllBackgroundsActive) {
-					if (!currentState.backgroundsActive) {
-						outputString += generatePassiveBackgroundsWithColor(this.getSuggestedBackgroundColor(i))
-						outputOpacityString = generateTransparentOpacity()
-					}
-					else { 
+				// always export bg (to override base)
+				if (this.areBackgroundsActive) {
+					if (this.areAllBackgroundsExist) {
 						outputString += generateBackgrounds(currentState.backgrounds)
-						if (!currentState.opacityActive) { outputOpacityString = generateAbsoluteOpacity() }
-						else { outputOpacityString = generateOpacity(currentState.opacity) }
+					}
+					else {
+						if (!currentState.backgroundsActive) {
+							outputString += generatePassiveBackgroundsWithColor(this.getSuggestedBackgroundColor(i))
+							outputOpacityString = generateTransparentOpacity()
+						}
+						else {
+							outputString += generateBackgrounds(currentState.backgrounds)
+							if (!currentState.opacityActive) { outputOpacityString = generateAbsoluteOpacity() }
+							else { outputOpacityString = generateOpacity(currentState.opacity) }
+						}
 					}
 				}
 				
-				if (this.areAllShadowsActive) {
+				if (this.areShadowsActive) {
 					if (!currentState.shadowsActive) { outputString += generatePassiveShadowsWithColor(this.getSuggestedShadowColor(i)) }
 					else { outputString += generateShadows(currentState.shadows) }
 				}	
 				
-				if (this.areAllBordersActive) {
+				if (this.areBordersActive) {
 					if (!currentState.bordersActive) { outputString += generatePassiveBordersWithColor(this.getSuggestedBorderColor(i)) }
 					else { outputString += generateBorders(currentState.borders) }
 				}
@@ -169,7 +178,7 @@ Layer.prototype.generateFramerStates = function() {
 		else if (currentType == 1 || currentType == 5) {
 			if (this.areAllShadowsEqual) {
 
-				if (this.areAllShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
+				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
 						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
 				}
 
@@ -224,7 +233,7 @@ Layer.prototype.generateFramerStates = function() {
 
 
 Layer.prototype.areAllGeneratable = function(state) {
-	return (this.areAllShadowsExportable && this.areAllInnersExportable && this.areAllBordersExportable && this.areAllBackgroundsExportable) ? true : false
+	return (this.areShadowsExportable && this.areInnersExportable && this.areBordersExportable && this.areBackgroundsExportable) ? true : false
 }
 
 Layer.prototype.compareShadows = function(state) {

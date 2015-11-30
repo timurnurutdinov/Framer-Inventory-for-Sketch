@@ -2,5 +2,6 @@ var getOpacity = function(layer) {
 	var opacity = 1
 	if (![layer isVisible]) { return 0 }
 	opacity = [[[layer style] contextSettings] opacity]
+	if (opacity == 1) { return 1 }
 	return opacity.toFixed(1)
 }
