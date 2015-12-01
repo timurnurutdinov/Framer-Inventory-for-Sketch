@@ -13,9 +13,10 @@ var onRun = function(context) {
 	var pages = [doc pages]
 	var runningPage = [doc currentPage]
 	
-	log("-----------------------------")
-	log("STARTING TESTING ENVIRONMENT")
-	log("-----------------------------")
+	var resultingString = ""
+	resultingString += "|------------------------------------|\n"
+	resultingString += "|----STARTING TESTING ENVIRONMENT----|\n"
+	resultingString += "|------------------------------------|\n\n\n"
 	
 	var skippedPagesNames = 0
 	var skippedLayersNames = 0
@@ -48,7 +49,7 @@ var onRun = function(context) {
 					testingSelection = testingSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([layersOnPage firstObject]))
 				}
 				else {
-					log("Warning: skipped " + layerName)
+					resultingString += "WARNING: Skipped " + layerName + "\n"
 					skippedLayersNames++
 				}
 			}
@@ -62,26 +63,41 @@ var onRun = function(context) {
 		}
 	}
 	
+	
+	resultingString += "Initialised " + pairs.length + " tests\n"
+	if (skippedPagesNames == 0) {
+		resultingString += "All testing layers are found\n"
+	}
+	resultingString += "\n\n\n\n"
 
 	for (var i = 0; i < answers.length; i++) {
-		var isTestCorrect = compareAnswer(answers[i], pairs[i][0])
-		if (!isTestCorrect) {
-			log("Test failed: " + pairs[i][0])
+		resultingString += "Test " + i + ": " + pairs[i][0] + "\n"
+		
+		var diff = compareAnswer(answers[i], pairs[i][0])
+		log(i + " diff: " + diff)
+
+		if (diff != nil) {
+			resultingString += "ERROR: " + diff
 			errorAnswers.push(i)
 		}
+		else {
+			resultingString += "Passed"
+		}
+		resultingString += "\n\n"
 	}
 	
 	doc.setCurrentPage(runningPage)
 	
+	
 	if (skippedPagesNames == 0 && skippedLayersNames == 0) {
 		[doc showMessage:"Passed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests"]
-		
 	}
 	else {
 		[doc showMessage:"Warning: skipped " + skippedPagesNames + " pages & " + skippedLayersNames + " layers"]
 	}
 	
-	
+	resultingString += "\n\nPassed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests\n"
+	writeTestingLog(resultingString)
 }
 
 
@@ -104,9 +120,10 @@ var getTestingSelection = function() {
 
 
 var compareAnswer = function(answer, fileName) {
+	
 	var readText = readFileForAnswer(fileName)
 	if (readText == "" || readText == '' || readText == nil) { return false }
-	else return (compareTexts(answer, "" + readText)) ? true : false
+	return compareTextsPhrase(answer, "" + readText)
 }
 
 
@@ -117,6 +134,28 @@ var compareTexts = function(text1, text2) {
 		if (text1[i] != text2[i]) { return false }
 	}
 	return true
+}
+
+
+var compareTextsPhrase = function(text1, text2) {
+	if (text1 == "" || text2 == "") { return "Null" }
+
+	var text1Array = text1.split(" ");
+	var text2Array = text2.split(" ");
+	
+	var maxLength = 0
+	maxLength = (text1Array.length > text2Array.length) ? text2Array.length : text1Array.length
+	
+	for (var i = 0; i < maxLength; i++) {
+		if (text1Array[i] != text2Array[i]) {
+			if (i != 0) {
+				return text1Array[i - 1] + " " + text1Array[i]
+			}
+			return text1Array[i]
+		}
+	}
+	if (text1Array.length != text2Array.length) { return "Lengths are not the same" }
+	return nil
 }
 
 

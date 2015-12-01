@@ -1,5 +1,6 @@
 var homeDirectory = "Framer Inventory"
 var testsDirectory = "/tests"
+var testsResults = "/tests"
 
 
 /*
@@ -15,6 +16,10 @@ var readFileForAnswer = function(fileName) {
 	return text
 }
 
+var writeTestingLog = function(outputString) {
+	var folderName = createTempFolderNamed(homeDirectory)
+	writeTextToFile(outputString, folderName + "/testsResults.txt")
+}
 
 
 
