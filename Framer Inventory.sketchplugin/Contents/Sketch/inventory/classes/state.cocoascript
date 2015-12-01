@@ -23,7 +23,6 @@ function State (layer) {
 	
 	// active properties
 	this.position = []
-	this.position = getPosition(layer, this.type)
 
 	this.opacity = getOpacity(layer)
 	this.corner = getCornerRadius(layer)
@@ -55,6 +54,8 @@ function State (layer) {
 	this.bordersExportable = this.isBordersExportale()
 	this.backgroundsExportable = this.isBackgroundsExportale()
 	this.generatable = this.isGeneratable()
+	
+	this.position = getPosition(layer, this.generatable)
 	
 }
 

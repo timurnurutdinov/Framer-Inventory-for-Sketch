@@ -169,7 +169,7 @@ Layer.prototype.generateFramerStates = function() {
 			}
 			else {
 				var normalizedLayer = this.normalizeCopyForState(currentState)
-				var temp = getPosition(normalizedLayer)
+				var temp = getPosition(normalizedLayer, areAllGeneratable)
 			
 				outputPositionString += generatePosition(temp)
 				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
@@ -184,14 +184,14 @@ Layer.prototype.generateFramerStates = function() {
 
 				var normalizedLayer = this.normalizeCopyForState(currentState)
 				cleanShadows(normalizedLayer)
-				var temp = getPosition(normalizedLayer)
+				var temp = getPosition(normalizedLayer, areAllGeneratable)
 
 				outputPositionString += generatePosition(temp)
 				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
 			else {
 				var normalizedLayer = this.normalizeCopyForState(currentState)
-				var temp = getPosition(normalizedLayer)
+				var temp = getPosition(normalizedLayer, areAllGeneratable)
 
 				outputPositionString += generatePosition(temp)
 				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }

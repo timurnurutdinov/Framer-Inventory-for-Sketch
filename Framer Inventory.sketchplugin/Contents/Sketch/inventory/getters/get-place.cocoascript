@@ -7,28 +7,36 @@
 
 
 
+// // returns width, height, x, y
+// function getPosition(layer, type) {
+// 	var localType = 0
+//
+// 	if (type == nil) { localType = exportableType(layer) }
+// 	else {
+// 		localType = type
+// 	}
+//
+// 	if (localType == 1) {
+// 		return getPlaceImage(layer)
+// 	}
+// 	else if (localType == 2 || localType == 3) {
+// 		return getPlaceRect(layer)
+// 	}
+// 	else if (localType == 5) {
+// 		return getPlaceRect(layer)
+// 	}
+// 	else {
+// 		log("ERROR: Unsupported type for position")
+// 		return nil
+// 	}
+// }
+
+
+
 // returns width, height, x, y
-function getPosition(layer, type) {
-	var localType = 0
-	
-	if (type == nil) { localType = exportableType(layer) }
-	else {
-		localType = type
-	}
-	
-	if (localType == 1) {
-		return getPlaceImage(layer)
-	}
-	else if (localType == 2 || localType == 3) {
-		return getPlaceRect(layer)
-	}
-	else if (localType == 5) {
-		return getPlaceRect(layer)
-	}
-	else {
-		log("ERROR: Unsupported type for position")
-		return nil
-	}
+function getPosition(layer, isStillExportable) {
+	if (isStillExportable) { return getPlaceRect(layer) }
+	return getPlaceImage(layer)
 }
 
 
