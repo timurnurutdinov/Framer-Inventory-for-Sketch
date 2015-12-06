@@ -6,6 +6,8 @@
 @import 'inventory/libs/pluginDefaults.js'
 @import 'inventory/libs/search.js'
 
+var com = {};
+
 var presets = {
     myRetina: "retina",
 }
@@ -22,7 +24,8 @@ var chooseAction = function(context, actionIdentifier, testing) {
 	
 	if (showLog) { log("Current document is initialised") }
 	currentDocument = context.document
-	
+
+	log(FramerInventory.getCurrentPage())
 	if (testing) {
 		if (showLog) { log("Starting Testing Environment...") }
 		runTestingEnvironment(context)
@@ -49,56 +52,51 @@ var chooseAction = function(context, actionIdentifier, testing) {
 
 
 
+function FramerInventory () {}
 
-//
-// com.framerInventory = (function() {
-// 	var mine = {};
-//
-// 	my.global = {
-//
-// 		getCurrentPage: function() {
-// 			return [currentDocument currentPage]
-// 		},
-//
-//
-// 		addPage: function(oldPage) {
-// 			var newPage = nil
-// 			var pageExistsIndex = -1
-// 			var newPageName = "[NE] " + [oldPage name]
-//
-// 			var pages = [currentDocument pages]
-// 			for (var i = 0; i < pages.count(); i++) {
-// 				if ([[pages objectAtIndex: i] name] == newPageName) {
-// 					pageExistsIndex = i
-// 					break
-// 				}
-// 			}
-//
-// 			if (pageExistsIndex != -1) {
-// 				newPage = [pages objectAtIndex: pageExistsIndex]
-// 			}
-// 			else {
-// 			    newPage = currentDocument.addBlankPage();
-// 			    newPage.setName(newPageName);
-// 			}
-//
-// 			currentDocument.setCurrentPage(oldPage);
-// 		    return newPage;
-// 		},
-//
-//
-// 		deleteLayerOnPage: function(layer, page) {
-// 			var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
-// 			var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
-// 			// log("Found " + deleteLayers.count() + "layers")
-//
-// 			for (var i = 0; i < deleteLayers.count(); i++) {
-// 				if ([deleteLayers objectAtIndex: i] != nil) {
-// 					[[deleteLayers objectAtIndex: i] removeFromParent]
-// 				}
-// 			}
-//
-// 			return
-// 		}
-// 	}
-// }
+FramerInventory.getCurrentPage = function () {
+	return [currentDocument currentPage]
+}
+
+
+FramerInventory.addPage = function(oldPage) {
+	if (showLog) { log("Adding new page. Current page is " + oldPage) }
+	var newPage = nil
+	var pageExistsIndex = -1
+	var newPageName = "[NE] " + [oldPage name]
+
+	var pages = [currentDocument pages]
+	for (var i = 0; i < pages.count(); i++) {
+		if ([[pages objectAtIndex: i] name] == newPageName) {
+			pageExistsIndex = i
+			break
+		}
+	}
+
+	if (pageExistsIndex != -1) {
+		newPage = [pages objectAtIndex: pageExistsIndex]
+	}
+	else {
+	    newPage = currentDocument.addBlankPage();
+	    newPage.setName(newPageName);
+	}
+
+	currentDocument.setCurrentPage(oldPage);
+    return newPage;
+}
+
+
+FramerInventory.deleteLayerOnPage = function(layer, page) {
+	var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
+	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
+	// log("Found " + deleteLayers.count() + "layers")
+
+	for (var i = 0; i < deleteLayers.count(); i++) {
+		if ([deleteLayers objectAtIndex: i] != nil) {
+			[[deleteLayers objectAtIndex: i] removeFromParent]
+		}
+	}
+
+	return
+}
+

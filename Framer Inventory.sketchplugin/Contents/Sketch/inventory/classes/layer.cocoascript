@@ -319,9 +319,9 @@ Layer.prototype.normalizeCopyForState = function(state) {
 	var copiedLayer = [baseLayer duplicate]
 	[copiedLayer removeFromParent]
 	
-	
-	var newPage = addPage(getCurrentPage())
-	deleteLayerOnPage(copiedLayer, newPage)
+	var currentPage = FramerInventory.getCurrentPage()
+	var newPage = FramerInventory.addPage(currentPage)
+	FramerInventory.deleteLayerOnPage(copiedLayer, newPage)
 	[newPage addLayers: [copiedLayer]]
 
 	

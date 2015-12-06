@@ -80,47 +80,47 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 
 
 
-var getCurrentPage = function() {
-	return [currentDocument currentPage]
-}
-
-
-var addPage = function(oldPage) {
-	var newPage = nil
-	var pageExistsIndex = -1
-	var newPageName = "[NE] " + [oldPage name]
-	
-	var pages = [currentDocument pages]
-	for (var i = 0; i < pages.count(); i++) {
-		if ([[pages objectAtIndex: i] name] == newPageName) {
-			pageExistsIndex = i
-			break
-		}
-	}
-	
-	if (pageExistsIndex != -1) {
-		newPage = [pages objectAtIndex: pageExistsIndex]
-	}
-	else {
-	    newPage = currentDocument.addBlankPage();
-	    newPage.setName(newPageName);
-	}
-    
-	currentDocument.setCurrentPage(oldPage);
-    return newPage;
-}
-
-
-var deleteLayerOnPage = function(layer, page) {
-	var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
-	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
-	// log("Found " + deleteLayers.count() + "layers")
-	
-	for (var i = 0; i < deleteLayers.count(); i++) {
-		if ([deleteLayers objectAtIndex: i] != nil) {
-			[[deleteLayers objectAtIndex: i] removeFromParent]
-		}
-	}
-
-	return
-}
+// var getCurrentPage = function() {
+// 	return [currentDocument currentPage]
+// }
+//
+//
+// var addPage = function(oldPage) {
+// 	var newPage = nil
+// 	var pageExistsIndex = -1
+// 	var newPageName = "[NE] " + [oldPage name]
+//
+// 	var pages = [currentDocument pages]
+// 	for (var i = 0; i < pages.count(); i++) {
+// 		if ([[pages objectAtIndex: i] name] == newPageName) {
+// 			pageExistsIndex = i
+// 			break
+// 		}
+// 	}
+//
+// 	if (pageExistsIndex != -1) {
+// 		newPage = [pages objectAtIndex: pageExistsIndex]
+// 	}
+// 	else {
+// 	    newPage = currentDocument.addBlankPage();
+// 	    newPage.setName(newPageName);
+// 	}
+//
+// 	currentDocument.setCurrentPage(oldPage);
+//     return newPage;
+// }
+//
+//
+// var deleteLayerOnPage = function(layer, page) {
+// 	var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
+// 	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
+// 	// log("Found " + deleteLayers.count() + "layers")
+//
+// 	for (var i = 0; i < deleteLayers.count(); i++) {
+// 		if ([deleteLayers objectAtIndex: i] != nil) {
+// 			[[deleteLayers objectAtIndex: i] removeFromParent]
+// 		}
+// 	}
+//
+// 	return
+// }
