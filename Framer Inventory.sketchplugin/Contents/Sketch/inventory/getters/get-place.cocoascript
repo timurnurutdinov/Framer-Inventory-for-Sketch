@@ -34,8 +34,11 @@
 
 
 // returns width, height, x, y
-function getPosition(layer, isStillExportable) {
-	if (isStillExportable) { return getPlaceRect(layer) }
+function getPosition(layer, type, isStillExportable) {
+	if (type == nil) { type = exportableType(layer) }
+	if (isStillExportable == nil) { if (showLog) { log("Warning: isStillExportable is unknown") } }	
+	
+	if (isStillExportable && (type == 2 || type == 3)) { return getPlaceRect(layer) }
 	return getPlaceImage(layer)
 }
 
@@ -46,14 +49,19 @@ function getPosition(layer, isStillExportable) {
 
 
 var getPlaceImage = function(layer) {
-	
-	var parentArtboard = findParentArtboard(layer)
 	var currentPage = findParentPage(layer)
+	var parentArtboard = findParentArtboard(layer)
+	var parentRect = [parentArtboard absoluteRect]
 
 	// copy layer and place it to artboard
 	var layer_copy = [layer duplicate]
 	[layer_copy removeFromParent]
 	[currentPage addLayers: [layer_copy]]
+	
+	
+	var frame = [layer_copy frame]
+	[frame setX: [[layer absoluteRect] x]]
+	[frame setY: [[layer absoluteRect] y]]
 	
 	
 	// normalize layer for export
@@ -66,7 +74,8 @@ var getPlaceImage = function(layer) {
 		
 	var values = []
 	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
-	values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
+	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
+	log("Values: " + values)
 	
 	[layer_copy removeFromParent]	
 	return values

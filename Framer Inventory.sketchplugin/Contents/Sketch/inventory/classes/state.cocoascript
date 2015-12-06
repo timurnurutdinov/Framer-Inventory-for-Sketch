@@ -55,7 +55,7 @@ function State (layer) {
 	this.backgroundsExportable = this.isBackgroundsExportale()
 	this.generatable = this.isGeneratable()
 	
-	this.position = getPosition(layer, this.generatable)
+	this.position = getPosition(layer, this.type, this.generatable)
 	
 }
 
