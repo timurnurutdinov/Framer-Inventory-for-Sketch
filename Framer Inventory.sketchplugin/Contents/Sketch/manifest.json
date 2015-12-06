@@ -9,21 +9,21 @@
   "compatibleVersion": 4.2,
   "commands" : [
     {
-      "script" : "action-test.cocoascript",
+      "script" : "choose-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "1. Test Replicate",
-      "identifier" : "action-test"
+      "name" : "1. Replicate Layers",
+      "identifier" : "choose-replicate-layers"
     },
     {
-      "script" : "action-test-2.cocoascript",
+      "script" : "choose-generate-states.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "2. Test States",
-      "identifier" : "action-test-2"
+      "name" : "2. Generate States",
+      "identifier" : "choose-generate-states"
     },
     {
-      "script" : "action-testing-environment.cocoascript",
+      "script" : "choose-testing-environment.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "Run testing environment",
@@ -33,8 +33,8 @@
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "action-test",
-		  "action-test-2",
+		  "choose-replicate-layers",
+		  "choose-generate-states",
 		  {
 		         "title": "3. Utils",
 		         "items": [

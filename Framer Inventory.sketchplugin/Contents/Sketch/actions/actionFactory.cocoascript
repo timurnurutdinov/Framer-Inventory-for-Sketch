@@ -1,0 +1,104 @@
+@import 'actions/workers/action-replicate-layers.cocoascript'
+@import 'actions/workers/action-generate-states.cocoascript'
+@import 'actions/workers/action-testing-environment.cocoascript'
+
+@import 'inventory/classes/layer.cocoascript'
+@import 'inventory/libs/pluginDefaults.js'
+@import 'inventory/libs/search.js'
+
+var presets = {
+    myRetina: "retina",
+}
+
+var pluginDomain = "com.addleimb.framer-inventory.retina"
+var userRetinaDefaults = initDefaults(pluginDomain, presets)
+
+var currentDocument = nil
+
+
+
+
+var chooseAction = function(context, actionIdentifier, testing) {
+	
+	if (showLog) { log("Current document is initialised") }
+	currentDocument = context.document
+	
+	if (testing) {
+		if (showLog) { log("Starting Testing Environment...") }
+		runTestingEnvironment(context)
+	}
+	else {
+		if (actionIdentifier == 0) {
+			if (showLog) { log("Starting Replicating Layers...") }
+			runReplicateLayers(context)
+		}
+		else if (actionIdentifier == 1) {
+			if (showLog) { log("Starting Analysing States...") }
+			runGenerateStates(context)
+		}
+		else if (actionIdentifier == 2) {
+			if (showLog) { log("Starting Simulating Keynote...") }
+			runSimulateKeynote(context)
+		}
+		else {
+			if (showLog) { log("ERROR: Action is undetermined") }
+		}
+	}
+}
+
+
+
+
+
+//
+// com.framerInventory = (function() {
+// 	var mine = {};
+//
+// 	my.global = {
+//
+// 		getCurrentPage: function() {
+// 			return [currentDocument currentPage]
+// 		},
+//
+//
+// 		addPage: function(oldPage) {
+// 			var newPage = nil
+// 			var pageExistsIndex = -1
+// 			var newPageName = "[NE] " + [oldPage name]
+//
+// 			var pages = [currentDocument pages]
+// 			for (var i = 0; i < pages.count(); i++) {
+// 				if ([[pages objectAtIndex: i] name] == newPageName) {
+// 					pageExistsIndex = i
+// 					break
+// 				}
+// 			}
+//
+// 			if (pageExistsIndex != -1) {
+// 				newPage = [pages objectAtIndex: pageExistsIndex]
+// 			}
+// 			else {
+// 			    newPage = currentDocument.addBlankPage();
+// 			    newPage.setName(newPageName);
+// 			}
+//
+// 			currentDocument.setCurrentPage(oldPage);
+// 		    return newPage;
+// 		},
+//
+//
+// 		deleteLayerOnPage: function(layer, page) {
+// 			var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
+// 			var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
+// 			// log("Found " + deleteLayers.count() + "layers")
+//
+// 			for (var i = 0; i < deleteLayers.count(); i++) {
+// 				if ([deleteLayers objectAtIndex: i] != nil) {
+// 					[[deleteLayers objectAtIndex: i] removeFromParent]
+// 				}
+// 			}
+//
+// 			return
+// 		}
+// 	}
+// }

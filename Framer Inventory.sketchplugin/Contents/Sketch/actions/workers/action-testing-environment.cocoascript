@@ -1,5 +1,5 @@
-@import 'action-test-2.cocoascript'
-@import 'inventory/libs/search.js'
+//@import 'action-test-2.cocoascript'
+//@import 'inventory/libs/search.js'
 @import 'inventory/libs/testing/write.js'
 
 
@@ -8,7 +8,8 @@ var environmentPagesNames = []
 
 var testingSelection = NSMutableArray.array()
 
-var onRun = function(context) {
+
+var runTestingEnvironment = function(context) {
 	var doc = context.document
 	var pages = [doc pages]
 	var runningPage = [doc currentPage]
@@ -54,7 +55,9 @@ var onRun = function(context) {
 				}
 			}
 			
-			answer = generateStatesAction(context)
+			
+			if (showLog) { log("Asking action data to test") }
+			answer = runGenerateStates(context)
 			answers.push(answer)
 			
 		}

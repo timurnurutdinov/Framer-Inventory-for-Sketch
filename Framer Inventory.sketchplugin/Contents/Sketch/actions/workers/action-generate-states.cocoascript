@@ -1,29 +1,34 @@
-// @import 'inventory/layer-compilation.cocoascript'
+// @import 'inventory/classes/layer.cocoascript'
 
-@import 'inventory/classes/layer.cocoascript'
+// @import 'inventory/libs/pluginDefaults.js'
+//@import 'inventory/libs/search.js'
 
-@import 'inventory/libs/pluginDefaults.js'
-@import 'inventory/libs/search.js'
+// var presets = {
+//     myRetina: "retina",
+// }
+//
+// var pluginDomain = "com.addleimb.framer-inventory.retina"
+// var userRetinaDefaults = initDefaults(pluginDomain, presets)
+//
+// var currentDocument = nil
 
-var presets = {
-    myRetina: "retina",
-}
-
-var pluginDomain = "com.addleimb.framer-inventory.retina"
-var userRetinaDefaults = initDefaults(pluginDomain, presets)
-
-var currentDocument = nil
-
-
-var onRun = function(context) {
-	replicateAction(context)
-}
+// var isTestingEnvironment = true
 
 
-var replicateAction = function(context) {
-	log("\n")
+// var onRun = function(context) {
+// 	isTestingEnvironment = false
+// 	generateStatesAction(context)
+// }
+
+
+
+
+var runGenerateStates = function(context, isTestingEnvironment) {
+	if (isTestingEnvironment == nil) { isTestingEnvironment = false }
+	
 	var doc = context.document
 	var selection = context.selection
+	if (isTestingEnvironment) { selection = getTestingSelection() }
 	
 	currentDocument = doc
 	
@@ -36,26 +41,40 @@ var replicateAction = function(context) {
 	userRetinaDefaults.myRetina = retinaProperty
 	saveDefaults(userRetinaDefaults)
 	
+	var artboards = [[doc currentPage] artboards]
+	
 	if (selection != nil) {
 		for (var i = 0; i < [selection count]; i++) {
 			var currentLayer = [selection objectAtIndex: i]
 			var layer = new Layer([currentLayer name])
-			layer.addState(currentLayer)
+			
+			var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
+																							 [currentLayer className])
+			for (var j = 0; j < [artboards count]; j++) {
+				var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
+				if ([matchingLayers count] > 0) {
+					layer.addState([matchingLayers firstObject])
+				}
+			}
+			
 			layers.push(layer)
 		}
 	}
 	
-
 	for (var i = 0; i < layers.length; i++) {
 		pasteboardContent += layers[i].printLayer()
 	}
+
 	
-	[[NSPasteboard generalPasteboard] clearContents];
-	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
-	[doc showMessage:"Done"]
+	if (!isTestingEnvironment) {
+		[[NSPasteboard generalPasteboard] clearContents];
+		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
+		[doc showMessage:"Done"]
+	}
 	
 	return pasteboardContent
 }
+
 
 
 
@@ -95,7 +114,7 @@ var addPage = function(oldPage) {
 var deleteLayerOnPage = function(layer, page) {
 	var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
 	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
-	log("Found " + deleteLayers.count() + "layers")
+	// log("Found " + deleteLayers.count() + "layers")
 	
 	for (var i = 0; i < deleteLayers.count(); i++) {
 		if ([deleteLayers objectAtIndex: i] != nil) {

@@ -1,0 +1,10 @@
+@import 'actions/actionFactory.cocoascript'
+
+var runReplicateLayersIdentifier = 0
+var showLog = true
+var testing = false
+
+var onRun = function(context) {
+	if (showLog) { log("Running Replace Layers") }
+	chooseAction(context, runReplicateLayersIdentifier, testing)
+}
