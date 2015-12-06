@@ -1,25 +1,5 @@
-// @import 'inventory/layer-compilation.cocoascript'
 
-// @import 'inventory/classes/layer.cocoascript'
-
-//@import 'inventory/libs/pluginDefaults.js'
-//@import 'inventory/libs/search.js'
-
-// var presets = {
-//     myRetina: "retina",
-// }
-//
-// var pluginDomain = "com.addleimb.framer-inventory.retina"
-// var userRetinaDefaults = initDefaults(pluginDomain, presets)
-//
-// var currentDocument = nil
-//
-
-// var onRun = function(context) {
-// 	replicateAction(context)
-// }
-
-
+// generate code for layers
 var runReplicateLayers = function(context) {
 	
 	var doc = context.document
@@ -32,6 +12,12 @@ var runReplicateLayers = function(context) {
 //
 // 	userRetinaDefaults.myRetina = retinaProperty
 // 	saveDefaults(userRetinaDefaults)
+	
+	
+	var currentPage = FramerInventory.getCurrentPage()
+	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	FramerInventory.cleanPage(framerInventoryPage)
+	
 	
 	if (selection != nil) {
 		for (var i = 0; i < [selection count]; i++) {
@@ -53,52 +39,3 @@ var runReplicateLayers = function(context) {
 	
 	return pasteboardContent
 }
-
-
-
-
-
-// var getCurrentPage = function() {
-// 	return [currentDocument currentPage]
-// }
-//
-//
-// var addPage = function(oldPage) {
-// 	var newPage = nil
-// 	var pageExistsIndex = -1
-// 	var newPageName = "[NE] " + [oldPage name]
-//
-// 	var pages = [currentDocument pages]
-// 	for (var i = 0; i < pages.count(); i++) {
-// 		if ([[pages objectAtIndex: i] name] == newPageName) {
-// 			pageExistsIndex = i
-// 			break
-// 		}
-// 	}
-//
-// 	if (pageExistsIndex != -1) {
-// 		newPage = [pages objectAtIndex: pageExistsIndex]
-// 	}
-// 	else {
-// 	    newPage = currentDocument.addBlankPage();
-// 	    newPage.setName(newPageName);
-// 	}
-//
-// 	currentDocument.setCurrentPage(oldPage);
-//     return newPage;
-// }
-//
-//
-// var deleteLayerOnPage = function(layer, page) {
-// 	var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
-// 	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
-// 	log("Found " + deleteLayers.count() + "layers")
-//
-// 	for (var i = 0; i < deleteLayers.count(); i++) {
-// 		if ([deleteLayers objectAtIndex: i] != nil) {
-// 			[[deleteLayers objectAtIndex: i] removeFromParent]
-// 		}
-// 	}
-//
-// 	return
-// }

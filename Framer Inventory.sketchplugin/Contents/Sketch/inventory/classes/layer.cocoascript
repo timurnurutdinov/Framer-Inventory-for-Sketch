@@ -90,6 +90,10 @@ Layer.prototype.printLayer = function() {
 
 
 Layer.prototype.generateFramerStates = function() {
+	if (this.states == nil || this.states.length == 0) {
+		if (showLog) { log("Warning: No states empty") }
+		return ""
+	}
 	
 	var currentType = this.states[0].type
 	var areAllGeneratable = this.areAllGeneratable()
@@ -320,9 +324,9 @@ Layer.prototype.normalizeCopyForState = function(state) {
 	[copiedLayer removeFromParent]
 	
 	var currentPage = FramerInventory.getCurrentPage()
-	var newPage = FramerInventory.addPage(currentPage)
-	FramerInventory.deleteLayerOnPage(copiedLayer, newPage)
-	[newPage addLayers: [copiedLayer]]
+	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	FramerInventory.cleanLayer(copiedLayer, framerInventoryPage)
+	[framerInventoryPage addLayers: [copiedLayer]]
 
 	
 	var size = [[copiedLayer exportOptions] addExportSize]

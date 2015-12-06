@@ -1,13 +1,11 @@
-//@import 'action-test-2.cocoascript'
-//@import 'inventory/libs/search.js'
-@import 'inventory/libs/testing/write.js'
+@import 'inventory/libs/testing/logger.js'
 
 
 var environmentLayersNames = []
 var environmentPagesNames = []
 
+var runTests = true
 var testingSelection = NSMutableArray.array()
-
 
 var runTestingEnvironment = function(context) {
 	var doc = context.document
@@ -23,15 +21,17 @@ var runTestingEnvironment = function(context) {
 	var skippedLayersNames = 0
 	
 	var pairs = generatePairs()
-	var answer = ""
 	var answers = []
 	var errorAnswers = []
 	
 	for (var i = 0; i < pairs.length; i++) {
+		var answer = ""
+		var pageName = pairs[i][0]
 		testingSelection = NSMutableArray.array()
-		answer = ""
 		
-		var operatingPage = findPageWithName(pairs[i][0], pages)
+		var operatingPage = FramerInventory.findPageWithName(pageName)
+		if (showTestLog) { log("Running on page: " + pageName) }
+		if (showTestLog) { log("Operating page: " + [operatingPage name]) }
 		
 		if (operatingPage != nil) {
 			
@@ -55,9 +55,7 @@ var runTestingEnvironment = function(context) {
 				}
 			}
 			
-			
-			if (showLog) { log("Asking action data to test") }
-			answer = runGenerateStates(context)
+			answer = runGenerateStates(context, runTests)
 			answers.push(answer)
 			
 		}
@@ -73,11 +71,17 @@ var runTestingEnvironment = function(context) {
 	}
 	resultingString += "\n\n\n\n"
 
+
 	for (var i = 0; i < answers.length; i++) {
-		resultingString += "Test " + i + ": " + pairs[i][0] + "\n"
+		var readReferenceFromFile = pairs[i][0]
 		
-		var diff = compareAnswer(answers[i], pairs[i][0])
-		log(i + " diff: " + diff)
+		resultingString += "Test " + i + ": " + readReferenceFromFile + "\n"
+		
+		var diff = compareAnswer(answers[i], readReferenceFromFile)
+		if (showLog) {
+			if (diff == nil) {log(i + " Correct test. Diff is null: " + diff)}
+			else { log(i + " diff: " + diff) }
+		}
 
 		if (diff != nil) {
 			resultingString += diff
@@ -88,6 +92,7 @@ var runTestingEnvironment = function(context) {
 		}
 		resultingString += "\n\n"
 	}
+	
 	
 	doc.setCurrentPage(runningPage)
 	
@@ -106,25 +111,22 @@ var runTestingEnvironment = function(context) {
 
 
 
+function TestingEnvironment () {}
 
-
-
-var findPageWithName = function(pageName, pages) {
-	for (var p = 0; p < [pages count]; p++) {
-		if ([[pages objectAtIndex:p] name] == pageName) { return [pages objectAtIndex:p] }
-	}
-	return nil
-}
-
-
-var getTestingSelection = function() {
+TestingEnvironment.getTestingSelection = function() {
 	return testingSelection
 }
 
 
+
+
+
+// compare functions
 var compareAnswer = function(answer, fileName) {
 	
 	var readText = readFileForAnswer(fileName)
+	if(showLog) { log("Read file: " + readText) }
+	
 	if (readText == "" || readText == '' || readText == nil) { return false }
 	return compareTextsPhrase(answer, "" + readText)
 }
@@ -177,8 +179,7 @@ var compareTextsPhrase = function(text1, text2) {
 
 
 
-
-
+// TESTS
 var generatePairs = function() {
 	var pairs = []
 	

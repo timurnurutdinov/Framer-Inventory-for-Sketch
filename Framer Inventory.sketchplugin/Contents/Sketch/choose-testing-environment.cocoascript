@@ -2,6 +2,7 @@
 
 var runGenerateStatesIdentifier = 1
 var showLog = true
+var showTestLog = true
 var testing = true
 
 var onRun = function(context) {

@@ -12,7 +12,9 @@ var readFileForAnswer = function(fileName) {
 	var folderName = createTempFolderNamed(homeDirectory)
 	var tests = createTempFolderNamed(homeDirectory + testsDirectory)
 	var text = readTextFromFile("" + tests + "/" + fileName + ".txt")
-	if (text == nil) { log("No test found: " + fileName) }
+	if (text == nil) {
+		if (showLog) { log("No test found: " + fileName) }
+	}
 	return text
 }
 
