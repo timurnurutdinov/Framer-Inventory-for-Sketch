@@ -9,6 +9,10 @@
 //  5 - other shape
 
 function exportableType(layerToAnalyse) {
+	if (layerToAnalyse == nil) {
+		log("ERRORRRR")
+	}
+	
 	var type = [layerToAnalyse className]
 	var answer = 0
 	
@@ -95,6 +99,18 @@ function findParentArtboard(layer) {
 }
 
 function findParentPage(layer) {
+	var lookingForParentPage = true
+	var localParent = layer
+	while (lookingForParentPage) {
+		localParent = [localParent parentGroup]
+		if ([localParent className] == "MSPage") {
+			lookingForParentPage = false
+		}
+	}
+	return localParent
+}
+
+function findParentPageByArtboard(layer) {
 	var parentArtboard = findParentArtboard(layer)
 	if ([parentArtboard className] == "MSPage") {
 		return parentArtboard

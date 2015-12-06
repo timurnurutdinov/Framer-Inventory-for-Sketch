@@ -207,10 +207,12 @@ var generatePairs = function() {
 	pairs.push(["states unexportable rectangle", ["nice"]])
 	
 	pairs.push(["states groups shadows same", ["nice"]])
+	pairs.push(["states groups shadows same borders", ["nice"]])
 	pairs.push(["states groups shadows scaled", ["nice"]])
 	
 	pairs.push(["layer out artboard position", ["nice"]])
 	pairs.push(["layer out artboard position group", ["nice"]])
+	pairs.push(["layer out artboard position group shadow", ["nice"]])
 	
 	return pairs
 }

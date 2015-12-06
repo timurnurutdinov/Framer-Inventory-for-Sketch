@@ -172,35 +172,75 @@ Layer.prototype.generateFramerStates = function() {
 				outputPositionString += generatePosition(currentState.position)
 			}
 			else {
-				var normalizedLayer = this.normalizeCopyForState(currentState)
-				var temp = getPosition(normalizedLayer, currentState.type, false)
+				// var normalizedLayer = this.normalizeCopyForState(currentState)
+				// var temp = getPosition(normalizedLayer, currentState.type, false)
+				var temp = getPlaceImage(currentState.layer)
+				var normal = this.normalizeLayer(currentState.layer, false)
+				this.copyLayerToNormalizedPage(normal)
 			
 				outputPositionString += generatePosition(temp)
 				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
 		}
-		else if (currentType == 1 || currentType == 5) {
+		else if (currentType == 1) {
 			if (this.areAllShadowsEqual) {
 
 				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
 						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
 				}
-
-				var normalizedLayer = this.normalizeCopyForState(currentState)
-				cleanShadows(normalizedLayer)
-				var temp = getPosition(normalizedLayer, currentState.type, false)
+				
+				var temp = getPlaceImage(currentState.layer)
+				var normal = this.normalizeLayer(currentState.layer, true)
+				this.copyLayerToNormalizedPage(normal)
+				
+				// var normalizedLayer = this.normalizeCopyForState(currentState)
+// 				cleanShadows(normalizedLayer)
+// 				var temp = getPosition(normalizedLayer, currentState.type, false)
 
 				outputPositionString += generatePosition(temp)
 				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
 			else {
-				var normalizedLayer = this.normalizeCopyForState(currentState)
-				var temp = getPosition(normalizedLayer, currentState.type, false)
+				/////////////////
+				// var normalizedLayer = this.normalizeCopyForState(currentState)
+				// var temp = getPosition(normalizedLayer, currentState.type, false)
+				var temp = getPlaceImage(currentState.layer)
+				var normal = this.normalizeLayer(currentState.layer, false)
+				this.copyLayerToNormalizedPage(normal)
 
 				outputPositionString += generatePosition(temp)
 				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
-			
+		}
+		else if (currentType == 5) {
+			if (areAllGeneratable && this.areAllShadowsEqual) {
+
+				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
+						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
+				}
+				
+				var temp = getPlaceRect(currentState.layer)
+				var normal = this.normalizeLayer(currentState.layer, true)
+				this.copyLayerToNormalizedPage(normal)
+				
+				// var normalizedLayer = this.normalizeCopyForState(currentState)
+// 				cleanShadows(normalizedLayer)
+// 				var temp = getPosition(normalizedLayer, currentState.type, false)
+
+				outputPositionString += generatePosition(temp)
+				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+			}
+			else {
+				/////////////////
+				// var normalizedLayer = this.normalizeCopyForState(currentState)
+				// var temp = getPosition(normalizedLayer, currentState.type, false)
+				var temp = getPlaceImage(currentState.layer)
+				var normal = this.normalizeLayer(currentState.layer, false)
+				this.copyLayerToNormalizedPage(normal)
+
+				outputPositionString += generatePosition(temp)
+				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+			}
 		}
 		else {
 			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
@@ -307,26 +347,6 @@ Layer.prototype.getSuggestedBackgroundColor = function(currentStateNumber) {
 
 
 
-
-// Layer.prototype.normalizeLayer = function(layer, cleanLayer) {
-// 	log("NORMALISED LAYER IS " + layer)
-// 	if (cleanLayer == nil) { cleanLayer = false }
-//
-// 	var layer_copy = [layer duplicate]
-// 	[layer_copy removeFromParent]
-//
-// 	var frame = [layer_copy frame]
-// 	[frame setX: [[layer absoluteRect] x]]
-// 	[frame setY: [[layer absoluteRect] y]]
-//
-// 	if (cleanLayer) { cleanShadows(layer_copy) }
-//
-// 	return layer_copy
-// }
-
-
-
-
 // return exportable copy of current layer
 Layer.prototype.normalizeCopyForState = function(state) {
 	var size_data = {
@@ -352,4 +372,40 @@ Layer.prototype.normalizeCopyForState = function(state) {
 
 	return copiedLayer
 
+}
+
+
+
+Layer.prototype.normalizeLayer = function(layer, cleanLayer) {
+	if (cleanLayer == nil) { cleanLayer = false }
+	
+	var layer_copy = [layer duplicate]
+	[layer_copy removeFromParent]
+	
+	// var frame = [layer_copy frame]
+// 	[frame setX: [[layer absoluteRect] x]]
+// 	[frame setY: [[layer absoluteRect] y]]
+	
+	if (cleanLayer) { cleanShadows(layer_copy) }
+	
+	return layer_copy
+}
+
+
+Layer.prototype.copyLayerToNormalizedPage = function(layer) {
+	var size_data = {
+	    "format": "png",
+	    "scale": 2,
+	    "suffix": ""
+	}
+	
+	var currentPage = FramerInventory.getCurrentPage()
+	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	FramerInventory.cleanLayer(layer, framerInventoryPage)
+	[framerInventoryPage addLayers: [layer]]
+	
+	var size = [[layer exportOptions] addExportSize]
+ 	[size setFormat:size_data.format]
+    [size setScale:size_data.scale]
+    [size setName:size_data.suffix]
 }

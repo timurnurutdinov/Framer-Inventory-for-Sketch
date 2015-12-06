@@ -50,7 +50,9 @@ function getPosition(layer, type, isStillExportable) {
 
 var getPlaceImage = function(layer) {
 	var currentPage = findParentPage(layer)
+	if (showLog) { log("CP") }
 	var parentArtboard = findParentArtboard(layer)
+	if (showLog) { log("PA") }
 	var parentRect = [parentArtboard absoluteRect]
 
 	// copy layer and place it to artboard
@@ -75,7 +77,7 @@ var getPlaceImage = function(layer) {
 	var values = []
 	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
 	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
-	log("Values: " + values)
+	if (showLog) { log("Values of " + [layer name] + ": " + values) }
 	
 	[layer_copy removeFromParent]	
 	return values
