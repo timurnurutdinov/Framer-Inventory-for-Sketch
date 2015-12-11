@@ -13,17 +13,15 @@ var presets = {
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"
-var userRetinaDefaults = initDefaults(pluginDomain, presets)
+// var userRetinaDefaults = initDefaults(pluginDomain, presets)
 
 var currentDocument = nil
-
-
 
 
 var chooseAction = function(context, actionIdentifier, testing) {
 	
 	if (showLog) { log("Current document is initialised") }
-	currentDocument = context.document
+	FramerInventory.initCurrentDocument(context)
 
 	if (testing) {
 		if (showLog) { log("Starting Testing Environment...") }
@@ -53,8 +51,16 @@ var chooseAction = function(context, actionIdentifier, testing) {
 
 function FramerInventory () {}
 
+FramerInventory.initCurrentDocument = function(context) {
+	currentDocument = context.document
+}
+
 FramerInventory.getCurrentPage = function () {
 	return [currentDocument currentPage]
+}
+
+FramerInventory.deselectLayers = function() {
+	[[currentDocument currentPage] deselectAllLayers]
 }
 
 
@@ -114,3 +120,178 @@ FramerInventory.findPageWithName = function(pageName) {
 	}
 	return nil
 }
+
+
+
+
+
+
+
+// selection based magic
+
+FramerInventory.organiseSelection = function(userSelection) {
+	var cleanedSelection = FramerInventory.cleanSelection(userSelection)[0]
+	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
+	FramerInventory.restoreSelection(userSelection)
+	var merged = FramerInventory.mergeQueue(queue)
+	var newSelection = FramerInventory.composeSelection(merged)
+	return newSelection
+}
+
+
+FramerInventory.cleanSelection = function(userSelection) {
+	var newSelection = NSMutableArray.new()
+	var duplicatedSelection = NSMutableArray.new()
+	
+	for (var i = 0; i < userSelection.count(); i++) {
+		var current = [userSelection objectAtIndex:i]
+		var alreadySelected = false
+		
+		for (var j = 0; j < i; j++) {
+			var comparableCurrent = [userSelection objectAtIndex:j]
+			if ([current name] == [comparableCurrent name]) {
+				alreadySelected = true
+			}
+		}
+		
+		if (!alreadySelected) {
+			newSelection = newSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+		}
+		else {
+			duplicatedSelection = duplicatedSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+		}
+	}
+	
+	return [newSelection, duplicatedSelection]
+}
+
+
+FramerInventory.configureQueue = function(artboards, cleanedSelection) {
+	var queue = []
+	
+	for (var i = 0; i < artboards.count(); i++) {
+		[[currentDocument currentPage] deselectAllLayers]
+		
+		var currentArtboard = [artboards objectAtIndex:i]
+		var artboardLayers = [currentArtboard layers]
+
+		// if (showLog) { log("A: " + [currentArtboard name]) }
+		var allChildren = [currentArtboard children]
+		var localQueue = []
+
+		
+		for (var j = 0; j < allChildren.count(); j++) {
+			
+			var child = [allChildren objectAtIndex: j]
+			
+			for (var s = 0; s < cleanedSelection.count(); s++) {
+				var selectionLayer = [cleanedSelection objectAtIndex: s]
+				
+				if ([child name] == [selectionLayer name]) {
+					// if (showLog) { log("Found layer") }
+					localQueue.push([child name])
+					break
+				}
+			}
+		}
+		
+		if (localQueue != nil && localQueue.length > 0) {
+			// if (showLog) { log("Added new queue") }
+			queue.push(localQueue)
+		}
+		
+	}
+	
+	return queue
+}
+
+
+FramerInventory.composeSelection = function(layerNames) {
+	var composedSelection = NSMutableArray.new()
+	
+	for (var i = 0; i < layerNames.length; i++) {
+		var namedLayersPredicate = NSPredicate.predicateWithFormat("name == %@", layerNames[i])
+		var foundLayers = findLayersMatchingPredicate_inContainer_filterByType(namedLayersPredicate, FramerInventory.getCurrentPage())
+		
+		if (foundLayers != nil && [foundLayers count] != 0) {
+			composedSelection = composedSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([foundLayers firstObject], nil))
+			continue
+		}
+	}
+	
+	return composedSelection
+}
+
+
+FramerInventory.restoreSelection = function(initialSelection) {
+	[[currentDocument currentPage] deselectAllLayers]
+	for (var i = 0; i < initialSelection.count(); i++) {
+		[[initialSelection objectAtIndex:i] select:true byExpandingSelection:true]
+	}
+}
+
+
+
+
+
+// merging layers
+FramerInventory.hasElem = function(elem, container) {
+	if (container == nil) {
+		if (showLog) { log("HasElem has an empty container")}
+		return -1
+	}
+	
+	for (var i = 0; i < container.length; i++) {
+		if (elem == container[i]) { return i }
+	}
+	return -1
+}
+
+
+FramerInventory.merge = function(left, right) {
+	if (left.length < 1) { return right }
+	if (left.right < 1) { return left }
+
+	var result = []
+	var leftPointer = 0
+	var rightPointer = 0
+	
+	for (var i = 0; i < left.length; i++) {
+		var currentElem = left[i]
+		
+		var stop = FramerInventory.hasElem(currentElem, right)
+		
+		// if (showLog) { log("it: " + i + " and stop is " + stop) }
+		
+		if (stop != -1) {
+			for (var f = leftPointer; f < i; f++) { result.push(left[f]) }
+			for (var f = rightPointer; f < stop; f++) { result.push(right[f]) }
+			result.push(right[stop])
+			leftPointer = i + 1
+			rightPointer = stop + 1
+		}
+	}
+	
+	for (var f = leftPointer; f < left.length; f++) { result.push(left[f]) }
+	for (var f = rightPointer; f < right.length; f++) { result.push(right[f]) }
+
+	return result
+}
+
+
+FramerInventory.mergeQueue = function(container) {
+	if (container == nil) {
+		if (showLog) { log("Merge queue has an empty container")}
+		return nil
+	}
+	if (container.legth == 1) { return container[0] }
+	
+	var temp = []
+	for (var i = 0; i < container.length; i++) {
+		temp = FramerInventory.merge(temp, container[i])
+	}
+	return temp
+}
+
+
+
