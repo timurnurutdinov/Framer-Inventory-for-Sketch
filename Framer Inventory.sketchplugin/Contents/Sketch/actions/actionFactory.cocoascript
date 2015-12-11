@@ -13,7 +13,7 @@ var presets = {
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"
-// var userRetinaDefaults = initDefaults(pluginDomain, presets)
+var userRetinaDefaults = initDefaults(pluginDomain, presets)
 
 var currentDocument = nil
 
@@ -130,11 +130,17 @@ FramerInventory.findPageWithName = function(pageName) {
 // selection based magic
 
 FramerInventory.organiseSelection = function(userSelection) {
+	var page = FramerInventory.getCurrentPage()
+	var artboards = [page artboards]
+	
 	var cleanedSelection = FramerInventory.cleanSelection(userSelection)[0]
 	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
+	
 	FramerInventory.restoreSelection(userSelection)
+	
 	var merged = FramerInventory.mergeQueue(queue)
 	var newSelection = FramerInventory.composeSelection(merged)
+	
 	return newSelection
 }
 

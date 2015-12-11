@@ -67,15 +67,15 @@ function generateAbsoluteRotation() {
 
 
 function generateCorner(value) {
-	// if (isAbsolute && value == 0) { return ", cornerRadius: 0" }
+	// if (isAbsolute && value == 0) { return ", borderRadius: 0" }
 	// else
 	if (value == 0) { return "" }
-	else if (value == "100%") { return ", cornerRadius: \"" + value + "\"" }
-	return ", cornerRadius: " + value + "*" + userRetinaDefaults.myRetina
+	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
+	return ", borderRadius: " + value + "*" + userRetinaDefaults.myRetina
 }
 
 function generateAbsoluteCorner() {
-	return ", cornerRadius: 0"
+	return ", borderRadius: 0"
 }
 
 
