@@ -133,7 +133,7 @@ function compareArrays(left, right) {
 	if (sizeLeft != sizeRight) { return false }
 	
 	for (var i = 0; i < sizeLeft; i++) {
-		log(left[i] + " " + right[i])
+		//log(left[i] + " " + right[i])
 		if (left[i] != right[i]) { 
 			return false
 		}

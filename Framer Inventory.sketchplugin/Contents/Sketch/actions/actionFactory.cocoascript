@@ -134,11 +134,20 @@ FramerInventory.organiseSelection = function(userSelection) {
 	var artboards = [page artboards]
 	
 	var cleanedSelection = FramerInventory.cleanSelection(userSelection)[0]
+	if (showLog) { log("Cleaned selection: " + cleanedSelection.count() + " -> " + cleanedSelection) }
+	
 	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
+	if (showLog) { log("Queue selection: " + queue.length + " -> " + queue) }
+	
+	
+	// if (showLog) { log("Cleaned Queue selection: " + queue) }
 	
 	FramerInventory.restoreSelection(userSelection)
 	
 	var merged = FramerInventory.mergeQueue(queue)
+	merged = FramerInventory.cleanDuplicates(merged)
+	
+	if (showLog) { log("Merged selection: " + merged) }
 	var newSelection = FramerInventory.composeSelection(merged)
 	
 	return newSelection
@@ -202,7 +211,7 @@ FramerInventory.configureQueue = function(artboards, cleanedSelection) {
 		}
 		
 		if (localQueue != nil && localQueue.length > 0) {
-			// if (showLog) { log("Added new queue") }
+			if (showLog) { log("Added new queue: " + localQueue) }
 			queue.push(localQueue)
 		}
 		
@@ -226,6 +235,41 @@ FramerInventory.composeSelection = function(layerNames) {
 	}
 	
 	return composedSelection
+}
+
+
+FramerInventory.cleanDuplicates = function(dirtySelection) {
+	if (dirtySelection == nil) { return nil }
+	log("SIZE: " + dirtySelection.length +  " " + dirtySelection)
+	var cleanSelection = []
+	
+	for (var i = 0; i < dirtySelection.length; i++) {
+		var dirtyLayer = dirtySelection[i]
+		
+		if (cleanSelection == nil) {
+			cleanSelection.push(dirtyLayer)
+		}
+		else {
+			var alreadySelected = false
+			
+			for (var j = 0; j < cleanSelection.length; j++) {
+				var cleanLayer = cleanSelection[j]
+				log("D & C: " + dirtyLayer + " | " + cleanLayer)
+			
+				if (dirtyLayer == cleanLayer) {
+					alreadySelected = true
+					break
+				}
+			}
+			
+			if (!alreadySelected) {
+				cleanSelection.push(dirtyLayer)
+			}
+		}
+		
+	}
+	
+	return cleanSelection
 }
 
 

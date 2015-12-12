@@ -186,6 +186,9 @@ var generatePairs = function() {
 	var paramsShapesPage = ["selection 1", "selection 2", "selection 3", "selection 4", "selection 5", "selection 6", "selection 7", "selection 8", "selection 9", "oval 1", "oval 2"]
 	pairs.push(["shapes", paramsShapesPage])
 	
+	
+	
+	// check params
 	pairs.push(["states predict opacity", ["nice"]])
 	pairs.push(["states predict no opacity", ["nice"]])
 	
@@ -210,9 +213,20 @@ var generatePairs = function() {
 	pairs.push(["states groups shadows same borders", ["nice"]])
 	pairs.push(["states groups shadows scaled", ["nice"]])
 	
+	
+	
+	// check normalising
 	pairs.push(["layer out artboard position", ["nice"]])
 	pairs.push(["layer out artboard position group", ["nice"]])
 	pairs.push(["layer out artboard position group shadow", ["nice"]])
+	
+	
+	
+	// check hierarhy
+	pairs.push(["states hierarhy selection order", ["square", "bg", "nice", "oval"]])
+	pairs.push(["states hierarhy selection order", ["bg", "square", "oval", "nice"]])
+	pairs.push(["states hierarhy selection order", ["nice", "oval", "square", "bg"]])
+	pairs.push(["states hierarhy selection order", ["nice", "oval", "square", "bg", "nice", "oval", "square", "bg"]])	
 	
 	return pairs
 }
