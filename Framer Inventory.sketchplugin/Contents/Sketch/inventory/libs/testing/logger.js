@@ -1,12 +1,15 @@
 var homeDirectory = "Framer Inventory"
 var testsDirectory = "/tests"
-var testsResults = "/tests"
+
 
 
 /*
  /Users/TillluR/Library/Containers/com.bohemiancoding.sketch3/Data/Library/Caches/Framer Inventory/
 */
 
+var readTestsFile = function() {
+
+}
 
 var readFileForAnswer = function(fileName) {
 	var folderName = createTempFolderNamed(homeDirectory)
