@@ -37,23 +37,9 @@ var runTestingEnvironment = function(context) {
 			
 			doc.setCurrentPage(operatingPage)
 			[[doc currentPage] deselectAllLayers]
-
-			for (var n = 0; n < pairs[i][1].length; n++) {
-				var layerName = pairs[i][1][n]
-				
-				var layersOnPagePredicate = NSPredicate.predicateWithFormat("name == %@ && class != %@", layerName, "MSArtboardGroup")
-				var layersOnPage = findLayersMatchingPredicate_inContainer_filterByType(layersOnPagePredicate, operatingPage)
-				
-				if (layersOnPage != nil && [layersOnPage count] != 0) {
-					[[layersOnPage firstObject] select:true byExpandingSelection:true]
-					
-					testingSelection = testingSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([layersOnPage firstObject]))
-				}
-				else {
-					resultingString += "WARNING: Skipped " + layerName + "\n"
-					skippedLayersNames++
-				}
-			}
+			
+			testingSelection = [operatingPage exportableLayers]
+			if (showTestLog) { log("exportable layers: " + testingSelection) }
 			
 			answer = runGenerateStates(context, runTests)
 			answers.push(answer)
@@ -223,10 +209,18 @@ var generatePairs = function() {
 	
 	
 	// check hierarhy
-	pairs.push(["states hierarhy selection order", ["square", "bg", "nice", "oval"]])
-	pairs.push(["states hierarhy selection order", ["bg", "square", "oval", "nice"]])
-	pairs.push(["states hierarhy selection order", ["nice", "oval", "square", "bg"]])
-	pairs.push(["states hierarhy selection order", ["nice", "oval", "square", "bg", "nice", "oval", "square", "bg"]])	
+	pairs.push(["states hierarhy selection order 1", ["square", "bg", "nice", "oval"]])
+	pairs.push(["states hierarhy selection order 2", ["square", "bg", "nice", "oval"]])
+	pairs.push(["states hierarhy selection order 3", ["square", "bg", "nice", "oval"]])
+	pairs.push(["states hierarhy selection order 4", ["square", "bg", "nice", "oval"]])
+	// pairs.push(["states hierarhy selection order", ["bg", "square", "oval", "nice"]])
+	// pairs.push(["states hierarhy selection order", ["nice", "oval", "square", "bg"]])
+	// pairs.push(["states hierarhy selection order", ["nice", "oval", "square", "bg", "nice", "oval", "square", "bg"]])
 	
 	return pairs
+}
+
+
+var generateSelectionNames = function(pageName) {
+	
 }
