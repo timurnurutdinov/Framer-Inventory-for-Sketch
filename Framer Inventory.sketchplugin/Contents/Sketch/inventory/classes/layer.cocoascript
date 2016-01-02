@@ -112,6 +112,7 @@ Layer.prototype.generateFramerStates = function() {
 	
 	var currentState = nil
 	var prevState = nil
+	var maxSpace = 0
 	
 	for (var i = 0; i < this.states.length; i++) {
 		currentState = this.states[i]
@@ -129,8 +130,9 @@ Layer.prototype.generateFramerStates = function() {
 		}
 		
 		if (currentType == 2 || currentType == 3) {
+			
+			// operating with rects and ovals
 			if (areAllGeneratable) {
-				
 				if (this.areCornersActive) {
 					if (!currentState.cornerActive) { outputString += generateAbsoluteCorner() }
 					else { outputString += generateCorner(currentState.corner) }
@@ -172,75 +174,79 @@ Layer.prototype.generateFramerStates = function() {
 				outputPositionString += generatePosition(currentState.position)
 			}
 			else {
-				// var normalizedLayer = this.normalizeCopyForState(currentState)
-				// var temp = getPosition(normalizedLayer, currentState.type, false)
-				var temp = getPlaceImage(currentState.layer)
+				var currentStatePlace = getPlaceImage(currentState.layer)
 				var normal = this.normalizeLayer(currentState.layer, false)
-				this.copyLayerToNormalizedPage(normal)
+				
+				var currentSpace = currentStatePlace[0] + currentStatePlace[1]
+				if (currentSpace > maxSpace) {
+					maxSpace = currentSpace
+					this.copyLayerToNormalizedPage(normal)
+				}
 			
-				outputPositionString += generatePosition(temp)
+				outputPositionString += generatePosition(currentStatePlace)
 				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
 		}
 		else if (currentType == 1) {
+			
+			// operating with groups
+			var currentStatePlace = []
+			var normal = nil
+			
 			if (this.areAllShadowsEqual) {
 
 				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
 						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
 				}
 				
-				var temp = getPlaceImage(currentState.layer)
-				var normal = this.normalizeLayer(currentState.layer, true)
-				this.copyLayerToNormalizedPage(normal)
-				
-				// var normalizedLayer = this.normalizeCopyForState(currentState)
-// 				cleanShadows(normalizedLayer)
-// 				var temp = getPosition(normalizedLayer, currentState.type, false)
-
-				outputPositionString += generatePosition(temp)
-				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+				currentStatePlace = getPlaceImage(currentState.layer)
+				normal = this.normalizeLayer(currentState.layer, true)
 			}
 			else {
-				/////////////////
-				// var normalizedLayer = this.normalizeCopyForState(currentState)
-				// var temp = getPosition(normalizedLayer, currentState.type, false)
-				var temp = getPlaceImage(currentState.layer)
-				var normal = this.normalizeLayer(currentState.layer, false)
-				this.copyLayerToNormalizedPage(normal)
-
-				outputPositionString += generatePosition(temp)
-				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+				currentStatePlace = getPlaceImage(currentState.layer)
+				normal = this.normalizeLayer(currentState.layer, false)
 			}
+			
+			var currentSpace = currentStatePlace[0] + currentStatePlace[1]
+			if (currentSpace > maxSpace) {
+				maxSpace = currentSpace
+				this.copyLayerToNormalizedPage(normal)
+			}
+
+			outputPositionString += generatePosition(currentStatePlace)
+			if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+			
 		}
 		else if (currentType == 5) {
+			
+			// operating with other shapes
+			var currentStatePlace = []
+			var normal = nil
+			
 			if (areAllGeneratable && this.areAllShadowsEqual) {
 
 				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
 						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
 				}
 				
-				var temp = getPlaceRect(currentState.layer)
-				var normal = this.normalizeLayer(currentState.layer, true)
-				this.copyLayerToNormalizedPage(normal)
+				currentStatePlace = getPlaceRect(currentState.layer)
+				normal = this.normalizeLayer(currentState.layer, true)
 				
-				// var normalizedLayer = this.normalizeCopyForState(currentState)
-// 				cleanShadows(normalizedLayer)
-// 				var temp = getPosition(normalizedLayer, currentState.type, false)
-
-				outputPositionString += generatePosition(temp)
-				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
 			else {
-				/////////////////
-				// var normalizedLayer = this.normalizeCopyForState(currentState)
-				// var temp = getPosition(normalizedLayer, currentState.type, false)
-				var temp = getPlaceImage(currentState.layer)
-				var normal = this.normalizeLayer(currentState.layer, false)
-				this.copyLayerToNormalizedPage(normal)
-
-				outputPositionString += generatePosition(temp)
-				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+				currentStatePlace = getPlaceImage(currentState.layer)
+				normal = this.normalizeLayer(currentState.layer, false)
 			}
+			
+			var currentSpace = currentStatePlace[0] + currentStatePlace[1]
+			if (currentSpace > maxSpace) {
+				maxSpace = currentSpace
+				this.copyLayerToNormalizedPage(normal)
+			}
+
+			outputPositionString += generatePosition(currentStatePlace)
+			if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
+			
 		}
 		else {
 			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
@@ -381,10 +387,6 @@ Layer.prototype.normalizeLayer = function(layer, cleanLayer) {
 	
 	var layer_copy = [layer duplicate]
 	[layer_copy removeFromParent]
-	
-	// var frame = [layer_copy frame]
-// 	[frame setX: [[layer absoluteRect] x]]
-// 	[frame setY: [[layer absoluteRect] y]]
 	
 	if (cleanLayer) { cleanShadows(layer_copy) }
 	
