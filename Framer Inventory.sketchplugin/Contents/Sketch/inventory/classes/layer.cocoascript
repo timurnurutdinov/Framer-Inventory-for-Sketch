@@ -129,6 +129,7 @@ Layer.prototype.generateFramerStates = function() {
 			// operating with rects and ovals
 			if (areAllGeneratable) {
 				if (this.areCornersActive) {
+					// ++++++++++++++++++++++++++++
 					if (!currentState.cornerActive) { outputString += generateAbsoluteCorner() }
 					else { outputString += generateCorner(currentState.corner) }
 				}
@@ -273,19 +274,28 @@ Layer.prototype.generateFramerStates = function() {
 
 Layer.prototype.returnDifferencedStates = function() {
 	if (this.states == nil) { return nil }
-	log ("DIFSTATE")
+	
 	var differencedStates = []
+	
 	var classicalState = this.getClassicalState()
 	differencedStates.push(classicalState)
 	
+	log("--------------------------------------")
+	log("CS: " + classicalState.printStateSmall())
+	for (var i = 0; i < this.states.length; i++) {
+		var state = this.states[i]
+		log("BS" + i + ": " + state.printStateSmall())
+	}
+	
+	
 	var baseState = classicalState
-	for (var i = 0; i < this.states.length - 1; i++) {
-		if (i != 0) { baseState = this.states[i] }
-		var tempState = baseState.keepDifference(this.states[i + 1])
+	for (var i = 0; i < this.states.length; i++) {
+		if (i != 0) { baseState = this.states[i - 1] }
+		var tempState = baseState.keepDifference(this.states[i])
 		
-		log("BS: " + baseState.printState())
-		log("TS: " + tempState.printState())
-		log("------")
+		log("--------------------------------------")
+		// log("BS: " + baseState.printStateSmall())
+		log("TS: " + tempState.printStateSmall())
 		
 		differencedStates.push(tempState)
 	}
@@ -296,6 +306,10 @@ Layer.prototype.returnDifferencedStates = function() {
 
 Layer.prototype.updateStates = function(states) {
 	this.states = states
+	
+	// for (var i = 1; i < this.states.length; i++) {
+// 		this.updateConditions(this.states[i])
+// 	}
 }
 
 
@@ -383,14 +397,25 @@ Layer.prototype.getClassicalState = function() {
 	if (this.states != nil && this.states.length > 0) { classicalState = new State(this.states[0].layer) }
 	else { return nil }
 	
-	for (var i = 1; i < this.states.length; i++) {
+	log("STLENGTH: " + this.states.length)
+	
+	for (var i = 0; i < this.states.length; i++) {
+		
 		var state = this.states[i]
 		
 		if (classicalState.opacity == nil || classicalState.opacity != state.opacity) { classicalState.opacity = nil }
 		if (classicalState.corner == nil || classicalState.corner != state.corner) { classicalState.corner = nil }
 		if (classicalState.rotation == nil || classicalState.rotation != state.rotation) { classicalState.rotation = nil }
 		
-		if (classicalState.position == nil || !compareArrays(classicalState.position, state.position)) { classicalState.position = nil }
+		if (classicalState.position != nil && classicalState.position != "" && state.position != nil) {	
+			for (var j = 0; j < classicalState.position.length; j++) {
+				if (j == 3) {
+					log("CP3: " + classicalState.position[j] + " | " + state.position[j])
+				}
+				if (classicalState.position[j] == nil || classicalState.position[j] != state.position[j]) { classicalState.position[j] = nil }
+			}
+		}
+		
 		if (classicalState.shadows == nil || !compareMatrices(classicalState.shadows, state.shadows)) { classicalState.shadows = nil }
 		if (classicalState.inners == nil || !compareMatrices(classicalState.inners, state.inners)) { classicalState.inners = nil }
 		if (classicalState.borders == nil || !compareMatrices(classicalState.borders, state.borders)) { classicalState.borders = nil }

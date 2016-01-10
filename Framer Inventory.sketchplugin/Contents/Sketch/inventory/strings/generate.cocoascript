@@ -54,8 +54,6 @@ function generateTransparentOpacity() {
 
 
 function generateRotation(value) {
-	// if (isAbsolute && value == 0) { return ", rotation: 0" }
-	// else
 	if (value == 0) { return "" }
 	return ", rotation: " + value
 }
@@ -67,14 +65,14 @@ function generateAbsoluteRotation() {
 
 
 function generateCorner(value) {
-	// if (isAbsolute && value == 0) { return ", borderRadius: 0" }
-	// else
+	log("NORMAL BEHAVIOUR")
 	if (value == nil || value == 0) { return "" }
 	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
 	return ", borderRadius: " + value + "*" + userRetinaDefaults.myRetina
 }
 
 function generateAbsoluteCorner() {
+	log("BAD BAD BAD BAD BAD")
 	return ", borderRadius: 0"
 }
 

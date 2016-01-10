@@ -59,6 +59,11 @@ function State (layer) {
 	
 	this.position = getPosition(layer, this.type, this.generatable)
 	
+	this.width = this.position[0]
+	this.height = this.position[1]
+	this.x = this.position[2]
+	this.y = this.position[3]
+	
 }
 
 
@@ -162,11 +167,10 @@ State.prototype.keepDifference = function(compareState) {
 		state.rotationActive = false
 	}
 	
-	if (this.position != nil && this.position != "" && state.position != nil) {
-		if (this.position[0] == state.position[0]) { state.position[0] = nil }
-		if (this.position[1] == state.position[1]) { state.position[1] = nil }
-		if (this.position[2] == state.position[2]) { state.position[2] = nil }
-		if (this.position[3] == state.position[3]) { state.position[3] = nil }
+	if (this.position != nil && this.position != "" && state.position != nil) {	
+		for (var i = 0; i < this.position.length; i++) {
+			if (this.position[i] == state.position[i]) { state.position[i] = nil }
+		}
 	}
 	
 	if (compareMatrices(this.shadows, state.shadows)) {
@@ -212,4 +216,9 @@ State.prototype.printState = function() {
 	if (this.inners != nil) { log("Inners: I=" + this.inners.length + "| " + this.inners) }
 	if (this.borders != nil) { log("Borders: Bo=" + this.borders.length + "| " + this.borders) }
 	if (this.backgrounds != nil) { log("Backgrounds: Ba=" + this.backgrounds.length + "| " + this.backgrounds) }
+}
+
+
+State.prototype.printStateSmall = function() {
+	log("NAME: " + this.stateName + " | " + this.corner)
 }
