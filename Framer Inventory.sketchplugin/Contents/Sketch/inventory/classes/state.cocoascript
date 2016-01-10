@@ -83,6 +83,7 @@ State.prototype.isEqualToState = function(state) {
 	if (this.corner != state.corner) { return false }
 	if (this.rotation != state.rotation) { return false }
 	
+	log("CLASSOPP")
 	if (!compareArrays(this.position, state.position)) { return false }
 	if (!compareMatrices(this.shadows, state.shadows)) { return false }
 	if (!compareMatrices(this.inners, state.inners)) { return false }
@@ -160,14 +161,13 @@ State.prototype.keepDifference = function(compareState) {
 		state.rotation = nil
 		state.rotationActive = false
 	}
-	log("PART 1")
-	// ?
-	if (this.position[0] == state.position[0]) { state.position[0] = nil }
-	if (this.position[1] == state.position[1]) { state.position[1] = nil }
-	if (this.position[2] == state.position[2]) { state.position[2] = nil }
-	if (this.position[3] == state.position[3]) { state.position[3] = nil }
 	
-	log("PART 2")
+	if (this.position != nil && this.position != "" && state.position != nil) {
+		if (this.position[0] == state.position[0]) { state.position[0] = nil }
+		if (this.position[1] == state.position[1]) { state.position[1] = nil }
+		if (this.position[2] == state.position[2]) { state.position[2] = nil }
+		if (this.position[3] == state.position[3]) { state.position[3] = nil }
+	}
 	
 	if (compareMatrices(this.shadows, state.shadows)) {
 		state.shadows = nil

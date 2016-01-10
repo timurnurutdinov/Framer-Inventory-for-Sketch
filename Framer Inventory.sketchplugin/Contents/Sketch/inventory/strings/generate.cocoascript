@@ -198,7 +198,9 @@ function generateStateSection(layerName, generatedStates) {
 	
 	var states = ""
 	for (var i = 0; i < generatedStates.length; i++) {
-		states += tln() + generatedStates[i] + ln()
+		var correctBeginString = generatedStates[i].replace("{, ", "{");
+		states += tln() + correctBeginString + ln()
+		// log("|" + generatedStates[i] + "|")
 	}
 	
 	return stateSectionName + states + stateBottomSection

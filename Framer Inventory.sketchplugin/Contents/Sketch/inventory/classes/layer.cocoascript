@@ -37,15 +37,6 @@ function Layer (layerName, currentPage) {
 
 
 
-Layer.prototype.getName = function() { return this.layerName }
-
-var ln = function() { return "\n" }
-var dln = function() { return ln() + ln() }
-var tln = function() { return "\t" }
-
-
-
-
 Layer.prototype.addState = function(layer) {
 	var state = new State(layer)
 	this.updateConditions(state)
@@ -267,10 +258,6 @@ Layer.prototype.generateFramerStates = function() {
 		log(statesNames[i] + " " + statesDescriptions[i])
 	}
 	
-	
-	// var googNews = runSimulateKeynoteIdentifier || 0
-	// log("TOP: " + goodNews)
-	
 	if (statesDescriptions.length > 0) {
 		outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
 
@@ -281,73 +268,28 @@ Layer.prototype.generateFramerStates = function() {
 
 	return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
 	
-	
-	
-	/*
-	// for layers and states
-	if (currentCommandIdentifier == 0 || currentCommandIdentifier == 1 || currentCommandIdentifier == 3) {
-		if (statesDescriptions.length > 0) {
-			outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
-
-			for (var i = 1; i < statesDescriptions.length; i++) {
-				generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
-			}
-		}
-
-		return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
-	}
-
-	// for keynote
-	var pageArtboards = FramerInventory.getCurrentPage()
-	var artboardsList = [pageArtboards artboards]
-	
-	var isAlreadyOpacity = true
-	
-	for (var i = 0, j = 0; i < artboardsList.count(); i++) {
-		var artboardName = [[artboardsList objectAtIndex: i] name]
-		if (i == 0 && artboardName != statesNames[j]) {
-			var line = statesDescriptions[j]
-			var fakeDescription = line.substring(0, line.indexOf(', opacity'))
-			if (fakeDescription == "") {
-				isAlreadyOpacity = false
-				fakeDescription = statesDescriptions[j] + ", opacity: 0"
-			}
-			generatedStates.push(generateState(artboardName, fakeDescription))
-			// generatedStates.push(generateState(statesNames[j], statesDescriptions[j]))
-		}
-		else {
-			
-		}
-		
-	}
-	
-	return generateStateSection(this.layerName, generatedStates)
-	*/
-	
 }
 
 
 Layer.prototype.returnDifferencedStates = function() {
+	if (this.states == nil) { return nil }
+	log ("DIFSTATE")
 	var differencedStates = []
+	var classicalState = this.getClassicalState()
+	differencedStates.push(classicalState)
 	
-	if (this.states.length > 0) {
-		differencedStates.push(this.states[0])
-	}
-	
+	var baseState = classicalState
 	for (var i = 0; i < this.states.length - 1; i++) {
-		var baseState = this.states[i]
+		if (i != 0) { baseState = this.states[i] }
 		var tempState = baseState.keepDifference(this.states[i + 1])
 		
-		log("____")
-		log("BASE STATE")
-		baseState.printState()
-		log("____")
-		log("TEMP STATE")
-		tempState.printState()
+		log("BS: " + baseState.printState())
+		log("TS: " + tempState.printState())
+		log("------")
+		
 		differencedStates.push(tempState)
 	}
 	
-	log("DSL: " + differencedStates.length)
 	return differencedStates
 }
 
@@ -434,33 +376,34 @@ Layer.prototype.getSuggestedBackgroundColor = function(currentStateNumber) {
 
 
 
-
-// return exportable copy of current layer
-Layer.prototype.normalizeCopyForState = function(state) {
-	var size_data = {
-	    "format": "png",
-	    "scale": 2,
-	    "suffix": ""
+// find const params for all layers
+Layer.prototype.getClassicalState = function() {
+	var classicalState = nil
+	
+	if (this.states != nil && this.states.length > 0) { classicalState = new State(this.states[0].layer) }
+	else { return nil }
+	
+	for (var i = 1; i < this.states.length; i++) {
+		var state = this.states[i]
+		
+		if (classicalState.opacity == nil || classicalState.opacity != state.opacity) { classicalState.opacity = nil }
+		if (classicalState.corner == nil || classicalState.corner != state.corner) { classicalState.corner = nil }
+		if (classicalState.rotation == nil || classicalState.rotation != state.rotation) { classicalState.rotation = nil }
+		
+		if (classicalState.position == nil || !compareArrays(classicalState.position, state.position)) { classicalState.position = nil }
+		if (classicalState.shadows == nil || !compareMatrices(classicalState.shadows, state.shadows)) { classicalState.shadows = nil }
+		if (classicalState.inners == nil || !compareMatrices(classicalState.inners, state.inners)) { classicalState.inners = nil }
+		if (classicalState.borders == nil || !compareMatrices(classicalState.borders, state.borders)) { classicalState.borders = nil }
+		if (classicalState.backgrounds == nil || !compareMatrices(classicalState.backgrounds, state.backgrounds)) { classicalState.backgrounds = nil }
 	}
-	 
-	var baseLayer = state.layer
-	var copiedLayer = [baseLayer duplicate]
-	[copiedLayer removeFromParent]
+	classicalState.stateName = "framer inventory initial"
 	
-	var currentPage = FramerInventory.getCurrentPage()
-	var framerInventoryPage = FramerInventory.addPage(currentPage)
-	FramerInventory.cleanLayer(copiedLayer, framerInventoryPage)
-	[framerInventoryPage addLayers: [copiedLayer]]
-
-	
-	var size = [[copiedLayer exportOptions] addExportSize]
- 	[size setFormat:size_data.format]
-    [size setScale:size_data.scale]
-    [size setName:size_data.suffix]
-
-	return copiedLayer
-
+	return classicalState
 }
+
+
+
+
 
 
 
