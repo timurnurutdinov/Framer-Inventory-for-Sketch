@@ -1,5 +1,6 @@
 @import 'actions/workers/action-replicate-layers.cocoascript'
 @import 'actions/workers/action-generate-states.cocoascript'
+@import 'actions/workers/action-simulate-keynote.cocoascript'
 @import 'actions/workers/action-testing-environment.cocoascript'
 
 @import 'inventory/classes/layer.cocoascript'

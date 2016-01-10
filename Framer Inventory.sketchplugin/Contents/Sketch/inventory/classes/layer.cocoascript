@@ -52,6 +52,12 @@ Layer.prototype.addState = function(layer) {
 	this.states.push(state)
 }
 
+Layer.prototype.addFirstState = function(state) {
+	this.updateConditions(state)
+	this.states.push(state)
+}
+
+
 
 Layer.prototype.updateConditions = function(state) {
 	// active
@@ -86,12 +92,9 @@ Layer.prototype.printLayer = function() {
 }
 
 
-
-
-
 Layer.prototype.generateFramerStates = function() {
 	if (this.states == nil || this.states.length == 0) {
-		if (showLog) { log("Warning: No states empty") }
+		if (showLog) { log("Warning: States are empty") }
 		return ""
 	}
 	
@@ -117,6 +120,7 @@ Layer.prototype.generateFramerStates = function() {
 	for (var i = 0; i < this.states.length; i++) {
 		currentState = this.states[i]
 		if (currentState.isEqualToState(prevState)) {
+			log("SKIPPED STATE")
 			break
 		}
 		
@@ -259,20 +263,98 @@ Layer.prototype.generateFramerStates = function() {
 
 	}
 	
-	if (statesDescriptions.length > 0) {
-		outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
+	for (var i = 0; i < statesDescriptions.length; i++) {
+		log(statesNames[i] + " " + statesDescriptions[i])
 	}
 	
-	if (statesDescriptions.length > 1) {
+	
+	// var googNews = runSimulateKeynoteIdentifier || 0
+	// log("TOP: " + goodNews)
+	
+	if (statesDescriptions.length > 0) {
+		outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
+
 		for (var i = 1; i < statesDescriptions.length; i++) {
 			generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
 		}
 	}
-	
-	return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
 
+	return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
+	
+	
+	
+	/*
+	// for layers and states
+	if (currentCommandIdentifier == 0 || currentCommandIdentifier == 1 || currentCommandIdentifier == 3) {
+		if (statesDescriptions.length > 0) {
+			outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
+
+			for (var i = 1; i < statesDescriptions.length; i++) {
+				generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
+			}
+		}
+
+		return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
+	}
+
+	// for keynote
+	var pageArtboards = FramerInventory.getCurrentPage()
+	var artboardsList = [pageArtboards artboards]
+	
+	var isAlreadyOpacity = true
+	
+	for (var i = 0, j = 0; i < artboardsList.count(); i++) {
+		var artboardName = [[artboardsList objectAtIndex: i] name]
+		if (i == 0 && artboardName != statesNames[j]) {
+			var line = statesDescriptions[j]
+			var fakeDescription = line.substring(0, line.indexOf(', opacity'))
+			if (fakeDescription == "") {
+				isAlreadyOpacity = false
+				fakeDescription = statesDescriptions[j] + ", opacity: 0"
+			}
+			generatedStates.push(generateState(artboardName, fakeDescription))
+			// generatedStates.push(generateState(statesNames[j], statesDescriptions[j]))
+		}
+		else {
+			
+		}
+		
+	}
+	
+	return generateStateSection(this.layerName, generatedStates)
+	*/
+	
 }
 
+
+Layer.prototype.returnDifferencedStates = function() {
+	var differencedStates = []
+	
+	if (this.states.length > 0) {
+		differencedStates.push(this.states[0])
+	}
+	
+	for (var i = 0; i < this.states.length - 1; i++) {
+		var baseState = this.states[i]
+		var tempState = baseState.keepDifference(this.states[i + 1])
+		
+		log("____")
+		log("BASE STATE")
+		baseState.printState()
+		log("____")
+		log("TEMP STATE")
+		tempState.printState()
+		differencedStates.push(tempState)
+	}
+	
+	log("DSL: " + differencedStates.length)
+	return differencedStates
+}
+
+
+Layer.prototype.updateStates = function(states) {
+	this.states = states
+}
 
 
 

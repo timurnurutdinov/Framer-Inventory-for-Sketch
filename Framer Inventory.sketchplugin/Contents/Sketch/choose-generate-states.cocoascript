@@ -1,6 +1,7 @@
 @import 'actions/actionFactory.cocoascript'
 
 var runGenerateStatesIdentifier = 1
+var currentCommandIdentifier = runGenerateStatesIdentifier
 var showLog = true
 var testing = false
 

@@ -1,0 +1,69 @@
+@import 'inventory/classes/state.cocoascript'
+
+// generate code for layers
+var runSimulateKeynote = function(context, isTestingEnvironment) {
+	
+	var doc = context.document
+	var selection = context.selection
+	
+	if (isTestingEnvironment != nil && isTestingEnvironment) { 
+		if (showLog) { log("Prepare custom selection for keynote tests") }
+		selection = TestingEnvironment.getTestingSelection()
+		
+		if (showLog) { log(selection) }
+	}
+	
+	var layers = []
+	var pasteboardContent = []
+	
+	var currentPage = FramerInventory.getCurrentPage()
+	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	FramerInventory.cleanPage(framerInventoryPage)
+	
+	var artboards = [[doc currentPage] artboards]
+	
+
+	var sortedSelection = FramerInventory.organiseSelection([currentPage exportableLayers])
+	
+	for (var i = 0; i < [sortedSelection count]; i++) {
+		var currentLayer = [sortedSelection objectAtIndex: i]
+		var layer = new Layer([currentLayer name])
+		var hasInitialState = false
+		
+		var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
+																						 [currentLayer className])
+		for (var j = 0; j < [artboards count]; j++) {
+			
+			var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
+			if ([matchingLayers count] > 0) {
+				if (j == 0) { hasInitialState = true }
+				else if (!hasInitialState) {
+					var fakeFirstState = new State([matchingLayers firstObject])
+					fakeFirstState.fixFirstState([[artboards firstObject] name])
+					layer.addFirstState(fakeFirstState)
+					hasInitialState = true
+				}
+				layer.addState([matchingLayers firstObject])
+			}
+		}
+		
+		layers.push(layer)
+	}
+	
+
+	
+	for (var i = 0; i < layers.length; i++) {
+		var diffStates = layers[i].returnDifferencedStates()
+		layers[i].updateStates(diffStates)
+		pasteboardContent += layers[i].printLayer()
+	}
+
+	
+	if (!isTestingEnvironment) {
+		[[NSPasteboard generalPasteboard] clearContents];
+		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
+		[doc showMessage:"Done"]
+	}
+	
+	return pasteboardContent
+}

@@ -1,6 +1,7 @@
 @import 'actions/actionFactory.cocoascript'
 
 var runReplicateLayersIdentifier = 0
+var currentCommandIdentifier = runReplicateLayersIdentifier
 var showLog = true
 var testing = false
 

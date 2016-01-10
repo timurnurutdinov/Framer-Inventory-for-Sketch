@@ -4,12 +4,13 @@ var testsDirectory = "/tests"
 
 
 /*
+ App Store:
  /Users/TillluR/Library/Containers/com.bohemiancoding.sketch3/Data/Library/Caches/Framer Inventory/
+
+ 3.4.4:
+/Users/TillluR/Library/Caches/Framer Inventory/
 */
 
-var readTestsFile = function() {
-
-}
 
 var readFileForAnswer = function(fileName) {
 	var folderName = createTempFolderNamed(homeDirectory)

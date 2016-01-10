@@ -69,7 +69,7 @@ function generateAbsoluteRotation() {
 function generateCorner(value) {
 	// if (isAbsolute && value == 0) { return ", borderRadius: 0" }
 	// else
-	if (value == 0) { return "" }
+	if (value == nil || value == 0) { return "" }
 	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
 	return ", borderRadius: " + value + "*" + userRetinaDefaults.myRetina
 }
@@ -164,10 +164,16 @@ function generatePassiveBackgroundsWithColor(colorValue) {
 function generatePosition(values) {
 	if (values == nil || values.length < 4) { return "width: 100, height: 100" }
 	else {
-		var width = " width: " + values[0] + "*" + userRetinaDefaults.myRetina
-		var height = ", height: " + values[1] + "*" + userRetinaDefaults.myRetina
-		var x = ", x: " + values[2] + "*" + userRetinaDefaults.myRetina
-		var y = ", y: " + values[3] + "*" + userRetinaDefaults.myRetina
+		var width = ""
+		var height = ""
+		var x = ""
+		var y = ""
+		
+		if (values[0] != nil) { width = " width: " + values[0] + "*" + userRetinaDefaults.myRetina }
+		if (values[1] != nil) { height = ", height: " + values[1] + "*" + userRetinaDefaults.myRetina }
+		if (values[2] != nil) { x = ", x: " + values[2] + "*" + userRetinaDefaults.myRetina }
+		if (values[3] != nil) { y = ", y: " + values[3] + "*" + userRetinaDefaults.myRetina }
+		
 		return "" + width + height + x + y
 	}
 }

@@ -23,6 +23,13 @@
       "identifier" : "choose-generate-states"
     },
     {
+      "script" : "choose-simulate-keynote.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "3. Simulate Keynote",
+      "identifier" : "choose-simulate-keynote"
+    },
+    {
       "script" : "choose-testing-environment.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
@@ -35,8 +42,9 @@
       "items": [
 		  "choose-replicate-layers",
 		  "choose-generate-states",
+		  "choose-simulate-keynote",
 		  {
-		         "title": "3. Utils",
+		         "title": "Utils",
 		         "items": [
 		           "action-testing-environment"
 		         ],
