@@ -45,6 +45,8 @@ function State (layer) {
 	this.borderHex = nil
 	
 	this.backgrounds = nil
+	this.backgroundOpacity = nil
+	this.backgroundHex = nil
 	
 	
 	// active conditions
@@ -119,6 +121,11 @@ State.prototype.updateState = function() {
 		this.borderWidth = firstBorder[1]
 		this.borderOpacity = firstBorder[3]
 		this.borderHex = firstBorder[4]
+	}
+	
+	if (this.backgrounds != nil) {
+		this.backgroundOpacity = this.backgrounds[0][1]
+		this.backgroundHex = this.backgrounds[0][2]
 	}
 	
 	// active conditions
@@ -304,6 +311,14 @@ State.prototype.composeBorders = function() {
 	borders.push(this.borderHex)
 	
 	return [borders]
+}
+
+State.prototype.composeBackgrounds = function() {	
+	var backgrounds = []
+	backgrounds.push(0)
+	backgrounds.push(this.backgroundOpacity)
+	backgrounds.push(this.backgroundHex)
+	return [backgrounds]
 }
 
 State.prototype.cleanTitledDescriptionShadows = function() {

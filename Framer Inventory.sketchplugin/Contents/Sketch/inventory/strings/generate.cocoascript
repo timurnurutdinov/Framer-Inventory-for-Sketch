@@ -114,13 +114,14 @@ function generateFilterShadows(values) {
 	else return ""
 }
 
-function generatePassiveFilterShadowsWithColor(colorValue) {
-	if (colorValue == nil) { return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 rbga(0,0,0,0))\"}" }
-	var color = convertHex(colorValue[5], 0)
-	var fixed = color.replace('\"', '')
-	log("COLOR FILTER: " + fixed)
-	return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 " + fixed + ")\"}"
-}
+
+// function generatePassiveFilterShadowsWithColor(colorValue) {
+// 	if (colorValue == nil) { return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 rbga(0,0,0,0))\"}" }
+// 	var color = convertHex(colorValue[5], 0)
+// 	var fixed = color.replace('\"', '')
+// 	log("COLOR FILTER: " + fixed)
+// 	return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 " + fixed + ")\"}"
+// }
 
 
 
@@ -136,10 +137,10 @@ function generateBorders(values) {
 	else return ""
 }
 
-function generatePassiveBordersWithColor(colorValue) {
-	if (colorValue == nil) { return ", borderWidth: 0, borderColor: \"rgba(0,0,0,0)\"" }
-	return  ", borderWidth: 0, borderColor: " + convertHex(colorValue[4], colorValue[3])
-}
+// function generatePassiveBordersWithColor(colorValue) {
+// 	if (colorValue == nil) { return ", borderWidth: 0, borderColor: \"rgba(0,0,0,0)\"" }
+// 	return  ", borderWidth: 0, borderColor: " + convertHex(colorValue[4], colorValue[3])
+// }
 
 
 
@@ -147,16 +148,16 @@ function generateBackgrounds(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
 		var value = values[0]
-		var composedBackground = ", backgroundColor: "  + convertHex(value[2], value[1])
-		return composedBackground
+		if (value[1] != nil && value[2] != nil) { return ", backgroundColor: " + convertHex(value[2], value[1]) }
+		return ""
 	}
 	else return ""
 }
 
-function generatePassiveBackgroundsWithColor(colorValue) {
-	if (colorValue == nil || colorValue == '') { return ", backgroundColor: \"rgba(0,0,0,0)\"" }
-	return ", backgroundColor: "  + convertHex(colorValue[2], colorValue[1])
-}
+// function generatePassiveBackgroundsWithColor(colorValue) {
+// 	if (colorValue == nil || colorValue == '') { return ", backgroundColor: \"rgba(0,0,0,0)\"" }
+// 	return ", backgroundColor: "  + convertHex(colorValue[2], colorValue[1])
+// }
 
 
 

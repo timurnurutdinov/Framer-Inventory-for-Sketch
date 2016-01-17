@@ -89,7 +89,7 @@ Layer.prototype.describeState = function(currentState, imageRequired) {
 	stateDescription += generatePosition(currentState.composePosition())
 	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
 	
-	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.backgrounds) }
+	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.composeBackgrounds()) }
 	
 	stateDescription += generateRotation(currentState.rotation)
 	
@@ -111,7 +111,7 @@ Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	stateDescription += generatePosition(currentState.composePosition())
 	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
 	
-	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.backgrounds) }
+	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.composeBackgrounds()) }
 	if (imageRequired) { stateDescription += generateImagePath(this.layerName) }
 
 	stateDescription += generateRotation(currentState.rotation)
@@ -148,6 +148,16 @@ Layer.prototype.returnBorderHex = function(value) {
 	for (var i = 0; i < this.states.length; i++) { this.states[i].borderHex = value }
 }
 
+Layer.prototype.returnBackgroundOpacity = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundOpacity = value }
+}
+
+Layer.prototype.returnBackgroundHex = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundHex = value }
+}
+
 
 
 
@@ -164,11 +174,6 @@ Layer.prototype.generateFramerStates = function() {
 	var areAllGeneratable = this.areAllGeneratable()
 	var imageRequired = ((layerType == 2 || layerType == 3) && areAllGeneratable) ? false : true
 	
-	// log(this.areShadowsExportable)
-	// log(this.areInnersExportable)
-	// log(this.areBordersExportable)
-	// log(this.areBackgroundsExportable)
-	
 	var generatedStates = []
 	var statesDescriptions = []
 	var statesNames = []
@@ -179,7 +184,6 @@ Layer.prototype.generateFramerStates = function() {
 	
 	var titleState = new State()
 	
-	titleState.opacity = this.analyseOpacity()
 	titleState.corner = this.analyseCorner()
 	titleState.rotation = this.analyseRotation()
 	
@@ -212,8 +216,19 @@ Layer.prototype.generateFramerStates = function() {
 	}
 	
 	
-	titleState.backgrounds = this.analyseBackgrounds()
+	var titleBackgrounds = []
+	titleBackgrounds.push(0)
+	titleBackgrounds.push(this.analyseBackgroundOpacity())
+	titleBackgrounds.push(this.analyseBackgroundHex())
+	titleState.backgrounds = [titleBackgrounds]
+	if (titleBackgrounds[1] != nil && titleBackgrounds[2] != nil) { ; }
+	else {
+		if (titleBackgrounds[1] != nil) { this.returnBackgroundOpacity(titleBackgrounds[1]) }
+		else { this.returnBackgroundHex(titleBackgrounds[2]) }
+	}
 	
+	titleState.opacity = this.analyseOpacity()
+	log("OPACITY: " + titleState.opacity)
 	if (imageRequired) { this.updatePositionImage() }
 	
 	var titlePosition = []
@@ -224,7 +239,8 @@ Layer.prototype.generateFramerStates = function() {
 	titleState.position = titlePosition
 	
 	titleState.updateState()
-	
+
+
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
 	
 	
@@ -567,12 +583,10 @@ Layer.prototype.analyseBorderWidth = function() {
 Layer.prototype.analyseBorderOpacity = function() {
 	if (!this.checkStates()) { return nil }
 	
-	log("GOGOGO")
 	var defaultValue = this.states[0].borderOpacity
 	var sameValue = true
 	
 	for (var i = 1; i < this.states.length; i++) {
-		log("SHAD OP: " + this.states[i].borderOpacity)
 		if (defaultValue != this.states[i].borderOpacity) {
 			sameValue = false
 			break
@@ -657,107 +671,116 @@ Layer.prototype.analyseBorderHex = function() {
 }
 
 
-//
-//
-// Layer.prototype.analyseBorders = function() {
-// 	if (!this.checkStates()) { return nil }
-//
-// 	var defaultBorders = this.states[0].borders
-// 	var isSameBorders = true
-//
-// 	for (var i = 1; i < this.states.length; i++) {
-// 		if (!compareMatrices(defaultBorders, this.states[i].borders)) {
-// 			isSameBorders = false
-// 			break
-// 		}
-// 	}
-//
-// 	if (isSameBorders) {
-// 		for (var i = 0; i < this.states.length; i++) {
-// 			this.states[i].borders = nil
-// 			this.states[i].bordersActive = false
-// 		}
-//
-// 		this.areBordersActive = false
-// 		return defaultBorders
-// 	}
-// 	else {
-// 		for (var i = 0; i < this.states.length; i++) {
-// 			if (this.states[i].borders == nil) {
-//
-// 				var suggestedBorders = this.suggestBorders(i)
-// 				if (suggestedBorders == nil) {
-// 					if (showLog) { log("ERROR: suggestBorders is nil") }
-// 				}
-//
-// 				var localBorder = []
-// 				localBorder.push(suggestedBorders[0][0])
-// 				localBorder.push("0")
-// 				localBorder.push(suggestedBorders[0][2])
-// 				localBorder.push(suggestedBorders[0][3])
-// 				localBorder.push(suggestedBorders[0][4])
-//
-// 				this.states[i].borders = []
-// 				this.states[i].borders.push(localBorder)
-//
-// 				this.states[i].bordersActive = true
-// 			}
-// 		}
-// 	}
-//
-// 	return nil
-// }
 
 
-Layer.prototype.analyseBackgrounds = function() {
+
+
+
+
+
+
+Layer.prototype.analyseBackgroundOpacity = function() {
 	if (!this.checkStates()) { return nil }
 	
-	var defaultBackgrounds = this.states[0].backgrounds
-	var isSameBackgrounds = true
+	var defaultValue = this.states[0].backgroundOpacity
+	var sameValue = true
 	
 	for (var i = 1; i < this.states.length; i++) {
-		if (!compareMatrices(defaultBackgrounds, this.states[i].backgrounds)) {
-			isSameBackgrounds = false
+		if (defaultValue != this.states[i].backgroundOpacity) {
+			sameValue = false
 			break
 		}
 	}
 	
-	if (isSameBackgrounds) {
-		for (var i = 0; i < this.states.length; i++) {
-			this.states[i].backgrounds = nil
-			this.states[i].backgroundsActive = false
-		}
-	
-		//this.areBackgroundsActive = false
-		return defaultBackgrounds
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundOpacity = nil }
+		return defaultValue
 	}
 	else {
 		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].backgrounds == nil) {
-				
+			if (this.states[i].backgroundOpacity == nil) {
+				var suggestedBackgrounds = this.suggestBackgrounds(i)
+				log(suggestedBackgrounds)
+				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
+				this.states[i].backgroundOpacity = suggestedBackgrounds[0][1]
+			}
+		}
+		
+		defaultValue = this.states[0].backgroundOpacity
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].backgroundOpacity) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundOpacity = nil }
+			return defaultValue
+		}
+	}
+
+	return nil
+}
+
+Layer.prototype.analyseBackgroundHex = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValue = this.states[0].backgroundHex
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValue != this.states[i].backgroundHex) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundHex = nil }
+		if (defaultValue == nil && (this.states[0].type == 2 || this.states[0].type == 3)) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].opacity = 0 }
+		}
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].backgroundHex == nil) {
 				this.states[i].opacity = 0
-				this.states[i].opacityActive = true
+				log("KNUDGE")
 				
 				var suggestedBackgrounds = this.suggestBackgrounds(i)
-				if (suggestedBackgrounds == nil) {
-					if (showLog) { log("ERROR: suggestBackgrounds is nil") }
-				}
-				
-				var localBackground = []
-				localBackground.push(suggestedBackgrounds[0][0])
-				localBackground.push(suggestedBackgrounds[0][1])
-				localBackground.push(suggestedBackgrounds[0][2])
-				
-				this.states[i].backgrounds = []
-				this.states[i].backgrounds.push(localBackground)
-				
-				this.states[i].backgroundsActive = true
+				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
+				this.states[i].backgroundHex = suggestedBackgrounds[0][2]
 			}
+		}
+		
+		defaultValue = this.states[0].backgroundHex
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].backgroundHex) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundHex = nil }
+			return defaultValue
 		}
 	}
 	
 	return nil
 }
+
+
+
+
+
+
 
 
 
@@ -787,7 +810,6 @@ Layer.prototype.analyseWidth = function() {
 	}
 	
 	if (isSameWidth) {
-		log("SANE WIDTH, OK")
 		for (var i = 0; i < this.states.length; i++) { this.states[i].width = nil }
 		return defaultWidth
 	}
@@ -1044,12 +1066,10 @@ Layer.prototype.analyseShadowSpread = function() {
 Layer.prototype.analyseShadowOpacity = function() {
 	if (!this.checkStates()) { return nil }
 	
-	log("GOGOGO")
 	var defaultValue = this.states[0].shadowOpacity
 	var sameValue = true
 	
 	for (var i = 1; i < this.states.length; i++) {
-		log("SHAD OP: " + this.states[i].shadowOpacity)
 		if (defaultValue != this.states[i].shadowOpacity) {
 			sameValue = false
 			break
@@ -1064,7 +1084,6 @@ Layer.prototype.analyseShadowOpacity = function() {
 		for (var i = 0; i < this.states.length; i++) {
 			if (this.states[i].shadowOpacity == nil) {
 				var suggestedShadows = this.suggestShadows(i)
-				log(i + "suggestedShadows: " + suggestedShadows[0][4])
 				if (suggestedShadows == nil) { log("ERROR: suggestShadows is nil") }
 				this.states[i].shadowOpacity = suggestedShadows[0][4]
 			}
@@ -1110,7 +1129,6 @@ Layer.prototype.analyseShadowHex = function() {
 		for (var i = 0; i < this.states.length; i++) {
 			if (this.states[i].shadowHex == nil) {
 				var suggestedShadows = this.suggestShadows(i)
-				log(i + "suggestedShadows: " + suggestedShadows[0][5])
 				if (suggestedShadows == nil) { log("ERROR: suggestShadows is nil") }
 				this.states[i].shadowHex = suggestedShadows[0][5]
 			}
