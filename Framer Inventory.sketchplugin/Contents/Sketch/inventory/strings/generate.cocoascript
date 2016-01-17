@@ -69,8 +69,7 @@ function generateShadows(values) {
 	else if (values.length == 1) {
 		var value = values[0]
 		var composedShadow = ""
-		
-		log("VALUE: " + value[0])
+
 		if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userRetinaDefaults.myRetina }
 		if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userRetinaDefaults.myRetina }
 		if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userRetinaDefaults.myRetina }
@@ -84,6 +83,20 @@ function generateShadows(values) {
 // function generatePassiveShadowsWithColor(colorValue) {
 // 	if (colorValue == nil) { return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: \"rgba(0,0,0,0)\"" }
 // 	return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: " + convertHex(colorValue[5], colorValue[4])
+// }
+
+// function generateShadows(value) {
+// 	if (value == nil) { return "" }
+// 	else {
+// 		var composedShadow = ""
+//
+// 		if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[3] != nil) { composedShadow += ", shadowSpread: " + value[3] + "*" + userRetinaDefaults.myRetina }
+// 		if (value[5] != nil && value[4] != nil) { composedShadow += ", shadowColor: "  + convertHex(value[5], value[4]) }
+// 		return composedShadow
+// 	}
 // }
 
 
@@ -184,7 +197,7 @@ function generateStateSection(layerName, generatedStates) {
 	
 	var states = ""
 	for (var i = 0; i < generatedStates.length; i++) {
-		var correctBeginString = generatedStates[i].replace("{, ", "{")
+		var correctBeginString = generatedStates[i].replace("{,", "{")
 		states += tln() + correctBeginString + ln()
 		// log("|" + generatedStates[i] + "|")
 	}

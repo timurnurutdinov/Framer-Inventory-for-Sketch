@@ -31,6 +31,13 @@ function State (layer) {
 	this.rotation = nil
 	
 	this.shadows = nil
+	this.shadowX = nil
+	this.shadowY = nil
+	this.shadowBlur = nil
+	this.shadowSpread = nil
+	this.shadowOpacity = nil
+	this.shadowHex = nil
+	
 	this.inners = nil
 	this.borders = nil
 	this.backgrounds = nil
@@ -89,6 +96,17 @@ State.prototype.updateState = function() {
 		this.height = this.position[1]
 		this.x = this.position[2]
 		this.y = this.position[3]
+	}
+	
+	if (this.shadows != nil) {
+		var firstShadow = this.shadows[0]
+		
+		this.shadowX = firstShadow[0]
+		this.shadowY = firstShadow[1]
+		this.shadowBlur = firstShadow[2]
+		this.shadowSpread = firstShadow[3]
+		this.shadowOpacity = firstShadow[4]
+		this.shadowHex = firstShadow[5]
 	}
 	
 	// active conditions
@@ -248,15 +266,23 @@ State.prototype.composePosition = function() {
 	return composedPosition
 }
 
-State.prototype.composeShadows = function() {
-	if (this.shadows == nil || this.shadows.length > 1) { return this.shadows }
-	var shadows = this.shadows[0]
-	
-	for (var i = 0; i < shadows.length; i++) {
-		if (shadows[i] == 0) { shadows[i] = nil }
-	}
+State.prototype.composeShadows = function() {	
+	var shadows = []
+	shadows.push(this.shadowX)
+	shadows.push(this.shadowY)
+	shadows.push(this.shadowBlur)
+	shadows.push(this.shadowSpread)
+	shadows.push(this.shadowOpacity)
+	shadows.push(this.shadowHex)
 	
 	return [shadows]
+}
+
+State.prototype.cleanTitledDescriptionShadows = function() {
+	if (this.shadowX == 0) { this.shadowX = nil }
+	if (this.shadowY == 0) { this.shadowY = nil }
+	if (this.shadowBlur == 0) { this.shadowBlur = nil }
+	if (this.shadowSpread == 0) { this.shadowSpread = nil }
 }
 
 
