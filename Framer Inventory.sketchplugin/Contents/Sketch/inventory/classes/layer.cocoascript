@@ -94,7 +94,7 @@ Layer.prototype.describeState = function(currentState, imageRequired) {
 	stateDescription += generateRotation(currentState.rotation)
 	
 	if (!imageRequired) { stateDescription += generateShadows(currentState.composeShadows()) }
-	if (!imageRequired) { stateDescription += generateBorders(currentState.borders) }
+	if (!imageRequired) { stateDescription += generateBorders(currentState.composeBorders()) }
 	
 	stateDescription += generateOpacity(currentState.opacity)
 	
@@ -117,8 +117,7 @@ Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	stateDescription += generateRotation(currentState.rotation)
 	
 	if (!imageRequired) { stateDescription += generateShadows(currentState.composeShadows()) }
-	log("COMPOSED: " + currentState.composeShadows())
-	if (!imageRequired) { stateDescription += generateBorders(currentState.borders) }
+	if (!imageRequired) { stateDescription += generateBorders(currentState.composeBorders()) }
 	
 	stateDescription += generateOpacity(currentState.opacity)
 	
@@ -129,12 +128,6 @@ Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 
 
 
-
-
-Layer.prototype.printLayer = function() {
-	return this.generateFramerStates()
-}
-
 Layer.prototype.returnShadowOpacity = function(value) {
 	if (!this.checkStates()) { return nil }
 	for (var i = 0; i < this.states.length; i++) { this.states[i].shadowOpacity = value }
@@ -143,6 +136,25 @@ Layer.prototype.returnShadowOpacity = function(value) {
 Layer.prototype.returnShadowHex = function(value) {
 	if (!this.checkStates()) { return nil }
 	for (var i = 0; i < this.states.length; i++) { this.states[i].shadowHex = value }
+}
+
+Layer.prototype.returnBorderOpacity = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].borderOpacity = value }
+}
+
+Layer.prototype.returnBorderHex = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].borderHex = value }
+}
+
+
+
+
+
+
+Layer.prototype.printLayer = function() {
+	return this.generateFramerStates()
 }
 
 Layer.prototype.generateFramerStates = function() {
@@ -185,9 +197,21 @@ Layer.prototype.generateFramerStates = function() {
 		else { this.returnShadowHex(titleShadows[5]) }
 	}
 
-	log("COOOOOOL: " + titleState.shadows)
 	
-	titleState.borders = this.analyseBorders()
+	var titleBorders = []
+	titleBorders.push(0)
+	titleBorders.push(this.analyseBorderWidth())
+	titleBorders.push(0)
+	titleBorders.push(this.analyseBorderOpacity())
+	titleBorders.push(this.analyseBorderHex())
+	titleState.borders = [titleBorders]
+	if (titleBorders[3] != nil && titleBorders[4] != nil) { ; }
+	else {
+		if (titleBorders[3] != nil) { this.returnBorderOpacity(titleBorders[3]) }
+		else { this.returnBorderHex(titleBorders[4]) }
+	}
+	
+	
 	titleState.backgrounds = this.analyseBackgrounds()
 	
 	if (imageRequired) { this.updatePositionImage() }
@@ -496,58 +520,193 @@ Layer.prototype.analyseRotation = function() {
 
 
 
-
-
-
-
-Layer.prototype.analyseBorders = function() {
+Layer.prototype.analyseBorderWidth = function() {
 	if (!this.checkStates()) { return nil }
 	
-	var defaultBorders = this.states[0].borders
-	var isSameBorders = true
+	var defaultValue = this.states[0].borderWidth
+	var sameValue = true
 	
 	for (var i = 1; i < this.states.length; i++) {
-		if (!compareMatrices(defaultBorders, this.states[i].borders)) {
-			isSameBorders = false
+		if (defaultValue != this.states[i].borderWidth) {
+			sameValue = false
 			break
 		}
 	}
 	
-	if (isSameBorders) {
-		for (var i = 0; i < this.states.length; i++) {
-			this.states[i].borders = nil
-			this.states[i].bordersActive = false
-		}
-	
-		this.areBordersActive = false
-		return defaultBorders
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].borderWidth = nil }
+		if (defaultValue == 0) { return nil }
+		return defaultValue
 	}
 	else {
 		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].borders == nil) {
-				
-				var suggestedBorders = this.suggestBorders(i)
-				if (suggestedBorders == nil) {
-					if (showLog) { log("ERROR: suggestBorders is nil") }
-				}
-				
-				var localBorder = []
-				localBorder.push(suggestedBorders[0][0])
-				localBorder.push("0")
-				localBorder.push(suggestedBorders[0][2])
-				localBorder.push(suggestedBorders[0][3])
-				localBorder.push(suggestedBorders[0][4])
-				
-				this.states[i].borders = []
-				this.states[i].borders.push(localBorder)
-				
-				this.states[i].bordersActive = true
+			if (this.states[i].borderWidth == nil) {
+				this.states[i].borderWidth = 0
 			}
+		}
+		
+		defaultValue = this.states[0].borderWidth
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].borderWidth) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].borderWidth = nil }
+			return defaultValue
+		}
+	}
+
+	return nil
+}
+
+Layer.prototype.analyseBorderOpacity = function() {
+	if (!this.checkStates()) { return nil }
+	
+	log("GOGOGO")
+	var defaultValue = this.states[0].borderOpacity
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		log("SHAD OP: " + this.states[i].borderOpacity)
+		if (defaultValue != this.states[i].borderOpacity) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].borderOpacity = nil }
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].borderOpacity == nil) {
+				var suggestedBorders = this.suggestBorders(i)
+				if (suggestedBorders == nil) { log("ERROR: suggestedBorders is nil") }
+				this.states[i].borderOpacity = suggestedBorders[0][3]
+			}
+		}
+		
+		defaultValue = this.states[0].borderOpacity
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].borderOpacity) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].borderOpacity = nil }
+			return defaultValue
+		}
+	}
+
+	return nil
+}
+
+Layer.prototype.analyseBorderHex = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValue = this.states[0].borderHex
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValue != this.states[i].borderHex) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].borderHex = nil }
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].borderHex == nil) {
+				var suggestedBorders = this.suggestBorders(i)
+				if (suggestedBorders == nil) { log("ERROR: suggestBorders is nil") }
+				this.states[i].borderHex = suggestedBorders[0][4]
+			}
+		}
+		
+		defaultValue = this.states[0].borderHex
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].borderHex) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].borderHex = nil }
+			return defaultValue
 		}
 	}
 	
 	return nil
 }
+
+
+//
+//
+// Layer.prototype.analyseBorders = function() {
+// 	if (!this.checkStates()) { return nil }
+//
+// 	var defaultBorders = this.states[0].borders
+// 	var isSameBorders = true
+//
+// 	for (var i = 1; i < this.states.length; i++) {
+// 		if (!compareMatrices(defaultBorders, this.states[i].borders)) {
+// 			isSameBorders = false
+// 			break
+// 		}
+// 	}
+//
+// 	if (isSameBorders) {
+// 		for (var i = 0; i < this.states.length; i++) {
+// 			this.states[i].borders = nil
+// 			this.states[i].bordersActive = false
+// 		}
+//
+// 		this.areBordersActive = false
+// 		return defaultBorders
+// 	}
+// 	else {
+// 		for (var i = 0; i < this.states.length; i++) {
+// 			if (this.states[i].borders == nil) {
+//
+// 				var suggestedBorders = this.suggestBorders(i)
+// 				if (suggestedBorders == nil) {
+// 					if (showLog) { log("ERROR: suggestBorders is nil") }
+// 				}
+//
+// 				var localBorder = []
+// 				localBorder.push(suggestedBorders[0][0])
+// 				localBorder.push("0")
+// 				localBorder.push(suggestedBorders[0][2])
+// 				localBorder.push(suggestedBorders[0][3])
+// 				localBorder.push(suggestedBorders[0][4])
+//
+// 				this.states[i].borders = []
+// 				this.states[i].borders.push(localBorder)
+//
+// 				this.states[i].bordersActive = true
+// 			}
+// 		}
+// 	}
+//
+// 	return nil
+// }
 
 
 Layer.prototype.analyseBackgrounds = function() {

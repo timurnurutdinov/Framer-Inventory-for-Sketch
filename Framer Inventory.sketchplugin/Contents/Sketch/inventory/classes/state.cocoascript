@@ -29,6 +29,7 @@ function State (layer) {
 	this.opacity = nil
 	this.corner = nil
 	this.rotation = nil
+	this.inners = nil
 	
 	this.shadows = nil
 	this.shadowX = nil
@@ -38,8 +39,11 @@ function State (layer) {
 	this.shadowOpacity = nil
 	this.shadowHex = nil
 	
-	this.inners = nil
 	this.borders = nil
+	this.borderWidth = nil
+	this.borderOpacity = nil
+	this.borderHex = nil
+	
 	this.backgrounds = nil
 	
 	
@@ -107,6 +111,14 @@ State.prototype.updateState = function() {
 		this.shadowSpread = firstShadow[3]
 		this.shadowOpacity = firstShadow[4]
 		this.shadowHex = firstShadow[5]
+	}
+	
+	if (this.borders != nil) {
+		var firstBorder = this.borders[0]
+		
+		this.borderWidth = firstBorder[1]
+		this.borderOpacity = firstBorder[3]
+		this.borderHex = firstBorder[4]
 	}
 	
 	// active conditions
@@ -255,6 +267,11 @@ State.prototype.createHiddenState = function(firstArtboardName) {
 	this.opacityActive = true
 }
 
+
+
+
+
+
 State.prototype.composePosition = function() {
 	var composedPosition = []
 	
@@ -276,6 +293,17 @@ State.prototype.composeShadows = function() {
 	shadows.push(this.shadowHex)
 	
 	return [shadows]
+}
+
+State.prototype.composeBorders = function() {	
+	var borders = []
+	borders.push(0)
+	borders.push(this.borderWidth)
+	borders.push(0)
+	borders.push(this.borderOpacity)
+	borders.push(this.borderHex)
+	
+	return [borders]
 }
 
 State.prototype.cleanTitledDescriptionShadows = function() {

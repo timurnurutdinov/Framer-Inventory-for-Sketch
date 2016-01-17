@@ -182,6 +182,8 @@ var generatePairs = function() {
 	pairs.push("states predict no corners")
 	
 	pairs.push("states predict borders")
+	pairs.push("states predict borders color")
+	pairs.push("states predict borders opacity")
 	pairs.push("states predict no borders")
 	
 	pairs.push("states predict shadows")

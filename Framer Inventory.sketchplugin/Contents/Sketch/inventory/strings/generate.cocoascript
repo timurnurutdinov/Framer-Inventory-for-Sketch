@@ -129,8 +129,8 @@ function generateBorders(values) {
 	else if (values.length == 1) {
 		var value = values[0]
 		var composedBorder = ""
-		composedBorder += ", borderWidth: " + value[1] + "*" + userRetinaDefaults.myRetina
-		composedBorder += ", borderColor: "  + convertHex(value[4], value[3])
+		if (value[1] != nil) { composedBorder += ", borderWidth: " + value[1] + "*" + userRetinaDefaults.myRetina }
+		if (value[3] != nil && value[4] != nil) { composedBorder += ", borderColor: "  + convertHex(value[4], value[3]) }
 		return composedBorder
 	}
 	else return ""
