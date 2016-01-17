@@ -39,11 +39,11 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 				if (j == 0) { hasInitialState = true }
 				else if (!hasInitialState) {
 					var fakeFirstState = new State([matchingLayers firstObject])
-					fakeFirstState.fixFirstState([[artboards firstObject] name])
+					fakeFirstState.createHiddenState([[artboards firstObject] name])
 					layer.addFirstState(fakeFirstState)
 					hasInitialState = true
 				}
-				layer.addState([matchingLayers firstObject])
+				layer.composeState([matchingLayers firstObject])
 			}
 		}
 		

@@ -36,7 +36,7 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 				var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
 				if ([matchingLayers count] > 0) {
 					// if (showLog) { log("Added a layer") }
-					layer.addState([matchingLayers firstObject])
+					layer.composeState([matchingLayers firstObject])
 				}
 			}
 			

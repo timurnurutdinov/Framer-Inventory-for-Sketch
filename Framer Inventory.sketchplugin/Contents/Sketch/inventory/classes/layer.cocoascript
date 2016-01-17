@@ -5,12 +5,11 @@
 @import 'inventory/strings/generate.cocoascript'
 
 
-function Layer (layerName, currentPage) {
+function Layer (layerName) {
 	// name of layer
 	this.layerName = layerName;
 	this.states = [];
-	
-	
+	//this.image = nil
 	
 	// active conditions
 	this.areOpacityActive = false
@@ -29,24 +28,27 @@ function Layer (layerName, currentPage) {
 	this.areBordersExportable = true
 	this.areBackgroundsExportable = true
 	
-	// if equals -> css-filter, else -> imagesг
+	// if equals -> css-filter, else -> image
 	this.areAllShadowsEqual = true
 	this.areAllBackgroundsExist = true
 
 }
 
 
-
-Layer.prototype.addState = function(layer) {
+Layer.prototype.composeState = function(layer) {
 	var state = new State(layer)
 	this.updateConditions(state)
 	this.states.push(state)
 }
 
+
+// add state and make it transparent
 Layer.prototype.addFirstState = function(state) {
 	this.updateConditions(state)
 	this.states.push(state)
 }
+
+
 
 
 
@@ -76,6 +78,11 @@ Layer.prototype.updateConditions = function(state) {
 
 
 
+
+
+
+
+
 // PRINT
 
 Layer.prototype.printLayer = function() {
@@ -83,107 +90,132 @@ Layer.prototype.printLayer = function() {
 }
 
 
-Layer.prototype.generateFramerStates = function() {
-	if (this.states == nil || this.states.length == 0) {
-		if (showLog) { log("Warning: States are empty") }
-		return ""
-	}
+Layer.prototype.describeState = function(currentState, imageRequired) {
+	if (imageRequired == nil) { imageRequired = false }
 	
-	var currentType = this.states[0].type
+	var stateDescription = ""
+	stateDescription += generatePosition(currentState.composePosition())
+	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
+	
+	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.backgrounds) }
+	
+	stateDescription += generateRotation(currentState.rotation)
+	
+	if (!imageRequired) { stateDescription += generateShadows(currentState.shadows) }
+	if (!imageRequired) { stateDescription += generateBorders(currentState.borders) }
+	
+	stateDescription += generateOpacity(currentState.opacity)
+	
+	return stateDescription
+}
+
+
+Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
+	if (imageRequired == nil) { imageRequired = false }
+	log(currentState.printState())
+	
+	var stateDescription = returnLayerName(this.layerName)
+	stateDescription += generatePosition(currentState.composePosition())
+	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
+	
+	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.backgrounds) }
+	if (imageRequired) { stateDescription += generateImagePath(this.layerName) }
+
+	stateDescription += generateRotation(currentState.rotation)
+	
+	stateDescription += generateShadows(currentState.composeShadows())
+	if (!imageRequired) { stateDescription += generateBorders(currentState.borders) }
+	
+	stateDescription += generateOpacity(currentState.opacity)
+	
+	return stateDescription.replace("Layer,", "Layer")
+}
+
+
+Layer.prototype.generateFramerStates = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var layerType = this.analyseType()
 	var areAllGeneratable = this.areAllGeneratable()
+	var imageRequired = ((layerType == 2 || layerType == 3) && areAllGeneratable) ? false : true
+	
+	// log(this.areShadowsExportable)
+	// log(this.areInnersExportable)
+	// log(this.areBordersExportable)
+	// log(this.areBackgroundsExportable)
 	
 	var generatedStates = []
 	var statesDescriptions = []
 	var statesNames = []
 	
-	// store values
-	var outputNameString = returnLayerName(this.layerName)
-	var outputPositionString = ""
-	var outputStateString = ""
-	var outputImageNameString = ""
-	var outputFilterShadowsString = ""
 	
-	
-	var currentState = nil
 	var prevState = nil
 	var maxSpace = 0
 	
+	var titleState = new State()
+	
+	titleState.opacity = this.analyseOpacity()
+	titleState.corner = this.analyseCorner()
+	titleState.rotation = this.analyseRotation()
+	titleState.shadows = this.analyseShadows()
+	titleState.borders = this.analyseBorders()
+	titleState.backgrounds = this.analyseBackgrounds()
+	
+	if (imageRequired) { this.updatePositionImage() }
+	
+	var titlePosition = []
+	titlePosition.push(this.analyseWidth())
+	titlePosition.push(this.analyseHeight())
+	titlePosition.push(this.analyseX())
+	titlePosition.push(this.analyseY())
+	titleState.position = titlePosition
+	titleState.updateState()
+	
+	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
+	
+	
+	
 	for (var i = 0; i < this.states.length; i++) {
-		currentState = this.states[i]
+		var currentState = this.states[i]
+		// currentState.updateState()
+		
 		if (currentState.isEqualToState(prevState)) {
-			log("SKIPPED STATE")
+			if (showLog) { log("Skipping duplicated state") }
 			break
 		}
+
+		var stateDescription = this.describeState(currentState, imageRequired)
 		
-		outputString = ""
-		outputPositionString = ""
-		outputOpacityString = ""
-		
-		if (this.areOpacityActive) {
-			if (!currentState.opacityActive) { outputOpacityString = generateAbsoluteOpacity() }
-			else { outputOpacityString = generateOpacity(currentState.opacity) }
-		}
-		
-		if (currentType == 2 || currentType == 3) {
-			
+		if (layerType == 2 || layerType == 3) {
+			/*
 			// operating with rects and ovals
 			if (areAllGeneratable) {
-				if (this.areCornersActive) {
-					// ++++++++++++++++++++++++++++
-					if (!currentState.cornerActive) { outputString += generateAbsoluteCorner() }
-					else { outputString += generateCorner(currentState.corner) }
-				}
-				
-				if (this.areRotationsActive) {
-					if (!currentState.rotationActive) { outputString += generateAbsoluteRotation() }
-					else { outputString += generateRotation(currentState.rotation) }
-				}
-				
-				// always export bg (to override base)
-				if (this.areBackgroundsActive) {
-					if (this.areAllBackgroundsExist) {
-						outputString += generateBackgrounds(currentState.backgrounds)
-					}
-					else {
-						if (!currentState.backgroundsActive) {
-							outputString += generatePassiveBackgroundsWithColor(this.getSuggestedBackgroundColor(i))
-							outputOpacityString = generateTransparentOpacity()
-						}
-						else {
-							outputString += generateBackgrounds(currentState.backgrounds)
-							if (!currentState.opacityActive) { outputOpacityString = generateAbsoluteOpacity() }
-							else { outputOpacityString = generateOpacity(currentState.opacity) }
-						}
-					}
-				}
-				
-				if (this.areShadowsActive) {
-					if (!currentState.shadowsActive) { outputString += generatePassiveShadowsWithColor(this.getSuggestedShadowColor(i)) }
-					else { outputString += generateShadows(currentState.shadows) }
-				}	
-				
-				if (this.areBordersActive) {
-					if (!currentState.bordersActive) { outputString += generatePassiveBordersWithColor(this.getSuggestedBorderColor(i)) }
-					else { outputString += generateBorders(currentState.borders) }
-				}
-		
-				outputPositionString += generatePosition(currentState.position)
+				outputString += generateCorner(currentState.corner)
+				outputString += generateRotation(currentState.rotation)
+				outputString += generateBackgrounds(currentState.backgrounds)
+				outputOpacityString = generateOpacity(currentState.opacity)
+				outputString += generateShadows(currentState.shadows)
+				outputString += generateBorders(currentState.borders)
+				outputPositionString += generatePosition(currentState.position)			
 			}
 			else {
-				var currentStatePlace = getPlaceImage(currentState.layer)
+				var currentStatePlace = currentState.position
 				var normal = this.normalizeLayer(currentState.layer, false)
-				
-				var currentSpace = currentStatePlace[0] + currentStatePlace[1]
-				if (currentSpace > maxSpace) {
-					maxSpace = currentSpace
-					this.copyLayerToNormalizedPage(normal)
+
+				if (currentStatePlace != nil) {
+					var currentSpace = currentStatePlace[0] + currentStatePlace[1]
+					if (currentSpace > maxSpace) {
+						maxSpace = currentSpace
+						this.copyLayerToNormalizedPage(normal)
+					}
 				}
-			
+				
 				outputPositionString += generatePosition(currentStatePlace)
-				if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			}
+			*/
 		}
-		else if (currentType == 1) {
+		/*
+		else if (layerType == 1) {
 			
 			// operating with groups
 			var currentStatePlace = []
@@ -213,7 +245,7 @@ Layer.prototype.generateFramerStates = function() {
 			if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			
 		}
-		else if (currentType == 5) {
+		else if (layerType == 5) {
 			
 			// operating with other shapes
 			var currentStatePlace = []
@@ -243,33 +275,476 @@ Layer.prototype.generateFramerStates = function() {
 			outputPositionString += generatePosition(currentStatePlace)
 			if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
 			
-		}
+		}*/
 		else {
 			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
 		}
 		
 		prevState = currentState
 		
-		statesDescriptions.push(outputPositionString + outputString + outputOpacityString)
+		// statesDescriptions.push(outputPositionString + outputString + outputOpacityString)
+		// statesNames.push(currentState.stateName)
+		
+		statesDescriptions.push(stateDescription)
 		statesNames.push(currentState.stateName)
-
 	}
 	
+	
+	// for (var i = 0; i < statesDescriptions.length; i++) {
+// 		log(statesNames[i] + " " + statesDescriptions[i])
+// 	}
+//
+// 	if (statesDescriptions.length > 0) {
+// 		outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
+//
+// 		for (var i = 1; i < statesDescriptions.length; i++) {
+// 			generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
+// 		}
+// 	}
+
 	for (var i = 0; i < statesDescriptions.length; i++) {
 		log(statesNames[i] + " " + statesDescriptions[i])
 	}
 	
-	if (statesDescriptions.length > 0) {
-		outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
-
-		for (var i = 1; i < statesDescriptions.length; i++) {
+	if (statesDescriptions.length > 1) {
+		for (var i = 0; i < statesDescriptions.length; i++) {
 			generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
 		}
 	}
-
-	return outputNameString + dln() + generateStateSection(this.layerName, generatedStates)
 	
+	return titleDescription + dln() + generateStateSection(this.layerName, generatedStates)
 }
+
+
+Layer.prototype.checkStates = function() {
+	if (this.states == nil || this.states.length == 0) {
+		if (showLog) { log("Warning: States are empty") }
+		return false
+	}
+	return true
+}
+
+Layer.prototype.updatePositionImage = function() {
+	for (var i = 0; i < this.states.length; i++) {
+		this.states[i].position = getPlaceImage(this.states[i].layer)
+		this.states[i].updateState()
+	}
+}
+
+
+
+
+
+
+
+
+
+Layer.prototype.analyseType = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultType = this.states[0].type
+	var isSameType = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultType != this.states[i].type) {
+			isSameType = false
+			if (showLog) { log("Warning: " + this.states[i].layerName + " has mixed type") }
+		}
+	}
+	
+	return defaultType
+}
+
+
+Layer.prototype.analyseOpacity = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultOpacity = this.states[0].opacity
+	var isSameOpacity = true
+	var opacityAbsolute = 1
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultOpacity != this.states[i].opacity) {
+			isSameOpacity = false
+			break
+		}
+	}
+	
+	if (isSameOpacity) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].opacity = nil
+			this.states[i].opacityActive = false
+		}
+	
+		this.areOpacityActive = false
+		return defaultOpacity
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].opacity == nil) {
+				this.states[i].opacity = opacityAbsolute
+				this.states[i].opacityActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+Layer.prototype.analyseCorner = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultCorner = this.states[0].corner
+	var isSameCorner = true
+	var cornerAbsolute = 0
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultCorner != this.states[i].corner) {
+			isSameCorner = false
+			break
+		}
+	}
+	
+	if (isSameCorner) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].corner = nil
+			this.states[i].cornerActive = false
+		}
+	
+		this.areCornersActive = false
+		return defaultCorner
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].corner == nil) {
+				this.states[i].corner = cornerAbsolute
+				this.states[i].cornerActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+Layer.prototype.analyseRotation = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultRotation = this.states[0].rotation
+	var isSameRotation = true
+	var rotationAbsolute = 0
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultRotation != this.states[i].rotation) {
+			isSameRotation = false
+			break
+		}
+	}
+	
+	if (isSameRotation) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].rotation = nil
+			this.states[i].rotationActive = false
+		}
+	
+		this.areRotationsActive = false
+		return defaultRotation
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].rotation == nil) {
+				this.states[i].rotation = rotationAbsolute
+				this.states[i].rotationActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+
+
+
+
+
+Layer.prototype.analyseShadows = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultShadows = this.states[0].shadows
+	var isSameShadows = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (!compareMatrices(defaultShadows, this.states[i].shadows)) {
+			isSameShadows = false
+			break
+		}
+	}
+	
+	if (isSameShadows) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].shadows = nil
+			this.states[i].shadowsActive = false
+		}
+	
+		this.areShadowsActive = false
+		return defaultShadows
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].shadows == nil) {
+				
+				var suggestedShadows = this.suggestShadows(i)
+				if (suggestedShadows == nil) {
+					if (showLog) { log("ERROR: suggestShadows is nil") }
+				}
+				
+				var localShadow = []
+				for (var j = 0; j < 4; j++) {
+					localShadow.push("0")
+				}
+				localShadow.push(suggestedShadows[0][4])
+				localShadow.push(suggestedShadows[0][5])
+				
+				this.states[i].shadows = []
+				this.states[i].shadows.push(localShadow)
+				
+				this.states[i].shadowsActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+Layer.prototype.analyseBorders = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultBorders = this.states[0].borders
+	var isSameBorders = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (!compareMatrices(defaultBorders, this.states[i].borders)) {
+			isSameBorders = false
+			break
+		}
+	}
+	
+	if (isSameBorders) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].borders = nil
+			this.states[i].bordersActive = false
+		}
+	
+		this.areBordersActive = false
+		return defaultBorders
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].borders == nil) {
+				
+				var suggestedBorders = this.suggestBorders(i)
+				if (suggestedBorders == nil) {
+					if (showLog) { log("ERROR: suggestBorders is nil") }
+				}
+				
+				var localBorder = []
+				localBorder.push(suggestedBorders[0][0])
+				localBorder.push("0")
+				localBorder.push(suggestedBorders[0][2])
+				localBorder.push(suggestedBorders[0][3])
+				localBorder.push(suggestedBorders[0][4])
+				
+				this.states[i].borders = []
+				this.states[i].borders.push(localBorder)
+				
+				this.states[i].bordersActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+Layer.prototype.analyseBackgrounds = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultBackgrounds = this.states[0].backgrounds
+	var isSameBackgrounds = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (!compareMatrices(defaultBackgrounds, this.states[i].backgrounds)) {
+			isSameBackgrounds = false
+			break
+		}
+	}
+	
+	if (isSameBackgrounds) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].backgrounds = nil
+			this.states[i].backgroundsActive = false
+		}
+	
+		//this.areBackgroundsActive = false
+		return defaultBackgrounds
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].backgrounds == nil) {
+				
+				this.states[i].opacity = 0
+				this.states[i].opacityActive = true
+				
+				var suggestedBackgrounds = this.suggestBackgrounds(i)
+				if (suggestedBackgrounds == nil) {
+					if (showLog) { log("ERROR: suggestBackgrounds is nil") }
+				}
+				
+				var localBackground = []
+				localBackground.push(suggestedBackgrounds[0][0])
+				localBackground.push(suggestedBackgrounds[0][1])
+				localBackground.push(suggestedBackgrounds[0][2])
+				
+				this.states[i].backgrounds = []
+				this.states[i].backgrounds.push(localBackground)
+				
+				this.states[i].backgroundsActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+
+
+
+
+
+Layer.prototype.analysePosition = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultPosition = this.states[0].position
+	var isSamePosition = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (!compareArrays(defaultPosition, this.states[i].position)) {
+			isSamePosition = false
+			break
+		}
+	}
+	
+	if (isSamePosition) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].position = nil
+			//this.states[i].positionActive = false
+		}
+	
+		//this.areBordersActive = false
+		return defaultPosition
+	}
+	
+	return nil
+}
+
+
+Layer.prototype.analyseWidth = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultWidth = this.states[0].width
+	var isSameWidth = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultWidth != this.states[i].width) {
+			isSameWidth = false
+			break
+		}
+	}
+	
+	if (isSameWidth) {
+		log("SANE WIDTH, OK")
+		for (var i = 0; i < this.states.length; i++) { this.states[i].width = nil }
+		return defaultWidth
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseHeight = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultHeight = this.states[0].height
+	var isSameHeight = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultHeight != this.states[i].height) {
+			isSameHeight = false
+			break
+		}
+	}
+	
+	if (isSameHeight) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].height = nil }
+		return defaultHeight
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseX = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultX = this.states[0].x
+	var isSameX = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultX != this.states[i].x) {
+			isSameX = false
+			break
+		}
+	}
+	
+	if (isSameX) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].x = nil }
+		return defaultX
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseY = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultY = this.states[0].y
+	var isSameY = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultY != this.states[i].y) {
+			isSameY = false
+			break
+		}
+	}
+	
+	if (isSameY) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].y = nil }
+		return defaultY
+	}
+	
+	return nil
+}
+
+
+
+
+
+
+
+
+
 
 
 Layer.prototype.returnDifferencedStates = function() {
@@ -340,53 +815,56 @@ Layer.prototype.compareShadows = function(state) {
 
 
 
-Layer.prototype.getSuggestedShadowColor = function(currentStateNumber) {
+Layer.prototype.suggestShadows = function(currentStateNumber) {
 	
 	for (var i = currentStateNumber; i < this.states.length; i++) {
-		if (this.states[i].shadowsActive && (this.states[i].shadow != '' || this.states[i].shadow != nil)) {
-			return this.states[i].shadows[0]
+		if (this.states[i].shadowsActive && this.states[i].shadows != nil) {
+			return this.states[i].shadows
 		}
 	}
+
 	for (var i = currentStateNumber; i >= 0; i--) {
-		if (this.states[i].shadowsActive && (this.states[i].shadow != '' || this.states[i].shadow != nil)) {
-			return this.states[i].shadows[0]
+		if (this.states[i].shadowsActive && this.states[i].shadows != nil) {
+			return this.states[i].shadows
 		}
 	}
 	return nil
 	
 }
 
-Layer.prototype.getSuggestedBorderColor = function(currentStateNumber) {
+Layer.prototype.suggestBorders = function(currentStateNumber) {
 	
 	for (var i = currentStateNumber; i < this.states.length; i++) {
-		if (this.states[i].bordersActive && (this.states[i].borders != '' || this.states[i].borders != nil)) {
-			return this.states[i].borders[0]
+		if (this.states[i].bordersActive && this.states[i].borders != nil) {
+			return this.states[i].borders
 		}
 	}
 	for (var i = currentStateNumber; i >= 0; i--) {
-		if (this.states[i].bordersActive && (this.states[i].borders != '' || this.states[i].borders != nil)) {
-			return this.states[i].borders[0]
+		if (this.states[i].bordersActive && this.states[i].borders != nil) {
+			return this.states[i].borders
 		}
 	}
 	return nil
 	
 }
 
-Layer.prototype.getSuggestedBackgroundColor = function(currentStateNumber) {
+Layer.prototype.suggestBackgrounds = function(currentStateNumber) {
 	
 	for (var i = currentStateNumber; i < this.states.length; i++) {
-		if (this.states[i].backgroundsActive && (this.states[i].backgrounds != '' || this.states[i].backgrounds != nil)) {
-			return this.states[i].backgrounds[0]
+		if (this.states[i].backgroundsActive && this.states[i].backgrounds != nil) {
+			return this.states[i].backgrounds
 		}
 	}
 	for (var i = currentStateNumber; i >= 0; i--) {
-		if (this.states[i].backgroundsActive && (this.states[i].backgrounds != '' || this.states[i].backgrounds != nil)) {
-			return this.states[i].backgrounds[0]
+		if (this.states[i].backgroundsActive && this.states[i].backgrounds != nil) {
+			return this.states[i].backgrounds
 		}
 	}
 	return nil
 	
 }
+
+
 
 
 
@@ -461,3 +939,10 @@ Layer.prototype.copyLayerToNormalizedPage = function(layer) {
     [size setScale:size_data.scale]
     [size setName:size_data.suffix]
 }
+
+
+
+
+var ln = function() { return "\n" }
+var dln = function() { return ln() + ln() }
+var tln = function() { return "\t" }

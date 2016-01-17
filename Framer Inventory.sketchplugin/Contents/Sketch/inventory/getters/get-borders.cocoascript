@@ -1,5 +1,6 @@
-
 var getBorders = function(layer) {
+	if (layer == nil) { return nil }
+	
 	var enabledBorders = []
 	
 	var bordersCollection = [[layer style] borders]
@@ -10,5 +11,7 @@ var getBorders = function(layer) {
 			enabledBorders.push(border)
 		}
 	}
+	
+	if (enabledBorders == '') { return nil }
 	return enabledBorders
 }

@@ -6,36 +6,11 @@
 // 4  - text layer
 
 
-
-// // returns width, height, x, y
-// function getPosition(layer, type) {
-// 	var localType = 0
-//
-// 	if (type == nil) { localType = exportableType(layer) }
-// 	else {
-// 		localType = type
-// 	}
-//
-// 	if (localType == 1) {
-// 		return getPlaceImage(layer)
-// 	}
-// 	else if (localType == 2 || localType == 3) {
-// 		return getPlaceRect(layer)
-// 	}
-// 	else if (localType == 5) {
-// 		return getPlaceRect(layer)
-// 	}
-// 	else {
-// 		log("ERROR: Unsupported type for position")
-// 		return nil
-// 	}
-// }
-
-
-
 // returns width, height, x, y
 function getPosition(layer, type, isStillExportable) {
-	if (type == nil) { type = exportableType(layer) }
+	if (layer == nil) { return nil }
+	
+	if (type == nil) { type = getObjectType(layer) }
 	if (isStillExportable == nil) { if (showLog) { log("Warning: isStillExportable is unknown") } }	
 	
 	if (isStillExportable && (type == 2 || type == 3)) { return getPlaceRect(layer) }
@@ -84,6 +59,7 @@ var getPlaceImage = function(layer) {
 
 
 var getPlaceRect = function(layer) {
+	if (layer == nil) { return nil }
 	
 	var parentArtboard = findParentArtboard(layer)
 

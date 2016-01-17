@@ -7,8 +7,6 @@
 @import 'inventory/libs/pluginDefaults.js'
 @import 'inventory/libs/search.js'
 
-var com = {};
-
 var presets = {
     myRetina: "retina",
 }
@@ -343,8 +341,4 @@ FramerInventory.mergeQueue = function(container) {
 	}
 	return temp
 }
-
-var ln = function() { return "\n" }
-var dln = function() { return ln() + ln() }
-var tln = function() { return "\t" }
 

@@ -1,7 +1,8 @@
 
 var getCornerRadius = function(layer) {
+	if (layer == nil) { return nil }
 
-	var localType = exportableType(layer)
+	var localType = getObjectType(layer)
 
 	if (localType == 1) {
 		return nil
@@ -9,7 +10,9 @@ var getCornerRadius = function(layer) {
 	else if (localType == 2){
 		var shape = layer.layers().firstObject()
 		if(shape && shape.isKindOfClass(MSRectangleShape)) {
-			return shape.cornerRadiusFloat()
+			var cornerValue = shape.cornerRadiusFloat()
+			if (cornerValue == 0) { return nil }
+			return cornerValue
 		}
 		return nil
 	}

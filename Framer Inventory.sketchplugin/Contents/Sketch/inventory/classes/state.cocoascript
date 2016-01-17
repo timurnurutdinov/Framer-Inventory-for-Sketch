@@ -9,46 +9,98 @@
 
 @import 'inventory/strings/generate.cocoascript'
 
-@import 'inventory/libs/clone.js'
-
 
 
 
 function State (layer) {
 	
+	this.stateName = nil
+	this.layer = nil
+	this.type = nil
+	
+	
+	// active properties
+	this.position = nil
+	this.width = nil
+	this.height = nil
+	this.x = nil
+	this.y = nil
+
+	this.opacity = nil
+	this.corner = nil
+	this.rotation = nil
+	
+	this.shadows = nil
+	this.inners = nil
+	this.borders = nil
+	this.backgrounds = nil
+	
+	
+	// active conditions
+	this.opacityActive = false
+	this.cornerActive = false
+	this.rotationActive = false
+	this.positionActive = false
+	
+	this.shadowsActive = false
+	this.innersActive = false
+	this.bordersActive = false
+	this.backgroundsActive = false
+	
+	// exportable conditions
+	this.shadowsExportable = false
+	this.innersExportable = false
+	this.bordersExportable = false
+	this.backgroundsExportable = false
+	this.generatable = false
+	
+	this.prepareState(layer)
+	this.updateState()
+}
+
+
+State.prototype.prepareState = function(layer) {
+	if (layer == nil) { return nil }
+	
 	var parentArtboard = findParentArtboard(layer)
 	this.stateName = [parentArtboard name]
 	
 	this.layer = layer
-	this.type = exportableType(layer)
+	this.type = getObjectType(layer)
 	
+	if (this.type == 2 || this.type == 3) { this.position = getPlaceRect(layer) }
+	else { this.position = getPlaceImage(layer) }
 	
-	// active properties
-	this.position = []
-
 	this.opacity = getOpacity(layer)
 	this.corner = getCornerRadius(layer)
-	this.rotation = 0
 	if ([layer rotation] != 0) { this.rotation = (-[layer rotation]) }
-
+	
 	this.shadows = getShadows(layer)
 	this.inners = getInners(layer)
 	this.borders = getBorders(layer)
-
 	this.backgrounds = getBackgroundColors(layer)
-	
-	
+		
+}
+
+
+State.prototype.updateState = function() {
+	if (this.position != nil) {
+		this.width = this.position[0]
+		this.height = this.position[1]
+		this.x = this.position[2]
+		this.y = this.position[3]
+	}
 	
 	// active conditions
-	this.opacityActive = (this.opacity == 1) ? false : true
-	this.cornerActive = (this.corner == nil || this.corner == 0) ? false : true
-	this.rotationActive = (this.rotation == 0) ? false : true
+	this.opacityActive = (this.opacity == nil) ? false : true
+	this.cornerActive = (this.corner == nil) ? false : true
+	this.rotationActive = (this.rotation == nil) ? false : true
+	this.positionActive = (this.position == nil) ? false : true
 	
-	this.shadowsActive = (this.shadows == nil || this.shadows == '') ? false : true
-	this.innersActive = (this.inners == nil || this.inners == '') ? false : true
-	this.bordersActive = (this.borders == nil || this.borders == '') ? false : true
-	this.backgroundsActive = (this.backgrounds == nil || this.backgrounds == '') ? false : true
-	
+	this.shadowsActive = (this.shadows == nil) ? false : true
+	this.innersActive = (this.inners == nil) ? false : true
+	this.bordersActive = (this.borders == nil) ? false : true
+	this.backgroundsActive = (this.backgrounds == nil) ? false : true
 	
 	// exportable conditions
 	this.shadowsExportable = this.isShadowsExportale()
@@ -56,25 +108,15 @@ function State (layer) {
 	this.bordersExportable = this.isBordersExportale()
 	this.backgroundsExportable = this.isBackgroundsExportale()
 	this.generatable = this.isGeneratable()
-	
-	this.position = getPosition(layer, this.type, this.generatable)
-	
-	this.width = this.position[0]
-	this.height = this.position[1]
-	this.x = this.position[2]
-	this.y = this.position[3]
-	
-}
-
-
-State.prototype.fixFirstState = function(firstArtboardName) {
-	this.stateName = firstArtboardName
-	this.opacity = 0
-	this.opacityActive = (this.opacity == 1) ? false : true
 }
 
 
 
+State.cloneState = function(baseState) {
+	var layer = baseState.layer
+	var state = new State(layer)
+	return state
+}
 
 
 
@@ -88,8 +130,8 @@ State.prototype.isEqualToState = function(state) {
 	if (this.corner != state.corner) { return false }
 	if (this.rotation != state.rotation) { return false }
 	
-	log("CLASSOPP")
 	if (!compareArrays(this.position, state.position)) { return false }
+	
 	if (!compareMatrices(this.shadows, state.shadows)) { return false }
 	if (!compareMatrices(this.inners, state.inners)) { return false }
 	if (!compareMatrices(this.borders, state.borders)) { return false }
@@ -102,27 +144,23 @@ State.prototype.isEqualToState = function(state) {
 
 
 
-
 State.prototype.isGeneratable = function() {
 	if (this.shadowsExportable && this.innersExportable && this.bordersExportable && this.backgroundsExportable) { return true }
 	else return false
 }
 
-
 State.prototype.isShadowsExportale = function() {
-	if (this.shadows == nil || this.shadows == '' || this.shadows.length == 1) { return true }
+	if (this.shadows == nil || this.shadows.length == 1) { return true }
 	else return false
 }
-
 
 State.prototype.isInnersExportale = function() {
-	if (this.inners == nil || this.inners == '') { return true }
+	if (this.inners == nil) { return true }
 	else return false
 }
 
-
 State.prototype.isBordersExportale = function() {
-	if (this.borders == nil || this.borders == '') { return true }
+	if (this.borders == nil) { return true }
 	else if (this.borders.length == 1) {
 		if (this.borders[0][0] == 1) {
 			if (this.borders[0][2] == 0) { return true }
@@ -133,9 +171,8 @@ State.prototype.isBordersExportale = function() {
 	else return false
 }
 
-
 State.prototype.isBackgroundsExportale = function() {
-	if (this.backgrounds == nil || this.backgrounds == '') { return true }
+	if (this.backgrounds == nil) { return true }
 	else if (this.backgrounds.length == 1) {
 		if (this.backgrounds[0][0] == 0) {
 			return true
@@ -150,7 +187,7 @@ State.prototype.isBackgroundsExportale = function() {
 
 
 
-
+// clone state and keep only unique properties
 State.prototype.keepDifference = function(compareState) {
 	var state = State.cloneState(compareState)
 	
@@ -167,7 +204,7 @@ State.prototype.keepDifference = function(compareState) {
 		state.rotationActive = false
 	}
 	
-	if (this.position != nil && this.position != "" && state.position != nil) {	
+	if (this.position != nil && state.position != nil) {	
 		for (var i = 0; i < this.position.length; i++) {
 			if (this.position[i] == state.position[i]) { state.position[i] = nil }
 		}
@@ -194,10 +231,32 @@ State.prototype.keepDifference = function(compareState) {
 }
 
 
-State.cloneState = function(baseState) {
-	var layer = baseState.layer
-	var state = new State(layer)
-	return state
+State.prototype.createHiddenState = function(firstArtboardName) {
+	this.stateName = firstArtboardName
+	this.opacity = 0
+	this.opacityActive = true
+}
+
+State.prototype.composePosition = function() {
+	var composedPosition = []
+	
+	composedPosition.push(this.width)
+	composedPosition.push(this.height)
+	composedPosition.push(this.x)
+	composedPosition.push(this.y)
+
+	return composedPosition
+}
+
+State.prototype.composeShadows = function() {
+	if (this.shadows == nil || this.shadows.length > 1) { return this.shadows }
+	var shadows = this.shadows[0]
+	
+	for (var i = 0; i < shadows.length; i++) {
+		if (shadows[i] == 0) { shadows[i] = nil }
+	}
+	
+	return [shadows]
 }
 
 
@@ -205,7 +264,7 @@ State.cloneState = function(baseState) {
 
 // a little helper
 State.prototype.printState = function() {
-	log("NAME: " + this.stateName)
+	log("#########: " + this.stateName)
 	
 	log("Position " + this.position)
 	log("Opacity: " + this.opacity)
@@ -220,5 +279,5 @@ State.prototype.printState = function() {
 
 
 State.prototype.printStateSmall = function() {
-	log("NAME: " + this.stateName + " | " + this.corner)
+	log("#########: " + this.stateName + " || " + this.backgrounds)
 }

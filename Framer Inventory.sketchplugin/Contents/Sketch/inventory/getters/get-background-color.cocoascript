@@ -1,4 +1,6 @@
 var getBackgroundColors = function(layer) {
+	if (layer == nil) { return nil }
+	
 	var enabledFills = []
 	
 	var fillCollection = [[layer style] fills]
@@ -10,5 +12,7 @@ var getBackgroundColors = function(layer) {
 			enabledFills.push(fill)
 		}
 	}
+	
+	if (enabledFills == '') { return nil }
 	return enabledFills
 }

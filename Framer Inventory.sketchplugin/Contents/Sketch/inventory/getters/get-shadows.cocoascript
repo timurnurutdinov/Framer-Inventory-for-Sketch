@@ -1,9 +1,13 @@
 var getShadows = function(layer) {
+	if (layer == nil) { return nil }
+	
 	var collection = [[layer style] shadows]
 	return getBothShadows(layer, collection)
 }
 
 var getInners = function(layer) {
+	if (layer == nil) { return nil }
+	
 	var collection = [[layer style] innerShadows]
 	return getBothShadows(layer, collection)
 }
@@ -20,5 +24,6 @@ var getBothShadows = function(layer, shadowsCollection) {
 		}
 	}
 	
+	if (enabledShadows == '') { return nil }
 	return enabledShadows
 }

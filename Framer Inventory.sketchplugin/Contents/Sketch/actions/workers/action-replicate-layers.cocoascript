@@ -19,7 +19,7 @@ var runReplicateLayers = function(context) {
 		for (var i = 0; i < [sortedSelection count]; i++) {
 			var currentLayer = [sortedSelection objectAtIndex: i]
 			var layer = new Layer([currentLayer name])
-			layer.addState(currentLayer)
+			layer.composeState(currentLayer)
 			layers.push(layer)
 		}
 	}
