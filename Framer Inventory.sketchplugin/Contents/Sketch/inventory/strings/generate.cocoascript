@@ -20,6 +20,7 @@ var convertHex = function(hex, opacity) {
 
 
 var calc = function(value) {
+	if (value == nil) { return "0 " }
 	return "calc(" + value + "px*\" + " + userRetinaDefaults.myRetina + " + \") "
 }
 

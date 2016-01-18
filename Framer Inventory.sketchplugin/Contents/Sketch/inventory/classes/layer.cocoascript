@@ -9,7 +9,8 @@ function Layer (layerName) {
 	// name of layer
 	this.layerName = layerName;
 	this.states = [];
-	//this.image = nil
+	
+	this.filterRequired = false
 	
 	// active conditions
 	this.areOpacityActive = false
@@ -52,6 +53,9 @@ Layer.prototype.addFirstState = function(state) {
 
 
 
+
+
+
 Layer.prototype.updateConditions = function(state) {
 	// active
 	this.areOpacityActive = this.areOpacityActive || state.opacityActive
@@ -74,6 +78,16 @@ Layer.prototype.updateConditions = function(state) {
 	// exportable for groups and images
 	this.areAllShadowsEqual = this.areAllShadowsEqual && this.compareShadows(state)
 	this.areAllBackgroundsExist = this.areAllBackgroundsExist && state.backgroundsActive
+}
+
+Layer.prototype.areAllGeneratable = function(state) {
+	return (this.areShadowsExportable && this.areInnersExportable && this.areBordersExportable && this.areBackgroundsExportable) ? true : false
+}
+
+Layer.prototype.compareShadows = function(state) {
+	if (this.states == nil || state == nil || this.states.length < 1) { return true }
+	if (!compareMatrices(this.states[0].shadows, state.shadows)) { return false }
+	return true
 }
 
 
@@ -117,12 +131,15 @@ Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	stateDescription += generateRotation(currentState.rotation)
 	
 	if (!imageRequired) { stateDescription += generateShadows(currentState.composeShadows()) }
+	if (imageRequired && this.filterRequired) { stateDescription += generateFilterShadows(currentState.composeShadows()) }
 	if (!imageRequired) { stateDescription += generateBorders(currentState.composeBorders()) }
 	
 	stateDescription += generateOpacity(currentState.opacity)
 	
 	return stateDescription.replace("Layer,", "Layer")
 }
+
+
 
 
 
@@ -163,29 +180,20 @@ Layer.prototype.returnBackgroundHex = function(value) {
 
 
 
+
+
 Layer.prototype.printLayer = function() {
 	return this.generateFramerStates()
 }
 
-Layer.prototype.generateFramerStates = function() {
-	if (!this.checkStates()) { return nil }
-	
-	var layerType = this.analyseType()
-	var areAllGeneratable = this.areAllGeneratable()
-	var imageRequired = ((layerType == 2 || layerType == 3) && areAllGeneratable) ? false : true
-	
-	var generatedStates = []
-	var statesDescriptions = []
-	var statesNames = []
-	
-	
-	var prevState = nil
-	var maxSpace = 0
-	
+Layer.prototype.generateFramerTitle = function(imageRequired) {
 	var titleState = new State()
 	
 	titleState.corner = this.analyseCorner()
 	titleState.rotation = this.analyseRotation()
+	
+	this.filterRequired = this.analyseFilterShadows(this.areShadowsExportable)
+	log("FILTER: " + this.filterRequired)
 	
 	var titleShadows = []
 	titleShadows.push(this.analyseShadowX())
@@ -228,7 +236,7 @@ Layer.prototype.generateFramerStates = function() {
 	}
 	
 	titleState.opacity = this.analyseOpacity()
-	log("OPACITY: " + titleState.opacity)
+
 	if (imageRequired) { this.updatePositionImage() }
 	
 	var titlePosition = []
@@ -239,15 +247,34 @@ Layer.prototype.generateFramerStates = function() {
 	titleState.position = titlePosition
 	
 	titleState.updateState()
+	
+	return titleState
+}
 
+Layer.prototype.generateFramerStates = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var layerType = this.analyseType()
+	var areAllGeneratable = this.areAllGeneratable()
+	var imageRequired = ((layerType == 2 || layerType == 3) && areAllGeneratable) ? false : true
+	
+	var generatedStates = []
+	var statesDescriptions = []
+	var statesNames = []
+	
+	
+	var prevState = nil
+	var maxSpace = 0
+	
+	
 
+	var titleState = this.generateFramerTitle(imageRequired)
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
 	
 	
 	
 	for (var i = 0; i < this.states.length; i++) {
 		var currentState = this.states[i]
-		// currentState.updateState()
 		
 		if (currentState.isEqualToState(prevState)) {
 			if (showLog) { log("Skipping duplicated state") }
@@ -256,71 +283,14 @@ Layer.prototype.generateFramerStates = function() {
 
 		var stateDescription = this.describeState(currentState, imageRequired)
 		
-		if (layerType == 2 || layerType == 3) {
-			/*
-			// operating with rects and ovals
-			if (areAllGeneratable) {
-				outputString += generateCorner(currentState.corner)
-				outputString += generateRotation(currentState.rotation)
-				outputString += generateBackgrounds(currentState.backgrounds)
-				outputOpacityString = generateOpacity(currentState.opacity)
-				outputString += generateShadows(currentState.shadows)
-				outputString += generateBorders(currentState.borders)
-				outputPositionString += generatePosition(currentState.position)			
-			}
-			else {
-				var currentStatePlace = currentState.position
-				var normal = this.normalizeLayer(currentState.layer, false)
-
-				if (currentStatePlace != nil) {
-					var currentSpace = currentStatePlace[0] + currentStatePlace[1]
-					if (currentSpace > maxSpace) {
-						maxSpace = currentSpace
-						this.copyLayerToNormalizedPage(normal)
-					}
-				}
-				
-				outputPositionString += generatePosition(currentStatePlace)
-			}
-			*/
-		}
+		prevState = currentState
+		
+		statesDescriptions.push(stateDescription)
+		statesNames.push(currentState.stateName)
+		
+		
+		
 		/*
-		else if (layerType == 1) {
-			
-			// operating with groups
-			var currentStatePlace = []
-			var normal = nil
-			
-			if (this.areAllShadowsEqual) {
-
-				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
-						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
-				}
-				
-				currentStatePlace = getPlaceImage(currentState.layer)
-				normal = this.normalizeLayer(currentState.layer, true)
-			}
-			else {
-				currentStatePlace = getPlaceImage(currentState.layer)
-				normal = this.normalizeLayer(currentState.layer, false)
-			}
-			
-			var currentSpace = currentStatePlace[0] + currentStatePlace[1]
-			if (currentSpace > maxSpace) {
-				maxSpace = currentSpace
-				this.copyLayerToNormalizedPage(normal)
-			}
-
-			outputPositionString += generatePosition(currentStatePlace)
-			if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
-			
-		}
-		else if (layerType == 5) {
-			
-			// operating with other shapes
-			var currentStatePlace = []
-			var normal = nil
-			
 			if (areAllGeneratable && this.areAllShadowsEqual) {
 
 				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
@@ -344,42 +314,15 @@ Layer.prototype.generateFramerStates = function() {
 
 			outputPositionString += generatePosition(currentStatePlace)
 			if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
-			
-		}*/
-		else {
-			log("ERROR. CANT PRINT STATE OF THIS TYPE.")
-		}
-		
-		prevState = currentState
-		
-		// statesDescriptions.push(outputPositionString + outputString + outputOpacityString)
-		// statesNames.push(currentState.stateName)
-		
-		statesDescriptions.push(stateDescription)
-		statesNames.push(currentState.stateName)
+		*/		
 	}
-	
-	
-	// for (var i = 0; i < statesDescriptions.length; i++) {
-// 		log(statesNames[i] + " " + statesDescriptions[i])
-// 	}
-//
-// 	if (statesDescriptions.length > 0) {
-// 		outputNameString += statesDescriptions[0] + outputImageNameString + outputFilterShadowsString
-//
-// 		for (var i = 1; i < statesDescriptions.length; i++) {
-// 			generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
-// 		}
-// 	}
 
-	for (var i = 0; i < statesDescriptions.length; i++) {
-		log(statesNames[i] + " " + statesDescriptions[i])
-	}
+	// for (var i = 0; i < statesDescriptions.length; i++) {
+		// log(statesNames[i] + " " + statesDescriptions[i])
+	// }
 	
 	if (statesDescriptions.length > 1) {
-		for (var i = 0; i < statesDescriptions.length; i++) {
-			generatedStates.push(generateState(statesNames[i], statesDescriptions[i]))
-		}
+		for (var i = 0; i < statesDescriptions.length; i++) { generatedStates.push(generateState(statesNames[i], statesDescriptions[i])) }
 	}
 	
 	return titleDescription + dln() + generateStateSection(this.layerName, generatedStates)
@@ -395,14 +338,74 @@ Layer.prototype.checkStates = function() {
 }
 
 Layer.prototype.updatePositionImage = function() {
+	var maxSize = 0
+	var maxSizeNumber = -1
+	
 	for (var i = 0; i < this.states.length; i++) {
-		this.states[i].position = getPlaceImage(this.states[i].layer)
+		var layer = this.states[i].layer
+		var layerForPosition = [layer duplicate]
+		if (this.filterRequired) { Layer.cleanLayerShadows(layerForPosition) }
+		
+		this.states[i].position = getPlaceImage(layerForPosition)
 		this.states[i].updateState()
+		
+		[layerForPosition removeFromParent]
+		
+		
+		var currentSize = this.states[i].width + this.states[i].height
+		if (currentSize > maxSize) {
+			maxSize = currentSize
+			maxSizeNumber = i
+		}
+	}
+	
+	if (maxSizeNumber != -1) {
+		var layerForPosition = this.states[maxSizeNumber].layer
+		
+		layerForPosition = Layer.returnLayerCopy(layerForPosition)
+		if (this.filterRequired) { Layer.cleanLayerShadows(layerForPosition) }
+		Layer.pasteLayer(layerForPosition)
+		Layer.addExportOptions(layerForPosition)
 	}
 }
 
+Layer.returnLayerCopy = function(layer) {
+	var layer_copy = [layer duplicate]
+	[layer_copy removeFromParent]
+	return layer_copy
+}
 
+Layer.cleanLayerShadows = function(layer) {
+	var shadowsCollection = [[layer style] shadows]
+	for (var i = 0; i < shadowsCollection.count(); i++) {
+		[shadowsCollection removeStylePartAtIndex: i]
+	}
+}
 
+Layer.pasteLayer = function(layer) {
+	var currentPage = FramerInventory.getCurrentPage()
+	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	FramerInventory.cleanLayer(layer, framerInventoryPage)
+	[framerInventoryPage addLayers: [layer]]
+}
+
+Layer.addExportOptions = function(layer) {
+	var size_data = {
+	    "format": "png",
+	    "scale": 1,
+	    "suffix": ""
+	}
+	
+	var exportSizes = [[layer exportOptions] sizes]
+	while([exportSizes count] > 0) {
+	    [[exportSizes firstObject] remove]
+	}
+
+	var size = [[layer exportOptions] addExportSize]
+ 	[size setFormat:size_data.format]
+    [size setScale:size_data.scale]
+    [size setName:size_data.suffix]
+}
 
 
 
@@ -425,6 +428,21 @@ Layer.prototype.analyseType = function() {
 	return defaultType
 }
 
+Layer.prototype.analyseFilterShadows = function(areExportable) {
+	if (!this.checkStates()) { return nil }
+	if (!areExportable) { return false }
+	
+	var defaultValue = this.states[0].shadows
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (!compareMatrices(defaultValue, this.states[i].shadows)) {
+			return false
+		}
+	}
+	
+	if (defaultValue == nil) { return false}
+	return true
+}
 
 Layer.prototype.analyseOpacity = function() {
 	if (!this.checkStates()) { return nil }
@@ -749,7 +767,6 @@ Layer.prototype.analyseBackgroundHex = function() {
 		for (var i = 0; i < this.states.length; i++) {
 			if (this.states[i].backgroundHex == nil) {
 				this.states[i].opacity = 0
-				log("KNUDGE")
 				
 				var suggestedBackgrounds = this.suggestBackgrounds(i)
 				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
@@ -1219,15 +1236,7 @@ Layer.prototype.updateStates = function(states) {
 
 
 
-Layer.prototype.areAllGeneratable = function(state) {
-	return (this.areShadowsExportable && this.areInnersExportable && this.areBordersExportable && this.areBackgroundsExportable) ? true : false
-}
 
-Layer.prototype.compareShadows = function(state) {
-	if (this.states == nil || state == nil || this.states.length < 1) { return true }
-	if (!compareMatrices(this.states[0].shadows, state.shadows)) { return false }
-	return true
-}
 
 
 
@@ -1329,40 +1338,6 @@ Layer.prototype.getClassicalState = function() {
 }
 
 
-
-
-
-
-
-Layer.prototype.normalizeLayer = function(layer, cleanLayer) {
-	if (cleanLayer == nil) { cleanLayer = false }
-	
-	var layer_copy = [layer duplicate]
-	[layer_copy removeFromParent]
-	
-	if (cleanLayer) { cleanShadows(layer_copy) }
-	
-	return layer_copy
-}
-
-
-Layer.prototype.copyLayerToNormalizedPage = function(layer) {
-	var size_data = {
-	    "format": "png",
-	    "scale": 2,
-	    "suffix": ""
-	}
-	
-	var currentPage = FramerInventory.getCurrentPage()
-	var framerInventoryPage = FramerInventory.addPage(currentPage)
-	FramerInventory.cleanLayer(layer, framerInventoryPage)
-	[framerInventoryPage addLayers: [layer]]
-	
-	var size = [[layer exportOptions] addExportSize]
- 	[size setFormat:size_data.format]
-    [size setScale:size_data.scale]
-    [size setName:size_data.suffix]
-}
 
 
 

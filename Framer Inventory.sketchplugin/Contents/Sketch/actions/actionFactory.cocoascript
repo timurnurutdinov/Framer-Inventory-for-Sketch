@@ -64,7 +64,7 @@ FramerInventory.deselectLayers = function() {
 
 
 FramerInventory.addPage = function(oldPage) {
-	if (showLog) { log("Adding new page. Current page is " + oldPage) }
+	if (showLog) { log("Adding Framer Inventory page") }
 	var newPage = nil
 	var pageExistsIndex = -1
 	var newPageName = "[Framer Inventory]"
@@ -91,7 +91,7 @@ FramerInventory.addPage = function(oldPage) {
 
 
 FramerInventory.cleanLayer = function(layer, page) {
-	var predicate = NSPredicate.predicateWithFormat("name == %@", [layer name])
+	var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [layer name], [layer className])
 	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
 
 	for (var i = 0; i < deleteLayers.count(); i++) {
