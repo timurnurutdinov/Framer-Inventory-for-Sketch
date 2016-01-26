@@ -15,6 +15,7 @@ var pluginDomain = "com.addleimb.framer-inventory.retina"
 var userRetinaDefaults = initDefaults(pluginDomain, presets)
 
 var currentDocument = nil
+var usedStates = []
 
 
 var chooseAction = function(context, actionIdentifier, testing) {
@@ -137,9 +138,6 @@ FramerInventory.organiseSelection = function(userSelection) {
 	
 	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
 	if (showLog) { log("Queue selection: " + queue.length + " -> " + queue) }
-	
-	
-	// if (showLog) { log("Cleaned Queue selection: " + queue) }
 	
 	FramerInventory.restoreSelection(userSelection)
 	
@@ -342,3 +340,42 @@ FramerInventory.mergeQueue = function(container) {
 	return temp
 }
 
+
+
+
+
+
+
+
+
+
+FramerInventory.addStateName = function(stateName) {
+	if (usedStates != nil) {
+		for (var i = 0; i < usedStates.length; i++) { if (usedStates[i] == stateName) { return } }
+	}
+	usedStates.push(stateName)
+}
+
+FramerInventory.getUsedStatesNames = function() {
+	var page = FramerInventory.getCurrentPage()
+	var artboards = [page artboards]
+	var usedArtboardsNames = []
+	
+	for (var i = 0; i < artboards.count(); i++) {
+		var currentArtboardName = [[artboards objectAtIndex: i] name]
+		if (FramerInventory.isUsed(currentArtboardName)) { usedArtboardsNames.push(currentArtboardName) }
+	}
+	
+	return usedArtboardsNames
+}
+
+FramerInventory.isUsed = function(artboardName) {
+	if (usedStates == nil) { return false }
+	
+	artboardName = removePath(artboardName).trim().split(' ').join('_').toLowerCase()
+	for (var i = 0; i < usedStates.length; i++) {
+		if (artboardName == usedStates[i]) { return true }
+	}
+	
+	return false
+}

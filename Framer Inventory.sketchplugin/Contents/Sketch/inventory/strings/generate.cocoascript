@@ -201,7 +201,6 @@ function generateStateSection(layerName, generatedStates) {
 	for (var i = 0; i < generatedStates.length; i++) {
 		var correctBeginString = generatedStates[i].replace("{,", "{")
 		states += tln() + correctBeginString + ln()
-		// log("|" + generatedStates[i] + "|")
 	}
 	
 	return stateSectionName + states + stateBottomSection
@@ -210,3 +209,82 @@ function generateStateSection(layerName, generatedStates) {
 function generateState(stateName, stateContent) {
 	return clearName(stateName) + ": {" + stateContent + "}"
 }
+
+
+function generateStateSwitchInstant(layerName, stateName) {
+	return "" + normalizeName(layerName) + ".states.switchInstant '" + normalizeName(stateName) + "'" + dln()
+}
+
+function generateRetinaVariable() {
+	var chosenRetina = 2
+	return userRetinaDefaults.myRetina + " = " + chosenRetina + dln()
+}
+
+
+
+function getButtonName() {
+	return "cycleButton"
+}
+
+function generateCycleButton() {
+	return getButtonName() + " = new Layer width: Screen.width, height: Screen.height, backgroundColor: \"transparent\"" + dln()
+}
+
+
+
+function getCycleArrayName() {
+	return "statesFromArtboards"
+}
+
+function generateCycleStates(states) {
+	var cycleStatesDescription = getCycleArrayName() + " = ["
+	for (var i = 0; i < states.length; i++) {
+		cycleStatesDescription += "\"" + states[i] + "\""
+		if (i != states.length - 1) { cycleStatesDescription += ", "}
+	}
+	cycleStatesDescription += "]" + ln()
+	return cycleStatesDescription
+}
+
+
+
+function getLayersArrayName() {
+	return "items"
+}
+
+function generateLayers(layers) {
+	var layersDescription = getLayersArrayName() + " = ["
+	for (var i = 0; i < layers.count(); i++) {
+		var layerName = [[layers objectAtIndex: i] name]
+		layersDescription += normalizeName(layerName)
+		if (i != layers.count() - 1) { layersDescription += ", "}
+	}
+	layersDescription += "]" + ln()
+	return layersDescription
+	
+}
+
+
+
+function getCyclerName() {
+	return "cycler"
+}
+
+function generateCycler() {
+	var cyclerDescription = getCyclerName() + " = Utils.cycle(" + getCycleArrayName() + ")" + ln()
+	cyclerDescription += "nextState = " + getCyclerName() + "()" + dln()
+	return cyclerDescription
+}
+
+
+
+function generateHandler() {
+	var handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
+	handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+	handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+	handlerDescription += tln() + tln() + "try" + ln()
+	handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+	handlerDescription += tln() + tln() + "catch error" + dln()
+	return handlerDescription
+}
+

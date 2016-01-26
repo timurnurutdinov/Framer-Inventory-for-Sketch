@@ -11,6 +11,7 @@ function Layer (layerName) {
 	this.states = [];
 	
 	this.filterRequired = false
+	this.titleState = nil
 	
 	// active conditions
 	this.areOpacityActive = false
@@ -186,6 +187,7 @@ Layer.prototype.printLayer = function() {
 	return this.generateFramerStates()
 }
 
+
 Layer.prototype.generateFramerTitle = function(imageRequired) {
 	var titleState = new State()
 	
@@ -247,9 +249,11 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 	titleState.position = titlePosition
 	
 	titleState.updateState()
+	this.titleState = titleState
 	
 	return titleState
 }
+
 
 Layer.prototype.generateFramerStates = function() {
 	if (!this.checkStates()) { return nil }
@@ -288,45 +292,27 @@ Layer.prototype.generateFramerStates = function() {
 		statesDescriptions.push(stateDescription)
 		statesNames.push(currentState.stateName)
 		
-		
-		
-		/*
-			if (areAllGeneratable && this.areAllShadowsEqual) {
-
-				if (this.areShadowsActive && outputFilterShadowsString == "" && currentState.shadowsActive) {
-						outputFilterShadowsString = generateFilterShadows(currentState.shadows)
-				}
-				
-				currentStatePlace = getPlaceRect(currentState.layer)
-				normal = this.normalizeLayer(currentState.layer, true)
-				
-			}
-			else {
-				currentStatePlace = getPlaceImage(currentState.layer)
-				normal = this.normalizeLayer(currentState.layer, false)
-			}
-			
-			var currentSpace = currentStatePlace[0] + currentStatePlace[1]
-			if (currentSpace > maxSpace) {
-				maxSpace = currentSpace
-				this.copyLayerToNormalizedPage(normal)
-			}
-
-			outputPositionString += generatePosition(currentStatePlace)
-			if (outputImageNameString == "") { outputImageNameString = generateImagePath(this.layerName) }
-		*/		
+		FramerInventory.addStateName(currentState.stateName)
 	}
-
-	// for (var i = 0; i < statesDescriptions.length; i++) {
-		// log(statesNames[i] + " " + statesDescriptions[i])
-	// }
 	
 	if (statesDescriptions.length > 1) {
 		for (var i = 0; i < statesDescriptions.length; i++) { generatedStates.push(generateState(statesNames[i], statesDescriptions[i])) }
 	}
+	var switchStateDescription = generateStateSwitchInstant(this.layerName, statesNames[0])
 	
-	return titleDescription + dln() + generateStateSection(this.layerName, generatedStates)
+	return titleDescription + dln() + generateStateSection(this.layerName, generatedStates) + switchStateDescription
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 Layer.prototype.checkStates = function() {
@@ -1180,74 +1166,6 @@ Layer.prototype.analyseShadowHex = function() {
 
 
 
-
-
-
-
-
-
-
-
-Layer.prototype.returnDifferencedStates = function() {
-	if (this.states == nil) { return nil }
-	
-	var differencedStates = []
-	
-	var classicalState = this.getClassicalState()
-	differencedStates.push(classicalState)
-	
-	log("--------------------------------------")
-	log("CS: " + classicalState.printStateSmall())
-	for (var i = 0; i < this.states.length; i++) {
-		var state = this.states[i]
-		log("BS" + i + ": " + state.printStateSmall())
-	}
-	
-	
-	var baseState = classicalState
-	for (var i = 0; i < this.states.length; i++) {
-		if (i != 0) { baseState = this.states[i - 1] }
-		var tempState = baseState.keepDifference(this.states[i])
-		
-		log("--------------------------------------")
-		// log("BS: " + baseState.printStateSmall())
-		log("TS: " + tempState.printStateSmall())
-		
-		differencedStates.push(tempState)
-	}
-	
-	return differencedStates
-}
-
-
-Layer.prototype.updateStates = function(states) {
-	this.states = states
-	
-	// for (var i = 1; i < this.states.length; i++) {
-// 		this.updateConditions(this.states[i])
-// 	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Layer.prototype.suggestShadows = function(currentStateNumber) {
 	
 	for (var i = currentStateNumber; i < this.states.length; i++) {
@@ -1301,6 +1219,57 @@ Layer.prototype.suggestBackgrounds = function(currentStateNumber) {
 
 
 
+
+
+
+
+
+/*
+
+Layer.prototype.returnDifferencedStates = function() {
+	if (this.states == nil) { return nil }
+	
+	var differencedStates = []
+	
+	var classicalState = this.titleState
+	log("HERE OUR CLASSICAL STATE: " + classicalState)
+	differencedStates.push(classicalState)
+	
+	log("--------------------------------------")
+	log("CS: " + classicalState.printStateSmall())
+	for (var i = 0; i < this.states.length; i++) {
+		var state = this.states[i]
+		log("BS" + i + ": " + state.printStateSmall())
+	}
+	
+	
+	var baseState = classicalState
+	for (var i = 0; i < this.states.length; i++) {
+		if (i != 0) { baseState = this.states[i - 1] }
+		var tempState = baseState.keepDifference(this.states[i])
+		
+		log("--------------------------------------")
+		// log("BS: " + baseState.printStateSmall())
+		log("TS: " + tempState.printStateSmall())
+		
+		differencedStates.push(tempState)
+	}
+	
+	return differencedStates
+}
+
+
+Layer.prototype.updateStates = function(states) {
+	this.states = states
+	
+	// for (var i = 1; i < this.states.length; i++) {
+// 		this.updateConditions(this.states[i])
+// 	}
+}
+
+*/
+
+/*
 // find const params for all layers
 Layer.prototype.getClassicalState = function() {
 	var classicalState = nil
@@ -1336,7 +1305,7 @@ Layer.prototype.getClassicalState = function() {
 	
 	return classicalState
 }
-
+*/
 
 
 
