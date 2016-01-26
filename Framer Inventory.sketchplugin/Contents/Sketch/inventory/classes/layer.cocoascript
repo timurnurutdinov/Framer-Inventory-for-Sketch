@@ -120,7 +120,6 @@ Layer.prototype.describeState = function(currentState, imageRequired) {
 Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	if (imageRequired == nil) { imageRequired = false }
 	currentState.cleanTitledDescriptionShadows()
-	log(currentState.printState())
 	
 	var stateDescription = returnLayerName(this.layerName)
 	stateDescription += generatePosition(currentState.composePosition())
@@ -195,7 +194,6 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 	titleState.rotation = this.analyseRotation()
 	
 	this.filterRequired = this.analyseFilterShadows(this.areShadowsExportable)
-	log("FILTER: " + this.filterRequired)
 	
 	var titleShadows = []
 	titleShadows.push(this.analyseShadowX())
@@ -276,29 +274,32 @@ Layer.prototype.generateFramerStates = function() {
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
 	
 	
-	
+	log("WSL: " + this.states.length)
 	for (var i = 0; i < this.states.length; i++) {
+		log("stage: " + i)
 		var currentState = this.states[i]
 		
 		if (currentState.isEqualToState(prevState)) {
-			if (showLog) { log("Skipping duplicated state") }
-			break
+			if (showLog) { log("Skipping duplicated state: " + currentState.stateName) }
+			continue
 		}
 
 		var stateDescription = this.describeState(currentState, imageRequired)
-		
-		prevState = currentState
+		log("D: " + stateDescription)
 		
 		statesDescriptions.push(stateDescription)
 		statesNames.push(currentState.stateName)
 		
 		FramerInventory.addStateName(currentState.stateName)
+		
+		prevState = currentState
 	}
 	
+	var switchStateDescription = ""
 	if (statesDescriptions.length > 1) {
 		for (var i = 0; i < statesDescriptions.length; i++) { generatedStates.push(generateState(statesNames[i], statesDescriptions[i])) }
+		switchStateDescription = generateStateSwitchInstant(this.layerName, statesNames[0])
 	}
-	var switchStateDescription = generateStateSwitchInstant(this.layerName, statesNames[0])
 	
 	return titleDescription + dln() + generateStateSection(this.layerName, generatedStates) + switchStateDescription
 }

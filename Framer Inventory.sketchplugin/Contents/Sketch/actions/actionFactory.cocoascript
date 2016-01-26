@@ -372,7 +372,6 @@ FramerInventory.getUsedStatesNames = function() {
 FramerInventory.isUsed = function(artboardName) {
 	if (usedStates == nil) { return false }
 	
-	artboardName = removePath(artboardName).trim().split(' ').join('_').toLowerCase()
 	for (var i = 0; i < usedStates.length; i++) {
 		if (artboardName == usedStates[i]) { return true }
 	}

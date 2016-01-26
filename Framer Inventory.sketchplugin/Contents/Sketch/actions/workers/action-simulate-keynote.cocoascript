@@ -53,14 +53,14 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 
 	pasteboardContent += generateRetinaVariable()
 	pasteboardContent += ln()
-	pasteboardContent += "#view" + ln()
+	pasteboardContent += "# view" + ln()
 	
 	for (var i = 0; i < layers.length; i++) {
 		pasteboardContent += layers[i].printLayer()
 	}
 	
 	pasteboardContent += ln()
-	pasteboardContent += "#model" + ln()
+	pasteboardContent += "# model" + ln()
 	pasteboardContent += generateCycleButton()
 	
 	var cycleStates = FramerInventory.getUsedStatesNames())

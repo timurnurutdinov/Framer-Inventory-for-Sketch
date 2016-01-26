@@ -168,7 +168,7 @@ State.prototype.isEqualToState = function(state) {
 	if (this.rotation != state.rotation) { return false }
 	
 	if (!compareArrays(this.position, state.position)) { return false }
-	
+
 	if (!compareMatrices(this.shadows, state.shadows)) { return false }
 	if (!compareMatrices(this.inners, state.inners)) { return false }
 	if (!compareMatrices(this.borders, state.borders)) { return false }

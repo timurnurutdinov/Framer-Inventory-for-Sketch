@@ -239,7 +239,7 @@ function getCycleArrayName() {
 function generateCycleStates(states) {
 	var cycleStatesDescription = getCycleArrayName() + " = ["
 	for (var i = 0; i < states.length; i++) {
-		cycleStatesDescription += "\"" + states[i] + "\""
+		cycleStatesDescription += "\"" + normalizeName(states[i]) + "\""
 		if (i != states.length - 1) { cycleStatesDescription += ", "}
 	}
 	cycleStatesDescription += "]" + ln()
