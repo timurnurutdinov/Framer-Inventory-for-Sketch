@@ -29,21 +29,40 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 		var currentLayer = [sortedSelection objectAtIndex: i]
 		var layer = new Layer([currentLayer name])
 		var hasInitialState = false
+		var hasCurrentState = false
 		
 		var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
 																						 [currentLayer className])
 		for (var j = 0; j < [artboards count]; j++) {
 			
+			var hasPrevState = hasCurrentState
+			var prevLayers = matchingLayers
+			
 			var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
+			
 			if ([matchingLayers count] > 0) {
-				if (j == 0) { hasInitialState = true }
+				hasCurrentState = true
+
+				if (j == 0) { 
+					hasInitialState = true
+				}
 				else if (!hasInitialState) {
 					var fakeFirstState = new State([matchingLayers firstObject])
 					fakeFirstState.createHiddenState([[artboards firstObject] name])
-					layer.addFirstState(fakeFirstState)
+					layer.addState(fakeFirstState)
 					hasInitialState = true
 				}
+				
 				layer.composeState([matchingLayers firstObject])
+			}
+			else {
+				hasCurrentState = false
+				
+				if (hasPrevState) {
+					var fakeCloseStep = new State([prevLayers firstObject])
+					fakeFirstState.createHiddenState([[artboards objectAtIndex: j] name])
+					layer.addState(fakeFirstState)
+				}
 			}
 		}
 		

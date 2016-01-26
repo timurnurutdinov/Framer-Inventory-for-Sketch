@@ -45,7 +45,7 @@ Layer.prototype.composeState = function(layer) {
 
 
 // add state and make it transparent
-Layer.prototype.addFirstState = function(state) {
+Layer.prototype.addState = function(state) {
 	this.updateConditions(state)
 	this.states.push(state)
 }
