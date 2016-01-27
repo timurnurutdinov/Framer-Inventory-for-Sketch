@@ -1,11 +1,11 @@
 @import 'actions/actionFactory.cocoascript'
 
-var runGenerateStatesIdentifier = 1
-var currentCommandIdentifier = runGenerateStatesIdentifier
+var runSettingsIdentifier = 3
+var currentCommandIdentifier = runSettingsIdentifier
 var showLog = true
 var testing = false
 
 var onRun = function(context) {
-	if (showLog) { log("Running Replicate States") }
+	if (showLog) { log("Running Settings") }
 	chooseAction(context, currentCommandIdentifier, testing)
 }

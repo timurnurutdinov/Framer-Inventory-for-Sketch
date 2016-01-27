@@ -7,5 +7,5 @@ var testing = false
 
 var onRun = function(context) {
 	if (showLog) { log("Running Replace Layers") }
-	chooseAction(context, runReplicateLayersIdentifier, testing)
+	chooseAction(context, currentCommandIdentifier, testing)
 }

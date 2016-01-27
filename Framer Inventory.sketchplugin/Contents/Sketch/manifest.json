@@ -34,7 +34,14 @@
       "handler" : "onRun",
       "shortcut" : "",
       "name" : "Run testing environment",
-      "identifier" : "action-testing-environment"
+      "identifier" : "choose-testing-environment"
+    },
+    {
+      "script" : "choose-settings.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Settings",
+      "identifier" : "choose-settings"
     }
   ],
   "menu": {
@@ -46,7 +53,8 @@
 		  {
 		         "title": "Utils",
 		         "items": [
-		           "action-testing-environment"
+				 	"choose-settings",
+		         	"choose-testing-environment"
 		         ],
 		  }
       ]

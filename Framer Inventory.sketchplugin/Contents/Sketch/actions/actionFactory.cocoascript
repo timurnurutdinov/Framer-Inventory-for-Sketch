@@ -2,6 +2,7 @@
 @import 'actions/workers/action-generate-states.cocoascript'
 @import 'actions/workers/action-simulate-keynote.cocoascript'
 @import 'actions/workers/action-testing-environment.cocoascript'
+@import 'actions/workers/action-settings.cocoascript'
 
 @import 'inventory/classes/layer.cocoascript'
 @import 'inventory/libs/pluginDefaults.js'
@@ -9,16 +10,21 @@
 
 var presets = {
     myRetina: "retina",
+	myMobile: true,
+	myMinimalExport: true,
+	myAutoplay: true
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"
-var userRetinaDefaults = initDefaults(pluginDomain, presets)
+var userDefaults = initDefaults(pluginDomain, presets)
 
 var currentDocument = nil
 var usedStates = []
+var pluginPath = ""
 
 
 var chooseAction = function(context, actionIdentifier, testing) {
+	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
 	
 	if (showLog) { log("Current document is initialised") }
 	FramerInventory.initCurrentDocument(context)
@@ -39,6 +45,10 @@ var chooseAction = function(context, actionIdentifier, testing) {
 		else if (actionIdentifier == 2) {
 			if (showLog) { log("Starting Simulating Keynote...") }
 			runSimulateKeynote(context)
+		}
+		else if (actionIdentifier == 3) {
+			if (showLog) { log("Starting Settings...") }
+			runSettings(context)
 		}
 		else {
 			if (showLog) { log("ERROR: Action is undetermined") }
@@ -120,7 +130,6 @@ FramerInventory.findPageWithName = function(pageName) {
 	}
 	return nil
 }
-
 
 
 

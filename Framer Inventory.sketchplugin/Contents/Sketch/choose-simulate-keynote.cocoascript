@@ -7,5 +7,5 @@ var testing = false
 
 var onRun = function(context) {
 	if (showLog) { log("Running Simulate Keynote") }
-	chooseAction(context, runSimulateKeynoteIdentifier, testing)
+	chooseAction(context, currentCommandIdentifier, testing)
 }
