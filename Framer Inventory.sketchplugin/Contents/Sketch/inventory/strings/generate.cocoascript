@@ -216,8 +216,16 @@ function generateStateSwitchInstant(layerName, stateName) {
 }
 
 function generateRetinaVariable() {
-	var chosenRetina = 2
-	return userDefaults.myRetina + " = " + chosenRetina + dln()
+	var chosenRetina = FramerInventory.getRetinaValue()
+	return userDefaults.myRetina + " = " + chosenRetina + ln()
+}
+
+function generatePhoneModel() {
+	var model = FramerInventory.getPhoneValue()
+	if (model == 1) { return "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln() }
+	else if (model == 2) { return "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln() }
+	else if (model == 3) { return "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln() }
+	else { return "" }
 }
 
 

@@ -60,8 +60,8 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 				
 				if (hasPrevState) {
 					var fakeCloseStep = new State([prevLayers firstObject])
-					fakeFirstState.createHiddenState([[artboards objectAtIndex: j] name])
-					layer.addState(fakeFirstState)
+					fakeCloseStep.createHiddenState([[artboards objectAtIndex: j] name])
+					layer.addState(fakeCloseStep)
 				}
 			}
 		}
@@ -71,7 +71,8 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	
 
 	pasteboardContent += generateRetinaVariable()
-	pasteboardContent += ln()
+	pasteboardContent += generatePhoneModel()
+	pasteboardContent += dln()
 	pasteboardContent += "# view" + ln()
 	
 	for (var i = 0; i < layers.length; i++) {

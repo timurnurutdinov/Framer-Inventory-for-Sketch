@@ -274,9 +274,7 @@ Layer.prototype.generateFramerStates = function() {
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
 	
 	
-	log("WSL: " + this.states.length)
 	for (var i = 0; i < this.states.length; i++) {
-		log("stage: " + i)
 		var currentState = this.states[i]
 		
 		if (currentState.isEqualToState(prevState)) {
@@ -285,7 +283,6 @@ Layer.prototype.generateFramerStates = function() {
 		}
 
 		var stateDescription = this.describeState(currentState, imageRequired)
-		log("D: " + stateDescription)
 		
 		statesDescriptions.push(stateDescription)
 		statesNames.push(currentState.stateName)
@@ -373,13 +370,14 @@ Layer.pasteLayer = function(layer) {
 	var currentPage = FramerInventory.getCurrentPage()
 	var framerInventoryPage = FramerInventory.addPage(currentPage)
 	FramerInventory.cleanLayer(layer, framerInventoryPage)
+	if (![layer isVisible]) { [layer setIsVisible:true] }
 	[framerInventoryPage addLayers: [layer]]
 }
 
 Layer.addExportOptions = function(layer) {
 	var size_data = {
 	    "format": "png",
-	    "scale": 1,
+	    "scale": FramerInventory.getRetinaValue(),
 	    "suffix": ""
 	}
 	
@@ -1257,54 +1255,6 @@ Layer.prototype.returnDifferencedStates = function() {
 	}
 	
 	return differencedStates
-}
-
-
-Layer.prototype.updateStates = function(states) {
-	this.states = states
-	
-	// for (var i = 1; i < this.states.length; i++) {
-// 		this.updateConditions(this.states[i])
-// 	}
-}
-
-*/
-
-/*
-// find const params for all layers
-Layer.prototype.getClassicalState = function() {
-	var classicalState = nil
-	
-	if (this.states != nil && this.states.length > 0) { classicalState = new State(this.states[0].layer) }
-	else { return nil }
-	
-	log("STLENGTH: " + this.states.length)
-	
-	for (var i = 0; i < this.states.length; i++) {
-		
-		var state = this.states[i]
-		
-		if (classicalState.opacity == nil || classicalState.opacity != state.opacity) { classicalState.opacity = nil }
-		if (classicalState.corner == nil || classicalState.corner != state.corner) { classicalState.corner = nil }
-		if (classicalState.rotation == nil || classicalState.rotation != state.rotation) { classicalState.rotation = nil }
-		
-		if (classicalState.position != nil && classicalState.position != "" && state.position != nil) {	
-			for (var j = 0; j < classicalState.position.length; j++) {
-				if (j == 3) {
-					log("CP3: " + classicalState.position[j] + " | " + state.position[j])
-				}
-				if (classicalState.position[j] == nil || classicalState.position[j] != state.position[j]) { classicalState.position[j] = nil }
-			}
-		}
-		
-		if (classicalState.shadows == nil || !compareMatrices(classicalState.shadows, state.shadows)) { classicalState.shadows = nil }
-		if (classicalState.inners == nil || !compareMatrices(classicalState.inners, state.inners)) { classicalState.inners = nil }
-		if (classicalState.borders == nil || !compareMatrices(classicalState.borders, state.borders)) { classicalState.borders = nil }
-		if (classicalState.backgrounds == nil || !compareMatrices(classicalState.backgrounds, state.backgrounds)) { classicalState.backgrounds = nil }
-	}
-	classicalState.stateName = "framer inventory initial"
-	
-	return classicalState
 }
 */
 
