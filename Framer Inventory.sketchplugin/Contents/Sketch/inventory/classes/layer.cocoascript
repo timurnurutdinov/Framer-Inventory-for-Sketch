@@ -371,6 +371,7 @@ Layer.pasteLayer = function(layer) {
 	var framerInventoryPage = FramerInventory.addPage(currentPage)
 	FramerInventory.cleanLayer(layer, framerInventoryPage)
 	if (![layer isVisible]) { [layer setIsVisible:true] }
+	if ([[[layer style] contextSettings] opacity] == 0) { [[[layer style] contextSettings] setOpacity:1] }
 	[framerInventoryPage addLayers: [layer]]
 }
 
