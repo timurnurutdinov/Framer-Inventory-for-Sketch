@@ -5,6 +5,8 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 	var doc = context.document
 	var selection = context.selection
 	
+	[[NSPasteboard generalPasteboard] clearContents]
+	
 	if (isTestingEnvironment != nil && isTestingEnvironment) { 
 		if (showLog) { log("Prepare custom selection for tests") }
 		selection = TestingEnvironment.getTestingSelection()
@@ -29,27 +31,31 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 	}
 	
 	
-	if (selection != nil) {
-		var sortedSelection = FramerInventory.organiseSelection(selection)
-		
-		for (var i = 0; i < [sortedSelection count]; i++) {
-			var currentLayer = [sortedSelection objectAtIndex: i]
-			var layer = new Layer([currentLayer name])
-			
-			var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
-																							 [currentLayer className])
-			for (var j = 0; j < [artboards count]; j++) {
-				// if (showLog) { log("Loogking for layer " + [currentLayer name] + " on artboard " + [artboards objectAtIndex: j]) }
-				
-				var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
-				if ([matchingLayers count] > 0) {
-					layer.composeState([matchingLayers firstObject])
-				}
-			}
-			
-			layers.push(layer)
-		}
+	var sortedSelection = FramerInventory.organiseSelection(selection)
+	if (sortedSelection == nil) {
+		[doc showMessage:"Nothing to generate. Please, select some layers"]
+		return
 	}
+	
+	for (var i = 0; i < [sortedSelection count]; i++) {
+		var currentLayer = [sortedSelection objectAtIndex: i]
+		var layer = new Layer([currentLayer name])
+		
+		var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
+																						 [currentLayer className])
+		for (var j = 0; j < [artboards count]; j++) {
+			// if (showLog) { log("Loogking for layer " + [currentLayer name] + " on artboard " + [artboards objectAtIndex: j]) }
+			
+			var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
+			if ([matchingLayers count] > 0) {
+				layer.composeState([matchingLayers firstObject])
+			}
+		}
+		
+		layers.push(layer)
+	}
+
+	
 	
 	for (var i = 0; i < layers.length; i++) {
 		pasteboardContent += layers[i].printLayer()
@@ -57,8 +63,7 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 
 	
 	if (!isTestingEnvironment) {
-		[[NSPasteboard generalPasteboard] clearContents];
-		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
+		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType]
 		[doc showMessage:"Done"]
 	}
 	

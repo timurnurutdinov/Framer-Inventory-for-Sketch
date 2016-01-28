@@ -26,6 +26,9 @@ function getObjectType(localLayer) {
 	else if (type == "MSShapeGroup") {
 		answer = getShapeType(localLayer)
 	}
+	else if (type == "MSTextLayer") {
+		answer =  1
+	}
 	else {
 		log("ERROR: Unrecognised object type")
 		asnwer = -1

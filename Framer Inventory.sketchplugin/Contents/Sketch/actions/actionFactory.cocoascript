@@ -133,10 +133,6 @@ FramerInventory.findPageWithName = function(pageName) {
 	return nil
 }
 
-FramerInventory.collapseArtboards = function() {
-	log("here")
-	[NSApp sendAction:"collapseGroupsInLayerList:" to:nil from:currentDocument];
-}
 
 
 
@@ -167,7 +163,7 @@ FramerInventory.organiseSelection = function(userSelection) {
 	
 	// if (showLog) { log("Merged selection: " + merged) }
 	var newSelection = FramerInventory.composeSelection(merged, cleanedSelection)
-	
+
 	return newSelection
 }
 
@@ -265,6 +261,7 @@ FramerInventory.composeSelection = function(layerNames, userSelection) {
 		}
 	}
 	
+	if (composedSelection != nil && composedSelection.count() < 1) { return nil }
 	return composedSelection
 }
 

@@ -7,6 +7,8 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	var doc = context.document
 	var selection = context.selection
 	
+	[[NSPasteboard generalPasteboard] clearContents]
+	
 	// if (isTestingEnvironment != nil && isTestingEnvironment) {
 // 		if (showLog) { log("Prepare custom selection for keynote tests") }
 // 		selection = TestingEnvironment.getTestingSelection()
@@ -32,6 +34,10 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	
 
 	var sortedSelection = FramerInventory.organiseSelection([currentPage exportableLayers])
+	if (sortedSelection == nil) {
+		[doc showMessage:"Nothing to simulate. Please, make some layers exportable"]
+		return
+	}
 	
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]
@@ -101,7 +107,6 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 
 	
 	if (!isTestingEnvironment) {
-		[[NSPasteboard generalPasteboard] clearContents];
 		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 		[doc showMessage:"Done"]
 	}
