@@ -21,6 +21,14 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 	
 	var artboards = [[doc currentPage] artboards]
 	
+	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(artboards)
+	if (duplicatedArtboard != nil) {
+		if (showLog) { log("Warning: duplicated artboards names are found") }
+		selectDuplicatedArtboards([duplicatedArtboard name])
+		return
+	}
+	
+	
 	if (selection != nil) {
 		var sortedSelection = FramerInventory.organiseSelection(selection)
 		

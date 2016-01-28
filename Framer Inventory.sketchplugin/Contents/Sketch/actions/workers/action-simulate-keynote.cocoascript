@@ -1,4 +1,5 @@
 @import 'inventory/classes/state.cocoascript'
+@import 'actions/workers/action-select-duplicated-artboards.cocoascript'
 
 // generate code for layers
 var runSimulateKeynote = function(context, isTestingEnvironment) {
@@ -6,12 +7,12 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	var doc = context.document
 	var selection = context.selection
 	
-	if (isTestingEnvironment != nil && isTestingEnvironment) { 
-		if (showLog) { log("Prepare custom selection for keynote tests") }
-		selection = TestingEnvironment.getTestingSelection()
-		
-		if (showLog) { log(selection) }
-	}
+	// if (isTestingEnvironment != nil && isTestingEnvironment) {
+// 		if (showLog) { log("Prepare custom selection for keynote tests") }
+// 		selection = TestingEnvironment.getTestingSelection()
+//
+// 		if (showLog) { log(selection) }
+// 	}
 	
 	var layers = []
 	var pasteboardContent = []
@@ -21,6 +22,13 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	FramerInventory.cleanPage(framerInventoryPage)
 	
 	var artboards = [[doc currentPage] artboards]
+	
+	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(artboards)
+	if (duplicatedArtboard != nil) {
+		if (showLog) { log("Warning: duplicated artboards names are found") }
+		selectDuplicatedArtboards([duplicatedArtboard name])
+		return
+	}
 	
 
 	var sortedSelection = FramerInventory.organiseSelection([currentPage exportableLayers])

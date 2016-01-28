@@ -133,6 +133,11 @@ FramerInventory.findPageWithName = function(pageName) {
 	return nil
 }
 
+FramerInventory.collapseArtboards = function() {
+	log("here")
+	[NSApp sendAction:"collapseGroupsInLayerList:" to:nil from:currentDocument];
+}
+
 
 
 
@@ -371,6 +376,23 @@ FramerInventory.mergeQueue = function(container) {
 
 
 
+
+
+FramerInventory.returnDuplicatedArtboards = function(artboards) {
+	
+	for (var i = 0; i < artboards.count(); i++) {
+		var current = [artboards objectAtIndex:i]
+		
+		for (var j = 0; j < i; j++) {
+			var comparableCurrent = [artboards objectAtIndex:j]
+			if ([current name] == [comparableCurrent name]) {
+				return comparableCurrent
+			}
+		}
+	}
+	
+	return nil
+}
 
 
 
