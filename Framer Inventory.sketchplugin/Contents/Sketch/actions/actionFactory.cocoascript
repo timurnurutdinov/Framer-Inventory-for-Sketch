@@ -150,23 +150,23 @@ FramerInventory.organiseSelection = function(userSelection) {
 	}
 	
 	var cleanedSelection = FramerInventory.cleanSelection(userSelection)[0]
-	if (showLog) { log("Cleaned selection: " + cleanedSelection.count() + " -> " + cleanedSelection) }
+	// if (showLog) { log("Cleaned selection: " + cleanedSelection.count() + " -> " + cleanedSelection) }
 	
 	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
-	if (showLog) { log("Queue selection: " + queue.length + " -> " + queue) }
+	// if (showLog) { log("Queue selection: " + queue.length + " -> " + queue) }
 	
 	FramerInventory.restoreSelection(userSelection)
 	
 	var merged = FramerInventory.mergeQueue(queue)
 	merged = FramerInventory.cleanDuplicates(merged)
 	
-	if (showLog) { log("Merged selection: " + merged) }
-	var newSelection = FramerInventory.composeSelection(merged)
+	// if (showLog) { log("Merged selection: " + merged) }
+	var newSelection = FramerInventory.composeSelection(merged, cleanedSelection)
 	
 	return newSelection
 }
 
-
+// skip layers with duplicated names from selection
 FramerInventory.cleanSelection = function(userSelection) {
 	var newSelection = NSMutableArray.new()
 	var duplicatedSelection = NSMutableArray.new()
@@ -190,10 +190,14 @@ FramerInventory.cleanSelection = function(userSelection) {
 		}
 	}
 	
+	if (duplicatedSelection != nil && [duplicatedSelection count] > 0) {
+		if (showLog) { log("Warning: user selection has " + [duplicatedSelection count] + " dublicated names")} 
+	}
+	
 	return [newSelection, duplicatedSelection]
 }
 
-
+// return an array based on each artboard layers hierarchy
 FramerInventory.configureQueue = function(artboards, cleanedSelection) {
 	var queue = []
 	
@@ -203,7 +207,6 @@ FramerInventory.configureQueue = function(artboards, cleanedSelection) {
 		var currentArtboard = [artboards objectAtIndex:i]
 		var artboardLayers = [currentArtboard layers]
 
-		// if (showLog) { log("A: " + [currentArtboard name]) }
 		var allChildren = [currentArtboard children]
 		var localQueue = []
 
@@ -223,7 +226,7 @@ FramerInventory.configureQueue = function(artboards, cleanedSelection) {
 		}
 		
 		if (localQueue != nil && localQueue.length > 0) {
-			if (showLog) { log("Added new queue: " + localQueue) }
+			// if (showLog) { log("Added new queue: " + localQueue) }
 			queue.push(localQueue)
 		}
 		
@@ -233,11 +236,22 @@ FramerInventory.configureQueue = function(artboards, cleanedSelection) {
 }
 
 
-FramerInventory.composeSelection = function(layerNames) {
+FramerInventory.composeSelection = function(layerNames, userSelection) {
 	var composedSelection = NSMutableArray.new()
 	
 	for (var i = 0; i < layerNames.length; i++) {
-		var namedLayersPredicate = NSPredicate.predicateWithFormat("name == %@", layerNames[i])
+		
+		var layerType = nil
+		for (var j = 0; j < [userSelection count]; j++) {
+			var currentLayer = [userSelection objectAtIndex:j]
+			
+			if ([currentLayer name] == layerNames[i]) {
+				layerType = [currentLayer className]
+				break
+			}
+		}
+		
+		var namedLayersPredicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", layerNames[i], layerType)
 		var foundLayers = findLayersMatchingPredicate_inContainer_filterByType(namedLayersPredicate, FramerInventory.getCurrentPage())
 		
 		if (foundLayers != nil && [foundLayers count] != 0) {
@@ -408,7 +422,6 @@ FramerInventory.setPhoneValue = function(artboardWidth) {
 	else if (artboardWidth == 375 || artboardWidth == 750) { phoneModel = 2 }
 	else if (artboardWidth == 414 || artboardWidth == 1242) { phoneModel = 3 }
 	else { phoneModel = 0 }
-	log("Phone Model: " + phoneModel)
 }
 
 FramerInventory.getPhoneValue = function() {
@@ -421,10 +434,9 @@ FramerInventory.setRetinaValue = function(artboardWidth) {
 	else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
 	else if (artboardWidth == 414) { pixelDensity = 3 }
 	else {
-		if (showLog) { log("Pixel density is unknown") }
+		if (showLog) { log("Pixel density is undetermined") }
 		pixelDensity = 1
 	}
-	log("PIXEL: " + pixelDensity)
 }
 
 FramerInventory.getRetinaValue = function() {
