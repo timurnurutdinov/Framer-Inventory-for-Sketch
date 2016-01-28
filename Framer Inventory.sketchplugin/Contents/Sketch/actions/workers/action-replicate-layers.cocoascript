@@ -14,7 +14,7 @@ var runReplicateLayers = function(context) {
 	
 	
 	if (selection != nil) {
-		var sortedSelection = FramerInventory.organiseSelection(selection)
+		var sortedSelection = FramerInventory.cleanSelection(selection)
 		
 		for (var i = 0; i < [sortedSelection count]; i++) {
 			var currentLayer = [sortedSelection objectAtIndex: i]

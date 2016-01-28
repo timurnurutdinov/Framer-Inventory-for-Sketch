@@ -149,7 +149,7 @@ FramerInventory.organiseSelection = function(userSelection) {
 		FramerInventory.analyseMobile(frame.width)
 	}
 	
-	var cleanedSelection = FramerInventory.cleanSelection(userSelection)[0]
+	var cleanedSelection = FramerInventory.cleanSelection(userSelection)
 	// if (showLog) { log("Cleaned selection: " + cleanedSelection.count() + " -> " + cleanedSelection) }
 	
 	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
@@ -194,7 +194,7 @@ FramerInventory.cleanSelection = function(userSelection) {
 		if (showLog) { log("Warning: user selection has " + [duplicatedSelection count] + " dublicated names")} 
 	}
 	
-	return [newSelection, duplicatedSelection]
+	return newSelection
 }
 
 // return an array based on each artboard layers hierarchy
