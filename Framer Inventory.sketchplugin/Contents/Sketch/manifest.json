@@ -12,21 +12,21 @@
       "script" : "choose-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "1. Replicate Layers",
+      "name" : "◉   Replicate Layers",
       "identifier" : "choose-replicate-layers"
     },
     {
       "script" : "choose-generate-states.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "2. Generate States",
+      "name" : "◉   Generate States",
       "identifier" : "choose-generate-states"
     },
     {
       "script" : "choose-simulate-keynote.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "3. Simulate Keynote",
+      "name" : "◎   Simulate Keynote",
       "identifier" : "choose-simulate-keynote"
     },
     {
@@ -42,18 +42,26 @@
       "shortcut" : "",
       "name" : "Settings",
       "identifier" : "choose-settings"
+    },
+    {
+      "script" : "choose-remove-export-page.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Remove Export Page",
+      "identifier" : "choose-remove-export-page"
     }
   ],
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "choose-replicate-layers",
-		  "choose-generate-states",
 		  "choose-simulate-keynote",
+		  "choose-generate-states",
+		  "choose-replicate-layers",
 		  {
-		         "title": "Utils",
+		         "title": "      Utils",
 		         "items": [
 				 	"choose-settings",
+					"choose-remove-export-page",
 		         	"choose-testing-environment"
 		         ],
 		  }

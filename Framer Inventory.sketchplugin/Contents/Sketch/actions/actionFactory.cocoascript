@@ -57,6 +57,9 @@ var chooseAction = function(context, actionIdentifier, testing) {
 			if (showLog) { log("Starting Settings...") }
 			runSettings(context)
 		}
+		else if (actionIdentifier == 4) {
+			FramerInventory.showDoneMessage()
+		}
 		else {
 			if (showLog) { log("ERROR: Action is undetermined") }
 		}
