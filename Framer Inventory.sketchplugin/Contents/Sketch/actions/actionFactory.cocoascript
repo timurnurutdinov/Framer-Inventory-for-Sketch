@@ -22,8 +22,12 @@ var currentDocument = nil
 var usedStates = []
 
 var pluginPath = ""
+
 var pixelDensity = 1
 var phoneModel = 0
+
+var exportPageRequired = false
+var exportPageName = "[Framer Inventory]"
 
 
 var chooseAction = function(context, actionIdentifier, testing) {
@@ -76,15 +80,13 @@ FramerInventory.deselectLayers = function() {
 	[[currentDocument currentPage] deselectAllLayers]
 }
 
-
 FramerInventory.addPage = function(oldPage) {
 	var newPage = nil
 	var pageExistsIndex = -1
-	var newPageName = "[Framer Inventory]"
 
 	var pages = [currentDocument pages]
 	for (var i = 0; i < pages.count(); i++) {
-		if ([[pages objectAtIndex: i] name] == newPageName) {
+		if ([[pages objectAtIndex: i] name] == exportPageName) {
 			pageExistsIndex = i
 			break
 		}
@@ -95,7 +97,7 @@ FramerInventory.addPage = function(oldPage) {
 	}
 	else {
 	    newPage = currentDocument.addBlankPage();
-	    newPage.setName(newPageName);
+	    newPage.setName(exportPageName);
 	}
 
 	currentDocument.setCurrentPage(oldPage);
@@ -131,6 +133,20 @@ FramerInventory.findPageWithName = function(pageName) {
 		if ([[pages objectAtIndex:p] name] == pageName) { return [pages objectAtIndex:p] }
 	}
 	return nil
+}
+
+FramerInventory.removePage = function(pageName) {
+	var oldPage = [currentDocument currentPage]
+	
+	var pages = [currentDocument pages]
+	for (var i = 0; i < pages.count(); i++) {
+		var page = [pages objectAtIndex: i]
+		if ([page name] == pageName) {
+			[currentDocument removePage:page]
+		}
+	}
+	
+	currentDocument.setCurrentPage(oldPage)
 }
 
 
@@ -462,3 +478,21 @@ FramerInventory.getRetinaValue = function() {
 	return pixelDensity
 }
 
+
+FramerInventory.requireExportPage = function() {
+	exportPageRequired = true
+}
+
+FramerInventory.isExportPageRequired = function() {
+	return exportPageRequired
+}
+
+FramerInventory.showDoneMessage = function() {
+	if (FramerInventory.isExportPageRequired()) {
+		[currentDocument showMessage:"Done. Export assets from " + exportPageName + " page"]
+	}
+	else {
+		[currentDocument showMessage:"Done"]
+		FramerInventory.removePage(exportPageName)
+	}
+}

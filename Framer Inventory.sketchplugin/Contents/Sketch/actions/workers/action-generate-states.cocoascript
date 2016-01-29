@@ -64,7 +64,7 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 	
 	if (!isTestingEnvironment) {
 		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType]
-		[doc showMessage:"Done"]
+		FramerInventory.showDoneMessage()
 	}
 	
 	return pasteboardContent

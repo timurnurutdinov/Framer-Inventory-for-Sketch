@@ -34,7 +34,7 @@ var runReplicateLayers = function(context) {
 	}
 	
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
-	[doc showMessage:"Done"]
+	FramerInventory.showDoneMessage()
 	
 	return pasteboardContent
 }

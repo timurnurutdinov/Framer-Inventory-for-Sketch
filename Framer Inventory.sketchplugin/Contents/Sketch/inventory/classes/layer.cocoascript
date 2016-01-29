@@ -259,6 +259,7 @@ Layer.prototype.generateFramerStates = function() {
 	var layerType = this.analyseType()
 	var areAllGeneratable = this.areAllGeneratable()
 	var imageRequired = ((layerType == 2 || layerType == 3) && areAllGeneratable) ? false : true
+	if (imageRequired) { FramerInventory.requireExportPage() }
 	
 	var generatedStates = []
 	var statesDescriptions = []
