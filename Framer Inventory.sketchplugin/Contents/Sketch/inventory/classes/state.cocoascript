@@ -245,39 +245,6 @@ State.prototype.isBackgroundsExportale = function() {
 
 
 
-/*
-
-	this.position = nil
-	this.width = nil
-	this.height = nil
-	this.x = nil
-	this.y = nil
-
-	this.opacity = nil
-	this.corner = nil
-	this.rotation = nil
-	this.inners = nil
-	
-	this.shadows = nil
-	this.shadowX = nil
-	this.shadowY = nil
-	this.shadowBlur = nil
-	this.shadowSpread = nil
-	this.shadowOpacity = nil
-	this.shadowHex = nil
-	
-	this.borders = nil
-	this.borderWidth = nil
-	this.borderOpacity = nil
-	this.borderHex = nil
-	
-	this.backgrounds = nil
-	this.backgroundOpacity = nil
-	this.backgroundHex = nil
-
-*/
-
-
 // clone state and keep only unique properties
 State.prototype.getMinimalState = function(compareState) {
 	var state = State.cloneState(compareState)
@@ -304,8 +271,10 @@ State.prototype.getMinimalState = function(compareState) {
 	if (this.shadowHex == state.shadowHex) { state.shadowHex = nil }
 	
 	if (this.borderWidth == state.borderWidth) { state.borderWidth = nil }
-	if (this.borderOpacity == state.borderOpacity) { state.borderOpacity = nil }
-	if (this.borderHex == state.borderHex) { state.borderHex = nil }
+	if (this.borderOpacity == state.borderOpacity && this.borderHex == state.borderHex) {
+		state.borderOpacity = nil
+		state.borderHex = nil
+	}
 	
 	if (this.backgroundHex == state.backgroundHex) { state.backgroundHex = nil }
 	
@@ -375,12 +344,13 @@ State.prototype.composeShadows = function() {
 
 State.prototype.composeBorders = function() {	
 	var borders = []
-	borders.push(0)
+	borders.push(1)
 	borders.push(this.borderWidth)
 	borders.push(0)
 	borders.push(this.borderOpacity)
 	borders.push(this.borderHex)
 	
+	log(borders)
 	return [borders]
 }
 

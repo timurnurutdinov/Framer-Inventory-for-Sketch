@@ -211,17 +211,24 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 
 	
 	var titleBorders = []
-	titleBorders.push(0)
+	titleBorders.push(1)
 	titleBorders.push(this.analyseBorderWidth())
 	titleBorders.push(0)
-	titleBorders.push(this.analyseBorderOpacity())
-	titleBorders.push(this.analyseBorderHex())
-	titleState.borders = [titleBorders]
-	if (titleBorders[3] != nil && titleBorders[4] != nil) { ; }
-	else {
-		if (titleBorders[3] != nil) { this.returnBorderOpacity(titleBorders[3]) }
-		else { this.returnBorderHex(titleBorders[4]) }
+	var shadowColor = this.analyseBorderColor()
+	if (shadowColor == nil) {
+		titleBorders.push(nil)
+		titleBorders.push(nil)
 	}
+	else {
+		titleBorders.push(shadowColor[0])
+		titleBorders.push(shadowColor[1])
+	}
+	titleState.borders = [titleBorders]
+	// if (titleBorders[3] != nil && titleBorders[4] != nil) { ; }
+// 	else {
+// 		if (titleBorders[3] != nil) { this.returnBorderOpacity(titleBorders[3]) }
+// 		else { this.returnBorderHex(titleBorders[4]) }
+// 	}
 	
 	
 	var titleBackgrounds = []
@@ -581,6 +588,60 @@ Layer.prototype.analyseBorderWidth = function() {
 		}
 	}
 
+	return nil
+}
+
+Layer.prototype.analyseBorderColor = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValueOpacity = this.states[0].borderOpacity
+	var defaultValueHex = this.states[0].borderHex
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValueOpacity != this.states[i].borderOpacity || defaultValueHex != this.states[i].borderHex) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].borderOpacity = nil
+			this.states[i].borderHex = nil
+		}
+		return [defaultValueOpacity, defaultValueHex]
+	}
+	else {
+		////
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].borderHex == nil) {
+				var suggestedBorders = this.suggestBorders(i)
+				if (suggestedBorders == nil) { log("ERROR: suggestBorders is nil") }
+				this.states[i].borderHex = suggestedBorders[0][4]
+				this.states[i].borderOpacity = suggestedBorders[0][3]
+			}
+		}
+		
+		defaultValueOpacity = this.states[0].borderOpacity
+		defaultValueHex = this.states[0].borderHex
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValueOpacity != this.states[i].borderOpacity || defaultValueHex != this.states[i].borderHex) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) {
+				this.states[i].borderOpacity = nil
+				this.states[i].borderHex = nil
+			}
+			return [defaultValueOpacity, defaultValueHex]
+		}
+	}
 	return nil
 }
 
