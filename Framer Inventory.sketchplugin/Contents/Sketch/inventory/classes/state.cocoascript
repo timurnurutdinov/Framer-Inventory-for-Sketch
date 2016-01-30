@@ -258,8 +258,10 @@ State.prototype.getMinimalState = function(compareState) {
 	if (this.shadowY == state.shadowY) { state.shadowY = nil }
 	if (this.shadowBlur == state.shadowBlur) { state.shadowBlur = nil }
 	if (this.shadowSpread == state.shadowSpread) { state.shadowSpread = nil }
-	if (this.shadowOpacity == state.shadowOpacity) { state.shadowOpacity = nil }
-	if (this.shadowHex == state.shadowHex) { state.shadowHex = nil }
+	if (this.shadowOpacity == state.shadowOpacity && this.shadowHex == state.shadowHex) {
+		state.shadowOpacity = nil
+		state.shadowHex = nil
+	}
 	
 	if (this.borderWidth == state.borderWidth) { state.borderWidth = nil }
 	if (this.borderOpacity == state.borderOpacity && this.borderHex == state.borderHex) {
