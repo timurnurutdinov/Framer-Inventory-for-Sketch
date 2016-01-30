@@ -224,23 +224,25 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 		titleBorders.push(shadowColor[1])
 	}
 	titleState.borders = [titleBorders]
-	// if (titleBorders[3] != nil && titleBorders[4] != nil) { ; }
-// 	else {
-// 		if (titleBorders[3] != nil) { this.returnBorderOpacity(titleBorders[3]) }
-// 		else { this.returnBorderHex(titleBorders[4]) }
-// 	}
 	
 	
 	var titleBackgrounds = []
 	titleBackgrounds.push(0)
-	titleBackgrounds.push(this.analyseBackgroundOpacity())
-	titleBackgrounds.push(this.analyseBackgroundHex())
-	titleState.backgrounds = [titleBackgrounds]
-	if (titleBackgrounds[1] != nil && titleBackgrounds[2] != nil) { ; }
-	else {
-		if (titleBackgrounds[1] != nil) { this.returnBackgroundOpacity(titleBackgrounds[1]) }
-		else { this.returnBackgroundHex(titleBackgrounds[2]) }
+	var backgroundColor = this.analyseBackgroundColor()
+	if (backgroundColor == nil) {
+		titleBackgrounds.push(nil)
+		titleBackgrounds.push(nil)
 	}
+	else {
+		titleBackgrounds.push(backgroundColor[0])
+		titleBackgrounds.push(backgroundColor[1])
+	}
+	titleState.backgrounds = [titleBackgrounds]
+	// if (titleBackgrounds[1] != nil && titleBackgrounds[2] != nil) { ; }
+// 	else {
+// 		if (titleBackgrounds[1] != nil) { this.returnBackgroundOpacity(titleBackgrounds[1]) }
+// 		else { this.returnBackgroundHex(titleBackgrounds[2]) }
+// 	}
 	
 	titleState.opacity = this.analyseOpacity()
 
@@ -275,13 +277,11 @@ Layer.prototype.generateFramerStates = function() {
 	var prevState = nil
 	var maxSpace = 0
 	
-	
 
 	var titleState = this.generateFramerTitle(imageRequired)
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
 	
 	if (currentCommandIdentifier == 2 && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
-	
 	
 	for (var i = 0; i < this.states.length; i++) {
 		var currentState = this.states[i]
@@ -645,105 +645,77 @@ Layer.prototype.analyseBorderColor = function() {
 	return nil
 }
 
-Layer.prototype.analyseBorderOpacity = function() {
+
+
+
+
+
+
+
+Layer.prototype.analyseBackgroundColor = function() {
 	if (!this.checkStates()) { return nil }
 	
-	var defaultValue = this.states[0].borderOpacity
+	var defaultValueOpacity = this.states[0].backgroundOpacity
+	var defaultValueHex = this.states[0].backgroundHex
 	var sameValue = true
 	
+	for (var i = 0; i < this.states.length; i++) {
+		log("Hex " + this.states[i].stateName + ": "+ this.states[i].backgroundHex)
+	}
+	
 	for (var i = 1; i < this.states.length; i++) {
-		if (defaultValue != this.states[i].borderOpacity) {
+		if (defaultValueOpacity != this.states[i].backgroundOpacity || defaultValueHex != this.states[i].backgroundHex) {
 			sameValue = false
 			break
 		}
 	}
 	
 	if (sameValue) {
-		for (var i = 0; i < this.states.length; i++) { this.states[i].borderOpacity = nil }
-		return defaultValue
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].backgroundOpacity = nil
+			this.states[i].backgroundHex = nil
+		}
+		// if all layers have bg with zero opacity
+		if (defaultValueHex == nil && (this.states[0].type == 2 || this.states[0].type == 3)) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].opacity = 0 }
+		}
+		return [defaultValueOpacity, defaultValueHex]
 	}
 	else {
 		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].borderOpacity == nil) {
-				var suggestedBorders = this.suggestBorders(i)
-				if (suggestedBorders == nil) { log("ERROR: suggestedBorders is nil") }
-				this.states[i].borderOpacity = suggestedBorders[0][3]
+			if (this.states[i].backgroundHex == nil) {
+				this.states[i].opacity = 0
+				
+				var suggestedBackgrounds = this.suggestBackgrounds(i)
+				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
+				this.states[i].backgroundOpacity = suggestedBackgrounds[0][1]
+				this.states[i].backgroundHex = suggestedBackgrounds[0][2]
 			}
 		}
 		
-		defaultValue = this.states[0].borderOpacity
+		defaultValueOpacity = this.states[0].backgroundOpacity
+		defaultValueHex = this.states[0].backgroundHex
 		sameValue = true
 		
 		for (var i = 1; i < this.states.length; i++) {
-			if (defaultValue != this.states[i].borderOpacity) {
+			if (defaultValueOpacity != this.states[i].backgroundOpacity || defaultValueHex != this.states[i].backgroundHex) {
 				sameValue = false
 				break
 			}
 		}
 		
 		if (sameValue) {
-			for (var i = 0; i < this.states.length; i++) { this.states[i].borderOpacity = nil }
-			return defaultValue
+			for (var i = 0; i < this.states.length; i++) {
+				this.states[i].backgroundOpacity = nil
+				this.states[i].backgroundHex = nil
+			}
+			return [defaultValueOpacity, defaultValueHex]
 		}
 	}
-
 	return nil
 }
 
-Layer.prototype.analyseBorderHex = function() {
-	if (!this.checkStates()) { return nil }
-	
-	var defaultValue = this.states[0].borderHex
-	var sameValue = true
-	
-	for (var i = 1; i < this.states.length; i++) {
-		if (defaultValue != this.states[i].borderHex) {
-			sameValue = false
-			break
-		}
-	}
-	
-	if (sameValue) {
-		for (var i = 0; i < this.states.length; i++) { this.states[i].borderHex = nil }
-		return defaultValue
-	}
-	else {
-		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].borderHex == nil) {
-				var suggestedBorders = this.suggestBorders(i)
-				if (suggestedBorders == nil) { log("ERROR: suggestBorders is nil") }
-				this.states[i].borderHex = suggestedBorders[0][4]
-			}
-		}
-		
-		defaultValue = this.states[0].borderHex
-		sameValue = true
-		
-		for (var i = 1; i < this.states.length; i++) {
-			if (defaultValue != this.states[i].borderHex) {
-				sameValue = false
-				break
-			}
-		}
-		
-		if (sameValue) {
-			for (var i = 0; i < this.states.length; i++) { this.states[i].borderHex = nil }
-			return defaultValue
-		}
-	}
-	
-	return nil
-}
-
-
-
-
-
-
-
-
-
-
+/*
 Layer.prototype.analyseBackgroundOpacity = function() {
 	if (!this.checkStates()) { return nil }
 	
@@ -839,7 +811,7 @@ Layer.prototype.analyseBackgroundHex = function() {
 	
 	return nil
 }
-
+*/
 
 
 

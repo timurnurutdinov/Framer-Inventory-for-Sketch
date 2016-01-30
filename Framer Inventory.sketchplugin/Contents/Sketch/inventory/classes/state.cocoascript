@@ -248,15 +248,6 @@ State.prototype.isBackgroundsExportale = function() {
 // clone state and keep only unique properties
 State.prototype.getMinimalState = function(compareState) {
 	var state = State.cloneState(compareState)
-	log("a:")
-	state.printStateSmall()
-	this.printStateSmall()
-	
-	// if (this.position != nil && state.position != nil) {
-// 		for (var i = 0; i < this.position.length; i++) {
-// 			if (this.position[i] == state.position[i]) { state.position[i] = nil }
-// 		}
-// 	}
 	
 	if (this.width == state.width) { state.width = nil }
 	if (this.height == state.height) { state.height = nil }
@@ -276,33 +267,15 @@ State.prototype.getMinimalState = function(compareState) {
 		state.borderHex = nil
 	}
 	
-	if (this.backgroundHex == state.backgroundHex) { state.backgroundHex = nil }
+	if (this.backgroundHex == state.backgroundHex && this.backgroundOpacity == state.backgroundOpacity) {
+		state.backgroundOpacity = nil
+		state.backgroundHex = nil
+	}
 	
 	if (this.opacity == state.opacity) { state.opacity = nil }
 	if (this.corner == state.corner) { state.corner = nil }
 	if (this.rotation == state.rotation) { state.rotation = nil }
-	
-	
-	// if (compareMatrices(this.shadows, state.shadows)) {
-// 		state.shadows = nil
-// 		state.shadowsActive = false
-// 	}
-// 	if (compareMatrices(this.inners, state.inners)) {
-// 		state.inners = nil
-// 		state.innersActive = false
-// 	}
-// 	if (compareMatrices(this.borders, state.borders)) {
-// 		state.borders = nil
-// 		state.bordersActive = false
-// 	}
-// 	if (compareMatrices(this.backgrounds, state.backgrounds)) {
-// 		state.backgrounds = nil
-// 		state.backgroundsActive = false
-// 	}
 
-	log("b:")
-	state.printStateSmall()
-	log("-----------------------------------------------")
 
 	return state
 }
@@ -349,8 +322,6 @@ State.prototype.composeBorders = function() {
 	borders.push(0)
 	borders.push(this.borderOpacity)
 	borders.push(this.borderHex)
-	
-	log(borders)
 	return [borders]
 }
 
