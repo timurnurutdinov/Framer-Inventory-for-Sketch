@@ -149,37 +149,6 @@ State.prototype.updateState = function() {
 
 
 
-State.cloneState = function(baseState) {
-	var layer = baseState.layer
-	var state = new State(layer)
-	
-	state.width = baseState.width
-	state.height = baseState.height
-	state.x = baseState.x
-	state.y = baseState.y
-	
-	state.shadowX = baseState.shadowX
-	state.shadowY = baseState.shadowY
-	state.shadowBlur = baseState.shadowBlur
-	state.shadowSpread = baseState.shadowSpread
-	state.shadowOpacity = baseState.shadowOpacity
-	state.shadowHex = baseState.shadowHex
-	
-	state.borderWidth = baseState.borderWidth
-	state.borderOpacity = baseState.borderOpacity
-	state.borderHex = baseState.borderHex
-	
-	state.backgroundOpacity = baseState.backgroundOpacity
-	state.backgroundHex = baseState.backgroundHex
-	
-	state.opacity = baseState.opacity
-	state.corner = baseState.corner
-	state.rotation = baseState.rotation
-	
-	return state
-}
-
-
 
 
 
@@ -245,9 +214,45 @@ State.prototype.isBackgroundsExportale = function() {
 
 
 
+
+
+
+State.cloneState = function(baseState) {
+	var layer = baseState.layer
+	var state = new State(layer)
+	
+	state.width = baseState.width
+	state.height = baseState.height
+	state.x = baseState.x
+	state.y = baseState.y
+	
+	state.shadowX = baseState.shadowX
+	state.shadowY = baseState.shadowY
+	state.shadowBlur = baseState.shadowBlur
+	state.shadowSpread = baseState.shadowSpread
+	state.shadowOpacity = baseState.shadowOpacity
+	state.shadowHex = baseState.shadowHex
+	
+	state.borderWidth = baseState.borderWidth
+	state.borderOpacity = baseState.borderOpacity
+	state.borderHex = baseState.borderHex
+	
+	state.backgroundOpacity = baseState.backgroundOpacity
+	state.backgroundHex = baseState.backgroundHex
+	
+	state.opacity = baseState.opacity
+	state.corner = baseState.corner
+	state.rotation = baseState.rotation
+	
+	return state
+}
+
+
 // clone state and keep only unique properties
 State.prototype.getMinimalState = function(compareState) {
 	var state = State.cloneState(compareState)
+	// state.stateName = this.stateName
+	log("GM: " + this.stateName + " for " + state.stateName + " | " + this.stateName)
 	
 	if (this.width == state.width) { state.width = nil }
 	if (this.height == state.height) { state.height = nil }

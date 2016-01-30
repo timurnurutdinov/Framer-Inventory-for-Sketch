@@ -318,13 +318,6 @@ Layer.prototype.generateFramerStates = function() {
 
 
 
-
-
-
-
-
-
-
 Layer.prototype.checkStates = function() {
 	if (this.states == nil || this.states.length == 0) {
 		if (showLog) { log("Warning: States are empty") }
@@ -402,6 +395,13 @@ Layer.addExportOptions = function(layer) {
     [size setScale:size_data.scale]
     [size setName:size_data.suffix]
 }
+
+
+
+
+
+
+
 
 
 
@@ -662,10 +662,6 @@ Layer.prototype.analyseBackgroundColor = function() {
 	var defaultValueHex = this.states[0].backgroundHex
 	var sameValue = true
 	
-	for (var i = 0; i < this.states.length; i++) {
-		log("Hex " + this.states[i].stateName + ": "+ this.states[i].backgroundHex)
-	}
-	
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValueOpacity != this.states[i].backgroundOpacity || defaultValueHex != this.states[i].backgroundHex) {
 			sameValue = false
@@ -717,113 +713,6 @@ Layer.prototype.analyseBackgroundColor = function() {
 	}
 	return nil
 }
-
-/*
-Layer.prototype.analyseBackgroundOpacity = function() {
-	if (!this.checkStates()) { return nil }
-	
-	var defaultValue = this.states[0].backgroundOpacity
-	var sameValue = true
-	
-	for (var i = 1; i < this.states.length; i++) {
-		if (defaultValue != this.states[i].backgroundOpacity) {
-			sameValue = false
-			break
-		}
-	}
-	
-	if (sameValue) {
-		for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundOpacity = nil }
-		return defaultValue
-	}
-	else {
-		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].backgroundOpacity == nil) {
-				var suggestedBackgrounds = this.suggestBackgrounds(i)
-				log(suggestedBackgrounds)
-				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
-				this.states[i].backgroundOpacity = suggestedBackgrounds[0][1]
-			}
-		}
-		
-		defaultValue = this.states[0].backgroundOpacity
-		sameValue = true
-		
-		for (var i = 1; i < this.states.length; i++) {
-			if (defaultValue != this.states[i].backgroundOpacity) {
-				sameValue = false
-				break
-			}
-		}
-		
-		if (sameValue) {
-			for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundOpacity = nil }
-			return defaultValue
-		}
-	}
-
-	return nil
-}
-
-Layer.prototype.analyseBackgroundHex = function() {
-	if (!this.checkStates()) { return nil }
-	
-	var defaultValue = this.states[0].backgroundHex
-	var sameValue = true
-	
-	for (var i = 1; i < this.states.length; i++) {
-		if (defaultValue != this.states[i].backgroundHex) {
-			sameValue = false
-			break
-		}
-	}
-	
-	if (sameValue) {
-		for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundHex = nil }
-		if (defaultValue == nil && (this.states[0].type == 2 || this.states[0].type == 3)) {
-			for (var i = 0; i < this.states.length; i++) { this.states[i].opacity = 0 }
-		}
-		return defaultValue
-	}
-	else {
-		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].backgroundHex == nil) {
-				this.states[i].opacity = 0
-				
-				var suggestedBackgrounds = this.suggestBackgrounds(i)
-				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
-				this.states[i].backgroundHex = suggestedBackgrounds[0][2]
-			}
-		}
-		
-		defaultValue = this.states[0].backgroundHex
-		sameValue = true
-		
-		for (var i = 1; i < this.states.length; i++) {
-			if (defaultValue != this.states[i].backgroundHex) {
-				sameValue = false
-				break
-			}
-		}
-		
-		if (sameValue) {
-			for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundHex = nil }
-			return defaultValue
-		}
-	}
-	
-	return nil
-}
-*/
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1162,98 +1051,6 @@ Layer.prototype.analyseShadowColor = function() {
 	return nil
 }
 
-/*
-Layer.prototype.analyseShadowOpacity = function() {
-	if (!this.checkStates()) { return nil }
-	
-	var defaultValue = this.states[0].shadowOpacity
-	var sameValue = true
-	
-	for (var i = 1; i < this.states.length; i++) {
-		if (defaultValue != this.states[i].shadowOpacity) {
-			sameValue = false
-			break
-		}
-	}
-	
-	if (sameValue) {
-		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowOpacity = nil }
-		return defaultValue
-	}
-	else {
-		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].shadowOpacity == nil) {
-				var suggestedShadows = this.suggestShadows(i)
-				if (suggestedShadows == nil) { log("ERROR: suggestShadows is nil") }
-				this.states[i].shadowOpacity = suggestedShadows[0][4]
-			}
-		}
-		
-		defaultValue = this.states[0].shadowOpacity
-		sameValue = true
-		
-		for (var i = 1; i < this.states.length; i++) {
-			if (defaultValue != this.states[i].shadowOpacity) {
-				sameValue = false
-				break
-			}
-		}
-		
-		if (sameValue) {
-			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowOpacity = nil }
-			return defaultValue
-		}
-	}
-
-	return nil
-}
-
-Layer.prototype.analyseShadowHex = function() {
-	if (!this.checkStates()) { return nil }
-	
-	var defaultValue = this.states[0].shadowHex
-	var sameValue = true
-	
-	for (var i = 1; i < this.states.length; i++) {
-		if (defaultValue != this.states[i].shadowHex) {
-			sameValue = false
-			break
-		}
-	}
-	
-	if (sameValue) {
-		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowHex = nil }
-		return defaultValue
-	}
-	else {
-		for (var i = 0; i < this.states.length; i++) {
-			if (this.states[i].shadowHex == nil) {
-				var suggestedShadows = this.suggestShadows(i)
-				if (suggestedShadows == nil) { log("ERROR: suggestShadows is nil") }
-				this.states[i].shadowHex = suggestedShadows[0][5]
-			}
-		}
-		
-		defaultValue = this.states[0].shadowHex
-		sameValue = true
-		
-		for (var i = 1; i < this.states.length; i++) {
-			if (defaultValue != this.states[i].shadowHex) {
-				sameValue = false
-				break
-			}
-		}
-		
-		if (sameValue) {
-			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowHex = nil }
-			return defaultValue
-		}
-	}
-	
-	return nil
-}
-*/
-
 
 
 
@@ -1327,12 +1124,15 @@ Layer.prototype.minimazeStates = function() {
 	minimazedStates.push(this.states[0])
 	
 	var baseState = nil
-	var nextState = nil
+	var currentState = nil
 	
 	for (var i = 1; i < this.states.length; i++) {
 		baseState = this.states[i - 1]
-		nextState = this.states[i]
-		minimazedStates.push(baseState.getMinimalState(nextState))
+		currentState = this.states[i]
+		
+		var cleanedState = baseState.getMinimalState(currentState)
+		cleanedState.stateName = currentState.stateName
+		minimazedStates.push(cleanedState)
 	}
 	
 	return minimazedStates
