@@ -25,7 +25,7 @@ var runSettings = function() {
 	initConfigureValues()
 	
 	var exportWindow = [[NSWindow alloc] init]
-	[exportWindow setFrame:NSMakeRect(0, 0, columnWidth + paddingLeft * 2, block * 8 + 10) display:false];
+	[exportWindow setFrame:NSMakeRect(0, 0, columnWidth + paddingLeft * 4 + 4, block * 8 + 10) display:false];
 	[exportWindow setBackgroundColor:backgroundColor];
 	
 	
@@ -102,7 +102,7 @@ function isRetinaRequired() {
 
 
 var createRetinaInput = function(exportWindow) {
-	var labelDescription = "Variable name"
+	var labelDescription = "Scale variable name"
 	var labelPlaceholder = "Ex: \"retina\""
 	var paddingBottom = block * 4 + (block * 3 / 4)
 	
@@ -129,7 +129,7 @@ var createRetinaInput = function(exportWindow) {
 
 
 var createAutoplayCheckbox = function(exportWindow) {
-	var labelDescription = "Autoplay"
+	var labelDescription = "Autoplay for Simulate Keynote"
 	var paddingBottom = block * 2
 	
 	var titleAutoplay = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft + 20, paddingBottom, columnWidth, 16)];
@@ -156,7 +156,7 @@ var createAutoplayCheckbox = function(exportWindow) {
 
 
 var createMinimalExportCheckbox = function(exportWindow) {
-	var labelDescription = "Minimal Export"
+	var labelDescription = "Minimal Export for Simulate Keynote"
 	var paddingBottom = block * 2 + (block * 3 / 4)
 	
 	var titleMinimalExport = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft + 20, paddingBottom, columnWidth, 16)];
@@ -213,7 +213,7 @@ var createLogo = function(exportWindow) {
 	
 	var imagePath = pluginPath + '/images/' + 'logo' + isRetinaRequired() + '.png';
 	var image = NSImage.alloc().initByReferencingFile(imagePath);
-	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth - 10, 40)];
+	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth + block - 10, 40)];
 	[imageView setImage: image];
 	[[exportWindow contentView] addSubview:imageView];
 }

@@ -12,7 +12,7 @@ var presets = {
     myRetina: "retina",
 	myMobile: 1,
 	myMinimalExport: 1,
-	myAutoplay: 1
+	myAutoplay: 0
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"

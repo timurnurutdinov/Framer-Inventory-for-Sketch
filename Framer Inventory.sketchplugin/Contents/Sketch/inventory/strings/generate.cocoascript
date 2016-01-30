@@ -284,15 +284,35 @@ function generateCycler() {
 	return cyclerDescription
 }
 
+function getFunctionName() {
+	return "runSimulation"
+}
+
 
 
 function generateHandler() {
-	var handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
-	handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
-	handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
-	handlerDescription += tln() + tln() + "try" + ln()
-	handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
-	handlerDescription += tln() + tln() + "catch error" + dln()
+	var handlerDescription = ""
+	
+	if (userDefaults.myAutoplay == 0) {
+		handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
+		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+		handlerDescription += tln() + tln() + "try" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + "catch error" + dln()
+	}
+	else {
+		handlerDescription = getFunctionName() + " = () ->" + ln()
+		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+		handlerDescription += tln() + tln() + "try" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + "catch error" + ln()
+		handlerDescription += tln() + "Utils.delay 2, ->" + ln()
+		handlerDescription += tln() + tln() + getFunctionName() + "()" + dln()
+		
+		handlerDescription += getFunctionName() + "()"
+	}
 	return handlerDescription
 }
 
