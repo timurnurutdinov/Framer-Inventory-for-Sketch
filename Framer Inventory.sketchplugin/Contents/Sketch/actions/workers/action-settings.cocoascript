@@ -147,7 +147,7 @@ var createAutoplayCheckbox = function(exportWindow) {
 	[autoplayCheckbox setTitle:""];
 	[autoplayCheckbox setState:configureAutoplay];
 	autoplayCheckbox.setCOSJSTargetFunction(function(sender){
-		configureAutoplay = configureAutoplay == false ? true : false
+		configureAutoplay = configureAutoplay == 0 ? 1 : 0
 	})
 	[[exportWindow contentView] addSubview:autoplayCheckbox];
 	
@@ -174,7 +174,7 @@ var createMinimalExportCheckbox = function(exportWindow) {
 	[minimalExportCheckbox setTitle:""];
 	[minimalExportCheckbox setState:configureMinimalExport];
 	minimalExportCheckbox.setCOSJSTargetFunction(function(sender){
-		configureMinimalExport = configureMinimalExport == false ? true : false
+		configureMinimalExport = configureMinimalExport == 0 ? 1 : 0
 	})
 	[[exportWindow contentView] addSubview:minimalExportCheckbox];
 	
@@ -201,7 +201,7 @@ var createMobileCheckbox = function(exportWindow) {
 	[mobileCheckbox setTitle:""];
 	[mobileCheckbox setState:configureMobile];
 	mobileCheckbox.setCOSJSTargetFunction(function(sender){
-		configureMobile = configureMobile == false ? true : false
+		configureMobile = configureMobile == 0 ? 1 : 0
 	})
 	[[exportWindow contentView] addSubview:mobileCheckbox];
 	

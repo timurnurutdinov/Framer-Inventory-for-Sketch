@@ -152,6 +152,30 @@ State.prototype.updateState = function() {
 State.cloneState = function(baseState) {
 	var layer = baseState.layer
 	var state = new State(layer)
+	
+	state.width = baseState.width
+	state.height = baseState.height
+	state.x = baseState.x
+	state.y = baseState.y
+	
+	state.shadowX = baseState.shadowX
+	state.shadowY = baseState.shadowY
+	state.shadowBlur = baseState.shadowBlur
+	state.shadowSpread = baseState.shadowSpread
+	state.shadowOpacity = baseState.shadowOpacity
+	state.shadowHex = baseState.shadowHex
+	
+	state.borderWidth = baseState.borderWidth
+	state.borderOpacity = baseState.borderOpacity
+	state.borderHex = baseState.borderHex
+	
+	state.backgroundOpacity = baseState.backgroundOpacity
+	state.backgroundHex = baseState.backgroundHex
+	
+	state.opacity = baseState.opacity
+	state.corner = baseState.corner
+	state.rotation = baseState.rotation
+	
 	return state
 }
 
@@ -221,49 +245,96 @@ State.prototype.isBackgroundsExportale = function() {
 
 
 
+/*
 
+	this.position = nil
+	this.width = nil
+	this.height = nil
+	this.x = nil
+	this.y = nil
+
+	this.opacity = nil
+	this.corner = nil
+	this.rotation = nil
+	this.inners = nil
+	
+	this.shadows = nil
+	this.shadowX = nil
+	this.shadowY = nil
+	this.shadowBlur = nil
+	this.shadowSpread = nil
+	this.shadowOpacity = nil
+	this.shadowHex = nil
+	
+	this.borders = nil
+	this.borderWidth = nil
+	this.borderOpacity = nil
+	this.borderHex = nil
+	
+	this.backgrounds = nil
+	this.backgroundOpacity = nil
+	this.backgroundHex = nil
+
+*/
 
 
 // clone state and keep only unique properties
-State.prototype.keepDifference = function(compareState) {
+State.prototype.getMinimalState = function(compareState) {
 	var state = State.cloneState(compareState)
+	log("a:")
+	state.printStateSmall()
+	this.printStateSmall()
 	
-	if (this.opacity == state.opacity) { 
-		state.opacity = nil
-		state.opacityActive = false
-	}
-	if (this.corner == state.corner) {
-		state.corner = nil
-		state.cornerActive = false
-	}
-	if (this.rotation == state.rotation) {
-		state.rotation = nil
-		state.rotationActive = false
-	}
+	// if (this.position != nil && state.position != nil) {
+// 		for (var i = 0; i < this.position.length; i++) {
+// 			if (this.position[i] == state.position[i]) { state.position[i] = nil }
+// 		}
+// 	}
 	
-	if (this.position != nil && state.position != nil) {	
-		for (var i = 0; i < this.position.length; i++) {
-			if (this.position[i] == state.position[i]) { state.position[i] = nil }
-		}
-	}
+	if (this.width == state.width) { state.width = nil }
+	if (this.height == state.height) { state.height = nil }
+	if (this.x == state.x) { state.x = nil }
+	if (this.y == state.y) { state.y = nil }
 	
-	if (compareMatrices(this.shadows, state.shadows)) {
-		state.shadows = nil
-		state.shadowsActive = false
-	}
-	if (compareMatrices(this.inners, state.inners)) {
-		state.inners = nil
-		state.innersActive = false
-	}
-	if (compareMatrices(this.borders, state.borders)) {
-		state.borders = nil
-		state.bordersActive = false
-	}
-	if (compareMatrices(this.backgrounds, state.backgrounds)) {
-		state.backgrounds = nil
-		state.backgroundsActive = false
-	}
+	if (this.shadowX == state.shadowX) { state.shadowX = nil }
+	if (this.shadowY == state.shadowY) { state.shadowY = nil }
+	if (this.shadowBlur == state.shadowBlur) { state.shadowBlur = nil }
+	if (this.shadowSpread == state.shadowSpread) { state.shadowSpread = nil }
+	if (this.shadowOpacity == state.shadowOpacity) { state.shadowOpacity = nil }
+	if (this.shadowHex == state.shadowHex) { state.shadowHex = nil }
 	
+	if (this.borderWidth == state.borderWidth) { state.borderWidth = nil }
+	if (this.borderOpacity == state.borderOpacity) { state.borderOpacity = nil }
+	if (this.borderHex == state.borderHex) { state.borderHex = nil }
+	
+	if (this.backgroundHex == state.backgroundHex) { state.backgroundHex = nil }
+	
+	if (this.opacity == state.opacity) { state.opacity = nil }
+	if (this.corner == state.corner) { state.corner = nil }
+	if (this.rotation == state.rotation) { state.rotation = nil }
+	
+	
+	// if (compareMatrices(this.shadows, state.shadows)) {
+// 		state.shadows = nil
+// 		state.shadowsActive = false
+// 	}
+// 	if (compareMatrices(this.inners, state.inners)) {
+// 		state.inners = nil
+// 		state.innersActive = false
+// 	}
+// 	if (compareMatrices(this.borders, state.borders)) {
+// 		state.borders = nil
+// 		state.bordersActive = false
+// 	}
+// 	if (compareMatrices(this.backgrounds, state.backgrounds)) {
+// 		state.backgrounds = nil
+// 		state.backgroundsActive = false
+// 	}
+
+	log("b:")
+	state.printStateSmall()
+	log("-----------------------------------------------")
+
 	return state
 }
 
@@ -351,5 +422,5 @@ State.prototype.printState = function() {
 
 
 State.prototype.printStateSmall = function() {
-	log("#########: " + this.stateName + " || " + this.backgrounds)
+	log("#########: " + this.stateName + " || " + this.x)
 }

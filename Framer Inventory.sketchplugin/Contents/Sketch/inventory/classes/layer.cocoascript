@@ -265,7 +265,6 @@ Layer.prototype.generateFramerStates = function() {
 	var statesDescriptions = []
 	var statesNames = []
 	
-	
 	var prevState = nil
 	var maxSpace = 0
 	
@@ -273,6 +272,8 @@ Layer.prototype.generateFramerStates = function() {
 
 	var titleState = this.generateFramerTitle(imageRequired)
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
+	
+	if (currentCommandIdentifier == 2 && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
 	
 	
 	for (var i = 0; i < this.states.length; i++) {
@@ -384,9 +385,7 @@ Layer.addExportOptions = function(layer) {
 	}
 	
 	var exportSizes = [[layer exportOptions] sizes]
-	while([exportSizes count] > 0) {
-	    [[exportSizes firstObject] remove]
-	}
+	while([exportSizes count] > 0) { [[exportSizes firstObject] remove] }
 
 	var size = [[layer exportOptions] addExportSize]
  	[size setFormat:size_data.format]
@@ -1225,40 +1224,24 @@ Layer.prototype.suggestBackgrounds = function(currentStateNumber) {
 
 
 
-/*
-
-Layer.prototype.returnDifferencedStates = function() {
-	if (this.states == nil) { return nil }
+Layer.prototype.minimazeStates = function() {
+	if (!this.checkStates()) { return nil }
 	
-	var differencedStates = []
+	var minimazedStates = []
+	minimazedStates.push(this.states[0])
 	
-	var classicalState = this.titleState
-	log("HERE OUR CLASSICAL STATE: " + classicalState)
-	differencedStates.push(classicalState)
+	var baseState = nil
+	var nextState = nil
 	
-	log("--------------------------------------")
-	log("CS: " + classicalState.printStateSmall())
-	for (var i = 0; i < this.states.length; i++) {
-		var state = this.states[i]
-		log("BS" + i + ": " + state.printStateSmall())
+	for (var i = 1; i < this.states.length; i++) {
+		baseState = this.states[i - 1]
+		nextState = this.states[i]
+		minimazedStates.push(baseState.getMinimalState(nextState))
 	}
 	
-	
-	var baseState = classicalState
-	for (var i = 0; i < this.states.length; i++) {
-		if (i != 0) { baseState = this.states[i - 1] }
-		var tempState = baseState.keepDifference(this.states[i])
-		
-		log("--------------------------------------")
-		// log("BS: " + baseState.printStateSmall())
-		log("TS: " + tempState.printStateSmall())
-		
-		differencedStates.push(tempState)
-	}
-	
-	return differencedStates
+	return minimazedStates
 }
-*/
+
 
 
 
