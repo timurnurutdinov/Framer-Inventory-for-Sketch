@@ -34,6 +34,7 @@ var runSettings = function() {
 	var miniamlExportCheckbox = createMinimalExportCheckbox(exportWindow)
 	var mobileCheckbox = createMobileCheckbox(exportWindow)
 	createLogo(exportWindow)
+	createHelpButton(exportWindow)
 	
 
 
@@ -216,4 +217,16 @@ var createLogo = function(exportWindow) {
 	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth + block - 10, 40)];
 	[imageView setImage: image];
 	[[exportWindow contentView] addSubview:imageView];
+}
+
+var createHelpButton = function(exportWindow) {	
+    var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + columnWidth + 13, 10, 32, 32)];
+	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
+	[helpButton setTitle:nil];
+	[helpButton setCOSJSTargetFunction:function(sender) {
+		var url = [NSURL URLWithString:@"http://medium.com"];
+		[[NSWorkspace sharedWorkspace] openURL:url]
+	}];
+	[helpButton setAction:"callAction:"]
+	[[exportWindow contentView] addSubview:helpButton];
 }
