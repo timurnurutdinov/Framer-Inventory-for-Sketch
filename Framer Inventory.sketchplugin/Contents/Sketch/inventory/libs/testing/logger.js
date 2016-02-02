@@ -13,8 +13,7 @@ var testsDirectory = "/tests"
 
 
 var readFileForAnswer = function(fileName) {
-	var folderName = createTempFolderNamed(homeDirectory)
-	var tests = createTempFolderNamed(homeDirectory + testsDirectory)
+	var tests = pluginPath + testsDirectory
 	var text = readTextFromFile("" + tests + "/" + fileName + ".txt")
 	if (text == nil) {
 		if (showLog) { log("No test found: " + fileName) }

@@ -1,0 +1,10 @@
+nice = new Layer width: 200*retina, height: 200*retina, x: 88*retina, y: 134*retina, backgroundColor: "rgba(80,227,194,1)", shadowColor: "rgba(82,82,82,0.5)"
+
+nice.states.add {
+	1: { shadowY: 0*retina, shadowBlur: 0*retina}
+	2: { shadowY: 20*retina, shadowBlur: 40*retina}
+	3: { shadowY: 0*retina, shadowBlur: 0*retina}
+	4: { shadowY: 20*retina, shadowBlur: 40*retina}
+	5: { shadowY: -20*retina, shadowBlur: 60*retina}
+}
+nice.states.switchInstant "1"

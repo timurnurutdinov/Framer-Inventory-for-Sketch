@@ -212,7 +212,7 @@ function generateState(stateName, stateContent) {
 
 
 function generateStateSwitchInstant(layerName, stateName) {
-	return "" + normalizeName(layerName) + ".states.switchInstant '" + normalizeName(stateName) + "'" + dln()
+	return "" + normalizeName(layerName) + ".states.switchInstant \"" + normalizeName(stateName) + "\"" + dln()
 }
 
 function generateRetinaVariable() {
