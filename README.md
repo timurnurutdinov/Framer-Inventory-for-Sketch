@@ -36,7 +36,7 @@ Generates code for **selected layers** without states. Works as a quick start fo
 
 
 
-### Settings
+## 4. Settings
 ![Alt text](/../images-second-version/readme/settings.png?raw=true “Settings window”)
 
 #### 4.1. Scale variable name
