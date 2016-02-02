@@ -84,7 +84,7 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	}
 	
 
-	pasteboardContent += generateRetinaVariable()
+	pasteboardContent += generateRetinaVariable() + ln()
 	pasteboardContent += generatePhoneModel()
 	pasteboardContent += dln()
 	pasteboardContent += "# view" + ln()

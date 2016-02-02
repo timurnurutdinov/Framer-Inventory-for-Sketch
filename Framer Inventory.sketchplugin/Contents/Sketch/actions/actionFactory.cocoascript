@@ -27,7 +27,7 @@ var pixelDensity = 1
 var phoneModel = 0
 
 var exportPageRequired = false
-var exportPageName = "[Framer Inventory]"
+var exportPageName = "Export for Framer Inventory"
 
 
 var chooseAction = function(context, actionIdentifier, testing) {
@@ -138,6 +138,8 @@ FramerInventory.findPageWithName = function(pageName) {
 	return nil
 }
 
+
+
 FramerInventory.removePage = function(pageName) {
 	var oldPage = [currentDocument currentPage]
 	
@@ -153,7 +155,31 @@ FramerInventory.removePage = function(pageName) {
 }
 
 
-
+// breaks current selection
+FramerInventory.selectAllLayersOnExportPage = function() {
+	var oldPage = [currentDocument currentPage]
+	var existingExportPage = nil
+	
+	var pages = [currentDocument pages]
+	for (var i = 0; i < pages.count(); i++) {
+		var page = [pages objectAtIndex: i]
+		if ([page name] == exportPageName) {
+			existingExportPage = page
+			break
+		}
+	}
+	
+	if (existingExportPage != nil) {
+		var layersOnPage = [existingExportPage layers]
+		FramerInventory.deselectLayers()
+		
+		for (var i = 0; i < layersOnPage.count(); i++) {
+			[[layersOnPage objectAtIndex:i] select:true byExpandingSelection:true]
+		}
+	}
+	
+	currentDocument.setCurrentPage(oldPage)
+}
 
 
 
@@ -482,6 +508,8 @@ FramerInventory.getRetinaValue = function() {
 }
 
 
+
+
 FramerInventory.requireExportPage = function() {
 	exportPageRequired = true
 }
@@ -493,6 +521,7 @@ FramerInventory.isExportPageRequired = function() {
 FramerInventory.showDoneMessage = function() {
 	if (FramerInventory.isExportPageRequired()) {
 		[currentDocument showMessage:"Done. Export assets from " + exportPageName + " page"]
+		// FramerInventory.selectAllLayersOnExportPage()
 	}
 	else {
 		[currentDocument showMessage:"Done"]

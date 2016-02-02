@@ -222,10 +222,28 @@ function generateRetinaVariable() {
 
 function generatePhoneModel() {
 	var model = FramerInventory.getPhoneValue()
-	if (model == 1) { return "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln() }
-	else if (model == 2) { return "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln() }
-	else if (model == 3) { return "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln() }
-	else { return "" }
+	var modelDescription = ""
+	
+	if (model == 1 || model == 2 || model == 3) {
+		modelDescription += "# mobile" + ln()
+	} 
+	
+	if (model == 1) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln()
+	}
+	else if (model == 2) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln()
+		modelDescription += "if Screen.width == 640" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.853" + ln()
+	}
+	else if (model == 3) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln()
+		modelDescription += "if Screen.width == 640" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.515" + ln()
+		modelDescription += "if Screen.width == 750" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.604" + ln()
+	}
+	return modelDescription
 }
 
 
