@@ -3,10 +3,9 @@
 
 >Framer Inventory operates within the current Sketch page, handles FramerJS code generation & helps exporting assets manually from automatically generated page.
 
+![Alt text](/../images-second-version/readme/window.png?raw=true “Framer Inventory plugin window”)
 
 ## 1. Simulate Keynote
-![Alt text](/../images/readme/simulate.png?raw=true “Simulate Keynote plugin window”)
-
 This action mimics Keynote and its Magic Move transition. Artboards are similar to slides in presentation but you can animate layers on them. Preview your ideas just few seconds later you’ve done them in Sketch!
 
 #### How to use
@@ -25,19 +24,15 @@ This action mimics Keynote and its Magic Move transition. Artboards are similar 
 
 
 ## 2. Generate States
-![Alt text](/../images/readme/replicate.png?raw=true “Replicate Selected plugin window”)
-
 Generates code for selected layers and supports their states. Similar to **Simulate Keynote** but let you write additional logic. Works great for high fidelity prototyping.
 
 
 ## 3. Replicate Selected
-![Alt text](/../images/readme/replicate.png?raw=true “Replicate Selected plugin window”)
-
 Generates code for selected layers without states. Works as a quick start for high fidelity prototyping without states (modulation, sliders & others)
 
 
 ## 4. Settings
-![Alt text](/../images/readme/replicate.png?raw=true “Replicate Selected plugin window”)
+![Alt text](/../images-second-version/readme/settings.png?raw=true “Settings window”)
 
 #### 4.1. Scale variable name
 Properties are scaled by this variable to support retina.
