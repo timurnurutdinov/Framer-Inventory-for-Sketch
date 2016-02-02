@@ -14,7 +14,7 @@ var runTestingEnvironment = function(context) {
 	
 	var resultingString = ""
 	resultingString += "|------------------------------------|\n"
-	resultingString += "|----STARTING TESTING ENVIRONMENT----|\n"
+	resultingString += "|---------TESTING ENVIRONMENT--------|\n"
 	resultingString += "|------------------------------------|\n\n\n"
 	
 	var skippedPagesNames = 0
@@ -61,7 +61,7 @@ var runTestingEnvironment = function(context) {
 	for (var i = 0; i < answers.length; i++) {
 		var readReferenceFromFile = pairs[i]
 		
-		resultingString += "Test " + i + ": " + readReferenceFromFile + "\n"
+		resultingString += "" + readReferenceFromFile + "\n"
 		
 		var diff = compareAnswer(answers[i], readReferenceFromFile)
 		if (showLog) {
@@ -169,52 +169,52 @@ var compareTextsPhrase = function(text1, text2) {
 var generatePairs = function() {
 	var pairs = []
 	
-	pairs.push("shapes")
+	pairs.push("01 shapes")
 	
 	// check params
-	pairs.push("states predict opacity")
-	pairs.push("states predict no opacity")
+	pairs.push("02 states predict opacity")
+	pairs.push("03 states predict no opacity")
 	
-	pairs.push("states predict rotation")
-	pairs.push("states predict no rotation")
+	pairs.push("04 states predict rotation")
+	pairs.push("05 states predict no rotation")
 	
-	pairs.push("states predict corners")
-	pairs.push("states predict no corners")
+	pairs.push("06 states predict corners")
+	pairs.push("07 states predict no corners")
 	
-	pairs.push("states predict borders")
-	pairs.push("states predict borders color")
-	pairs.push("states predict borders opacity")
-	pairs.push("states predict no borders")
+	pairs.push("08 states predict borders")
+	pairs.push("09 states predict borders color")
+	pairs.push("10 states predict borders opacity")
+	pairs.push("11 states predict no borders")
 	
-	pairs.push("states predict shadows")
-	pairs.push("states predict shadows color")
-	pairs.push("states predict shadows opacity")
-	pairs.push("states predict no shadows")
+	pairs.push("12 states predict shadows")
+	pairs.push("13 states predict shadows color")
+	pairs.push("14 states predict shadows opacity")
+	pairs.push("15 states predict no shadows")
 	
-	pairs.push("states predict backgrounds")
-	pairs.push("states predict backgrounds color")
-	pairs.push("states predict backgrounds opacity")
-	pairs.push("states predict no backgrounds")
+	pairs.push("16 states predict backgrounds")
+	pairs.push("17 states predict backgrounds color")
+	pairs.push("18 states predict backgrounds opacity")
+	pairs.push("19 states predict no backgrounds")
 	
-	pairs.push("states unexportable rectangle")
+	pairs.push("20 states unexportable rectangle")
 	
-	pairs.push("states groups shadows same")
-	pairs.push("states groups shadows same borders")
-	pairs.push("states groups shadows scaled")
+	pairs.push("21 states groups shadows same")
+	pairs.push("22 states groups shadows same borders")
+	pairs.push("23 states groups shadows scaled")
 	
 	
 	
 	// check normalising
-	pairs.push("layer out artboard position")
-	pairs.push("layer out artboard position group")
-	pairs.push("layer out artboard position group shadow")
+	pairs.push("24 layer out artboard position")
+	pairs.push("25 layer out artboard position group")
+	pairs.push("26 layer out artboard position group shadow")
 	
 		
 	// check hierarhy
-	pairs.push("states hierarhy selection order 1")
-	pairs.push("states hierarhy selection order 2")
-	pairs.push("states hierarhy selection order 3")
-	pairs.push("states hierarhy selection order 4")
+	pairs.push("27 states hierarhy selection order 1")
+	pairs.push("28 states hierarhy selection order 2")
+	pairs.push("29 states hierarhy selection order 3")
+	pairs.push("30 states hierarhy selection order 4")
 	
 	return pairs
 }
