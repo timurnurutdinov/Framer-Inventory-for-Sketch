@@ -216,6 +216,13 @@ var generatePairs = function() {
 	pairs.push("29 states hierarhy selection order 3")
 	pairs.push("30 states hierarhy selection order 4")
 	
+	// double check color composing
+	pairs.push("31 states predict borders color opacity round")
+	pairs.push("32 states predict borders color opacity")
+	pairs.push("33 states predict shadows color opacity")
+	pairs.push("34 states predict background color opacity")
+	
+	
 	return pairs
 }
 

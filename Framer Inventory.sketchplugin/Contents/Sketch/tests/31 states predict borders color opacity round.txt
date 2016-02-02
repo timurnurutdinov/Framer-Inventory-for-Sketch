@@ -1,0 +1,9 @@
+nice = new Layer width: 180*retina, height: 180*retina, x: 100*retina, y: 200*retina, borderRadius: 100*retina, backgroundColor: "rgba(255,0,0,1)"
+
+nice.states.add {
+	a: { borderWidth: 10*retina, borderColor: "rgba(127,0,0,1)"}
+	b: { borderWidth: 20*retina, borderColor: "rgba(127,0,0,1)"}
+	c: { borderWidth: 20*retina, borderColor: "rgba(0,0,0,1)"}
+	d: { borderWidth: 20*retina, borderColor: "rgba(0,0,0,0.5)"}
+}
+nice.states.switchInstant "a"
