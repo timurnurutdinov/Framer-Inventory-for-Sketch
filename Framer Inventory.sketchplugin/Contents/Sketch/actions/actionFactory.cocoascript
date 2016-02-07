@@ -199,16 +199,17 @@ FramerInventory.organiseSelection = function(userSelection) {
 	// if (showLog) { log("Cleaned selection: " + cleanedSelection.count() + " -> " + cleanedSelection) }
 	
 	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
-	// if (showLog) { log("Queue selection: " + queue.length + " -> " + queue) }
 	
 	FramerInventory.restoreSelection(userSelection)
 	
 	var merged = FramerInventory.mergeQueue(queue)
-	merged = FramerInventory.cleanDuplicates(merged)
 	
-	// if (showLog) { log("Merged selection: " + merged) }
+	merged = FramerInventory.cleanDuplicates(merged)
+	// if (showLog) { log("Duplicates cleaned: " + merged) }
+	
 	var newSelection = FramerInventory.composeSelection(merged, cleanedSelection)
-
+	// if (showLog) { log("Composed: " + newSelection) }
+	
 	return newSelection
 }
 
@@ -223,8 +224,10 @@ FramerInventory.cleanSelection = function(userSelection) {
 		
 		for (var j = 0; j < i; j++) {
 			var comparableCurrent = [userSelection objectAtIndex:j]
-			if ([current name] == [comparableCurrent name]) {
+			
+			if ([[current name] isEqualToString:[comparableCurrent name]]) {
 				alreadySelected = true
+				break
 			}
 		}
 		
@@ -264,7 +267,7 @@ FramerInventory.configureQueue = function(artboards, cleanedSelection) {
 			for (var s = 0; s < cleanedSelection.count(); s++) {
 				var selectionLayer = [cleanedSelection objectAtIndex: s]
 				
-				if ([child name] == [selectionLayer name]) {
+				if ([[child name] isEqualToString:[selectionLayer name]]) {
 					localQueue.push([child name])
 					break
 				}
@@ -291,7 +294,7 @@ FramerInventory.composeSelection = function(layerNames, userSelection) {
 		for (var j = 0; j < [userSelection count]; j++) {
 			var currentLayer = [userSelection objectAtIndex:j]
 			
-			if ([currentLayer name] == layerNames[i]) {
+			if ([[currentLayer name] isEqualToString:layerNames[i]]) {
 				layerType = [currentLayer className]
 				break
 			}
@@ -327,7 +330,7 @@ FramerInventory.cleanDuplicates = function(dirtySelection) {
 			for (var j = 0; j < cleanSelection.length; j++) {
 				var cleanLayer = cleanSelection[j]
 			
-				if (dirtyLayer == cleanLayer) {
+				if ([dirtyLayer isEqualToString:cleanLayer]) {
 					alreadySelected = true
 					break
 				}

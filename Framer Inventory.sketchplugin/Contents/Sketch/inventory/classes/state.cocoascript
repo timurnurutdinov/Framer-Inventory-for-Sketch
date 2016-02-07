@@ -252,7 +252,7 @@ State.cloneState = function(baseState) {
 State.prototype.getMinimalState = function(compareState) {
 	var state = State.cloneState(compareState)
 	// state.stateName = this.stateName
-	log("GM: " + this.stateName + " for " + state.stateName + " | " + this.stateName)
+	//log("GM: " + this.stateName + " for " + state.stateName + " | " + this.stateName)
 	
 	if (this.width == state.width) { state.width = nil }
 	if (this.height == state.height) { state.height = nil }

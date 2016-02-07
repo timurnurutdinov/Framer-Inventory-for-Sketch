@@ -290,7 +290,7 @@ Layer.prototype.generateFramerStates = function() {
 		var currentState = this.states[i]
 		
 		if (currentState.isEqualToState(prevState)) {
-			if (showLog) { log("Skipping duplicated state: " + currentState.stateName) }
+			// if (showLog) { log("Skipping duplicated state: " + currentState.stateName) }
 			continue
 		}
 
@@ -381,19 +381,19 @@ Layer.pasteLayer = function(layer) {
 }
 
 Layer.addExportOptions = function(layer) {
-	var size_data = {
+	var sizeData = {
 	    "format": "png",
 	    "scale": FramerInventory.getRetinaValue(),
 	    "suffix": ""
 	}
 	
-	var exportSizes = [[layer exportOptions] sizes]
+	var exportSizes = [[layer exportOptions] exportFormats]
 	while([exportSizes count] > 0) { [[exportSizes firstObject] remove] }
 
-	var size = [[layer exportOptions] addExportSize]
- 	[size setFormat:size_data.format]
-    [size setScale:size_data.scale]
-    [size setName:size_data.suffix]
+	var size = [[layer exportOptions] addExportFormat]
+ 	// [size setFormat:sizeData.format]
+    [size setScale:sizeData.scale]
+    [size setName:sizeData.suffix]
 }
 
 

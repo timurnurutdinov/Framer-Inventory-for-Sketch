@@ -87,7 +87,7 @@ var saveSettings = function() {
 	
 	saveDefaults(userDefaults)
 	
-	[currentDocument showMessage:"Saved"]
+	[currentDocument showMessage:"Settings saved"]
 }
 
 function isRetinaRequired() {
