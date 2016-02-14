@@ -207,6 +207,7 @@ function generateStateSection(layerName, generatedStates) {
 }
 
 function generateState(stateName, stateContent) {
+	if (stateContent == "" || stateContent == nil || stateContent == '') { return "" }
 	return clearName(stateName) + ": {" + stateContent + "}"
 }
 

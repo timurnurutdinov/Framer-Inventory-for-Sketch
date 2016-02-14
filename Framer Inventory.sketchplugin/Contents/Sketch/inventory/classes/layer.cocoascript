@@ -306,7 +306,10 @@ Layer.prototype.generateFramerStates = function() {
 	
 	var switchStateDescription = ""
 	if (statesDescriptions.length > 1) {
-		for (var i = 0; i < statesDescriptions.length; i++) { generatedStates.push(generateState(statesNames[i], statesDescriptions[i])) }
+		for (var i = 0; i < statesDescriptions.length; i++) {
+			var generatedStateLine = generateState(statesNames[i], statesDescriptions[i])
+			if (generatedStateLine != "") { generatedStates.push(generatedStateLine) }
+		}
 		switchStateDescription = generateStateSwitchInstant(this.layerName, statesNames[0])
 	}
 	
@@ -365,6 +368,7 @@ Layer.returnLayerCopy = function(layer) {
 }
 
 Layer.cleanLayerShadows = function(layer) {
+	layer.style().setSharedObjectID(null)
 	var shadowsCollection = [[layer style] shadows]
 	for (var i = 0; i < shadowsCollection.count(); i++) {
 		[shadowsCollection removeStylePartAtIndex: i]
