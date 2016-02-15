@@ -224,7 +224,7 @@ var createHelpButton = function(exportWindow) {
 	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
 	[helpButton setTitle:nil];
 	[helpButton setCOSJSTargetFunction:function(sender) {
-		var url = [NSURL URLWithString:@"http://medium.com"];
+		var url = [NSURL URLWithString:@"http://bit.ly/deep-framer-inventory"];
 		[[NSWorkspace sharedWorkspace] openURL:url]
 	}];
 	[helpButton setAction:"callAction:"]
