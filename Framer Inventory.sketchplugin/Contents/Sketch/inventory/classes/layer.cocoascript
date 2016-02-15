@@ -1,0 +1,1152 @@
+@import 'inventory/classes/state.cocoascript'
+
+@import 'inventory/getters/normalize.cocoascript'
+@import 'inventory/getters/get-place.cocoascript'
+@import 'inventory/strings/generate.cocoascript'
+
+
+function Layer (layerName) {
+	// name of layer
+	this.layerName = layerName;
+	this.states = [];
+	
+	this.filterRequired = false
+	this.titleState = nil
+	
+	// active conditions
+	this.areOpacityActive = false
+	this.areCornersActive = false
+	this.areRotationsActive = false
+	
+	this.areShadowsActive = false
+	this.areInnersActive = false
+	this.areBordersActive = false
+	this.areBackgroundsActive = true // always export bg
+	
+	
+	// exportable conditions
+	this.areShadowsExportable = true
+	this.areInnersExportable = true
+	this.areBordersExportable = true
+	this.areBackgroundsExportable = true
+	
+	// if equals -> css-filter, else -> image
+	this.areAllShadowsEqual = true
+	this.areAllBackgroundsExist = true
+
+}
+
+
+Layer.prototype.composeState = function(layer) {
+	var state = new State(layer)
+	this.updateConditions(state)
+	this.states.push(state)
+}
+
+
+// add state and make it transparent
+Layer.prototype.addState = function(state) {
+	this.updateConditions(state)
+	this.states.push(state)
+}
+
+
+
+
+
+
+
+
+Layer.prototype.updateConditions = function(state) {
+	// active
+	this.areOpacityActive = this.areOpacityActive || state.opacityActive
+	this.areCornersActive = this.areCornersActive || state.cornerActive
+	this.areRotationsActive = this.areRotationsActive || state.rotationActive
+	
+	this.areShadowsActive = this.areShadowsActive || state.shadowsActive
+	this.areInnersActive = this.areInnersActive || state.innersActive
+	this.areBordersActive = this.areBordersActive || state.bordersActive
+	this.areBackgroundsActive = this.areBackgroundsActive || state.backgroundsActive
+	
+	
+	
+	// exportable
+	this.areShadowsExportable = this.areShadowsExportable && state.shadowsExportable
+	this.areInnersExportable = this.areInnersExportable && state.innersExportable
+	this.areBordersExportable = this.areBordersExportable && state.bordersExportable
+	this.areBackgroundsExportable = this.areBackgroundsExportable && state.backgroundsExportable
+	
+	// exportable for groups and images
+	this.areAllShadowsEqual = this.areAllShadowsEqual && this.compareShadows(state)
+	this.areAllBackgroundsExist = this.areAllBackgroundsExist && state.backgroundsActive
+}
+
+Layer.prototype.areAllGeneratable = function(state) {
+	return (this.areShadowsExportable && this.areInnersExportable && this.areBordersExportable && this.areBackgroundsExportable) ? true : false
+}
+
+Layer.prototype.compareShadows = function(state) {
+	if (this.states == nil || state == nil || this.states.length < 1) { return true }
+	if (!compareMatrices(this.states[0].shadows, state.shadows)) { return false }
+	return true
+}
+
+
+
+
+
+
+
+Layer.prototype.describeState = function(currentState, imageRequired) {
+	if (imageRequired == nil) { imageRequired = false }
+	
+	var stateDescription = ""
+	stateDescription += generatePosition(currentState.composePosition())
+	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
+	
+	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.composeBackgrounds()) }
+	
+	stateDescription += generateRotation(currentState.rotation)
+	
+	if (!imageRequired) { stateDescription += generateShadows(currentState.composeShadows()) }
+	if (!imageRequired) { stateDescription += generateBorders(currentState.composeBorders()) }
+	
+	stateDescription += generateOpacity(currentState.opacity)
+	
+	return stateDescription
+}
+
+
+Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
+	if (imageRequired == nil) { imageRequired = false }
+	currentState.cleanTitledDescriptionShadows()
+	
+	var stateDescription = returnLayerName(this.layerName)
+	stateDescription += generatePosition(currentState.composePosition())
+	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
+	
+	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.composeBackgrounds()) }
+	if (imageRequired) { stateDescription += generateImagePath(this.layerName) }
+
+	stateDescription += generateRotation(currentState.rotation)
+	
+	if (!imageRequired) { stateDescription += generateShadows(currentState.composeShadows()) }
+	if (imageRequired && this.filterRequired) { stateDescription += generateFilterShadows(currentState.composeShadows()) }
+	if (!imageRequired) { stateDescription += generateBorders(currentState.composeBorders()) }
+	
+	stateDescription += generateOpacity(currentState.opacity)
+	
+	return stateDescription.replace("Layer,", "Layer")
+}
+
+
+
+
+
+
+
+Layer.prototype.returnShadowOpacity = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].shadowOpacity = value }
+}
+
+Layer.prototype.returnShadowHex = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].shadowHex = value }
+}
+
+Layer.prototype.returnBorderOpacity = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].borderOpacity = value }
+}
+
+Layer.prototype.returnBorderHex = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].borderHex = value }
+}
+
+Layer.prototype.returnBackgroundOpacity = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundOpacity = value }
+}
+
+Layer.prototype.returnBackgroundHex = function(value) {
+	if (!this.checkStates()) { return nil }
+	for (var i = 0; i < this.states.length; i++) { this.states[i].backgroundHex = value }
+}
+
+
+
+
+
+
+
+
+Layer.prototype.printLayer = function() {
+	return this.generateFramerStates()
+}
+
+
+Layer.prototype.generateFramerTitle = function(imageRequired) {
+	var titleState = new State()
+	
+	titleState.corner = this.analyseCorner()
+	titleState.rotation = this.analyseRotation()
+	
+	this.filterRequired = this.analyseFilterShadows(this.areShadowsExportable)
+	
+	var titleShadows = []
+	titleShadows.push(this.analyseShadowX())
+	titleShadows.push(this.analyseShadowY())
+	titleShadows.push(this.analyseShadowBlur())
+	titleShadows.push(this.analyseShadowSpread())
+	var shadowColor = this.analyseShadowColor()
+	if (shadowColor == nil) {
+		titleShadows.push(nil)
+		titleShadows.push(nil)
+	}
+	else {
+		titleShadows.push(shadowColor[0])
+		titleShadows.push(shadowColor[1])
+	}
+	titleState.shadows = [titleShadows]
+	// if (titleShadows[4] != nil && titleShadows[5] != nil) { ; }
+	// else {
+		// if (titleShadows[4] != nil) { this.returnShadowOpacity(titleShadows[4]) }
+		// else { this.returnShadowHex(titleShadows[5]) }
+	// }
+
+	
+	var titleBorders = []
+	titleBorders.push(1)
+	titleBorders.push(this.analyseBorderWidth())
+	titleBorders.push(0)
+	var shadowColor = this.analyseBorderColor()
+	if (shadowColor == nil) {
+		titleBorders.push(nil)
+		titleBorders.push(nil)
+	}
+	else {
+		titleBorders.push(shadowColor[0])
+		titleBorders.push(shadowColor[1])
+	}
+	titleState.borders = [titleBorders]
+	
+	
+	var titleBackgrounds = []
+	titleBackgrounds.push(0)
+	var backgroundColor = this.analyseBackgroundColor()
+	if (backgroundColor == nil) {
+		titleBackgrounds.push(nil)
+		titleBackgrounds.push(nil)
+	}
+	else {
+		titleBackgrounds.push(backgroundColor[0])
+		titleBackgrounds.push(backgroundColor[1])
+	}
+	titleState.backgrounds = [titleBackgrounds]
+
+	
+	titleState.opacity = this.analyseOpacity()
+
+	if (imageRequired) { this.updatePositionImage() }
+	
+	var titlePosition = []
+	titlePosition.push(this.analyseWidth())
+	titlePosition.push(this.analyseHeight())
+	titlePosition.push(this.analyseX())
+	titlePosition.push(this.analyseY())
+	titleState.position = titlePosition
+	
+	titleState.updateState()
+	this.titleState = titleState
+	
+	return titleState
+}
+
+
+Layer.prototype.generateFramerStates = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var layerType = this.analyseType()
+	var areAllGeneratable = this.areAllGeneratable()
+	var imageRequired = ((layerType == 2 || layerType == 3) && areAllGeneratable) ? false : true
+	if (imageRequired) { FramerInventory.requireExportPage() }
+	
+	var generatedStates = []
+	var statesDescriptions = []
+	var statesNames = []
+	
+	var prevState = nil
+	var maxSpace = 0
+	
+
+	var titleState = this.generateFramerTitle(imageRequired)
+	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
+	
+	if (currentCommandIdentifier == 2 && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
+	
+	for (var i = 0; i < this.states.length; i++) {
+		var currentState = this.states[i]
+		
+		if (currentState.isEqualToState(prevState)) {
+			// if (showLog) { log("Skipping duplicated state: " + currentState.stateName) }
+			continue
+		}
+
+		var stateDescription = this.describeState(currentState, imageRequired)
+		
+		statesDescriptions.push(stateDescription)
+		statesNames.push(currentState.stateName)
+		
+		FramerInventory.addStateName(currentState.stateName)
+		
+		prevState = currentState
+	}
+	
+	var switchStateDescription = ""
+	if (statesDescriptions.length > 1) {
+		for (var i = 0; i < statesDescriptions.length; i++) {
+			var generatedStateLine = generateState(statesNames[i], statesDescriptions[i])
+			if (generatedStateLine != "") { generatedStates.push(generatedStateLine) }
+		}
+		switchStateDescription = generateStateSwitchInstant(this.layerName, statesNames[0])
+	}
+	
+	return titleDescription + dln() + generateStateSection(this.layerName, generatedStates) + switchStateDescription
+}
+
+
+
+
+
+
+Layer.prototype.checkStates = function() {
+	if (this.states == nil || this.states.length == 0) {
+		if (showLog) { log("Warning: States are empty") }
+		return false
+	}
+	return true
+}
+
+Layer.prototype.updatePositionImage = function() {
+	var maxSize = 0
+	var maxSizeNumber = -1
+	
+	for (var i = 0; i < this.states.length; i++) {
+		var layer = this.states[i].layer
+		var layerForPosition = [layer duplicate]
+		if (this.filterRequired) { Layer.cleanLayerShadows(layerForPosition) }
+		
+		this.states[i].position = getPlaceImage(layerForPosition)
+		this.states[i].updateState()
+		
+		[layerForPosition removeFromParent]
+		
+		
+		var currentSize = this.states[i].width + this.states[i].height
+		if (currentSize > maxSize) {
+			maxSize = currentSize
+			maxSizeNumber = i
+		}
+	}
+	
+	if (maxSizeNumber != -1) {
+		var layerForPosition = this.states[maxSizeNumber].layer
+		
+		layerForPosition = Layer.returnLayerCopy(layerForPosition)
+		if (this.filterRequired) { Layer.cleanLayerShadows(layerForPosition) }
+		Layer.pasteLayer(layerForPosition)
+		Layer.addExportOptions(layerForPosition)
+	}
+}
+
+Layer.returnLayerCopy = function(layer) {
+	var layer_copy = [layer duplicate]
+	[layer_copy removeFromParent]
+	return layer_copy
+}
+
+Layer.cleanLayerShadows = function(layer) {
+	layer.style().setSharedObjectID(null)
+	var shadowsCollection = [[layer style] shadows]
+	for (var i = 0; i < shadowsCollection.count(); i++) {
+		[shadowsCollection removeStylePartAtIndex: i]
+	}
+}
+
+Layer.pasteLayer = function(layer) {
+	var currentPage = FramerInventory.getCurrentPage()
+	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	FramerInventory.cleanLayer(layer, framerInventoryPage)
+	if (![layer isVisible]) { [layer setIsVisible:true] }
+	if ([[[layer style] contextSettings] opacity] == 0) { [[[layer style] contextSettings] setOpacity:1] }
+	[framerInventoryPage addLayers: [layer]]
+}
+
+Layer.addExportOptions = function(layer) {
+	var sizeData = {
+	    "format": "png",
+	    "scale": FramerInventory.getRetinaValue(),
+	    "suffix": ""
+	}
+	
+	var exportSizes = [[layer exportOptions] exportFormats]
+	while([exportSizes count] > 0) { [[exportSizes firstObject] remove] }
+
+	var size = [[layer exportOptions] addExportFormat]
+ 	// [size setFormat:sizeData.format]
+    [size setScale:sizeData.scale]
+    [size setName:sizeData.suffix]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Layer.prototype.analyseType = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultType = this.states[0].type
+	var isSameType = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultType != this.states[i].type) {
+			isSameType = false
+			if (showLog) { log("Warning: " + this.states[i].layerName + " has mixed type") }
+		}
+	}
+	
+	return defaultType
+}
+
+Layer.prototype.analyseFilterShadows = function(areExportable) {
+	if (!this.checkStates()) { return nil }
+	if (!areExportable) { return false }
+	
+	var defaultValue = this.states[0].shadows
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (!compareMatrices(defaultValue, this.states[i].shadows)) {
+			return false
+		}
+	}
+	
+	if (defaultValue == nil) { return false}
+	return true
+}
+
+Layer.prototype.analyseOpacity = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultOpacity = this.states[0].opacity
+	var isSameOpacity = true
+	var opacityAbsolute = 1
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultOpacity != this.states[i].opacity) {
+			isSameOpacity = false
+			break
+		}
+	}
+	
+	if (isSameOpacity) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].opacity = nil
+			this.states[i].opacityActive = false
+		}
+	
+		this.areOpacityActive = false
+		return defaultOpacity
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].opacity == nil) {
+				this.states[i].opacity = opacityAbsolute
+				this.states[i].opacityActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+Layer.prototype.analyseCorner = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultCorner = this.states[0].corner
+	var isSameCorner = true
+	var cornerAbsolute = 0
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultCorner != this.states[i].corner) {
+			isSameCorner = false
+			break
+		}
+	}
+	
+	if (isSameCorner) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].corner = nil
+			this.states[i].cornerActive = false
+		}
+	
+		this.areCornersActive = false
+		return defaultCorner
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].corner == nil) {
+				this.states[i].corner = cornerAbsolute
+				this.states[i].cornerActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+Layer.prototype.analyseRotation = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultRotation = this.states[0].rotation
+	var isSameRotation = true
+	var rotationAbsolute = 0
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultRotation != this.states[i].rotation) {
+			isSameRotation = false
+			break
+		}
+	}
+	
+	if (isSameRotation) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].rotation = nil
+			this.states[i].rotationActive = false
+		}
+	
+		this.areRotationsActive = false
+		return defaultRotation
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].rotation == nil) {
+				this.states[i].rotation = rotationAbsolute
+				this.states[i].rotationActive = true
+			}
+		}
+	}
+	
+	return nil
+}
+
+
+
+
+Layer.prototype.analyseBorderWidth = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValue = this.states[0].borderWidth
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValue != this.states[i].borderWidth) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].borderWidth = nil }
+		if (defaultValue == 0) { return nil }
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].borderWidth == nil) {
+				this.states[i].borderWidth = 0
+			}
+		}
+		
+		defaultValue = this.states[0].borderWidth
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].borderWidth) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].borderWidth = nil }
+			return defaultValue
+		}
+	}
+
+	return nil
+}
+
+Layer.prototype.analyseBorderColor = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValueOpacity = this.states[0].borderOpacity
+	var defaultValueHex = this.states[0].borderHex
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValueOpacity != this.states[i].borderOpacity || defaultValueHex != this.states[i].borderHex) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].borderOpacity = nil
+			this.states[i].borderHex = nil
+		}
+		return [defaultValueOpacity, defaultValueHex]
+	}
+	else {
+		////
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].borderHex == nil) {
+				var suggestedBorders = this.suggestBorders(i)
+				if (suggestedBorders == nil) { log("ERROR: suggestBorders is nil") }
+				this.states[i].borderHex = suggestedBorders[0][4]
+				this.states[i].borderOpacity = suggestedBorders[0][3]
+			}
+		}
+		
+		defaultValueOpacity = this.states[0].borderOpacity
+		defaultValueHex = this.states[0].borderHex
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValueOpacity != this.states[i].borderOpacity || defaultValueHex != this.states[i].borderHex) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) {
+				this.states[i].borderOpacity = nil
+				this.states[i].borderHex = nil
+			}
+			return [defaultValueOpacity, defaultValueHex]
+		}
+	}
+	return nil
+}
+
+
+
+
+
+
+
+
+Layer.prototype.analyseBackgroundColor = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValueOpacity = this.states[0].backgroundOpacity
+	var defaultValueHex = this.states[0].backgroundHex
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValueOpacity != this.states[i].backgroundOpacity || defaultValueHex != this.states[i].backgroundHex) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].backgroundOpacity = nil
+			this.states[i].backgroundHex = nil
+		}
+		// if all layers have bg with zero opacity
+		if (defaultValueHex == nil && (this.states[0].type == 2 || this.states[0].type == 3)) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].opacity = 0 }
+		}
+		return [defaultValueOpacity, defaultValueHex]
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].backgroundHex == nil) {
+				this.states[i].opacity = 0
+				
+				var suggestedBackgrounds = this.suggestBackgrounds(i)
+				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
+				this.states[i].backgroundOpacity = suggestedBackgrounds[0][1]
+				this.states[i].backgroundHex = suggestedBackgrounds[0][2]
+			}
+		}
+		
+		defaultValueOpacity = this.states[0].backgroundOpacity
+		defaultValueHex = this.states[0].backgroundHex
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValueOpacity != this.states[i].backgroundOpacity || defaultValueHex != this.states[i].backgroundHex) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) {
+				this.states[i].backgroundOpacity = nil
+				this.states[i].backgroundHex = nil
+			}
+			return [defaultValueOpacity, defaultValueHex]
+		}
+	}
+	return nil
+}
+
+
+
+
+Layer.prototype.analysePosition = function() {
+	this.analyseWidth()
+	this.analyseHeight()
+	this.analyseX()
+	this.analyseY()
+}
+
+Layer.prototype.analyseWidth = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultWidth = this.states[0].width
+	var isSameWidth = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultWidth != this.states[i].width) {
+			isSameWidth = false
+			break
+		}
+	}
+	
+	if (isSameWidth) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].width = nil }
+		return defaultWidth
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseHeight = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultHeight = this.states[0].height
+	var isSameHeight = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultHeight != this.states[i].height) {
+			isSameHeight = false
+			break
+		}
+	}
+	
+	if (isSameHeight) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].height = nil }
+		return defaultHeight
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseX = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultX = this.states[0].x
+	var isSameX = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultX != this.states[i].x) {
+			isSameX = false
+			break
+		}
+	}
+	
+	if (isSameX) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].x = nil }
+		return defaultX
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseY = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultY = this.states[0].y
+	var isSameY = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultY != this.states[i].y) {
+			isSameY = false
+			break
+		}
+	}
+	
+	if (isSameY) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].y = nil }
+		return defaultY
+	}
+	
+	return nil
+}
+
+
+
+
+
+
+
+
+Layer.prototype.analyseShadowX = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValue = this.states[0].shadowX
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValue != this.states[i].shadowX) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowX = nil }
+		if (defaultValue == 0) { return nil }
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].shadowX == nil) {
+				this.states[i].shadowX = 0
+			}
+		}
+		
+		defaultValue = this.states[0].shadowX
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].shadowX) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowX = nil }
+			return defaultValue
+		}
+	}
+
+	return nil
+}
+
+Layer.prototype.analyseShadowY = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValue = this.states[0].shadowY
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValue != this.states[i].shadowY) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowY = nil }
+		if (defaultValue == 0) { return nil }
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].shadowY == nil) {
+				this.states[i].shadowY = 0
+			}
+		}
+		
+		defaultValue = this.states[0].shadowY
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].shadowY) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowY = nil }
+			return defaultValue
+		}
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseShadowBlur = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValue = this.states[0].shadowBlur
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValue != this.states[i].shadowBlur) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowBlur = nil }
+		if (defaultValue == 0) { return nil }
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].shadowBlur == nil) {
+				this.states[i].shadowBlur = 0
+			}
+		}
+		
+		defaultValue = this.states[0].shadowBlur
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].shadowBlur) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowBlur = nil }
+			return defaultValue
+		}
+	}
+	
+	return nil
+}
+
+Layer.prototype.analyseShadowSpread = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValue = this.states[0].shadowSpread
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValue != this.states[i].shadowSpread) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowSpread = nil }
+		if (defaultValue == 0) { return nil }
+		return defaultValue
+	}
+	else {
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].shadowSpread == nil) {
+				this.states[i].shadowSpread = 0
+			}
+		}
+		
+		defaultValue = this.states[0].shadowSpread
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValue != this.states[i].shadowSpread) {
+				sameValue = false
+				break
+			}
+		}
+		
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowSpread = nil }
+			return defaultValue
+		}
+	}
+
+	return nil
+}
+
+
+
+
+
+
+Layer.prototype.analyseShadowColor = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var defaultValueOpacity = this.states[0].shadowOpacity
+	var defaultValueHex = this.states[0].shadowHex
+	var sameValue = true
+	
+	for (var i = 1; i < this.states.length; i++) {
+		if (defaultValueOpacity != this.states[i].shadowOpacity || defaultValueHex != this.states[i].shadowHex) {
+			sameValue = false
+			break
+		}
+	}
+	
+	if (sameValue) {
+		for (var i = 0; i < this.states.length; i++) {
+			this.states[i].shadowOpacity = nil
+			this.states[i].shadowHex = nil
+		}
+		return [defaultValueOpacity, defaultValueHex]
+	}
+	else {
+		////
+		for (var i = 0; i < this.states.length; i++) {
+			if (this.states[i].shadowHex == nil) {
+				var suggestedShadows = this.suggestShadows(i)
+				if (suggestedShadows == nil) { log("ERROR: suggestShadows is nil") }
+				this.states[i].shadowOpacity = suggestedShadows[0][4]
+				this.states[i].shadowHex = suggestedShadows[0][5]
+			}
+		}
+		
+		defaultValueOpacity = this.states[0].shadowOpacity
+		defaultValueHex = this.states[0].shadowHex
+		sameValue = true
+		
+		for (var i = 1; i < this.states.length; i++) {
+			if (defaultValueOpacity != this.states[i].shadowOpacity || defaultValueHex != this.states[i].shadowHex) {
+				sameValue = false
+				break
+			}
+		}
+	
+		if (sameValue) {
+			for (var i = 0; i < this.states.length; i++) {
+				this.states[i].shadowOpacity = nil
+				this.states[i].shadowHex = nil
+			}
+			return [defaultValueOpacity, defaultValueHex]
+		}
+		
+	}
+	return nil
+}
+
+
+
+
+
+
+
+
+
+Layer.prototype.suggestShadows = function(currentStateNumber) {
+	
+	for (var i = currentStateNumber; i < this.states.length; i++) {
+		if (this.states[i].shadowsActive && this.states[i].shadows != nil) {
+			return this.states[i].shadows
+		}
+	}
+
+	for (var i = currentStateNumber; i >= 0; i--) {
+		if (this.states[i].shadowsActive && this.states[i].shadows != nil) {
+			return this.states[i].shadows
+		}
+	}
+	return nil
+	
+}
+
+Layer.prototype.suggestBorders = function(currentStateNumber) {
+	
+	for (var i = currentStateNumber; i < this.states.length; i++) {
+		if (this.states[i].bordersActive && this.states[i].borders != nil) {
+			return this.states[i].borders
+		}
+	}
+	for (var i = currentStateNumber; i >= 0; i--) {
+		if (this.states[i].bordersActive && this.states[i].borders != nil) {
+			return this.states[i].borders
+		}
+	}
+	return nil
+	
+}
+
+Layer.prototype.suggestBackgrounds = function(currentStateNumber) {
+	
+	for (var i = currentStateNumber; i < this.states.length; i++) {
+		if (this.states[i].backgroundsActive && this.states[i].backgrounds != nil) {
+			return this.states[i].backgrounds
+		}
+	}
+	for (var i = currentStateNumber; i >= 0; i--) {
+		if (this.states[i].backgroundsActive && this.states[i].backgrounds != nil) {
+			return this.states[i].backgrounds
+		}
+	}
+	return nil
+	
+}
+
+
+
+
+
+
+
+
+
+
+Layer.prototype.minimazeStates = function() {
+	if (!this.checkStates()) { return nil }
+	
+	var minimazedStates = []
+	minimazedStates.push(this.states[0])
+	
+	var baseState = nil
+	var currentState = nil
+	
+	for (var i = 1; i < this.states.length; i++) {
+		baseState = this.states[i - 1]
+		currentState = this.states[i]
+		
+		var cleanedState = baseState.getMinimalState(currentState)
+		cleanedState.stateName = currentState.stateName
+		minimazedStates.push(cleanedState)
+	}
+	
+	return minimazedStates
+}
+
+
+
+
+
+
+var ln = function() { return "\n" }
+var dln = function() { return ln() + ln() }
+var tln = function() { return "\t" }

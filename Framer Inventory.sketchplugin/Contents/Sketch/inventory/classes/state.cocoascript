@@ -1,0 +1,374 @@
+@import 'inventory/getters/exportable.cocoascript'
+
+@import 'inventory/getters/get-place.cocoascript'
+@import 'inventory/getters/get-opacity.cocoascript'
+@import 'inventory/getters/get-corners.cocoascript'
+@import 'inventory/getters/get-shadows.cocoascript'
+@import 'inventory/getters/get-borders.cocoascript'
+@import 'inventory/getters/get-background-color.cocoascript'
+
+@import 'inventory/strings/generate.cocoascript'
+
+
+
+
+function State (layer) {
+	
+	this.stateName = nil
+	this.layer = nil
+	this.type = nil
+	
+	
+	// active properties
+	this.position = nil
+	this.width = nil
+	this.height = nil
+	this.x = nil
+	this.y = nil
+
+	this.opacity = nil
+	this.corner = nil
+	this.rotation = nil
+	this.inners = nil
+	
+	this.shadows = nil
+	this.shadowX = nil
+	this.shadowY = nil
+	this.shadowBlur = nil
+	this.shadowSpread = nil
+	this.shadowOpacity = nil
+	this.shadowHex = nil
+	
+	this.borders = nil
+	this.borderWidth = nil
+	this.borderOpacity = nil
+	this.borderHex = nil
+	
+	this.backgrounds = nil
+	this.backgroundOpacity = nil
+	this.backgroundHex = nil
+	
+	
+	// active conditions
+	this.opacityActive = false
+	this.cornerActive = false
+	this.rotationActive = false
+	this.positionActive = false
+	
+	this.shadowsActive = false
+	this.innersActive = false
+	this.bordersActive = false
+	this.backgroundsActive = false
+	
+	// exportable conditions
+	this.shadowsExportable = false
+	this.innersExportable = false
+	this.bordersExportable = false
+	this.backgroundsExportable = false
+	this.generatable = false
+	
+	this.prepareState(layer)
+	this.updateState()
+}
+
+
+State.prototype.prepareState = function(layer) {
+	if (layer == nil) { return nil }
+	
+	var parentArtboard = findParentArtboard(layer)
+	this.stateName = [parentArtboard name]
+	
+	this.layer = layer
+	this.type = getObjectType(layer)
+	
+	if (this.type == 2 || this.type == 3) { this.position = getPlaceRect(layer) }
+	else { this.position = getPlaceImage(layer) }
+	
+	this.opacity = getOpacity(layer)
+	this.corner = getCornerRadius(layer)
+	if ([layer rotation] != 0) { this.rotation = (-[layer rotation]) }
+	
+	this.shadows = getShadows(layer)
+	this.inners = getInners(layer)
+	this.borders = getBorders(layer)
+	this.backgrounds = getBackgroundColors(layer)
+		
+}
+
+
+State.prototype.updateState = function() {
+	if (this.position != nil) {
+		this.width = this.position[0]
+		this.height = this.position[1]
+		this.x = this.position[2]
+		this.y = this.position[3]
+	}
+	
+	if (this.shadows != nil) {
+		var firstShadow = this.shadows[0]
+		
+		this.shadowX = firstShadow[0]
+		this.shadowY = firstShadow[1]
+		this.shadowBlur = firstShadow[2]
+		this.shadowSpread = firstShadow[3]
+		this.shadowOpacity = firstShadow[4]
+		this.shadowHex = firstShadow[5]
+	}
+	
+	if (this.borders != nil) {
+		var firstBorder = this.borders[0]
+		
+		this.borderWidth = firstBorder[1]
+		this.borderOpacity = firstBorder[3]
+		this.borderHex = firstBorder[4]
+	}
+	
+	if (this.backgrounds != nil) {
+		this.backgroundOpacity = this.backgrounds[0][1]
+		this.backgroundHex = this.backgrounds[0][2]
+	}
+	
+	// active conditions
+	this.opacityActive = (this.opacity == nil) ? false : true
+	this.cornerActive = (this.corner == nil) ? false : true
+	this.rotationActive = (this.rotation == nil) ? false : true
+	this.positionActive = (this.position == nil) ? false : true
+	
+	this.shadowsActive = (this.shadows == nil) ? false : true
+	this.innersActive = (this.inners == nil) ? false : true
+	this.bordersActive = (this.borders == nil) ? false : true
+	this.backgroundsActive = (this.backgrounds == nil) ? false : true
+	
+	// exportable conditions
+	this.shadowsExportable = this.isShadowsExportale()
+	this.innersExportable = this.isInnersExportale()
+	this.bordersExportable = this.isBordersExportale()
+	this.backgroundsExportable = this.isBackgroundsExportale()
+	this.generatable = this.isGeneratable()
+}
+
+
+
+
+
+
+State.prototype.isEqualToState = function(state) {
+	if (state == nil) { return false }
+	
+	if (this.type != state.type) { return false }
+	if (this.opacity != state.opacity) { return false }
+	if (this.corner != state.corner) { return false }
+	if (this.rotation != state.rotation) { return false }
+	
+	if (!compareArrays(this.position, state.position)) { return false }
+
+	if (!compareMatrices(this.shadows, state.shadows)) { return false }
+	if (!compareMatrices(this.inners, state.inners)) { return false }
+	if (!compareMatrices(this.borders, state.borders)) { return false }
+	if (!compareMatrices(this.backgrounds, state.backgrounds)) { return false }
+	
+	return true
+}
+
+
+
+
+
+State.prototype.isGeneratable = function() {
+	if (this.shadowsExportable && this.innersExportable && this.bordersExportable && this.backgroundsExportable) { return true }
+	else return false
+}
+
+State.prototype.isShadowsExportale = function() {
+	if (this.shadows == nil || this.shadows.length == 1) { return true }
+	else return false
+}
+
+State.prototype.isInnersExportale = function() {
+	if (this.inners == nil) { return true }
+	else return false
+}
+
+State.prototype.isBordersExportale = function() {
+	if (this.borders == nil) { return true }
+	else if (this.borders.length == 1) {
+		if (this.borders[0][0] == 1) {
+			if (this.borders[0][2] == 0) { return true }
+			else return false
+		}
+		else return false
+	}
+	else return false
+}
+
+State.prototype.isBackgroundsExportale = function() {
+	if (this.backgrounds == nil) { return true }
+	else if (this.backgrounds.length == 1) {
+		if (this.backgrounds[0][0] == 0) {
+			return true
+		}
+		else return false
+	}
+	else return false
+}
+
+
+
+
+
+
+State.cloneState = function(baseState) {
+	var layer = baseState.layer
+	var state = new State(layer)
+	
+	state.width = baseState.width
+	state.height = baseState.height
+	state.x = baseState.x
+	state.y = baseState.y
+	
+	state.shadowX = baseState.shadowX
+	state.shadowY = baseState.shadowY
+	state.shadowBlur = baseState.shadowBlur
+	state.shadowSpread = baseState.shadowSpread
+	state.shadowOpacity = baseState.shadowOpacity
+	state.shadowHex = baseState.shadowHex
+	
+	state.borderWidth = baseState.borderWidth
+	state.borderOpacity = baseState.borderOpacity
+	state.borderHex = baseState.borderHex
+	
+	state.backgroundOpacity = baseState.backgroundOpacity
+	state.backgroundHex = baseState.backgroundHex
+	
+	state.opacity = baseState.opacity
+	state.corner = baseState.corner
+	state.rotation = baseState.rotation
+	
+	return state
+}
+
+
+// clone state and keep only unique properties
+State.prototype.getMinimalState = function(compareState) {
+	var state = State.cloneState(compareState)
+	// state.stateName = this.stateName
+	//log("GM: " + this.stateName + " for " + state.stateName + " | " + this.stateName)
+	
+	if (this.width == state.width) { state.width = nil }
+	if (this.height == state.height) { state.height = nil }
+	if (this.x == state.x) { state.x = nil }
+	if (this.y == state.y) { state.y = nil }
+	
+	if (this.shadowX == state.shadowX) { state.shadowX = nil }
+	if (this.shadowY == state.shadowY) { state.shadowY = nil }
+	if (this.shadowBlur == state.shadowBlur) { state.shadowBlur = nil }
+	if (this.shadowSpread == state.shadowSpread) { state.shadowSpread = nil }
+	if (this.shadowOpacity == state.shadowOpacity && this.shadowHex == state.shadowHex) {
+		state.shadowOpacity = nil
+		state.shadowHex = nil
+	}
+	
+	if (this.borderWidth == state.borderWidth) { state.borderWidth = nil }
+	if (this.borderOpacity == state.borderOpacity && this.borderHex == state.borderHex) {
+		state.borderOpacity = nil
+		state.borderHex = nil
+	}
+	
+	if (this.backgroundHex == state.backgroundHex && this.backgroundOpacity == state.backgroundOpacity) {
+		state.backgroundOpacity = nil
+		state.backgroundHex = nil
+	}
+	
+	if (this.opacity == state.opacity) { state.opacity = nil }
+	if (this.corner == state.corner) { state.corner = nil }
+	if (this.rotation == state.rotation) { state.rotation = nil }
+
+
+	return state
+}
+
+
+State.prototype.createHiddenState = function(firstArtboardName) {
+	this.stateName = firstArtboardName
+	this.opacity = 0
+	this.opacityActive = true
+}
+
+
+
+
+
+
+State.prototype.composePosition = function() {
+	var composedPosition = []
+	
+	composedPosition.push(this.width)
+	composedPosition.push(this.height)
+	composedPosition.push(this.x)
+	composedPosition.push(this.y)
+
+	return composedPosition
+}
+
+State.prototype.composeShadows = function() {	
+	var shadows = []
+	shadows.push(this.shadowX)
+	shadows.push(this.shadowY)
+	shadows.push(this.shadowBlur)
+	shadows.push(this.shadowSpread)
+	shadows.push(this.shadowOpacity)
+	shadows.push(this.shadowHex)
+	
+	return [shadows]
+}
+
+State.prototype.composeBorders = function() {	
+	var borders = []
+	borders.push(1)
+	borders.push(this.borderWidth)
+	borders.push(0)
+	borders.push(this.borderOpacity)
+	borders.push(this.borderHex)
+	return [borders]
+}
+
+State.prototype.composeBackgrounds = function() {	
+	var backgrounds = []
+	backgrounds.push(0)
+	backgrounds.push(this.backgroundOpacity)
+	backgrounds.push(this.backgroundHex)
+	return [backgrounds]
+}
+
+State.prototype.cleanTitledDescriptionShadows = function() {
+	if (this.shadowX == 0) { this.shadowX = nil }
+	if (this.shadowY == 0) { this.shadowY = nil }
+	if (this.shadowBlur == 0) { this.shadowBlur = nil }
+	if (this.shadowSpread == 0) { this.shadowSpread = nil }
+}
+
+
+
+
+
+
+
+// a little helper
+State.prototype.printState = function() {
+	log("#########: " + this.stateName)
+	
+	log("Position " + this.position)
+	log("Opacity: " + this.opacity)
+	log("Corner: " + this.corner)
+	log("Rotation: " + this.rotation)
+	
+	if (this.shadows != nil) { log("Shadows: S=" + this.shadows.length + "| " + this.shadows) }
+	if (this.inners != nil) { log("Inners: I=" + this.inners.length + "| " + this.inners) }
+	if (this.borders != nil) { log("Borders: Bo=" + this.borders.length + "| " + this.borders) }
+	if (this.backgrounds != nil) { log("Backgrounds: Ba=" + this.backgrounds.length + "| " + this.backgrounds) }
+}
+
+
+State.prototype.printStateSmall = function() {
+	log("#########: " + this.stateName + " || " + this.x)
+}

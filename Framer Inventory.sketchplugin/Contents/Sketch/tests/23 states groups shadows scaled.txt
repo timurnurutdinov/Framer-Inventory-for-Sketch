@@ -1,0 +1,8 @@
+nice = new Layer image: "images/nice.png"
+
+nice.states.add {
+	1: { width: 252*retina, height: 270*retina, x: 62*retina, y: 104*retina}
+	2: { width: 178*retina, height: 191*retina, x: 99*retina, y: 138*retina}
+}
+nice.states.switchInstant "1"
+

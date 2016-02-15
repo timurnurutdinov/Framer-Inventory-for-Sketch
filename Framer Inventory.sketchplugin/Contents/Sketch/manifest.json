@@ -2,53 +2,68 @@
   "name" : "Framer Inventory",
   "author" : "Timur Nurutdinov",
   "authorEmail" : "addleimb@gmail.com",
-  "description": "Export FramerJS layers and states from Sketch",
+  "description": "Export FramerJS layers & states from Sketch",
   "homepage": "https://github.com/timurnurutdinov/Framer-Inventory",
   "identifier": "com.tilllur.framer-inventory",
-  "version": 1.0,
-  "compatibleVersion": 3.3,
+  "version": "2.0.0",
+  "compatibleVersion": 3.5,
   "commands" : [
     {
-      "script" : "action-replicate-layers.cocoascript",
+      "script" : "choose-replicate-layers.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "2. Replicate Selected",
-      "identifier" : "action-replicate-layers"
+      "name" : "◉   Replicate Layers",
+      "identifier" : "choose-replicate-layers"
     },
     {
-      "script" : "action-simulate-keynote.cocoascript",
+      "script" : "choose-generate-states.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "1. Simulate Keynote",
-      "identifier" : "action-simulate-keynote"
+      "name" : "◉   Generate States",
+      "identifier" : "choose-generate-states"
     },
     {
-      "script" : "action-select-inventorable.cocoascript",
+      "script" : "choose-simulate-keynote.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Select Exportables",
-      "identifier" : "action-select-inventorable"
+      "name" : "◎   Simulate Keynote",
+      "identifier" : "choose-simulate-keynote"
     },
     {
-      "script" : "action-collapse-artboards.cocoascript",
+      "script" : "choose-testing-environment.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Collapse Artboards",
-      "identifier" : "action-collapse-artboards"
+      "name" : "Run testing environment",
+      "identifier" : "choose-testing-environment"
+    },
+    {
+      "script" : "choose-settings.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Settings",
+      "identifier" : "choose-settings"
+    },
+    {
+      "script" : "choose-remove-export-page.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Remove Export Page",
+      "identifier" : "choose-remove-export-page"
     }
   ],
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "action-replicate-layers",
-		  "action-simulate-keynote",
+		  "choose-simulate-keynote",
+		  "choose-generate-states",
+		  "choose-replicate-layers",
 		  {
-		         "title": "3. Utils",
+		         "title": "      Utils",
 		         "items": [
-		           "action-select-inventorable",
-				   "action-collapse-artboards"
+				 	"choose-settings",
+					"choose-remove-export-page"
 		         ],
-		       }
+		  }
       ]
     }
 }

@@ -1,0 +1,40 @@
+
+// generate code for layers
+var runReplicateLayers = function(context) {
+	
+	var doc = context.document
+	var selection = context.selection
+	
+	[[NSPasteboard generalPasteboard] clearContents]
+	
+	var layers = []
+	var pasteboardContent = []
+	
+	var currentPage = FramerInventory.getCurrentPage()
+	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	FramerInventory.cleanPage(framerInventoryPage)
+	
+	
+	var sortedSelection = FramerInventory.cleanSelection(selection)
+	if (sortedSelection == nil || sortedSelection.count() < 1) {
+		[doc showMessage:"Nothing to replicate. Please, select some layers"]
+		return
+	}
+	
+	for (var i = 0; i < [sortedSelection count]; i++) {
+		var currentLayer = [sortedSelection objectAtIndex: i]
+		var layer = new Layer([currentLayer name])
+		layer.composeState(currentLayer)
+		layers.push(layer)
+	}
+	
+
+	for (var i = 0; i < layers.length; i++) {
+		pasteboardContent += layers[i].printLayer()
+	}
+	
+	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
+	FramerInventory.showDoneMessage()
+	
+	return pasteboardContent
+}

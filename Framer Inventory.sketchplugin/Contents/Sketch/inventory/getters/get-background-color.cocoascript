@@ -1,0 +1,18 @@
+var getBackgroundColors = function(layer) {
+	if (layer == nil) { return nil }
+	
+	var enabledFills = []
+	
+	var fillCollection = [[layer style] fills]
+	for (var f = fillCollection.count() - 1; f >= 0; f--) {
+		var localFill = [fillCollection objectAtIndex:f]
+		
+		if ([localFill isEnabled]) {
+			var fill = [[localFill fillType], [[localFill color] alpha], [[localFill color] hexValue]]
+			enabledFills.push(fill)
+		}
+	}
+	
+	if (enabledFills == '') { return nil }
+	return enabledFills
+}

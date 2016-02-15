@@ -1,0 +1,24 @@
+
+var getCornerRadius = function(layer) {
+	if (layer == nil) { return nil }
+
+	var localType = getObjectType(layer)
+
+	if (localType == 1) {
+		return nil
+	}
+	else if (localType == 2){
+		var shape = layer.layers().firstObject()
+		if(shape && shape.isKindOfClass(MSRectangleShape)) {
+			var cornerValue = shape.cornerRadiusFloat()
+			if (cornerValue == 0) { return nil }
+			return cornerValue
+		}
+		return nil
+	}
+	else if (localType == 3){
+		return "100%"
+	}
+
+	return nil
+}

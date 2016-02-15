@@ -1,0 +1,230 @@
+@import 'inventory/libs/testing/logger.js'
+
+
+var environmentLayersNames = []
+var environmentPagesNames = []
+
+var runTests = true
+var testingSelection = NSMutableArray.array()
+
+var runTestingEnvironment = function(context) {
+	var doc = context.document
+	var pages = [doc pages]
+	var runningPage = [doc currentPage]
+	
+	var resultingString = ""
+	resultingString += "|------------------------------------|\n"
+	resultingString += "|---------TESTING ENVIRONMENT--------|\n"
+	resultingString += "|------------------------------------|\n\n\n"
+	
+	var skippedPagesNames = 0
+	var skippedLayersNames = 0
+	
+	var pairs = generatePairs()
+	var answers = []
+	var errorAnswers = []
+	
+	for (var i = 0; i < pairs.length; i++) {
+		var answer = ""
+		var pageName = pairs[i]
+		testingSelection = NSMutableArray.array()
+		
+		var operatingPage = FramerInventory.findPageWithName(pageName)
+		if (showTestLog) { log("Running on page: " + pageName) }
+		if (showTestLog) { log("Operating page: " + [operatingPage name]) }
+		
+		if (operatingPage != nil) {
+			
+			doc.setCurrentPage(operatingPage)
+			[[doc currentPage] deselectAllLayers]
+			
+			testingSelection = [operatingPage exportableLayers]
+			if (showTestLog) { log("exportable layers: " + testingSelection) }
+			
+			answer = runGenerateStates(context, runTests)
+			answers.push(answer)
+			
+		}
+		else {
+			skippedPagesNames++
+		}
+	}
+	
+	
+	resultingString += "Initialised " + pairs.length + " tests\n"
+	if (skippedPagesNames == 0) {
+		resultingString += "All testing layers are found\n"
+	}
+	resultingString += "\n\n\n\n"
+
+
+	for (var i = 0; i < answers.length; i++) {
+		var readReferenceFromFile = pairs[i]
+		
+		resultingString += "" + readReferenceFromFile + "\n"
+		
+		var diff = compareAnswer(answers[i], readReferenceFromFile)
+		if (showLog) {
+			if (diff == nil) {log(i + " Correct test. Diff is null: " + diff)}
+			else { log(i + " diff: " + diff) }
+		}
+
+		if (diff != nil) {
+			resultingString += diff
+			errorAnswers.push(i)
+		}
+		else {
+			resultingString += "Passed"
+		}
+		resultingString += "\n\n"
+	}
+	
+	
+	doc.setCurrentPage(runningPage)
+	
+	
+	if (skippedPagesNames == 0 && skippedLayersNames == 0) {
+		[doc showMessage:"Passed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests"]
+	}
+	else {
+		[doc showMessage:"Warning: skipped " + skippedPagesNames + " pages & " + skippedLayersNames + " layers"]
+	}
+	
+	resultingString += "\n\nPassed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests\n"
+	writeTestingLog(resultingString)
+}
+
+
+
+
+function TestingEnvironment () {}
+
+TestingEnvironment.getTestingSelection = function() {
+	return testingSelection
+}
+
+
+
+
+
+// compare functions
+var compareAnswer = function(answer, fileName) {
+	
+	var readText = readFileForAnswer(fileName)
+	if(showLog) { log("Read file: " + readText) }
+	
+	if (readText == "" || readText == '' || readText == nil) { return false }
+	return compareTextsPhrase(answer, "" + readText)
+}
+
+
+var compareTexts = function(text1, text2) {
+	if (text1 == "" || text2 == "") { return false }
+	if (text1.length != text2.length) { return false }
+	for (var i = 0; i < text1.length; i++) {
+		if (text1[i] != text2[i]) { return false }
+	}
+	return true
+}
+
+
+var compareTextsPhrase = function(text1, text2) {
+	if (text1 == "" || text2 == "") { return "NULL" }
+
+	var lines1 = text1.split("\n");
+	var lines2 = text2.split("\n");
+
+	var longestLine = (lines1.length > lines2.length) ? lines2.length : lines1.length
+	for (var l = 0; l < longestLine; l++) {
+		if (lines1[l] == lines2[l]) {
+			continue
+		}
+		else if (lines1[l] == nil || lines2[l] == nil) { return "NULL" }
+		else {
+			var text1Array = lines1[l].split(" ");
+			var text2Array = lines2[l].split(" ");
+			
+			var maxLength = (text1Array.length > text2Array.length) ? text2Array.length : text1Array.length
+			
+			for (var i = 0; i < maxLength; i++) {
+					if (text1Array[i] != text2Array[i]) {
+						var prev = ""
+						if (i != 0) { prev = text1Array[i - 1] }
+						var errorLocalString = "IN LINE STARTS: " + lines1[l].split(" ", 1) + "\n"
+						errorLocalString += "DIFF: " + prev + " " + text1Array[i]
+						log(errorLocalString)
+						return errorLocalString
+					}
+				}
+		}
+	}
+}
+
+
+
+
+
+
+// TESTS
+var generatePairs = function() {
+	var pairs = []
+	
+	pairs.push("01 shapes")
+	
+	// check params
+	pairs.push("02 states predict opacity")
+	pairs.push("03 states predict no opacity")
+	
+	pairs.push("04 states predict rotation")
+	pairs.push("05 states predict no rotation")
+	
+	pairs.push("06 states predict corners")
+	pairs.push("07 states predict no corners")
+	
+	pairs.push("08 states predict borders")
+	pairs.push("09 states predict borders color")
+	pairs.push("10 states predict borders opacity")
+	pairs.push("11 states predict no borders")
+	
+	pairs.push("12 states predict shadows")
+	pairs.push("13 states predict shadows color")
+	pairs.push("14 states predict shadows opacity")
+	pairs.push("15 states predict no shadows")
+	
+	pairs.push("16 states predict backgrounds")
+	pairs.push("17 states predict backgrounds color")
+	pairs.push("18 states predict backgrounds opacity")
+	pairs.push("19 states predict no backgrounds")
+	
+	pairs.push("20 states unexportable rectangle")
+	
+	pairs.push("21 states groups shadows same")
+	pairs.push("22 states groups shadows same borders")
+	pairs.push("23 states groups shadows scaled")
+	
+	
+	
+	// check normalising
+	pairs.push("24 layer out artboard position")
+	pairs.push("25 layer out artboard position group")
+	pairs.push("26 layer out artboard position group shadow")
+	
+		
+	// check hierarhy
+	pairs.push("27 states hierarhy selection order 1")
+	pairs.push("28 states hierarhy selection order 2")
+	pairs.push("29 states hierarhy selection order 3")
+	pairs.push("30 states hierarhy selection order 4")
+	
+	// double check color composing
+	pairs.push("31 states predict borders color opacity round")
+	pairs.push("32 states predict borders color opacity")
+	pairs.push("33 states predict shadows color opacity")
+	pairs.push("34 states predict background color opacity")
+	
+	
+	return pairs
+}
+
+
+

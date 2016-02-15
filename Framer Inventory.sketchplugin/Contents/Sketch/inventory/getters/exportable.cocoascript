@@ -1,0 +1,167 @@
+
+
+// types:
+// -1 - unsupported
+//  1 - group, image
+//  2 - rectangle 
+//  3 - oval
+//  4 - text layer
+//  5 - other shape
+
+function getObjectType(localLayer) {
+	if (localLayer == nil) {
+		log("Warning: Type is nil")
+		return nil
+	}
+	
+	var type = [localLayer className]
+	var answer = 0
+	
+	if (type == "MSSliceLayer") { answer = -1 }
+	else if (type == "MSTextLayer") { answer = 4 }
+	else if (type == "MSLayerGroup") {
+		answer =  1
+	}
+	else if (type == "MSBitmapLayer") { answer = 1 }
+	else if (type == "MSShapeGroup") {
+		answer = getShapeType(localLayer)
+	}
+	else if (type == "MSTextLayer") {
+		answer =  1
+	}
+	else {
+		log("ERROR: Unrecognised object type")
+		asnwer = -1
+	}
+	
+	// log("TYPE IS: " + answer)
+	return answer
+}
+
+
+function getShapeType(localLayer) {
+	if ([localLayer className] != "MSShapeGroup") { return -1 }
+	var magicLayers = localLayer.layers()
+	
+	// do not export combined shapes
+	if (magicLayers.count() > 1) { return 5 }
+	
+	// if shape is made with one layer
+	var shape = magicLayers.firstObject()
+	
+	// if it's a Rectangle or Oval
+	if(shape && shape.isKindOfClass(MSOvalShape)) {
+		if ([[[shape path] points] count] != 4) { return 5 }
+		return 3
+	}
+	else if(shape && shape.isKindOfClass(MSRectangleShape)) {
+		if ([[[shape path] points] count] != 4) { return 5 }
+		return 2
+	}
+	else {
+		log("ERROR STRANGE! SEEMS LIKE SHAPE")
+	}
+	
+	return 5
+}
+
+
+
+
+
+var removePath = function(longPath) {
+	return longPath.replace(/^.*[\\\/]/, '').trim()
+}
+
+var clearName = function(longName) {
+	var clearedName = removePath(longName).trim().split(' ').join('_')
+	return clearedName.toLowerCase()
+}
+
+
+
+
+
+
+
+
+// relative to Parent/Artboard
+
+function findParentArtboard(layer) {
+	if (layer == nil) { return nil }
+	
+	var lookingForParentArtboard = true
+	var localParent = layer
+	while (lookingForParentArtboard) {
+		localParent = [localParent parentGroup]
+		if ([localParent className] == "MSArtboardGroup") {
+			lookingForParentArtboard = false
+		}
+		else if ([localParent className] == "MSPage") {
+			lookingForParentArtboard = false
+		}
+	}
+	return localParent
+}
+
+function findParentPage(layer) {
+	var lookingForParentPage = true
+	var localParent = layer
+	while (lookingForParentPage) {
+		localParent = [localParent parentGroup]
+		if ([localParent className] == "MSPage") {
+			lookingForParentPage = false
+		}
+	}
+	return localParent
+}
+
+function findParentPageByArtboard(layer) {
+	var parentArtboard = findParentArtboard(layer)
+	if ([parentArtboard className] == "MSPage") {
+		return parentArtboard
+	}
+	return [parentArtboard parentGroup]
+}
+
+
+
+
+
+// common
+
+function compareArrays(left, right) {
+	if (left == nil && right == nil) { return true }
+	else if (left == nil || right == nil) { return false }
+	
+	var sizeLeft = left.length
+	var sizeRight = right.length
+	if (sizeLeft != sizeRight) { return false }
+	
+	for (var i = 0; i < sizeLeft; i++) {
+		//log(left[i] + " " + right[i])
+		if (left[i] != right[i]) { 
+			return false
+		}
+	}
+
+	return true
+}
+
+
+function compareMatrices(left, right) {
+	if (left == nil && right == nil) { return true }
+	else if (left == nil || right == nil) { return false }
+	
+	var sizeLeft = left.length
+	var sizeRight = right.length
+	if (sizeLeft != sizeRight) { return false }
+	
+	for (var i = 0; i < sizeLeft; i++) {
+		if (!compareArrays(left[i], right[i])) {
+			return false
+		}
+	}
+	
+	return true
+}

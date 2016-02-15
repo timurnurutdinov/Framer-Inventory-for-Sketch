@@ -1,0 +1,106 @@
+
+
+var block = 40
+var paddingLeft = block / 2
+var columnWidth = block * 5 + 20
+
+var smallFontSize = 13
+var bigFontSize = 20
+
+var whiteColor = [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1]
+var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]
+var fieldColor = [NSColor colorWithSRGBRed:0.97 green:0.97 blue:0.97 alpha:1]
+var backgroundColor = [NSColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1]
+
+
+
+
+
+// configure plugin
+var selectDuplicatedArtboards = function(artboardName) {
+	
+	var exportWindow = [[NSWindow alloc] init]
+	[exportWindow setFrame:NSMakeRect(0, 0, columnWidth * 2 + paddingLeft * 2 - block * 2, block * 5) display:false];
+	[exportWindow setBackgroundColor:backgroundColor];
+	
+	
+	createErrorDescription(exportWindow)
+	
+	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft - 6, 0, block * 4, 50)];
+	[showDuplicatesButton setTitle:"Show artboards"];
+	[showDuplicatesButton setBezelStyle:NSRoundedBezelStyle];
+	[showDuplicatesButton setKeyEquivalent:"\r"];
+	[showDuplicatesButton setCOSJSTargetFunction:function(sender) {
+		[exportWindow orderOut:nil]
+		[NSApp stopModal]
+		
+		selectArtboardsWithName(artboardName)
+	}];
+	[showDuplicatesButton setAction:"callAction:"];
+	[[exportWindow contentView] addSubview:showDuplicatesButton];
+	
+	
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + block * 4 - 6, 0, 72, 50)];
+	[cancelButton setTitle:"Cancel"];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[exportWindow orderOut:nil]
+		[NSApp stopModal]
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[exportWindow contentView] addSubview:cancelButton];
+	
+	
+	[NSApp runModalForWindow:exportWindow];
+}
+
+var selectArtboardsWithName = function(artboardName) {
+	var currentPage = FramerInventory.getCurrentPage()
+	[currentPage deselectAllLayers]
+	
+	var artboards = [currentPage artboards]
+	for (var i = 0; i < artboards.count(); i++) {
+		var currentArtboard = [artboards objectAtIndex: i]
+		if ([currentArtboard name] == artboardName) {
+			[currentArtboard select:true byExpandingSelection:true]
+		}
+	}
+	
+	[currentDocument showMessage:"Please, rename artboards and try again"]
+}
+
+
+
+
+
+
+
+
+
+var createErrorDescription = function(exportWindow) {
+	var labelDescription = "Please, rename artboards"
+	var errorDescription = "This page has artboards with the same name.\nSimulate Keynote command works properly only\nwith unique artboards' names"
+	var labelPlaceholder = "Ex: \"retina\""
+	var paddingBottom = block * 2
+	
+	var titleRetina = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth * 2, 16)];
+    [titleRetina setEditable:false];
+    [titleRetina setBordered:false];
+    [titleRetina setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
+    [titleRetina setTextColor:lightColor];
+    [titleRetina setDrawsBackground:false];
+    [titleRetina setStringValue:errorDescription];
+    [titleRetina sizeToFit];
+    [[exportWindow contentView] addSubview:titleRetina];
+	
+	var titleRetina = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom + block + 14, columnWidth, 16)];
+    [titleRetina setEditable:false];
+    [titleRetina setBordered:false];
+    [titleRetina setFont:[NSFont systemFontOfSize:bigFontSize]];
+    [titleRetina setTextColor:whiteColor];
+    [titleRetina setDrawsBackground:false];
+    [titleRetina setStringValue:labelDescription];
+    [titleRetina sizeToFit];
+    [[exportWindow contentView] addSubview:titleRetina];
+}

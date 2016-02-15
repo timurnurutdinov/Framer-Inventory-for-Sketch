@@ -1,0 +1,10 @@
+var getOpacity = function(layer) {
+	if (layer == nil) { return nil }
+	
+	if (![layer isVisible]) { return 0 }
+	
+	var opacity = [[[layer style] contextSettings] opacity]
+	if (opacity == 1) { return nil }
+	
+	return opacity.toFixed(1)
+}

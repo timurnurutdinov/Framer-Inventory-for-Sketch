@@ -1,0 +1,108 @@
+// types:
+// -1 - unsupported
+// 1  - group, image, shape
+// 2  - rectangle 
+// 3  - oval
+// 4  - text layer
+
+
+// returns width, height, x, y
+function getPosition(layer, type, isStillExportable) {
+	if (layer == nil) { return nil }
+	
+	if (type == nil) { type = getObjectType(layer) }
+	if (isStillExportable == nil) { if (showLog) { log("Warning: isStillExportable is unknown") } }	
+	
+	if (isStillExportable && (type == 2 || type == 3)) { return getPlaceRect(layer) }
+	return getPlaceImage(layer)
+}
+
+
+
+
+
+
+
+var getPlaceImage = function(layer) {
+	var currentPage = findParentPage(layer)
+	var parentArtboard = findParentArtboard(layer)
+	var parentRect = [parentArtboard absoluteRect]
+
+	// copy layer and place it to artboard
+	var layer_copy = [layer duplicate]
+	[layer_copy removeFromParent]
+	[currentPage addLayers: [layer_copy]]
+	
+	
+	var frame = [layer_copy frame]
+	[frame setX: [[layer absoluteRect] x]]
+	[frame setY: [[layer absoluteRect] y]]
+	
+	
+	// normalize layer for export
+	[layer_copy setRotation: 0]
+	if ([[[layer_copy style] contextSettings] opacity] == 0) {
+		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
+	}
+	if (![layer_copy isVisible]) { [layer_copy setIsVisible:true] }
+		
+		
+	var values = []
+	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
+	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
+	//if (showLog) { log("Values of " + [layer name] + ": " + values) }
+	
+	[layer_copy removeFromParent]	
+	return values
+}
+
+
+
+var getPlaceRect = function(layer) {
+	if (layer == nil) { return nil }
+	
+	var parentArtboard = findParentArtboard(layer)
+
+	var layer_copy = [layer duplicate]
+	[layer_copy setRotation: 0]
+	
+	var copied_x = getX(layer_copy, parentArtboard)
+	var copied_y = getY(layer_copy, parentArtboard)
+	
+	var values = [getWidth(layer), getHeight(layer), copied_x, copied_y]
+	
+	[layer_copy removeFromParent]
+	
+	return values
+}
+
+
+
+
+
+
+// support
+
+var getY = function(layer, parentLayer) {
+	var parentY = [[parentLayer absoluteRect] y]
+	var layerY = [[layer absoluteRect] y]
+	return -(parentY - layerY)
+}
+
+var getX = function(layer, parentLayer) {
+	var parentX = [[parentLayer absoluteRect] x]
+	var layerX = [[layer absoluteRect] x]
+	return -(parentX - layerX)
+}
+
+var getHeight = function(layer) {
+	return [[layer frame] height]
+}
+
+var getWidth = function(layer) {
+	return [[layer frame] width]
+}
+
+
+
+

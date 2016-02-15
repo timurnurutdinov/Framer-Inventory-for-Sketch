@@ -1,0 +1,337 @@
+function returnLayerName(layerName) {
+	return normalizeName(layerName) + " = new Layer"
+}
+
+
+function normalizeName(layerName) {
+	return clearName(layerName)
+}
+
+
+var convertHex = function(hex, opacity) {
+    hex = hex.replace('#','');
+    r = parseInt(hex.substring(0,2), 16);
+    g = parseInt(hex.substring(2,4), 16);
+    b = parseInt(hex.substring(4,6), 16);
+
+    result = 'rgba('+r+','+g+','+b+','+opacity+')';
+    return "\"" + result + "\"";
+}
+
+
+var calc = function(value) {
+	if (value == nil) { return "0 " }
+	return "calc(" + value + "px*\" + " + userDefaults.myRetina + " + \") "
+}
+
+
+var calcColor = function(value) {
+	var deleteLastScobe = value.replace(/\)\"/, '')
+	return "\" + " + deleteLastScobe + "))\""
+}
+
+
+
+
+
+
+
+function generateOpacity(value) {
+	if (value == nil) { return "" }
+	return ", opacity: " + value
+}
+
+// function generateAbsoluteOpacity() {
+// 	return ", opacity: 1"
+// }
+//
+// function generateTransparentOpacity() {
+// 	return ", opacity: 0"
+// }
+
+
+
+function generateRotation(value) {
+	if (value == nil) { return "" }
+	return ", rotation: " + value
+}
+
+
+function generateCorner(value) {
+	if (value == nil) { return "" }
+	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
+	return ", borderRadius: " + value + "*" + userDefaults.myRetina
+}
+
+
+
+function generateShadows(values) {
+	if (values == nil) { return "" }
+	else if (values.length == 1) {
+		var value = values[0]
+		var composedShadow = ""
+
+		if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userDefaults.myRetina }
+		if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userDefaults.myRetina }
+		if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userDefaults.myRetina }
+		if (value[3] != nil) { composedShadow += ", shadowSpread: " + value[3] + "*" + userDefaults.myRetina }
+		if (value[5] != nil && value[4] != nil) { composedShadow += ", shadowColor: "  + convertHex(value[5], value[4]) }
+		return composedShadow
+	}
+	else return ""
+}
+
+// function generatePassiveShadowsWithColor(colorValue) {
+// 	if (colorValue == nil) { return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: \"rgba(0,0,0,0)\"" }
+// 	return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: " + convertHex(colorValue[5], colorValue[4])
+// }
+
+// function generateShadows(value) {
+// 	if (value == nil) { return "" }
+// 	else {
+// 		var composedShadow = ""
+//
+// 		if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userDefaults.myRetina }
+// 		if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userDefaults.myRetina }
+// 		if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userDefaults.myRetina }
+// 		if (value[3] != nil) { composedShadow += ", shadowSpread: " + value[3] + "*" + userDefaults.myRetina }
+// 		if (value[5] != nil && value[4] != nil) { composedShadow += ", shadowColor: "  + convertHex(value[5], value[4]) }
+// 		return composedShadow
+// 	}
+// }
+
+
+
+function generateFilterShadows(values) {
+	if (values == nil) { return "" }
+	else if (values.length == 1) {
+		var value = values[0]
+		var color = convertHex(value[5], value[4])
+		
+		var shadowVariable = ", style: {\"-webkit-filter\": \"drop-shadow(" + calc(value[0])
+		shadowVariable += calc(value[1]) + calc(value[2]) + calcColor(color) + "}"
+		return shadowVariable
+	}
+	else return ""
+}
+
+
+// function generatePassiveFilterShadowsWithColor(colorValue) {
+// 	if (colorValue == nil) { return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 rbga(0,0,0,0))\"}" }
+// 	var color = convertHex(colorValue[5], 0)
+// 	var fixed = color.replace('\"', '')
+// 	log("COLOR FILTER: " + fixed)
+// 	return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 " + fixed + ")\"}"
+// }
+
+
+
+function generateBorders(values) {
+	if (values == nil) { return "" }
+	else if (values.length == 1) {
+		var value = values[0]
+		var composedBorder = ""
+		if (value[1] != nil) { composedBorder += ", borderWidth: " + value[1] + "*" + userDefaults.myRetina }
+		if (value[3] != nil && value[4] != nil) { composedBorder += ", borderColor: "  + convertHex(value[4], value[3]) }
+		return composedBorder
+	}
+	else return ""
+}
+
+// function generatePassiveBordersWithColor(colorValue) {
+// 	if (colorValue == nil) { return ", borderWidth: 0, borderColor: \"rgba(0,0,0,0)\"" }
+// 	return  ", borderWidth: 0, borderColor: " + convertHex(colorValue[4], colorValue[3])
+// }
+
+
+
+function generateBackgrounds(values) {
+	if (values == nil) { return "" }
+	else if (values.length == 1) {
+		var value = values[0]
+		if (value[1] != nil && value[2] != nil) { return ", backgroundColor: " + convertHex(value[2], value[1]) }
+		return ""
+	}
+	else return ""
+}
+
+// function generatePassiveBackgroundsWithColor(colorValue) {
+// 	if (colorValue == nil || colorValue == '') { return ", backgroundColor: \"rgba(0,0,0,0)\"" }
+// 	return ", backgroundColor: "  + convertHex(colorValue[2], colorValue[1])
+// }
+
+
+
+function generatePosition(values) {
+	if (values == nil || values.length < 4) { return "" }
+	else {
+		var width = ""
+		var height = ""
+		var x = ""
+		var y = ""
+		
+		if (values[0] != nil) { width = " width: " + values[0] + "*" + userDefaults.myRetina }
+		if (values[1] != nil) { height = ", height: " + values[1] + "*" + userDefaults.myRetina }
+		if (values[2] != nil) { x = ", x: " + values[2] + "*" + userDefaults.myRetina }
+		if (values[3] != nil) { y = ", y: " + values[3] + "*" + userDefaults.myRetina }
+		
+		return "" + width + height + x + y
+	}
+}
+
+
+function generateImagePath(dirtyPath) {
+	return ", image: \"images/" + removePath(dirtyPath) + ".png\""
+}
+
+
+
+
+
+
+// states related
+
+function generateStateSection(layerName, generatedStates) {
+	if (generatedStates == nil || generatedStates.length == 0) { return "" }
+	
+	var stateSectionName = normalizeName(layerName) + ".states.add {" + ln()
+	var stateBottomSection = "}" + ln()
+	
+	var states = ""
+	for (var i = 0; i < generatedStates.length; i++) {
+		var correctBeginString = generatedStates[i].replace("{,", "{")
+		states += tln() + correctBeginString + ln()
+	}
+	
+	return stateSectionName + states + stateBottomSection
+}
+
+function generateState(stateName, stateContent) {
+	if (stateContent == "" || stateContent == nil || stateContent == '') { return "" }
+	return clearName(stateName) + ": {" + stateContent + "}"
+}
+
+
+function generateStateSwitchInstant(layerName, stateName) {
+	return "" + normalizeName(layerName) + ".states.switchInstant \"" + normalizeName(stateName) + "\"" + dln()
+}
+
+function generateRetinaVariable() {
+	var chosenRetina = FramerInventory.getRetinaValue()
+	return userDefaults.myRetina + " = " + chosenRetina + ln()
+}
+
+function generatePhoneModel() {
+	var model = FramerInventory.getPhoneValue()
+	var modelDescription = ""
+	
+	if (model == 1 || model == 2 || model == 3) {
+		modelDescription += "# mobile" + ln()
+	} 
+	
+	if (model == 1) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln()
+	}
+	else if (model == 2) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln()
+		modelDescription += "if Screen.width == 640" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.853" + ln()
+	}
+	else if (model == 3) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln()
+		modelDescription += "if Screen.width == 640" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.515" + ln()
+		modelDescription += "if Screen.width == 750" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.604" + ln()
+	}
+	return modelDescription
+}
+
+
+
+function getButtonName() {
+	return "cycleButton"
+}
+
+function generateCycleButton() {
+	return getButtonName() + " = new Layer width: Screen.width, height: Screen.height, backgroundColor: \"transparent\"" + dln()
+}
+
+
+
+function getCycleArrayName() {
+	return "statesFromArtboards"
+}
+
+function generateCycleStates(states) {
+	var cycleStatesDescription = getCycleArrayName() + " = ["
+	for (var i = 0; i < states.length; i++) {
+		cycleStatesDescription += "\"" + normalizeName(states[i]) + "\""
+		if (i != states.length - 1) { cycleStatesDescription += ", "}
+	}
+	cycleStatesDescription += "]" + ln()
+	return cycleStatesDescription
+}
+
+
+
+function getLayersArrayName() {
+	return "items"
+}
+
+function generateLayers(layers) {
+	var layersDescription = getLayersArrayName() + " = ["
+	for (var i = 0; i < layers.count(); i++) {
+		var layerName = [[layers objectAtIndex: i] name]
+		layersDescription += normalizeName(layerName)
+		if (i != layers.count() - 1) { layersDescription += ", "}
+	}
+	layersDescription += "]" + ln()
+	return layersDescription
+	
+}
+
+
+
+function getCyclerName() {
+	return "cycler"
+}
+
+function generateCycler() {
+	var cyclerDescription = getCyclerName() + " = Utils.cycle(" + getCycleArrayName() + ")" + ln()
+	cyclerDescription += "nextState = " + getCyclerName() + "()" + dln()
+	return cyclerDescription
+}
+
+function getFunctionName() {
+	return "runSimulation"
+}
+
+
+
+function generateHandler() {
+	var handlerDescription = ""
+	
+	if (userDefaults.myAutoplay == 0) {
+		handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
+		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+		handlerDescription += tln() + tln() + "try" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + "catch error" + dln()
+	}
+	else {
+		handlerDescription = getFunctionName() + " = () ->" + ln()
+		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+		handlerDescription += tln() + tln() + "try" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + "catch error" + ln()
+		handlerDescription += tln() + "Utils.delay 2, ->" + ln()
+		handlerDescription += tln() + tln() + getFunctionName() + "()" + dln()
+		
+		handlerDescription += getFunctionName() + "()"
+	}
+	return handlerDescription
+}
+
