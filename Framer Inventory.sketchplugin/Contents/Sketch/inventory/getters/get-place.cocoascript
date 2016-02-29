@@ -24,6 +24,12 @@ function getPosition(layer, type, isStillExportable) {
 
 
 var getPlaceImage = function(layer) {
+	
+	if (layer == nil) { 
+		if (showLog) { log("WARNING: Nil layer") }
+		return [100, 100, 0, 0]
+	}
+	
 	var currentPage = findParentPage(layer)
 	var parentArtboard = findParentArtboard(layer)
 	var parentRect = [parentArtboard absoluteRect]
@@ -41,6 +47,7 @@ var getPlaceImage = function(layer) {
 	
 	// normalize layer for export
 	[layer_copy setRotation: 0]
+	
 	if ([[[layer_copy style] contextSettings] opacity] == 0) {
 		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
 	}
