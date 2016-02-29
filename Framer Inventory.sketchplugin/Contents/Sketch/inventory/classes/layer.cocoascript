@@ -292,10 +292,11 @@ Layer.prototype.generateFramerStates = function() {
 		var stateDescription = this.describeState(currentState, imageRequired)
 		
 		// if layer description has all properties
-		if (stateDescription != "") { statesDescriptions.push(stateDescription) }
-		statesNames.push(currentState.stateName)
-		
-		FramerInventory.addStateName(currentState.stateName)
+		if (stateDescription != "") { 
+			statesDescriptions.push(stateDescription)
+			statesNames.push(currentState.stateName)
+			FramerInventory.addStateName(currentState.stateName)
+		}	
 		
 		prevState = currentState
 	}
