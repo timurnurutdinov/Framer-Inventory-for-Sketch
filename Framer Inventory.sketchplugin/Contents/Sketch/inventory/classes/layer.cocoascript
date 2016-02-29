@@ -210,11 +210,6 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 		titleShadows.push(shadowColor[1])
 	}
 	titleState.shadows = [titleShadows]
-	// if (titleShadows[4] != nil && titleShadows[5] != nil) { ; }
-	// else {
-		// if (titleShadows[4] != nil) { this.returnShadowOpacity(titleShadows[4]) }
-		// else { this.returnShadowHex(titleShadows[5]) }
-	// }
 
 	
 	var titleBorders = []
@@ -296,7 +291,8 @@ Layer.prototype.generateFramerStates = function() {
 
 		var stateDescription = this.describeState(currentState, imageRequired)
 		
-		statesDescriptions.push(stateDescription)
+		// if layer description has all properties
+		if (stateDescription != "") { statesDescriptions.push(stateDescription) }
 		statesNames.push(currentState.stateName)
 		
 		FramerInventory.addStateName(currentState.stateName)

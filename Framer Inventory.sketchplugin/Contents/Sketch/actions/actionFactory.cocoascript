@@ -195,7 +195,10 @@ FramerInventory.organiseSelection = function(userSelection) {
 		FramerInventory.analyseMobile(frame.width)
 	}
 	
-	var cleanedSelection = FramerInventory.cleanSelection(userSelection)
+	var cleanedTypes = FramerInventory.cleanTypes(userSelection)
+	
+	
+	var cleanedSelection = FramerInventory.cleanSelection(cleanedTypes)
 	// if (showLog) { log("Cleaned selection: " + cleanedSelection.count() + " -> " + cleanedSelection) }
 	
 	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
@@ -208,10 +211,28 @@ FramerInventory.organiseSelection = function(userSelection) {
 	// if (showLog) { log("Duplicates cleaned: " + merged) }
 	
 	var newSelection = FramerInventory.composeSelection(merged, cleanedSelection)
-	// if (showLog) { log("Composed: " + newSelection) }
+	if (showLog) { log("Composed: " + newSelection) }
 	
 	return newSelection
 }
+
+
+FramerInventory.cleanTypes = function(userSelection) {
+	var newSelection = NSMutableArray.new()
+	
+	for (var i = 0; i < userSelection.count(); i++) {
+		var current = [userSelection objectAtIndex:i]
+		var type = [current className]
+		
+		if (type == "MSArtboardGroup" || type == "MSSliceLayer") { ; }
+		else {
+			newSelection = newSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+		}
+	}
+	
+	return newSelection
+}
+
 
 // skip layers with duplicated names from selection
 FramerInventory.cleanSelection = function(userSelection) {
@@ -530,4 +551,5 @@ FramerInventory.showDoneMessage = function() {
 		[currentDocument showMessage:"Done"]
 		FramerInventory.removePage(exportPageName)
 	}
+	if (showLog) { log("Completed") }
 }
