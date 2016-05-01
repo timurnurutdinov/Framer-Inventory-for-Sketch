@@ -1,5 +1,7 @@
 
 
+function ExportInventory () {}
+
 // types:
 // -1 - unsupported
 //  1 - group, image, symbol
@@ -8,7 +10,7 @@
 //  4 - text layer
 //  5 - other shape
 
-function getObjectType(localLayer) {
+ExportInventory.getObjectType = function(localLayer) {
 	if (localLayer == nil) {
 		log("Warning: Type is nil")
 		return nil
@@ -25,7 +27,7 @@ function getObjectType(localLayer) {
 	}
 	else if (type == "MSBitmapLayer") { answer = 1 }
 	else if (type == "MSShapeGroup") {
-		answer = getShapeType(localLayer)
+		answer = ExportInventory.getShapeType(localLayer)
 	}
 	else if (type == "MSTextLayer") {
 		answer =  1
@@ -40,7 +42,7 @@ function getObjectType(localLayer) {
 }
 
 
-function getShapeType(localLayer) {
+ExportInventory.getShapeType = function(localLayer) {
 	if ([localLayer className] != "MSShapeGroup") { return -1 }
 	var magicLayers = localLayer.layers()
 	
@@ -88,7 +90,7 @@ var clearName = function(longName) {
 
 // relative to Parent/Artboard
 
-function findParentArtboard(layer) {
+ExportInventory.findParentArtboard = function(layer) {
 	if (layer == nil) { return nil }
 	
 	var lookingForParentArtboard = true
@@ -105,7 +107,7 @@ function findParentArtboard(layer) {
 	return localParent
 }
 
-function findParentPage(layer) {
+ExportInventory.findParentPage = function(layer) {
 	var lookingForParentPage = true
 	var localParent = layer
 	while (lookingForParentPage) {
@@ -117,13 +119,13 @@ function findParentPage(layer) {
 	return localParent
 }
 
-function findParentPageByArtboard(layer) {
-	var parentArtboard = findParentArtboard(layer)
-	if ([parentArtboard className] == "MSPage") {
-		return parentArtboard
-	}
-	return [parentArtboard parentGroup]
-}
+// ExportInventory.findParentPageByArtboard = function(layer) {
+// 	var parentArtboard = ExportInventory.findParentArtboard(layer)
+// 	if ([parentArtboard className] == "MSPage") {
+// 		return parentArtboard
+// 	}
+// 	return [parentArtboard parentGroup]
+// }
 
 
 

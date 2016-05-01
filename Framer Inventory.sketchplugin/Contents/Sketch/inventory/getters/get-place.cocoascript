@@ -10,7 +10,7 @@
 function getPosition(layer, type, isStillExportable) {
 	if (layer == nil) { return nil }
 	
-	if (type == nil) { type = getObjectType(layer) }
+	if (type == nil) { type = ExportInventory.getObjectType(layer) }
 	if (isStillExportable == nil) { if (showLog) { log("Warning: isStillExportable is unknown") } }	
 	
 	if (isStillExportable && (type == 2 || type == 3)) { return getPlaceRect(layer) }
@@ -30,8 +30,8 @@ var getPlaceImage = function(layer) {
 		return [100, 100, 0, 0]
 	}
 	
-	var currentPage = findParentPage(layer)
-	var parentArtboard = findParentArtboard(layer)
+	var currentPage = ExportInventory.findParentPage(layer)
+	var parentArtboard = ExportInventory.findParentArtboard(layer)
 	var parentRect = [parentArtboard absoluteRect]
 
 	// copy layer and place it to artboard
@@ -68,7 +68,7 @@ var getPlaceImage = function(layer) {
 var getPlaceRect = function(layer) {
 	if (layer == nil) { return nil }
 	
-	var parentArtboard = findParentArtboard(layer)
+	var parentArtboard = ExportInventory.findParentArtboard(layer)
 
 	var layer_copy = [layer duplicate]
 	[layer_copy setRotation: 0]

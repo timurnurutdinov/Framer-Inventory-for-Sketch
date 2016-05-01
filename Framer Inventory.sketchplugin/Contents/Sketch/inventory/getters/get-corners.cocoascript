@@ -2,7 +2,7 @@
 var getCornerRadius = function(layer) {
 	if (layer == nil) { return nil }
 
-	var localType = getObjectType(layer)
+	var localType = ExportInventory.getObjectType(layer)
 
 	if (localType == 1) {
 		return nil

@@ -75,11 +75,11 @@ function State (layer) {
 State.prototype.prepareState = function(layer) {
 	if (layer == nil) { return nil }
 	
-	var parentArtboard = findParentArtboard(layer)
+	var parentArtboard = ExportInventory.findParentArtboard(layer)
 	this.stateName = [parentArtboard name]
 	
 	this.layer = layer
-	this.type = getObjectType(layer)
+	this.type = ExportInventory.getObjectType(layer)
 	
 	if (this.type == 2 || this.type == 3) { this.position = getPlaceRect(layer) }
 	else { this.position = getPlaceImage(layer) }
