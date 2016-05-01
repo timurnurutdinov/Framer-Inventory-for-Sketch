@@ -1,11 +1,11 @@
 
-// function DescribeInventory () {}
+function DescribeInventory () {}
 
 
 
 // states related
 
-function generateStateSection(layerName, generatedStates) {
+DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 	if (generatedStates == nil || generatedStates.length == 0) { return "" }
 	
 	var stateSectionName = normalizeName(layerName) + ".states.add {" + ln()
@@ -20,22 +20,22 @@ function generateStateSection(layerName, generatedStates) {
 	return stateSectionName + states + stateBottomSection
 }
 
-function generateState(stateName, stateContent) {
+DescribeInventory.generateState = function(stateName, stateContent) {
 	if (stateContent == "" || stateContent == nil || stateContent == '') { return "" }
 	return clearName(stateName) + ": {" + stateContent + "}"
 }
 
 
-function generateStateSwitchInstant(layerName, stateName) {
+DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
 	return "" + normalizeName(layerName) + ".states.switchInstant \"" + normalizeName(stateName) + "\"" + dln()
 }
 
-function generateRetinaVariable() {
+DescribeInventory.generateRetinaVariable = function() {
 	var chosenRetina = FramerInventory.getRetinaValue()
 	return userDefaults.myRetina + " = " + chosenRetina + ln()
 }
 
-function generatePhoneModel() {
+DescribeInventory.generatePhoneModel = function() {
 	var model = FramerInventory.getPhoneValue()
 	var modelDescription = ""
 	
@@ -67,7 +67,7 @@ function getButtonName() {
 	return "cycleButton"
 }
 
-function generateCycleButton() {
+DescribeInventory.generateCycleButton = function() {
 	return getButtonName() + " = new Layer width: Screen.width, height: Screen.height, backgroundColor: \"transparent\"" + dln()
 }
 
@@ -77,7 +77,7 @@ function getCycleArrayName() {
 	return "statesFromArtboards"
 }
 
-function generateCycleStates(states) {
+DescribeInventory.generateCycleStates = function(states) {
 	var cycleStatesDescription = getCycleArrayName() + " = ["
 	for (var i = 0; i < states.length; i++) {
 		cycleStatesDescription += "\"" + normalizeName(states[i]) + "\""
@@ -93,7 +93,7 @@ function getLayersArrayName() {
 	return "items"
 }
 
-function generateLayers(layers) {
+DescribeInventory.generateLayers = function(layers) {
 	var layersDescription = getLayersArrayName() + " = ["
 	for (var i = 0; i < layers.count(); i++) {
 		var layerName = [[layers objectAtIndex: i] name]
@@ -111,7 +111,7 @@ function getCyclerName() {
 	return "cycler"
 }
 
-function generateCycler() {
+DescribeInventory.generateCycler = function() {
 	var cyclerDescription = getCyclerName() + " = Utils.cycle(" + getCycleArrayName() + ")" + ln()
 	cyclerDescription += "nextState = " + getCyclerName() + "()" + dln()
 	return cyclerDescription
@@ -122,8 +122,7 @@ function getFunctionName() {
 }
 
 
-
-function generateHandler() {
+DescribeInventory.generateHandler = function() {
 	var handlerDescription = ""
 	
 	if (userDefaults.myAutoplay == 0) {

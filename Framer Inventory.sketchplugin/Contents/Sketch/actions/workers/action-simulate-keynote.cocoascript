@@ -84,8 +84,8 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	}
 	
 
-	pasteboardContent += generateRetinaVariable() + ln()
-	pasteboardContent += generatePhoneModel()
+	pasteboardContent += DescribeInventory.generateRetinaVariable() + ln()
+	pasteboardContent += DescribeInventory.generatePhoneModel()
 	pasteboardContent += dln()
 	pasteboardContent += "# view" + ln()
 	
@@ -95,14 +95,14 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	
 	pasteboardContent += ln()
 	pasteboardContent += "# model" + ln()
-	pasteboardContent += generateCycleButton()
+	pasteboardContent += DescribeInventory.generateCycleButton()
 	
 	var cycleStates = FramerInventory.getUsedStatesNames())
-	pasteboardContent += generateCycleStates(cycleStates)
+	pasteboardContent += DescribeInventory.generateCycleStates(cycleStates)
 	
-	pasteboardContent += generateLayers(sortedSelection)
-	pasteboardContent += generateCycler()
-	pasteboardContent += generateHandler()
+	pasteboardContent += DescribeInventory.generateLayers(sortedSelection)
+	pasteboardContent += DescribeInventory.generateCycler()
+	pasteboardContent += DescribeInventory.generateHandler()
 	
 
 	
