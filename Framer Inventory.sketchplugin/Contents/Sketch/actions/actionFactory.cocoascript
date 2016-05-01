@@ -181,6 +181,21 @@ FramerInventory.selectAllLayersOnExportPage = function() {
 	currentDocument.setCurrentPage(oldPage)
 }
 
+// add item to NSArray 
+FramerInventory.addItemToArray = function(item, array) {
+    return array.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(item, nil))
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -226,7 +241,7 @@ FramerInventory.cleanTypes = function(userSelection) {
 		
 		if (type == "MSArtboardGroup" || type == "MSSliceLayer") { ; }
 		else {
-			newSelection = newSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+			newSelection = FramerInventory.addItemToArray(current, newSelection)
 		}
 	}
 	
@@ -253,10 +268,10 @@ FramerInventory.cleanSelection = function(userSelection) {
 		}
 		
 		if (!alreadySelected) {
-			newSelection = newSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+			newSelection = FramerInventory.addItemToArray(current, newSelection)
 		}
 		else {
-			duplicatedSelection = duplicatedSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+			duplicatedSelection = FramerInventory.addItemToArray(current, duplicatedSelection)
 		}
 	}
 	
@@ -325,7 +340,7 @@ FramerInventory.composeSelection = function(layerNames, userSelection) {
 		var foundLayers = findLayersMatchingPredicate_inContainer_filterByType(namedLayersPredicate, FramerInventory.getCurrentPage())
 		
 		if (foundLayers != nil && [foundLayers count] != 0) {
-			composedSelection = composedSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([foundLayers firstObject], nil))
+			composedSelection = FramerInventory.addItemToArray([foundLayers firstObject], composedSelection)
 			continue
 		}
 	}
