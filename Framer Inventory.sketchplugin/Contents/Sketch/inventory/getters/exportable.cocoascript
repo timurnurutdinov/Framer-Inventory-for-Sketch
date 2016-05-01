@@ -2,7 +2,7 @@
 
 // types:
 // -1 - unsupported
-//  1 - group, image
+//  1 - group, image, symbol
 //  2 - rectangle 
 //  3 - oval
 //  4 - text layer
@@ -14,12 +14,13 @@ function getObjectType(localLayer) {
 		return nil
 	}
 	
-	var type = [localLayer className]
+	
 	var answer = 0
+	var type = [localLayer className]
 	
 	if (type == "MSSliceLayer") { answer = -1 }
 	else if (type == "MSTextLayer") { answer = 4 }
-	else if (type == "MSLayerGroup") {
+	else if (type == "MSLayerGroup" || type == "MSSymbolInstance") {
 		answer =  1
 	}
 	else if (type == "MSBitmapLayer") { answer = 1 }
