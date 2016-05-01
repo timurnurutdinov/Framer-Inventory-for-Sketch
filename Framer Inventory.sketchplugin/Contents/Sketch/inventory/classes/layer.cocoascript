@@ -4,6 +4,8 @@
 @import 'inventory/getters/get-place.cocoascript'
 @import 'inventory/strings/generate.cocoascript'
 
+@import 'inventory/libs/logic.cocoascript'
+
 
 function Layer (layerName) {
 	// name of layer
@@ -87,7 +89,7 @@ Layer.prototype.areAllGeneratable = function(state) {
 
 Layer.prototype.compareShadows = function(state) {
 	if (this.states == nil || state == nil || this.states.length < 1) { return true }
-	if (!compareMatrices(this.states[0].shadows, state.shadows)) { return false }
+	if (!LogicInventory.compareMatrices(this.states[0].shadows, state.shadows)) { return false }
 	return true
 }
 
@@ -432,7 +434,7 @@ Layer.prototype.analyseFilterShadows = function(areExportable) {
 	var defaultValue = this.states[0].shadows
 	
 	for (var i = 1; i < this.states.length; i++) {
-		if (!compareMatrices(defaultValue, this.states[i].shadows)) {
+		if (!LogicInventory.compareMatrices(defaultValue, this.states[i].shadows)) {
 			return false
 		}
 	}
