@@ -20,7 +20,7 @@ function calc(value) {
 
 function calcColor(value) {
 	var deleteLastScobe = value.replace(/\)\"/, '')
-	return "\" + " + deleteLastScobe + "))\""
+	return "\" + " + '\"' + deleteLastScobe + ")\""
 }
 
 
@@ -64,6 +64,8 @@ GenerateInventory.generateRotation = function(value) {
 GenerateInventory.generateCorner = function(value) {
 	if (value == nil) { return "" }
 	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
+	
+	if (userDefaults.myRetinaEnabled == 0) { return ", borderRadius: " + (value * userDefaults.myRetinaValue) }
 	return ", borderRadius: " + value + "*" + userDefaults.myRetinaString
 }
 
@@ -72,30 +74,56 @@ GenerateInventory.generateCorner = function(value) {
 GenerateInventory.generateShadows = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
-		var value = values[0]
 		var composedShadow = ""
+		var value = values[0]
+		
+		var color = ""
+		if (value[5] != nil && value[4] != nil) { color = ", shadowColor: " + convertHex(value[5], value[4]) }
+		
+		if (userDefaults.myRetinaEnabled == 0) {
+			if (value[0] != nil) { composedShadow += ", shadowX: " + (value[0] * userDefaults.myRetinaValue) }
+			if (value[1] != nil) { composedShadow += ", shadowY: " + (value[1] * userDefaults.myRetinaValue) }
+			if (value[2] != nil) { composedShadow += ", shadowBlur: " + (value[2] * userDefaults.myRetinaValue) }
+			if (value[3] != nil) { composedShadow += ", shadowSpread: " + (value[3] * userDefaults.myRetinaValue) }
+		}
+		else {
+			if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userDefaults.myRetinaString }
+			if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userDefaults.myRetinaString }
+			if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userDefaults.myRetinaString }
+			if (value[3] != nil) { composedShadow += ", shadowSpread: " + value[3] + "*" + userDefaults.myRetinaString }
+		}
 
-		if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userDefaults.myRetinaString }
-		if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userDefaults.myRetinaString }
-		if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userDefaults.myRetinaString }
-		if (value[3] != nil) { composedShadow += ", shadowSpread: " + value[3] + "*" + userDefaults.myRetinaString }
-		if (value[5] != nil && value[4] != nil) { composedShadow += ", shadowColor: "  + convertHex(value[5], value[4]) }
-		return composedShadow
+		return composedShadow + color
 	}
 	else return ""
 }
 
 
 
-
+// FINILIZE THIS
 GenerateInventory.generateFilterShadows = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
 		var value = values[0]
-		var color = convertHex(value[5], value[4])
 		
-		var shadowVariable = ", style: {\"-webkit-filter\": \"drop-shadow(" + calc(value[0])
-		shadowVariable += calc(value[1]) + calc(value[2]) + calcColor(color) + "}"
+		var color = ""
+		if (value[5] != nil && value[4] != nil) { color += convertHex(value[5], value[4]) }
+		if (color != "") { 
+			color = color.replace('\"','')
+			color = color.replace('\"','')
+		}
+		
+		var shadowVariable = ""
+		if (userDefaults.myRetinaEnabled == 0) {
+			var shadowVariable = ", style: {\"" + "-webkit-filter\"" + ": \"" + "drop-shadow" + '('
+			shadowVariable += (value[0] * userDefaults.myRetinaValue) + "px " + (value[1] * userDefaults.myRetinaValue) + "px " 
+			shadowVariable += (value[2] * userDefaults.myRetinaValue) + "px " + color + ')' + "\"" + "}"
+		}
+		else {
+			shadowVariable = ", style: {\"-webkit-filter\": \"drop-shadow(" + calc(value[0])
+			shadowVariable += calc(value[1]) + calc(value[2]) + calcColor(color) + "}"
+		}
+		
 		return shadowVariable
 	}
 	else return ""
@@ -107,11 +135,20 @@ GenerateInventory.generateFilterShadows = function(values) {
 GenerateInventory.generateBorders = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
-		var value = values[0]
 		var composedBorder = ""
-		if (value[1] != nil) { composedBorder += ", borderWidth: " + value[1] + "*" + userDefaults.myRetinaString }
-		if (value[3] != nil && value[4] != nil) { composedBorder += ", borderColor: "  + convertHex(value[4], value[3]) }
-		return composedBorder
+		var value = values[0]
+		
+		var color = ""
+		if (value[3] != nil && value[4] != nil) { color += ", borderColor: "  + convertHex(value[4], value[3]) }		
+		
+		if (userDefaults.myRetinaEnabled == 0) {
+			if (value[1] != nil) { composedBorder += ", borderWidth: " + (value[1] * userDefaults.myRetinaValue) }
+		}
+		else {
+			if (value[1] != nil) { composedBorder += ", borderWidth: " + value[1] + "*" + userDefaults.myRetinaString }
+		}
+		
+		return composedBorder + color
 	}
 	else return ""
 }
@@ -123,8 +160,11 @@ GenerateInventory.generateBackgrounds = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
 		var value = values[0]
-		if (value[1] != nil && value[2] != nil) { return ", backgroundColor: " + convertHex(value[2], value[1]) }
-		return ""
+		
+		var color = ""
+		if (value[2] != nil && value[1] != nil) { color += ", backgroundColor: "  + convertHex(value[2], value[1]) }
+		
+		return color
 	}
 	else return ""
 }
@@ -139,10 +179,18 @@ GenerateInventory.generatePosition = function(values) {
 		var x = ""
 		var y = ""
 		
-		if (values[0] != nil) { width = " width: " + values[0] + "*" + userDefaults.myRetinaString }
-		if (values[1] != nil) { height = ", height: " + values[1] + "*" + userDefaults.myRetinaString }
-		if (values[2] != nil) { x = ", x: " + values[2] + "*" + userDefaults.myRetinaString }
-		if (values[3] != nil) { y = ", y: " + values[3] + "*" + userDefaults.myRetinaString }
+		if (userDefaults.myRetinaEnabled == 0) {
+			if (values[0] != nil) { width = " width: " + (values[0] * userDefaults.myRetinaValue) }
+			if (values[1] != nil) { height = ", height: " + (values[1] * userDefaults.myRetinaValue) }
+			if (values[2] != nil) { x = ", x: " + (values[2] * userDefaults.myRetinaValue) }
+			if (values[3] != nil) { y = ", y: " + (values[3] * userDefaults.myRetinaValue) }
+		}
+		else {
+			if (values[0] != nil) { width = " width: " + values[0] + "*" + userDefaults.myRetinaString }
+			if (values[1] != nil) { height = ", height: " + values[1] + "*" + userDefaults.myRetinaString }
+			if (values[2] != nil) { x = ", x: " + values[2] + "*" + userDefaults.myRetinaString }
+			if (values[3] != nil) { y = ", y: " + values[3] + "*" + userDefaults.myRetinaString }
+		}
 		
 		return "" + width + height + x + y
 	}
