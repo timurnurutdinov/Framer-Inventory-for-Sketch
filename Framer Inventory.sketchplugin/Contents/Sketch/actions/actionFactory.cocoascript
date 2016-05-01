@@ -406,6 +406,15 @@ FramerInventory.restoreSelection = function(initialSelection) {
 
 
 
+
+
+
+
+
+
+
+
+
 // merging layers
 FramerInventory.hasElem = function(elem, container) {
 	if (container == nil) {
@@ -580,3 +589,28 @@ FramerInventory.showDoneMessage = function() {
 	}
 	if (showLog) { log("Completed") }
 }
+
+
+
+
+
+FramerInventory.findMatchingLayers = function(predicate, currentLayer, artboard) {
+	var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, artboard)
+	
+	
+	if ([matchingLayers count] == 0 && ([currentLayer className] == "MSLayerGroup" || [currentLayer className] == "MSSymbolInstance")) {
+		
+		if ([currentLayer className] == "MSLayerGroup") {
+			var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSSymbolInstance")
+		}
+		else {
+			var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSLayerGroup")
+		}
+			
+		matchingLayersNext = findLayersMatchingPredicate_inContainer_filterByType(predicateNext, artboard)
+		matchingLayers = FramerInventory.addArrayToArray(matchingLayersNext, matchingLayers)
+	}
+	
+	return matchingLayers
+}
+

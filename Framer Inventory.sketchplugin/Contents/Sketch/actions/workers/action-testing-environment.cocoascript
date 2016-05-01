@@ -222,6 +222,9 @@ var generatePairs = function() {
 	pairs.push("33 states predict shadows color opacity")
 	pairs.push("34 states predict background color opacity")
 	
+	// check new symbols in Sketch 3.7+
+	pairs.push("35 symbols and groups main symbol")
+	pairs.push("36 symbols and groups main group")
 	
 	return pairs
 }
