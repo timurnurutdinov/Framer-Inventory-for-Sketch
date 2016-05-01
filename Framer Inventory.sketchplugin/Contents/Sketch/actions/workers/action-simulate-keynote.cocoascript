@@ -54,6 +54,23 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 			
 			var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
 			
+			
+			if ([matchingLayers count] == 0 && ([currentLayer className] == "MSLayerGroup" || [currentLayer className] == "MSSymbolInstance")) {
+				log("CARE WITH SYMBOLS: " + [currentLayer name])
+				
+				if ([currentLayer className] == "MSLayerGroup") {
+					var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSSymbolInstance")
+				}
+				else {
+					var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSLayerGroup")
+				}
+					
+				matchingLayersNext = findLayersMatchingPredicate_inContainer_filterByType(predicateNext, [artboards objectAtIndex: j])
+				matchingLayers = FramerInventory.addArrayToArray(matchingLayersNext, matchingLayers)
+				log("ML:" + matchingLayers.count())
+			}
+			
+			
 			if ([matchingLayers count] > 0) {
 				hasCurrentState = true
 
