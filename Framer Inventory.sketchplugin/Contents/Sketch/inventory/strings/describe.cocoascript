@@ -8,7 +8,7 @@ function DescribeInventory () {}
 DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 	if (generatedStates == nil || generatedStates.length == 0) { return "" }
 	
-	var stateSectionName = normalizeName(layerName) + ".states.add {" + ln()
+	var stateSectionName = GenerateInventory.clearName(layerName) + ".states.add {" + ln()
 	var stateBottomSection = "}" + ln()
 	
 	var states = ""
@@ -22,12 +22,12 @@ DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 
 DescribeInventory.generateState = function(stateName, stateContent) {
 	if (stateContent == "" || stateContent == nil || stateContent == '') { return "" }
-	return clearName(stateName) + ": {" + stateContent + "}"
+	return GenerateInventory.clearName(stateName) + ": {" + stateContent + "}"
 }
 
 
 DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
-	return "" + normalizeName(layerName) + ".states.switchInstant \"" + normalizeName(stateName) + "\"" + dln()
+	return "" + GenerateInventory.clearName(layerName) + ".states.switchInstant \"" + GenerateInventory.clearName(stateName) + "\"" + dln()
 }
 
 DescribeInventory.generateRetinaVariable = function() {
@@ -80,7 +80,7 @@ function getCycleArrayName() {
 DescribeInventory.generateCycleStates = function(states) {
 	var cycleStatesDescription = getCycleArrayName() + " = ["
 	for (var i = 0; i < states.length; i++) {
-		cycleStatesDescription += "\"" + normalizeName(states[i]) + "\""
+		cycleStatesDescription += "\"" + GenerateInventory.clearName(states[i]) + "\""
 		if (i != states.length - 1) { cycleStatesDescription += ", "}
 	}
 	cycleStatesDescription += "]" + ln()
@@ -97,7 +97,7 @@ DescribeInventory.generateLayers = function(layers) {
 	var layersDescription = getLayersArrayName() + " = ["
 	for (var i = 0; i < layers.count(); i++) {
 		var layerName = [[layers objectAtIndex: i] name]
-		layersDescription += normalizeName(layerName)
+		layersDescription += GenerateInventory.clearName(layerName)
 		if (i != layers.count() - 1) { layersDescription += ", "}
 	}
 	layersDescription += "]" + ln()

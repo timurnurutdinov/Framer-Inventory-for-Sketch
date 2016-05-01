@@ -125,7 +125,7 @@ Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	if (imageRequired == nil) { imageRequired = false }
 	currentState.cleanTitledDescriptionShadows()
 	
-	var stateDescription = returnLayerName(this.layerName)
+	var stateDescription = GenerateInventory.returnLayerName(this.layerName)
 	stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
 	if (!imageRequired) { stateDescription += GenerateInventory.generateCorner(currentState.corner) }
 	

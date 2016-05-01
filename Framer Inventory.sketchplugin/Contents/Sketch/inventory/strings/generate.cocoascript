@@ -1,18 +1,7 @@
 
+// local functions for colors & shadows
 
-
-
-function returnLayerName(layerName) {
-	return normalizeName(layerName) + " = new Layer"
-}
-
-
-function normalizeName(layerName) {
-	return clearName(layerName)
-}
-
-
-var convertHex = function(hex, opacity) {
+function convertHex(hex, opacity) {
     hex = hex.replace('#','');
     r = parseInt(hex.substring(0,2), 16);
     g = parseInt(hex.substring(2,4), 16);
@@ -23,13 +12,13 @@ var convertHex = function(hex, opacity) {
 }
 
 
-var calc = function(value) {
+function calc(value) {
 	if (value == nil) { return "0 " }
 	return "calc(" + value + "px*\" + " + userDefaults.myRetina + " + \") "
 }
 
 
-var calcColor = function(value) {
+function calcColor(value) {
 	var deleteLastScobe = value.replace(/\)\"/, '')
 	return "\" + " + deleteLastScobe + "))\""
 }
@@ -38,7 +27,27 @@ var calcColor = function(value) {
 
 
 
+
+
+
 function GenerateInventory () {}
+
+GenerateInventory.returnLayerName = function(layerName) {
+	return GenerateInventory.clearName(layerName) + " = new Layer"
+}
+
+GenerateInventory.removePath = function(longPath) {
+	return longPath.replace(/^.*[\\\/]/, '').trim()
+}
+
+GenerateInventory.clearName = function(longName) {
+	var clearedName = GenerateInventory.removePath(longName).trim().split(' ').join('_')
+	return clearedName.toLowerCase()
+}
+
+
+
+
 
 GenerateInventory.generateOpacity = function(value) {
 	if (value == nil) { return "" }
@@ -141,7 +150,8 @@ GenerateInventory.generatePosition = function(values) {
 
 
 GenerateInventory.generateImagePath = function(dirtyPath) {
-	return ", image: \"images/" + removePath(dirtyPath) + ".png\""
+	return ", image: \"images/" + GenerateInventory.removePath(dirtyPath) + ".png\""
 }
+
 
 
