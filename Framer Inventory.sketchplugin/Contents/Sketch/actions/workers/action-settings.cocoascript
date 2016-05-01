@@ -72,7 +72,7 @@ var runSettings = function() {
 
 
 var initConfigureValues = function() {
-	configureRetina = userDefaults.myRetina
+	configureRetina = userDefaults.myRetinaString
 	configureMobile = userDefaults.myMobile
 	configureMinimalExport = userDefaults.myMinimalExport
 	configureAutoplay = userDefaults.myAutoplay
@@ -80,7 +80,7 @@ var initConfigureValues = function() {
 
 var saveSettings = function() {
 	
-	userDefaults.myRetina = configureRetina
+	userDefaults.myRetinaString = configureRetina
 	userDefaults.myMobile = configureMobile
 	userDefaults.myMinimalExport = configureMinimalExport
 	userDefaults.myAutoplay = configureAutoplay

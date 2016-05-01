@@ -32,7 +32,7 @@ DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
 
 DescribeInventory.generateRetinaVariable = function() {
 	var chosenRetina = FramerInventory.getRetinaValue()
-	return userDefaults.myRetina + " = " + chosenRetina + ln()
+	return userDefaults.myRetinaString + " = " + chosenRetina + ln()
 }
 
 DescribeInventory.generatePhoneModel = function() {
