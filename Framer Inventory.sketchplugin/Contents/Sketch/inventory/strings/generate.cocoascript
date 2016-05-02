@@ -23,6 +23,19 @@ function calcColor(value) {
 	return "\" + " + '\"' + deleteLastScobe + ")\""
 }
 
+function isFloor(val) {
+    return Math.floor(val) == val
+}
+
+function niceValue(val, accuracy) {
+	if (isFloor(val)) { return val }
+	else {
+		if (accuracy == nil) { accuracy = 1 }
+        try { return val.toFixed(accuracy) }
+        catch (e) { return val }
+	}
+}
+
 
 
 
@@ -51,13 +64,13 @@ GenerateInventory.clearName = function(longName) {
 
 GenerateInventory.generateOpacity = function(value) {
 	if (value == nil) { return "" }
-	return ", opacity: " + value
+	return ", opacity: " + niceValue(value,0)
 }
 
 
 GenerateInventory.generateRotation = function(value) {
 	if (value == nil) { return "" }
-	return ", rotation: " + value
+	return ", rotation: " + niceValue(value)
 }
 
 
@@ -65,8 +78,8 @@ GenerateInventory.generateCorner = function(value) {
 	if (value == nil) { return "" }
 	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
 	
-	if (userDefaults.myRetinaEnabled == 0) { return ", borderRadius: " + (value * userDefaults.myRetinaValue) }
-	return ", borderRadius: " + value + "*" + userDefaults.myRetinaString
+	if (userDefaults.myRetinaEnabled == 0) { return ", borderRadius: " + (niceValue(value) * userDefaults.myRetinaValue) }
+	return ", borderRadius: " + niceValue(value) + "*" + userDefaults.myRetinaString
 }
 
 
@@ -180,16 +193,16 @@ GenerateInventory.generatePosition = function(values) {
 		var y = ""
 		
 		if (userDefaults.myRetinaEnabled == 0) {
-			if (values[0] != nil) { width = " width: " + (values[0] * userDefaults.myRetinaValue) }
-			if (values[1] != nil) { height = ", height: " + (values[1] * userDefaults.myRetinaValue) }
-			if (values[2] != nil) { x = ", x: " + (values[2] * userDefaults.myRetinaValue) }
-			if (values[3] != nil) { y = ", y: " + (values[3] * userDefaults.myRetinaValue) }
+			if (values[0] != nil) { width = " width: " + (niceValue(values[0]) * userDefaults.myRetinaValue) }
+			if (values[1] != nil) { height = ", height: " + (niceValue(values[1]) * userDefaults.myRetinaValue) }
+			if (values[2] != nil) { x = ", x: " + (niceValue(values[2]) * userDefaults.myRetinaValue) }
+			if (values[3] != nil) { y = ", y: " + (niceValue(values[3]) * userDefaults.myRetinaValue) }
 		}
 		else {
-			if (values[0] != nil) { width = " width: " + values[0] + "*" + userDefaults.myRetinaString }
-			if (values[1] != nil) { height = ", height: " + values[1] + "*" + userDefaults.myRetinaString }
-			if (values[2] != nil) { x = ", x: " + values[2] + "*" + userDefaults.myRetinaString }
-			if (values[3] != nil) { y = ", y: " + values[3] + "*" + userDefaults.myRetinaString }
+			if (values[0] != nil) { width = " width: " + niceValue(values[0]) + "*" + userDefaults.myRetinaString }
+			if (values[1] != nil) { height = ", height: " + niceValue(values[1]) + "*" + userDefaults.myRetinaString }
+			if (values[2] != nil) { x = ", x: " + niceValue(values[2]) + "*" + userDefaults.myRetinaString }
+			if (values[3] != nil) { y = ", y: " + niceValue(values[3]) + "*" + userDefaults.myRetinaString }
 		}
 		
 		return "" + width + height + x + y
