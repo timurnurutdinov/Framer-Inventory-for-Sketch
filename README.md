@@ -43,13 +43,18 @@ Generates code for **selected layers** without states. Works as a quick start fo
 #### 4.1. Dimentions
 ##### A. Pixels
 Choose multiplier and scale properties to get retina optimised prototype. Supports Auto Code.
+![Alt text](/../images-second-version/readme/modifier.png?raw=true “Settings window”)
+
 ##### B. Points
 Choose variable name to scale properties in Framer. Choose if you like to measure in points.
+![Alt text](/../images-second-version/readme/variable.png?raw=true “Settings window”)
+
 
 #### 4.2. iPhone prototyping
 - Detects iPhone 5/6/6 Plus to show in Framer Studio
 - Scales properties for iPhone 5/6/6
 - Adds scaled export options on "Export for Framer Inventory" page
+![Alt text](/../images-second-version/readme/mobile.png?raw=true “Settings window”)
 
 #### 4.3. Minimal export for Simulate Keynote
 - Cleans states to generate minimal amount of code
