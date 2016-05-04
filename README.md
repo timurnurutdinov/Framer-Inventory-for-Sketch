@@ -53,6 +53,7 @@ Choose variable name to scale properties in Framer. Choose if you like to measur
 
 #### 4.3. Minimal export for Simulate Keynote
 - Cleans states to generate minimal amount of code
+![Alt text](/../images-second-version/readme/minimal.png?raw=true “Settings window”)
 
 #### 4.4. Autoplay
 - Replaces onClick handler with an autoplay loop
