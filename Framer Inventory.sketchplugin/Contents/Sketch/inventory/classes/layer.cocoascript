@@ -386,19 +386,16 @@ Layer.pasteLayer = function(layer) {
 }
 
 Layer.addExportOptions = function(layer) {
-	var sizeData = {
-	    "format": "png",
-	    "scale": FramerInventory.getRetinaValue(),
-	    "suffix": ""
-	}
+	var scaleData = 1
+	if (userDefaults.myRetinaEnabled == 0) { scaleData = userDefaults.myRetinaValue }
+	if (FramerInventory.getPhoneValue() != 0) { scaleData = FramerInventory.getRetinaValue() }
 	
 	var exportSizes = [[layer exportOptions] exportFormats]
 	while([exportSizes count] > 0) { [[exportSizes firstObject] remove] }
 
 	var size = [[layer exportOptions] addExportFormat]
- 	// [size setFormat:sizeData.format]
-    [size setScale:sizeData.scale]
-    [size setName:sizeData.suffix]
+    [size setScale:scaleData]
+    [size setName:""]
 }
 
 
