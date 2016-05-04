@@ -44,9 +44,10 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 		var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
 																						 [currentLayer className])
 		for (var j = 0; j < [artboards count]; j++) {
-			// if (showLog) { log("Loogking for layer " + [currentLayer name] + " on artboard " + [artboards objectAtIndex: j]) }
 			
-			var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
+			// var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
+			var matchingLayers = FramerInventory.findMatchingLayers(predicate, currentLayer, [artboards objectAtIndex: j])
+			
 			if ([matchingLayers count] > 0) {
 				layer.composeState([matchingLayers firstObject])
 			}

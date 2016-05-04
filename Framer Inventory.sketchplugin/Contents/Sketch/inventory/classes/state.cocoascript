@@ -8,7 +8,7 @@
 @import 'inventory/getters/get-background-color.cocoascript'
 
 @import 'inventory/strings/generate.cocoascript'
-
+@import 'inventory/libs/logic.cocoascript'
 
 
 
@@ -75,11 +75,11 @@ function State (layer) {
 State.prototype.prepareState = function(layer) {
 	if (layer == nil) { return nil }
 	
-	var parentArtboard = findParentArtboard(layer)
+	var parentArtboard = TypeInventory.findParentArtboard(layer)
 	this.stateName = [parentArtboard name]
 	
 	this.layer = layer
-	this.type = getObjectType(layer)
+	this.type = TypeInventory.getObjectType(layer)
 	
 	if (this.type == 2 || this.type == 3) { this.position = getPlaceRect(layer) }
 	else { this.position = getPlaceImage(layer) }
@@ -160,12 +160,12 @@ State.prototype.isEqualToState = function(state) {
 	if (this.corner != state.corner) { return false }
 	if (this.rotation != state.rotation) { return false }
 	
-	if (!compareArrays(this.position, state.position)) { return false }
+	if (!LogicInventory.compareArrays(this.position, state.position)) { return false }
 
-	if (!compareMatrices(this.shadows, state.shadows)) { return false }
-	if (!compareMatrices(this.inners, state.inners)) { return false }
-	if (!compareMatrices(this.borders, state.borders)) { return false }
-	if (!compareMatrices(this.backgrounds, state.backgrounds)) { return false }
+	if (!LogicInventory.compareMatrices(this.shadows, state.shadows)) { return false }
+	if (!LogicInventory.compareMatrices(this.inners, state.inners)) { return false }
+	if (!LogicInventory.compareMatrices(this.borders, state.borders)) { return false }
+	if (!LogicInventory.compareMatrices(this.backgrounds, state.backgrounds)) { return false }
 	
 	return true
 }

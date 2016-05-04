@@ -2,7 +2,11 @@
 
 @import 'inventory/getters/normalize.cocoascript'
 @import 'inventory/getters/get-place.cocoascript'
+
 @import 'inventory/strings/generate.cocoascript'
+@import 'inventory/strings/describe.cocoascript'
+
+@import 'inventory/libs/logic.cocoascript'
 
 
 function Layer (layerName) {
@@ -87,7 +91,7 @@ Layer.prototype.areAllGeneratable = function(state) {
 
 Layer.prototype.compareShadows = function(state) {
 	if (this.states == nil || state == nil || this.states.length < 1) { return true }
-	if (!compareMatrices(this.states[0].shadows, state.shadows)) { return false }
+	if (!LogicInventory.compareMatrices(this.states[0].shadows, state.shadows)) { return false }
 	return true
 }
 
@@ -101,17 +105,17 @@ Layer.prototype.describeState = function(currentState, imageRequired) {
 	if (imageRequired == nil) { imageRequired = false }
 	
 	var stateDescription = ""
-	stateDescription += generatePosition(currentState.composePosition())
-	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
+	stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	if (!imageRequired) { stateDescription += GenerateInventory.generateCorner(currentState.corner) }
 	
-	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.composeBackgrounds()) }
+	if (!imageRequired) { stateDescription += GenerateInventory.generateBackgrounds(currentState.composeBackgrounds()) }
 	
-	stateDescription += generateRotation(currentState.rotation)
+	stateDescription += GenerateInventory.generateRotation(currentState.rotation)
 	
-	if (!imageRequired) { stateDescription += generateShadows(currentState.composeShadows()) }
-	if (!imageRequired) { stateDescription += generateBorders(currentState.composeBorders()) }
+	if (!imageRequired) { stateDescription += GenerateInventory.generateShadows(currentState.composeShadows()) }
+	if (!imageRequired) { stateDescription += GenerateInventory.generateBorders(currentState.composeBorders()) }
 	
-	stateDescription += generateOpacity(currentState.opacity)
+	stateDescription += GenerateInventory.generateOpacity(currentState.opacity)
 	
 	return stateDescription
 }
@@ -121,20 +125,20 @@ Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	if (imageRequired == nil) { imageRequired = false }
 	currentState.cleanTitledDescriptionShadows()
 	
-	var stateDescription = returnLayerName(this.layerName)
-	stateDescription += generatePosition(currentState.composePosition())
-	if (!imageRequired) { stateDescription += generateCorner(currentState.corner) }
+	var stateDescription = GenerateInventory.returnLayerName(this.layerName)
+	stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	if (!imageRequired) { stateDescription += GenerateInventory.generateCorner(currentState.corner) }
 	
-	if (!imageRequired) { stateDescription += generateBackgrounds(currentState.composeBackgrounds()) }
-	if (imageRequired) { stateDescription += generateImagePath(this.layerName) }
+	if (!imageRequired) { stateDescription += GenerateInventory.generateBackgrounds(currentState.composeBackgrounds()) }
+	if (imageRequired) { stateDescription += GenerateInventory.generateImagePath(this.layerName) }
 
-	stateDescription += generateRotation(currentState.rotation)
+	stateDescription += GenerateInventory.generateRotation(currentState.rotation)
 	
-	if (!imageRequired) { stateDescription += generateShadows(currentState.composeShadows()) }
-	if (imageRequired && this.filterRequired) { stateDescription += generateFilterShadows(currentState.composeShadows()) }
-	if (!imageRequired) { stateDescription += generateBorders(currentState.composeBorders()) }
+	if (!imageRequired) { stateDescription += GenerateInventory.generateShadows(currentState.composeShadows()) }
+	if (imageRequired && this.filterRequired) { stateDescription += GenerateInventory.generateFilterShadows(currentState.composeShadows()) }
+	if (!imageRequired) { stateDescription += GenerateInventory.generateBorders(currentState.composeBorders()) }
 	
-	stateDescription += generateOpacity(currentState.opacity)
+	stateDescription += GenerateInventory.generateOpacity(currentState.opacity)
 	
 	return stateDescription.replace("Layer,", "Layer")
 }
@@ -304,13 +308,13 @@ Layer.prototype.generateFramerStates = function() {
 	var switchStateDescription = ""
 	if (statesDescriptions.length > 1) {
 		for (var i = 0; i < statesDescriptions.length; i++) {
-			var generatedStateLine = generateState(statesNames[i], statesDescriptions[i])
+			var generatedStateLine = DescribeInventory.generateState(statesNames[i], statesDescriptions[i])
 			if (generatedStateLine != "") { generatedStates.push(generatedStateLine) }
 		}
-		switchStateDescription = generateStateSwitchInstant(this.layerName, statesNames[0])
+		switchStateDescription = DescribeInventory.generateStateSwitchInstant(this.layerName, statesNames[0])
 	}
 	
-	return titleDescription + dln() + generateStateSection(this.layerName, generatedStates) + switchStateDescription
+	return titleDescription + dln() + DescribeInventory.generateStateSection(this.layerName, generatedStates) + switchStateDescription
 }
 
 
@@ -382,19 +386,16 @@ Layer.pasteLayer = function(layer) {
 }
 
 Layer.addExportOptions = function(layer) {
-	var sizeData = {
-	    "format": "png",
-	    "scale": FramerInventory.getRetinaValue(),
-	    "suffix": ""
-	}
+	var scaleData = 1
+	if (userDefaults.myRetinaEnabled == 0) { scaleData = userDefaults.myRetinaValue }
+	if (FramerInventory.getPhoneValue() != 0) { scaleData = FramerInventory.getRetinaValue() }
 	
 	var exportSizes = [[layer exportOptions] exportFormats]
 	while([exportSizes count] > 0) { [[exportSizes firstObject] remove] }
 
 	var size = [[layer exportOptions] addExportFormat]
- 	// [size setFormat:sizeData.format]
-    [size setScale:sizeData.scale]
-    [size setName:sizeData.suffix]
+    [size setScale:scaleData]
+    [size setName:""]
 }
 
 
@@ -432,7 +433,7 @@ Layer.prototype.analyseFilterShadows = function(areExportable) {
 	var defaultValue = this.states[0].shadows
 	
 	for (var i = 1; i < this.states.length; i++) {
-		if (!compareMatrices(defaultValue, this.states[i].shadows)) {
+		if (!LogicInventory.compareMatrices(defaultValue, this.states[i].shadows)) {
 			return false
 		}
 	}

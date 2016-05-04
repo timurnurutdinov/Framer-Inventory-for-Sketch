@@ -1,0 +1,37 @@
+function LogicInventory () {}
+
+LogicInventory.compareArrays = function(left, right) {
+	if (left == nil && right == nil) { return true }
+	else if (left == nil || right == nil) { return false }
+	
+	var sizeLeft = left.length
+	var sizeRight = right.length
+	if (sizeLeft != sizeRight) { return false }
+	
+	for (var i = 0; i < sizeLeft; i++) {
+		//log(left[i] + " " + right[i])
+		if (left[i] != right[i]) { 
+			return false
+		}
+	}
+
+	return true
+}
+
+
+LogicInventory.compareMatrices = function(left, right) {
+	if (left == nil && right == nil) { return true }
+	else if (left == nil || right == nil) { return false }
+	
+	var sizeLeft = left.length
+	var sizeRight = right.length
+	if (sizeLeft != sizeRight) { return false }
+	
+	for (var i = 0; i < sizeLeft; i++) {
+		if (!LogicInventory.compareArrays(left[i], right[i])) {
+			return false
+		}
+	}
+	
+	return true
+}

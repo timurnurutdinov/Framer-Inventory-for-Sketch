@@ -1,14 +1,7 @@
-function returnLayerName(layerName) {
-	return normalizeName(layerName) + " = new Layer"
-}
 
+// local functions for colors & shadows
 
-function normalizeName(layerName) {
-	return clearName(layerName)
-}
-
-
-var convertHex = function(hex, opacity) {
+function convertHex(hex, opacity) {
     hex = hex.replace('#','');
     r = parseInt(hex.substring(0,2), 16);
     g = parseInt(hex.substring(2,4), 16);
@@ -19,15 +12,38 @@ var convertHex = function(hex, opacity) {
 }
 
 
-var calc = function(value) {
+function calc(value) {
 	if (value == nil) { return "0 " }
-	return "calc(" + value + "px*\" + " + userDefaults.myRetina + " + \") "
+	return "calc(" + value + "px*\" + " + userDefaults.myRetinaString + " + \") "
 }
 
 
-var calcColor = function(value) {
+function calcColor(value) {
 	var deleteLastScobe = value.replace(/\)\"/, '')
-	return "\" + " + deleteLastScobe + "))\""
+	return "\" + " + '\"' + deleteLastScobe + ")\""
+}
+
+function isFloor(val) {
+    return Math.floor(val) == val
+}
+
+function niceValue(val, accuracy) {
+	if (isFloor(val)) { return val }
+	else {
+		if (accuracy == nil) { accuracy = 1 }
+        try { return val.toFixed(accuracy) }
+        catch (e) { return val }
+	}
+}
+
+// value out -> vout :)
+function vout(val) {
+	if (userDefaults.myRetinaEnabled == 0) {
+		var currentMultiplier = userDefaults.myRetinaValue
+		if (FramerInventory.getPhoneValue() != 0) { currentMultiplier = FramerInventory.getRetinaValue() }
+		return (niceValue(val) * currentMultiplier) + ""
+	}
+	else { return niceValue(val) + "*" + userDefaults.myRetinaString }
 }
 
 
@@ -36,133 +52,135 @@ var calcColor = function(value) {
 
 
 
-function generateOpacity(value) {
+
+function GenerateInventory () {}
+
+GenerateInventory.returnLayerName = function(layerName) {
+	return GenerateInventory.clearName(layerName) + " = new Layer"
+}
+
+GenerateInventory.removePath = function(longPath) {
+	return longPath.replace(/^.*[\\\/]/, '').trim()
+}
+
+GenerateInventory.clearName = function(longName) {
+	var clearedName = GenerateInventory.removePath(longName).trim().split(' ').join('_')
+	return clearedName.toLowerCase()
+}
+
+
+
+
+
+GenerateInventory.generateOpacity = function(value) {
 	if (value == nil) { return "" }
-	return ", opacity: " + value
+	return ", opacity: " + niceValue(value,0)
 }
 
-// function generateAbsoluteOpacity() {
-// 	return ", opacity: 1"
-// }
-//
-// function generateTransparentOpacity() {
-// 	return ", opacity: 0"
-// }
 
-
-
-function generateRotation(value) {
+GenerateInventory.generateRotation = function(value) {
 	if (value == nil) { return "" }
-	return ", rotation: " + value
+	return ", rotation: " + niceValue(value)
 }
 
 
-function generateCorner(value) {
+GenerateInventory.generateCorner = function(value) {
 	if (value == nil) { return "" }
 	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
-	return ", borderRadius: " + value + "*" + userDefaults.myRetina
+	return ", borderRadius: " + vout(value)
 }
 
 
 
-function generateShadows(values) {
+GenerateInventory.generateShadows = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
-		var value = values[0]
 		var composedShadow = ""
+		var value = values[0]
+		
+		var color = ""
+		if (value[5] != nil && value[4] != nil) { color = ", shadowColor: " + convertHex(value[5], value[4]) }
+		
+		if (value[0] != nil) { composedShadow += ", shadowX: " + vout(value[0]) }
+		if (value[1] != nil) { composedShadow += ", shadowY: " + vout(value[1]) }
+		if (value[2] != nil) { composedShadow += ", shadowBlur: " + vout(value[2]) }
+		if (value[3] != nil) { composedShadow += ", shadowSpread: " + vout(value[3]) }
 
-		if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userDefaults.myRetina }
-		if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userDefaults.myRetina }
-		if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userDefaults.myRetina }
-		if (value[3] != nil) { composedShadow += ", shadowSpread: " + value[3] + "*" + userDefaults.myRetina }
-		if (value[5] != nil && value[4] != nil) { composedShadow += ", shadowColor: "  + convertHex(value[5], value[4]) }
-		return composedShadow
+		return composedShadow + color
 	}
 	else return ""
 }
 
-// function generatePassiveShadowsWithColor(colorValue) {
-// 	if (colorValue == nil) { return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: \"rgba(0,0,0,0)\"" }
-// 	return ", shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0, shadowColor: " + convertHex(colorValue[5], colorValue[4])
-// }
-
-// function generateShadows(value) {
-// 	if (value == nil) { return "" }
-// 	else {
-// 		var composedShadow = ""
-//
-// 		if (value[0] != nil) { composedShadow += ", shadowX: " + value[0] + "*" + userDefaults.myRetina }
-// 		if (value[1] != nil) { composedShadow += ", shadowY: " + value[1] + "*" + userDefaults.myRetina }
-// 		if (value[2] != nil) { composedShadow += ", shadowBlur: " + value[2] + "*" + userDefaults.myRetina }
-// 		if (value[3] != nil) { composedShadow += ", shadowSpread: " + value[3] + "*" + userDefaults.myRetina }
-// 		if (value[5] != nil && value[4] != nil) { composedShadow += ", shadowColor: "  + convertHex(value[5], value[4]) }
-// 		return composedShadow
-// 	}
-// }
 
 
-
-function generateFilterShadows(values) {
+// FINILIZE THIS
+GenerateInventory.generateFilterShadows = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
 		var value = values[0]
-		var color = convertHex(value[5], value[4])
 		
-		var shadowVariable = ", style: {\"-webkit-filter\": \"drop-shadow(" + calc(value[0])
-		shadowVariable += calc(value[1]) + calc(value[2]) + calcColor(color) + "}"
+		var color = ""
+		if (value[5] != nil && value[4] != nil) { color += convertHex(value[5], value[4]) }
+		if (color != "") { 
+			color = color.replace('\"','')
+			color = color.replace('\"','')
+		}
+		
+		var shadowVariable = ""
+		// BAD CODE: REFACTORING NEEDED
+		if (userDefaults.myRetinaEnabled == 0) {
+			var shadowVariable = ", style: {\"" + "-webkit-filter\"" + ": \"" + "drop-shadow" + '('
+			shadowVariable += vout(value[0]) + "px " + vout(value[1]) + "px " 
+			shadowVariable += vout(value[2]) + "px " + color + ')' + "\"" + "}"
+		}
+		else {
+			shadowVariable = ", style: {\"-webkit-filter\": \"drop-shadow(" + calc(niceValue(value[0]))
+			shadowVariable += calc(niceValue(value[1])) + calc(niceValue(value[2])) + calcColor(color) + "}"
+		}
+		
 		return shadowVariable
 	}
 	else return ""
 }
 
 
-// function generatePassiveFilterShadowsWithColor(colorValue) {
-// 	if (colorValue == nil) { return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 rbga(0,0,0,0))\"}" }
-// 	var color = convertHex(colorValue[5], 0)
-// 	var fixed = color.replace('\"', '')
-// 	log("COLOR FILTER: " + fixed)
-// 	return ", style: {\"-webkit-filter\": \"drop-shadow(0 0 0 " + fixed + ")\"}"
-// }
 
 
-
-function generateBorders(values) {
+GenerateInventory.generateBorders = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
-		var value = values[0]
 		var composedBorder = ""
-		if (value[1] != nil) { composedBorder += ", borderWidth: " + value[1] + "*" + userDefaults.myRetina }
-		if (value[3] != nil && value[4] != nil) { composedBorder += ", borderColor: "  + convertHex(value[4], value[3]) }
-		return composedBorder
+		var value = values[0]
+		
+		var color = ""
+		if (value[3] != nil && value[4] != nil) { color += ", borderColor: "  + convertHex(value[4], value[3]) }		
+		
+		if (value[1] != nil) { composedBorder += ", borderWidth: " + vout(value[1]) }
+		
+		return composedBorder + color
 	}
 	else return ""
 }
 
-// function generatePassiveBordersWithColor(colorValue) {
-// 	if (colorValue == nil) { return ", borderWidth: 0, borderColor: \"rgba(0,0,0,0)\"" }
-// 	return  ", borderWidth: 0, borderColor: " + convertHex(colorValue[4], colorValue[3])
-// }
 
 
 
-function generateBackgrounds(values) {
+GenerateInventory.generateBackgrounds = function(values) {
 	if (values == nil) { return "" }
 	else if (values.length == 1) {
 		var value = values[0]
-		if (value[1] != nil && value[2] != nil) { return ", backgroundColor: " + convertHex(value[2], value[1]) }
-		return ""
+		
+		var color = ""
+		if (value[2] != nil && value[1] != nil) { color += ", backgroundColor: "  + convertHex(value[2], value[1]) }
+		
+		return color
 	}
 	else return ""
 }
 
-// function generatePassiveBackgroundsWithColor(colorValue) {
-// 	if (colorValue == nil || colorValue == '') { return ", backgroundColor: \"rgba(0,0,0,0)\"" }
-// 	return ", backgroundColor: "  + convertHex(colorValue[2], colorValue[1])
-// }
 
 
-
-function generatePosition(values) {
+GenerateInventory.generatePosition = function(values) {
 	if (values == nil || values.length < 4) { return "" }
 	else {
 		var width = ""
@@ -170,168 +188,19 @@ function generatePosition(values) {
 		var x = ""
 		var y = ""
 		
-		if (values[0] != nil) { width = " width: " + values[0] + "*" + userDefaults.myRetina }
-		if (values[1] != nil) { height = ", height: " + values[1] + "*" + userDefaults.myRetina }
-		if (values[2] != nil) { x = ", x: " + values[2] + "*" + userDefaults.myRetina }
-		if (values[3] != nil) { y = ", y: " + values[3] + "*" + userDefaults.myRetina }
+		if (values[0] != nil) { width = " width: " + vout(values[0]) }
+		if (values[1] != nil) { height = ", height: " + vout(values[1]) }
+		if (values[2] != nil) { x = ", x: " + vout(values[2]) }
+		if (values[3] != nil) { y = ", y: " + vout(values[3]) }
 		
 		return "" + width + height + x + y
 	}
 }
 
 
-function generateImagePath(dirtyPath) {
-	return ", image: \"images/" + removePath(dirtyPath) + ".png\""
+GenerateInventory.generateImagePath = function(dirtyPath) {
+	return ", image: \"images/" + GenerateInventory.removePath(dirtyPath) + ".png\""
 }
 
 
-
-
-
-
-// states related
-
-function generateStateSection(layerName, generatedStates) {
-	if (generatedStates == nil || generatedStates.length == 0) { return "" }
-	
-	var stateSectionName = normalizeName(layerName) + ".states.add {" + ln()
-	var stateBottomSection = "}" + ln()
-	
-	var states = ""
-	for (var i = 0; i < generatedStates.length; i++) {
-		var correctBeginString = generatedStates[i].replace("{,", "{")
-		states += tln() + correctBeginString + ln()
-	}
-	
-	return stateSectionName + states + stateBottomSection
-}
-
-function generateState(stateName, stateContent) {
-	if (stateContent == "" || stateContent == nil || stateContent == '') { return "" }
-	return clearName(stateName) + ": {" + stateContent + "}"
-}
-
-
-function generateStateSwitchInstant(layerName, stateName) {
-	return "" + normalizeName(layerName) + ".states.switchInstant \"" + normalizeName(stateName) + "\"" + dln()
-}
-
-function generateRetinaVariable() {
-	var chosenRetina = FramerInventory.getRetinaValue()
-	return userDefaults.myRetina + " = " + chosenRetina + ln()
-}
-
-function generatePhoneModel() {
-	var model = FramerInventory.getPhoneValue()
-	var modelDescription = ""
-	
-	if (model == 1 || model == 2 || model == 3) {
-		modelDescription += "# mobile" + ln()
-	} 
-	
-	if (model == 1) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln()
-	}
-	else if (model == 2) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln()
-		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.853" + ln()
-	}
-	else if (model == 3) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln()
-		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.515" + ln()
-		modelDescription += "if Screen.width == 750" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.604" + ln()
-	}
-	return modelDescription
-}
-
-
-
-function getButtonName() {
-	return "cycleButton"
-}
-
-function generateCycleButton() {
-	return getButtonName() + " = new Layer width: Screen.width, height: Screen.height, backgroundColor: \"transparent\"" + dln()
-}
-
-
-
-function getCycleArrayName() {
-	return "statesFromArtboards"
-}
-
-function generateCycleStates(states) {
-	var cycleStatesDescription = getCycleArrayName() + " = ["
-	for (var i = 0; i < states.length; i++) {
-		cycleStatesDescription += "\"" + normalizeName(states[i]) + "\""
-		if (i != states.length - 1) { cycleStatesDescription += ", "}
-	}
-	cycleStatesDescription += "]" + ln()
-	return cycleStatesDescription
-}
-
-
-
-function getLayersArrayName() {
-	return "items"
-}
-
-function generateLayers(layers) {
-	var layersDescription = getLayersArrayName() + " = ["
-	for (var i = 0; i < layers.count(); i++) {
-		var layerName = [[layers objectAtIndex: i] name]
-		layersDescription += normalizeName(layerName)
-		if (i != layers.count() - 1) { layersDescription += ", "}
-	}
-	layersDescription += "]" + ln()
-	return layersDescription
-	
-}
-
-
-
-function getCyclerName() {
-	return "cycler"
-}
-
-function generateCycler() {
-	var cyclerDescription = getCyclerName() + " = Utils.cycle(" + getCycleArrayName() + ")" + ln()
-	cyclerDescription += "nextState = " + getCyclerName() + "()" + dln()
-	return cyclerDescription
-}
-
-function getFunctionName() {
-	return "runSimulation"
-}
-
-
-
-function generateHandler() {
-	var handlerDescription = ""
-	
-	if (userDefaults.myAutoplay == 0) {
-		handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
-		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
-		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
-		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
-		handlerDescription += tln() + tln() + "catch error" + dln()
-	}
-	else {
-		handlerDescription = getFunctionName() + " = () ->" + ln()
-		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
-		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
-		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
-		handlerDescription += tln() + tln() + "catch error" + ln()
-		handlerDescription += tln() + "Utils.delay 2, ->" + ln()
-		handlerDescription += tln() + tln() + getFunctionName() + "()" + dln()
-		
-		handlerDescription += getFunctionName() + "()"
-	}
-	return handlerDescription
-}
 

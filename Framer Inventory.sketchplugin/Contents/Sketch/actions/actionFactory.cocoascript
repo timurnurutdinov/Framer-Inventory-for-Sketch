@@ -9,7 +9,9 @@
 @import 'inventory/libs/search.js'
 
 var presets = {
-    myRetina: "retina",
+	myRetinaEnabled: 0,
+	myRetinaValue: 1,
+    myRetinaString: "retina",
 	myMobile: 1,
 	myMinimalExport: 1,
 	myAutoplay: 0
@@ -181,6 +183,32 @@ FramerInventory.selectAllLayersOnExportPage = function() {
 	currentDocument.setCurrentPage(oldPage)
 }
 
+// add item to NSArray 
+FramerInventory.addItemToArray = function(item, array) {
+	if (array == nil) { return nil }
+    return array.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(item, nil))
+}
+
+FramerInventory.addArrayToArray = function(itemArray, array) {
+	if (array == nil) { return nil }
+	
+    var composedArray = NSArray.new()
+	for (var i = 0; i < itemArray.count(); i++) {
+		var item = [itemArray objectAtIndex: i]
+		composedArray = composedArray.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(item, nil))
+	}
+	return composedArray
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -226,7 +254,7 @@ FramerInventory.cleanTypes = function(userSelection) {
 		
 		if (type == "MSArtboardGroup" || type == "MSSliceLayer") { ; }
 		else {
-			newSelection = newSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+			newSelection = FramerInventory.addItemToArray(current, newSelection)
 		}
 	}
 	
@@ -253,10 +281,10 @@ FramerInventory.cleanSelection = function(userSelection) {
 		}
 		
 		if (!alreadySelected) {
-			newSelection = newSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+			newSelection = FramerInventory.addItemToArray(current, newSelection)
 		}
 		else {
-			duplicatedSelection = duplicatedSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(current, nil))
+			duplicatedSelection = FramerInventory.addItemToArray(current, duplicatedSelection)
 		}
 	}
 	
@@ -321,11 +349,12 @@ FramerInventory.composeSelection = function(layerNames, userSelection) {
 			}
 		}
 		
+
 		var namedLayersPredicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", layerNames[i], layerType)
 		var foundLayers = findLayersMatchingPredicate_inContainer_filterByType(namedLayersPredicate, FramerInventory.getCurrentPage())
 		
 		if (foundLayers != nil && [foundLayers count] != 0) {
-			composedSelection = composedSelection.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects([foundLayers firstObject], nil))
+			composedSelection = FramerInventory.addItemToArray([foundLayers firstObject], composedSelection)
 			continue
 		}
 	}
@@ -374,6 +403,15 @@ FramerInventory.restoreSelection = function(initialSelection) {
 		[[initialSelection objectAtIndex:i] select:true byExpandingSelection:true]
 	}
 }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -553,3 +591,28 @@ FramerInventory.showDoneMessage = function() {
 	}
 	if (showLog) { log("Completed") }
 }
+
+
+
+
+
+FramerInventory.findMatchingLayers = function(predicate, currentLayer, artboard) {
+	var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, artboard)
+	
+	
+	if ([matchingLayers count] == 0 && ([currentLayer className] == "MSLayerGroup" || [currentLayer className] == "MSSymbolInstance")) {
+		
+		if ([currentLayer className] == "MSLayerGroup") {
+			var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSSymbolInstance")
+		}
+		else {
+			var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSLayerGroup")
+		}
+			
+		matchingLayersNext = findLayersMatchingPredicate_inContainer_filterByType(predicateNext, artboard)
+		matchingLayers = FramerInventory.addArrayToArray(matchingLayersNext, matchingLayers)
+	}
+	
+	return matchingLayers
+}
+

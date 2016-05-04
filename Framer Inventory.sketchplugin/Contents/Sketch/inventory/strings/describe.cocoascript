@@ -1,0 +1,151 @@
+
+function DescribeInventory () {}
+
+
+
+// states related
+
+DescribeInventory.generateStateSection = function(layerName, generatedStates) {
+	if (generatedStates == nil || generatedStates.length == 0) { return "" }
+	
+	var stateSectionName = GenerateInventory.clearName(layerName) + ".states.add {" + ln()
+	var stateBottomSection = "}" + ln()
+	
+	var states = ""
+	for (var i = 0; i < generatedStates.length; i++) {
+		var correctBeginString = generatedStates[i].replace("{,", "{")
+		states += tln() + correctBeginString + ln()
+	}
+	
+	return stateSectionName + states + stateBottomSection
+}
+
+DescribeInventory.generateState = function(stateName, stateContent) {
+	if (stateContent == "" || stateContent == nil || stateContent == '') { return "" }
+	return GenerateInventory.clearName(stateName) + ": {" + stateContent + "}"
+}
+
+
+DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
+	return "" + GenerateInventory.clearName(layerName) + ".states.switchInstant \"" + GenerateInventory.clearName(stateName) + "\"" + dln()
+}
+
+DescribeInventory.generateRetinaVariable = function() {
+	if (userDefaults.myRetinaEnabled == 0) { return "" }
+	var chosenRetina = FramerInventory.getRetinaValue()
+	return userDefaults.myRetinaString + " = " + chosenRetina + ln()
+}
+
+DescribeInventory.generatePhoneModel = function() {
+	var model = FramerInventory.getPhoneValue()
+	var modelDescription = ""
+	
+	if (model == 1 || model == 2 || model == 3) {
+		modelDescription += "# mobile" + ln()
+	} 
+	
+	if (model == 1) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln()
+	}
+	else if (model == 2) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln()
+		modelDescription += "if Screen.width == 640" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.853" + ln()
+	}
+	else if (model == 3) {
+		modelDescription += "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln()
+		modelDescription += "if Screen.width == 640" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.515" + ln()
+		modelDescription += "if Screen.width == 750" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 0.604" + ln()
+	}
+	return modelDescription
+}
+
+
+
+function getButtonName() {
+	return "cycleButton"
+}
+
+DescribeInventory.generateCycleButton = function() {
+	return getButtonName() + " = new Layer width: Screen.width, height: Screen.height, backgroundColor: \"transparent\"" + dln()
+}
+
+
+
+function getCycleArrayName() {
+	return "statesFromArtboards"
+}
+
+DescribeInventory.generateCycleStates = function(states) {
+	var cycleStatesDescription = getCycleArrayName() + " = ["
+	for (var i = 0; i < states.length; i++) {
+		cycleStatesDescription += "\"" + GenerateInventory.clearName(states[i]) + "\""
+		if (i != states.length - 1) { cycleStatesDescription += ", "}
+	}
+	cycleStatesDescription += "]" + ln()
+	return cycleStatesDescription
+}
+
+
+
+function getLayersArrayName() {
+	return "items"
+}
+
+DescribeInventory.generateLayers = function(layers) {
+	var layersDescription = getLayersArrayName() + " = ["
+	for (var i = 0; i < layers.count(); i++) {
+		var layerName = [[layers objectAtIndex: i] name]
+		layersDescription += GenerateInventory.clearName(layerName)
+		if (i != layers.count() - 1) { layersDescription += ", "}
+	}
+	layersDescription += "]" + ln()
+	return layersDescription
+	
+}
+
+
+
+function getCyclerName() {
+	return "cycler"
+}
+
+DescribeInventory.generateCycler = function() {
+	var cyclerDescription = getCyclerName() + " = Utils.cycle(" + getCycleArrayName() + ")" + ln()
+	cyclerDescription += "nextState = " + getCyclerName() + "()" + dln()
+	return cyclerDescription
+}
+
+function getFunctionName() {
+	return "runSimulation"
+}
+
+
+DescribeInventory.generateHandler = function() {
+	var handlerDescription = ""
+	
+	if (userDefaults.myAutoplay == 0) {
+		handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
+		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+		handlerDescription += tln() + tln() + "try" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + "catch error" + dln()
+	}
+	else {
+		handlerDescription = getFunctionName() + " = () ->" + ln()
+		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+		handlerDescription += tln() + tln() + "try" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + "catch error" + ln()
+		handlerDescription += tln() + "Utils.delay 2, ->" + ln()
+		handlerDescription += tln() + tln() + getFunctionName() + "()" + dln()
+		
+		handlerDescription += getFunctionName() + "()"
+	}
+	return handlerDescription
+}
+
