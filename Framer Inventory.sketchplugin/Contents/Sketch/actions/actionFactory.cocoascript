@@ -9,8 +9,8 @@
 @import 'inventory/libs/search.js'
 
 var presets = {
-	myRetinaEnabled: 1,
-	myRetinaValue: 2,
+	myRetinaEnabled: 0,
+	myRetinaValue: 1,
     myRetinaString: "retina",
 	myMobile: 1,
 	myMinimalExport: 1,

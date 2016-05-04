@@ -31,7 +31,7 @@ DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
 }
 
 DescribeInventory.generateRetinaVariable = function() {
-	if (userDefaults.myRetinaEnabled == 1) { return "" }
+	if (userDefaults.myRetinaEnabled == 0) { return "" }
 	var chosenRetina = FramerInventory.getRetinaValue()
 	return userDefaults.myRetinaString + " = " + chosenRetina + ln()
 }

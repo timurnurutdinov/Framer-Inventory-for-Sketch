@@ -38,7 +38,11 @@ function niceValue(val, accuracy) {
 
 // value out -> vout :)
 function vout(val) {
-	if (userDefaults.myRetinaEnabled == 1) { return (niceValue(val) * userDefaults.myRetinaValue) + "" }
+	if (userDefaults.myRetinaEnabled == 0) {
+		var currentMultiplier = userDefaults.myRetinaValue
+		if (FramerInventory.getPhoneValue() != 0) { currentMultiplier = FramerInventory.getRetinaValue() }
+		return (niceValue(val) * currentMultiplier) + ""
+	}
 	else { return niceValue(val) + "*" + userDefaults.myRetinaString }
 }
 
@@ -123,7 +127,8 @@ GenerateInventory.generateFilterShadows = function(values) {
 		}
 		
 		var shadowVariable = ""
-		if (userDefaults.myRetinaEnabled == 1) {
+		// BAD CODE: REFACTORING NEEDED
+		if (userDefaults.myRetinaEnabled == 0) {
 			var shadowVariable = ", style: {\"" + "-webkit-filter\"" + ": \"" + "drop-shadow" + '('
 			shadowVariable += vout(value[0]) + "px " + vout(value[1]) + "px " 
 			shadowVariable += vout(value[2]) + "px " + color + ')' + "\"" + "}"
