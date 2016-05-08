@@ -11,15 +11,16 @@ var runReplicateLayers = function(context) {
 	var pasteboardContent = []
 	
 	var currentPage = FramerInventory.getCurrentPage()
-	var framerInventoryPage = FramerInventory.addPage(currentPage)
-	FramerInventory.cleanPage(framerInventoryPage)
+	FramerInventory.addExportPageAndReturn(currentPage)
+	FramerInventory.cleanExportPage()
 	
-	
-	var sortedSelection = FramerInventory.cleanSelection(selection)
+	var sortedSelection = OrderInventory.removeDuplicatedLayers(selection)
 	if (sortedSelection == nil || sortedSelection.count() < 1) {
 		[doc showMessage:"Nothing to replicate. Please, select some layers"]
 		return
 	}
+	
+	FramerInventory.setUserSelection(sortedSelection)
 	
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]

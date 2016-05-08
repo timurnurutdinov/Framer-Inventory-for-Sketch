@@ -20,8 +20,8 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	var pasteboardContent = []
 	
 	var currentPage = FramerInventory.getCurrentPage()
-	var framerInventoryPage = FramerInventory.addPage(currentPage)
-	FramerInventory.cleanPage(framerInventoryPage)
+	FramerInventory.addExportPageAndReturn(currentPage)
+	FramerInventory.cleanExportPage()
 	
 	var artboards = [[doc currentPage] artboards]
 	

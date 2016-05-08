@@ -92,7 +92,7 @@ FramerInventory.deselectLayers = function() {
 	[[currentDocument currentPage] deselectAllLayers]
 }
 
-FramerInventory.addPage = function(oldPage) {
+FramerInventory.addExportPageAndReturn = function(oldPage) {
 	var newPage = nil
 	var pageExistsIndex = -1
 
@@ -116,6 +116,47 @@ FramerInventory.addPage = function(oldPage) {
     return newPage;
 }
 
+FramerInventory.cleanExportPage = function() {
+	var exportPage = FramerInventory.findPageWithName(exportPageName)
+	var exportableLayers = [exportPage exportableLayers]
+	
+	for (var i = 0; i < exportableLayers.count(); i++) {
+		[[exportableLayers objectAtIndex: i] removeFromParent]
+	}
+}
+
+FramerInventory.removePage = function(pageName) {
+	var oldPage = [currentDocument currentPage]
+	var pages = [currentDocument pages]
+	
+	for (var i = 0; i < pages.count(); i++) {
+		var page = [pages objectAtIndex: i]
+		if ([page name] == pageName) { [currentDocument removePage:page] }
+	}
+	
+	currentDocument.setCurrentPage(oldPage)
+}
+
+FramerInventory.findPageWithName = function(pageName) {
+	var pages = [currentDocument pages]
+	for (var p = 0; p < [pages count]; p++) {
+		if ([[pages objectAtIndex:p] name] == pageName) { return [pages objectAtIndex:p] }
+	}
+	return nil
+}
+
+FramerInventory.returnDuplicatedArtboards = function(artboards) {
+	for (var i = 0; i < artboards.count(); i++) {
+		var current = [artboards objectAtIndex:i]
+		
+		for (var j = 0; j < i; j++) {
+			var comparableCurrent = [artboards objectAtIndex:j]
+			if ([current name] == [comparableCurrent name]) { return comparableCurrent }
+		}
+	}
+	
+	return nil
+}
 
 FramerInventory.cleanLayer = function(layer, page) {
 	var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [layer name], [layer className])
@@ -131,33 +172,7 @@ FramerInventory.cleanLayer = function(layer, page) {
 }
 
 
-FramerInventory.cleanPage = function(page) {
-	var exportableLayers = [page exportableLayers]
-	
-	for (var i = 0; i < exportableLayers.count(); i++) {
-		[[exportableLayers objectAtIndex: i] removeFromParent]
-	}
-}
 
-FramerInventory.findPageWithName = function(pageName) {
-	var pages = [currentDocument pages]
-	for (var p = 0; p < [pages count]; p++) {
-		if ([[pages objectAtIndex:p] name] == pageName) { return [pages objectAtIndex:p] }
-	}
-	return nil
-}
-
-FramerInventory.removePage = function(pageName) {
-	var oldPage = [currentDocument currentPage]
-	var pages = [currentDocument pages]
-	
-	for (var i = 0; i < pages.count(); i++) {
-		var page = [pages objectAtIndex: i]
-		if ([page name] == pageName) { [currentDocument removePage:page] }
-	}
-	
-	currentDocument.setCurrentPage(oldPage)
-}
 
 
 
@@ -189,7 +204,8 @@ FramerInventory.addArrayToArray = function(itemArray, array) {
 // selection based magic
 
 FramerInventory.organiseSelection = function(userSelection) {
-	contextUserSelection = userSelection
+	FramerInventory.setUserSelection(userSelection)
+	
 	var page = FramerInventory.getCurrentPage()
 	var artboards = [page artboards]
 	
@@ -206,6 +222,10 @@ FramerInventory.organiseSelection = function(userSelection) {
 	// FramerInventory.restoreSelection(userSelection)
 	
 	return orderedLayers
+}
+
+FramerInventory.setUserSelection = function(userSelection) {
+	contextUserSelection = userSelection
 }
 
 FramerInventory.restoreSelection = function(selection) {
@@ -229,26 +249,6 @@ FramerInventory.createExportSelection = function() {
 }
 
 
-
-
-
-
-
-FramerInventory.returnDuplicatedArtboards = function(artboards) {
-	
-	for (var i = 0; i < artboards.count(); i++) {
-		var current = [artboards objectAtIndex:i]
-		
-		for (var j = 0; j < i; j++) {
-			var comparableCurrent = [artboards objectAtIndex:j]
-			if ([current name] == [comparableCurrent name]) { 
-				return comparableCurrent 
-			}
-		}
-	}
-	
-	return nil
-}
 
 
 
@@ -333,9 +333,9 @@ FramerInventory.isExportPageRequired = function() {
 }
 
 FramerInventory.showDoneMessage = function() {
-	var message = "Done. "
+	var message = "Done"
 	
-	if (OrderInventory.getWarnings() != "") { message += "Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
+	if (OrderInventory.getWarnings() != "") { message += ". Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
 	
 	if (FramerInventory.isExportPageRequired()) { message = "Done. Export assets from \"" + exportPageName + "\" page" }
 	else { FramerInventory.removePage(exportPageName) }

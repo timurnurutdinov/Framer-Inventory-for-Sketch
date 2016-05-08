@@ -378,7 +378,7 @@ Layer.cleanLayerShadows = function(layer) {
 
 Layer.pasteLayer = function(layer) {
 	var currentPage = FramerInventory.getCurrentPage()
-	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	var framerInventoryPage = FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanLayer(layer, framerInventoryPage)
 	if (![layer isVisible]) { [layer setIsVisible:true] }
 	if ([[[layer style] contextSettings] opacity] == 0) { [[[layer style] contextSettings] setOpacity:1] }
