@@ -33,6 +33,8 @@ var phoneModel = 0
 var exportPageRequired = false
 var exportPageName = "Export for Framer Inventory"
 
+var contextUserSelection = NSArray.new()
+
 
 var chooseAction = function(context, actionIdentifier, testing) {
 	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
@@ -69,6 +71,9 @@ var chooseAction = function(context, actionIdentifier, testing) {
 		}
 	}
 }
+
+
+
 
 
 
@@ -142,49 +147,17 @@ FramerInventory.findPageWithName = function(pageName) {
 	return nil
 }
 
-
-
 FramerInventory.removePage = function(pageName) {
 	var oldPage = [currentDocument currentPage]
-	
 	var pages = [currentDocument pages]
+	
 	for (var i = 0; i < pages.count(); i++) {
 		var page = [pages objectAtIndex: i]
-		if ([page name] == pageName) {
-			[currentDocument removePage:page]
-		}
+		if ([page name] == pageName) { [currentDocument removePage:page] }
 	}
 	
 	currentDocument.setCurrentPage(oldPage)
 }
-
-
-// breaks current selection
-FramerInventory.selectAllLayersOnExportPage = function() {
-	var oldPage = [currentDocument currentPage]
-	var existingExportPage = nil
-	
-	var pages = [currentDocument pages]
-	for (var i = 0; i < pages.count(); i++) {
-		var page = [pages objectAtIndex: i]
-		if ([page name] == exportPageName) {
-			existingExportPage = page
-			break
-		}
-	}
-	
-	if (existingExportPage != nil) {
-		var layersOnPage = [existingExportPage layers]
-		FramerInventory.deselectLayers()
-		
-		for (var i = 0; i < layersOnPage.count(); i++) {
-			[[layersOnPage objectAtIndex:i] select:true byExpandingSelection:true]
-		}
-	}
-	
-	currentDocument.setCurrentPage(oldPage)
-}
-
 
 
 
@@ -212,9 +185,11 @@ FramerInventory.addArrayToArray = function(itemArray, array) {
 
 
 
+
 // selection based magic
 
 FramerInventory.organiseSelection = function(userSelection) {
+	contextUserSelection = userSelection
 	var page = FramerInventory.getCurrentPage()
 	var artboards = [page artboards]
 	
@@ -228,242 +203,30 @@ FramerInventory.organiseSelection = function(userSelection) {
 	var unorderedLayers = OrderInventory.returnUnorderedLayers()
 	var orderedLayers = OrderInventory.analyseOrder(unorderedLayers)
 	
-	FramerInventory.restoreSelection(userSelection)
+	// FramerInventory.restoreSelection(userSelection)
 	
 	return orderedLayers
 }
 
-
-// FramerInventory.cleanTypes = function(userSelection) {
-// 	var newSelection = NSMutableArray.new()
-//
-// 	for (var i = 0; i < userSelection.count(); i++) {
-// 		var current = [userSelection objectAtIndex:i]
-// 		var type = [current className]
-//
-// 		if (type == "MSArtboardGroup" || type == "MSSliceLayer") { ; }
-// 		else {
-// 			newSelection = FramerInventory.addItemToArray(current, newSelection)
-// 		}
-// 	}
-//
-// 	return newSelection
-// }
-
-
-// skip layers with duplicated names from selection
-// FramerInventory.cleanSelection = function(userSelection) {
-// 	var newSelection = NSMutableArray.new()
-// 	var duplicatedSelection = NSMutableArray.new()
-//
-// 	for (var i = 0; i < userSelection.count(); i++) {
-// 		var current = [userSelection objectAtIndex:i]
-// 		var alreadySelected = false
-//
-// 		for (var j = 0; j < i; j++) {
-// 			var comparableCurrent = [userSelection objectAtIndex:j]
-//
-// 			if ([[current name] isEqualToString:[comparableCurrent name]]) {
-// 				alreadySelected = true
-// 				break
-// 			}
-// 		}
-//
-// 		if (!alreadySelected) {
-// 			newSelection = FramerInventory.addItemToArray(current, newSelection)
-// 		}
-// 		else {
-// 			duplicatedSelection = FramerInventory.addItemToArray(current, duplicatedSelection)
-// 		}
-// 	}
-//
-// 	if (duplicatedSelection != nil && [duplicatedSelection count] > 0) {
-// 		if (showLog) { log("Warning: user selection has " + [duplicatedSelection count] + " dublicated names")}
-// 	}
-//
-// 	return newSelection
-// }
-
-// return an array based on each artboard layers hierarchy
-// FramerInventory.configureQueue = function(artboards, cleanedSelection) {
-// 	var queue = []
-//
-// 	for (var i = 0; i < artboards.count(); i++) {
-// 		[[currentDocument currentPage] deselectAllLayers]
-//
-// 		var currentArtboard = [artboards objectAtIndex:i]
-// 		var artboardLayers = [currentArtboard layers]
-//
-// 		var allChildren = [currentArtboard children]
-// 		var localQueue = []
-//
-//
-// 		for (var j = 0; j < allChildren.count(); j++) {
-//
-// 			var child = [allChildren objectAtIndex: j]
-//
-// 			for (var s = 0; s < cleanedSelection.count(); s++) {
-// 				var selectionLayer = [cleanedSelection objectAtIndex: s]
-//
-// 				if ([[child name] isEqualToString:[selectionLayer name]]) {
-// 					localQueue.push([child name])
-// 					break
-// 				}
-// 			}
-// 		}
-//
-// 		if (localQueue != nil && localQueue.length > 0) {
-// 			// if (showLog) { log("Added new queue: " + localQueue) }
-// 			queue.push(localQueue)
-// 		}
-//
-// 	}
-//
-// 	return queue
-// }
-
-
-// FramerInventory.composeSelection = function(layerNames, userSelection) {
-// 	var composedSelection = NSMutableArray.new()
-//
-// 	for (var i = 0; i < layerNames.length; i++) {
-//
-// 		var layerType = nil
-// 		for (var j = 0; j < [userSelection count]; j++) {
-// 			var currentLayer = [userSelection objectAtIndex:j]
-//
-// 			if ([[currentLayer name] isEqualToString:layerNames[i]]) {
-// 				layerType = [currentLayer className]
-// 				break
-// 			}
-// 		}
-//
-//
-// 		var namedLayersPredicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", layerNames[i], layerType)
-// 		var foundLayers = findLayersMatchingPredicate_inContainer_filterByType(namedLayersPredicate, FramerInventory.getCurrentPage())
-//
-// 		if (foundLayers != nil && [foundLayers count] != 0) {
-// 			composedSelection = FramerInventory.addItemToArray([foundLayers firstObject], composedSelection)
-// 			continue
-// 		}
-// 	}
-//
-// 	if (composedSelection != nil && composedSelection.count() < 1) { return nil }
-// 	return composedSelection
-// }
-
-
-// FramerInventory.cleanDuplicates = function(dirtySelection) {
-// 	if (dirtySelection == nil) { return nil }
-// 	var cleanSelection = []
-//
-// 	for (var i = 0; i < dirtySelection.length; i++) {
-// 		var dirtyLayer = dirtySelection[i]
-//
-// 		if (cleanSelection == nil) {
-// 			cleanSelection.push(dirtyLayer)
-// 		}
-// 		else {
-// 			var alreadySelected = false
-//
-// 			for (var j = 0; j < cleanSelection.length; j++) {
-// 				var cleanLayer = cleanSelection[j]
-//
-// 				if ([dirtyLayer isEqualToString:cleanLayer]) {
-// 					alreadySelected = true
-// 					break
-// 				}
-// 			}
-//
-// 			if (!alreadySelected) {
-// 				cleanSelection.push(dirtyLayer)
-// 			}
-// 		}
-//
-// 	}
-//
-// 	return cleanSelection
-// }
-
-
-FramerInventory.restoreSelection = function(initialSelection) {
-	[[currentDocument currentPage] deselectAllLayers]
-	for (var i = 0; i < initialSelection.count(); i++) {
-		[[initialSelection objectAtIndex:i] select:true byExpandingSelection:true]
+FramerInventory.restoreSelection = function(selection) {
+	var currentPage = FramerInventory.getCurrentPage()
+	[currentPage deselectAllLayers]
+	
+	for (var i = 0; i < selection.count(); i++) {
+		[[selection objectAtIndex:i] select:true byExpandingSelection:true]
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// merging layers
-// FramerInventory.hasElem = function(elem, container) {
-// 	if (container == nil) {
-// 		if (showLog) { log("HasElem has an empty container")}
-// 		return -1
-// 	}
-//
-// 	for (var i = 0; i < container.length; i++) {
-// 		if (elem == container[i]) { return i }
-// 	}
-// 	return -1
-// }
-
-
-// FramerInventory.merge = function(left, right) {
-// 	if (left.length < 1) { return right }
-// 	if (left.right < 1) { return left }
-//
-// 	var result = []
-// 	var leftPointer = 0
-// 	var rightPointer = 0
-//
-// 	for (var i = 0; i < left.length; i++) {
-// 		var currentElem = left[i]
-//
-// 		var stopPoint = FramerInventory.hasElem(currentElem, right)
-//
-// 		// if (showLog) { log("it: " + i + " and stopPoint is " + stopPoint) }
-//
-// 		if (stopPoint != -1) {
-// 			for (var f = leftPointer; f < i; f++) { result.push(left[f]) }
-// 			for (var f = rightPointer; f < stopPoint; f++) { result.push(right[f]) }
-// 			result.push(right[stopPoint])
-// 			leftPointer = i + 1
-// 			rightPointer = stopPoint + 1
-// 		}
-// 	}
-//
-// 	for (var f = leftPointer; f < left.length; f++) { result.push(left[f]) }
-// 	for (var f = rightPointer; f < right.length; f++) { result.push(right[f]) }
-//
-// 	return result
-// }
-//
-//
-// FramerInventory.mergeQueue = function(container) {
-// 	if (container == nil) {
-// 		if (showLog) { log("Merge queue has an empty container")}
-// 		return nil
-// 	}
-// 	if (container.legth == 1) { return container[0] }
-//
-// 	var temp = []
-// 	for (var i = 0; i < container.length; i++) {
-// 		temp = FramerInventory.merge(temp, container[i])
-// 	}
-// 	return temp
-// }
+FramerInventory.createExportSelection = function() {
+	var exportPage = FramerInventory.findPageWithName(exportPageName)
+	if (exportPage == nil) { return }
+	[exportPage deselectAllLayers]
+	
+	var exportables = [exportPage exportableLayers]
+	for (var i = 0; i < exportables.count(); i++) {
+		[[exportables objectAtIndex:i] select:true byExpandingSelection:true]
+	}
+}
 
 
 
@@ -570,19 +333,19 @@ FramerInventory.isExportPageRequired = function() {
 }
 
 FramerInventory.showDoneMessage = function() {
-	if (OrderInventory.getWarnings() != "") {
-		var message = "Done. Warning: \"" + OrderInventory.getWarnings() + "\" has several types."
-		[currentDocument showMessage:message]
-	}
-	else if (FramerInventory.isExportPageRequired()) {
-		[currentDocument showMessage:"Done. Export assets from " + exportPageName + " page"]
-		// FramerInventory.selectAllLayersOnExportPage()
-	}
-	else {
-		[currentDocument showMessage:"Done"]
-		FramerInventory.removePage(exportPageName)
-	}
-	if (showLog) { log("Completed") }
+	var message = "Done. "
+	
+	if (OrderInventory.getWarnings() != "") { message += "Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
+	
+	if (FramerInventory.isExportPageRequired()) { message = "Done. Export assets from \"" + exportPageName + "\" page" }
+	else { FramerInventory.removePage(exportPageName) }
+	
+	[currentDocument showMessage:message]
+	
+	FramerInventory.createExportSelection()
+	FramerInventory.restoreSelection(contextUserSelection)
+	
+	if (showLog) { log("Framer Inventory: Completed") }
 }
 
 
