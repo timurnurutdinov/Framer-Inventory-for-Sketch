@@ -25,22 +25,21 @@ var runTestingEnvironment = function(context) {
 	var errorAnswers = []
 	
 	for (var i = 0; i < pairs.length; i++) {
+		
 		var answer = ""
 		var pageName = pairs[i]
+		
 		testingSelection = NSMutableArray.array()
 		
 		var operatingPage = FramerInventory.findPageWithName(pageName)
-		if (showTestLog) { log("Running on page: " + pageName) }
-		if (showTestLog) { log("Operating page: " + [operatingPage name]) }
+		if (showTestLog) { log("Running: " + pageName) }
+		// if (showTestLog) { log("Operating page: " + [operatingPage name]) }
 		
 		if (operatingPage != nil) {
-			
 			doc.setCurrentPage(operatingPage)
 			[[doc currentPage] deselectAllLayers]
 			
 			testingSelection = [operatingPage exportableLayers]
-			if (showTestLog) { log("exportable layers: " + testingSelection) }
-			
 			answer = runGenerateStates(context, runTests)
 			answers.push(answer)
 			
@@ -52,30 +51,26 @@ var runTestingEnvironment = function(context) {
 	
 	
 	resultingString += "Initialised " + pairs.length + " tests\n"
-	if (skippedPagesNames == 0) {
-		resultingString += "All testing layers are found\n"
-	}
+	if (skippedPagesNames == 0) { resultingString += "All testing layers are found\n" }
 	resultingString += "\n\n\n\n"
 
 
 	for (var i = 0; i < answers.length; i++) {
 		var readReferenceFromFile = pairs[i]
-		
+		var diff = compareAnswer(answers[i], readReferenceFromFile)
 		resultingString += "" + readReferenceFromFile + "\n"
 		
-		var diff = compareAnswer(answers[i], readReferenceFromFile)
 		if (showLog) {
-			if (diff == nil) {log(i + " Correct test. Diff is null: " + diff)}
-			else { log(i + " diff: " + diff) }
+			
+			if (diff == nil) {log((i + 1) + " OK")}
+			else { log((i + 1) + ": " + diff) }
 		}
 
 		if (diff != nil) {
 			resultingString += diff
 			errorAnswers.push(i)
 		}
-		else {
-			resultingString += "Passed"
-		}
+		else { resultingString += "Passed" }
 		resultingString += "\n\n"
 	}
 	
@@ -91,6 +86,7 @@ var runTestingEnvironment = function(context) {
 	}
 	
 	resultingString += "\n\nPassed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests\n"
+	
 	writeTestingLog(resultingString)
 }
 
@@ -109,10 +105,7 @@ TestingEnvironment.getTestingSelection = function() {
 
 // compare functions
 var compareAnswer = function(answer, fileName) {
-	
 	var readText = readFileForAnswer(fileName)
-	if(showLog) { log("Read file: " + readText) }
-	
 	if (readText == "" || readText == '' || readText == nil) { return false }
 	return compareTextsPhrase(answer, "" + readText)
 }
@@ -152,7 +145,7 @@ var compareTextsPhrase = function(text1, text2) {
 						if (i != 0) { prev = text1Array[i - 1] }
 						var errorLocalString = "IN LINE STARTS: " + lines1[l].split(" ", 1) + "\n"
 						errorLocalString += "DIFF: " + prev + " " + text1Array[i]
-						log(errorLocalString)
+						// log(errorLocalString)
 						return errorLocalString
 					}
 				}
@@ -225,6 +218,7 @@ var generatePairs = function() {
 	// check new symbols in Sketch 3.7+
 	pairs.push("35 symbols and groups main symbol")
 	pairs.push("36 symbols and groups main group")
+	
 	
 	return pairs
 }

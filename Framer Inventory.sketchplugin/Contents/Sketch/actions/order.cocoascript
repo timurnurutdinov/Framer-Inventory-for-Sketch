@@ -3,13 +3,14 @@ var userSelection = nil
 var selectionMap = [,]
 var artboardsMapsArray = []
 
-
+var typeWarning = ""
 
 function OrderInventory () {}
 
 OrderInventory.initSelection = function(selection) {
-	if (selection == nil) { return nil }
 	userSelection = selection
+	selectionMap = [,]
+	artboardsMapsArray = []
 	OrderInventory.composeSelectionMap()
 }
 
@@ -18,7 +19,12 @@ OrderInventory.mapSize = function(map) {
 }
 
 OrderInventory.presentOrder = function(array) {
+	if (array == nil) { return }
 	for (var i = 0; i < array.count(); i++) { log(i + ": " + [[array objectAtIndex:i] name]) } log("")
+}
+
+OrderInventory.getWarnings = function() {
+	return typeWarning
 }
 
 OrderInventory.composeSelectionMap = function() {
@@ -33,7 +39,8 @@ OrderInventory.composeSelectionMap = function() {
 		}
 		else {
 			var currentvalue = selectionMap[layerName]
-			if (![currentvalue isEqualToString:type]) { 
+			if (![currentvalue isEqualToString:type]) {
+				typeWarning = layerName
 				if (showLog) { log("WARNING: SEVERAL TYPES OF " + layerName) }
 			}
 		}
@@ -44,6 +51,7 @@ OrderInventory.composeSelectionMap = function() {
 
 OrderInventory.removeDuplicatedLayers = function(array) {
 	var cleanedLayers = NSArray.new()
+	if (array == nil) { return cleanedLayers }
 	
 	for (var i = 0; i < array.count(); i++) {
 		var currentLayer = [array objectAtIndex: i]
@@ -221,8 +229,8 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 			
 			var score = OrderInventory.analyseAveragePosition(existingLayer, currentLayer)
 			
-			if (score > 0) { log([existingLayer name] + " > " + [currentLayer name]) }
-			else if (score < 0) { log([existingLayer name] + " < " + [currentLayer name]) }
+			// if (score > 0) { log([existingLayer name] + " > " + [currentLayer name]) }
+			// else if (score < 0) { log([existingLayer name] + " < " + [currentLayer name]) }
 
 			
 			if (score < 0) {

@@ -8,7 +8,7 @@ square.states.add {
 }
 square.states.switchInstant "s1"
 
-oval = new Layer width: 100*retina, height: 100*retina, x: 200*retina, y: 200*retina, borderRadius: "100%", backgroundColor: "rgba(245,166,35,1)"
-
 nice = new Layer width: 90*retina, height: 90*retina, x: 155*retina, y: 355*retina, backgroundColor: "rgba(0,0,0,1)"
+
+oval = new Layer width: 100*retina, height: 100*retina, x: 200*retina, y: 200*retina, borderRadius: "100%", backgroundColor: "rgba(245,166,35,1)"
 

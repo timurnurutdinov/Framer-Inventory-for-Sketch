@@ -8,10 +8,7 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 	[[NSPasteboard generalPasteboard] clearContents]
 	
 	if (isTestingEnvironment != nil && isTestingEnvironment) { 
-		if (showLog) { log("Prepare custom selection for tests") }
 		selection = TestingEnvironment.getTestingSelection()
-		
-		if (showLog) { log(selection) }
 	}
 	
 	var layers = []

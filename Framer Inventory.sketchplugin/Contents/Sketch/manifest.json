@@ -61,7 +61,8 @@
 		         "title": "      Utils",
 		         "items": [
 				 	"choose-settings",
-					"choose-remove-export-page"
+					"choose-remove-export-page",
+					"choose-testing-environment"
 		         ],
 		  }
       ]
