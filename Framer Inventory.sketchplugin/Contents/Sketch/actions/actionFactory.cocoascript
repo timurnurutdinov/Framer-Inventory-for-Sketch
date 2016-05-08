@@ -183,21 +183,19 @@ FramerInventory.selectAllLayersOnExportPage = function() {
 	currentDocument.setCurrentPage(oldPage)
 }
 
+
+
+
 // add item to NSArray 
 FramerInventory.addItemToArray = function(item, array) {
 	if (array == nil) { return nil }
     return array.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(item, nil))
 }
 
+// add NSArray to NSArray
 FramerInventory.addArrayToArray = function(itemArray, array) {
 	if (array == nil) { return nil }
-	
-    var composedArray = NSArray.new()
-	for (var i = 0; i < itemArray.count(); i++) {
-		var item = [itemArray objectAtIndex: i]
-		composedArray = composedArray.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(item, nil))
-	}
-	return composedArray
+	return array.arrayByAddingObjectsFromArray(itemArray)
 }
 
 
@@ -239,7 +237,7 @@ FramerInventory.organiseSelection = function(userSelection) {
 	// if (showLog) { log("Duplicates cleaned: " + merged) }
 	
 	var newSelection = FramerInventory.composeSelection(merged, cleanedSelection)
-	if (showLog) { log("Composed: " + newSelection) }
+	// if (showLog) { log("Composed: " + newSelection) }
 	
 	return newSelection
 }

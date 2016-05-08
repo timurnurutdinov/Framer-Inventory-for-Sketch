@@ -1,0 +1,128 @@
+
+var userSelection = nil
+var selectionMap = [,]
+
+
+
+function OrderInventory () {}
+
+OrderInventory.initSelection = function(selection) {
+	if (selection == nil) { return nil }
+	userSelection = selection
+	OrderInventory.composeSelectionMap()
+}
+
+OrderInventory.selectionMapSize = function() {
+	return Object.keys(selectionMap).length
+}
+
+OrderInventory.presentOrder = function(array) {
+	for (var i = 0; i < layers.count(); i++) { log(i + ": " + [[layers objectAtIndex:i] name]) } log("")
+}
+
+OrderInventory.composeSelectionMap = function() {
+	for (var i = 0; i < userSelection.count(); i++) {
+		var layer = [userSelection objectAtIndex:i]
+		var type = [layer className]
+		var layerName = [layer name]
+		
+		if (selectionMap[layerName] == nil) { 
+			if (layerName != nil && type != nil) { selectionMap[layerName] = type }
+			else { if(showLog) { log("ERROE: NIL KEY OR VALUE FOR SELECTION") } }
+		}
+		else {
+			var currentvalue = selectionMap[layerName]
+			if (![currentvalue isEqualToString:type]) { 
+				if (showLog) { log("WARNING: SEVERAL TYPES OF " + layerName) }
+			}
+		}
+	}
+	
+	if (showLog) { log("Map size: " + OrderInventory.selectionMapSize()) }
+}
+
+OrderInventory.removeDuplicatedLayers = function(array) {
+	var cleanedLayers = NSArray.new()
+	
+	for (var i = 0; i < array.count(); i++) {
+		var currentLayer = [array objectAtIndex: i]
+		var isExist = false
+		
+		for (var c = 0; c < cleanedLayers.count(); c++) {
+			var currentCleaned = [cleanedLayers objectAtIndex: c]
+			
+			if ([[currentLayer name] isEqualToString:[currentCleaned name]]) {
+				isExist = true
+				break
+			}
+		}
+		
+		if (!isExist) {
+			cleanedLayers = FramerInventory.addItemToArray(currentLayer, cleanedLayers)
+		}
+	}
+	
+	return cleanedLayers
+}
+
+
+
+
+
+
+OrderInventory.returnLayers = function(layer) {
+	return layer.layers().array()
+}
+
+OrderInventory.isContainer = function(layer) {
+	if (layer == nil) { return false }
+	var type = [layer className]
+	
+	if (type == "MSLayerGroup" || type == "MSArtboardGroup") { return true }
+	return false
+}
+
+OrderInventory.isFound = function(layer) {
+	if (layer == nil || [layer className] == nil) { return false }
+	var type = [layer className]
+	var layerName = [layer name]
+	
+	if ([type isEqualToString:selectionMap[layerName]]) { return true }
+	return false
+}
+
+OrderInventory.returnScope = function(layer) {
+	if (layer == nil) { return nil }
+
+	if (OrderInventory.isFound(layer)) { 
+		var localOrder = NSArray.new()
+		return FramerInventory.addItemToArray(layer, localOrder)
+	}
+	else {
+		if (OrderInventory.isContainer(layer)) {
+			var layers = OrderInventory.returnLayers(layer)
+			var localOrder = NSArray.new()
+
+			for (var i = 0; i < layers.count(); i++) {
+				var currentChild = [layers objectAtIndex:i]
+				var localScope = OrderInventory.returnScope(currentChild)
+				
+				if (localScope != nil && localScope.count() > 0) {
+					localOrder = FramerInventory.addArrayToArray(localScope, localOrder)
+				}
+				
+			}
+
+			if (localOrder == nil || localOrder.count() == 0) { return nil }
+			return localOrder
+		}
+		else { return nil }
+	}
+}
+
+OrderInventory.returnArtboardOrder = function(artboard) {
+	if (artboard == nil || [artboard className] != "MSArtboardGroup") { return nil }
+
+	var artboardScope = OrderInventory.returnScope(artboard)
+	return OrderInventory.removeDuplicatedLayers(artboardScope)
+}
