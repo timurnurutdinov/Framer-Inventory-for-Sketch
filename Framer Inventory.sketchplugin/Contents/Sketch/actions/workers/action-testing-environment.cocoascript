@@ -25,15 +25,12 @@ var runTestingEnvironment = function(context) {
 	var errorAnswers = []
 	
 	for (var i = 0; i < pairs.length; i++) {
-		
 		var answer = ""
-		var pageName = pairs[i]
-		
 		testingSelection = NSMutableArray.array()
+		var pageName = pairs[i]
 		
 		var operatingPage = FramerInventory.findPageWithName(pageName)
 		if (showTestLog) { log("Running: " + pageName) }
-		// if (showTestLog) { log("Operating page: " + [operatingPage name]) }
 		
 		if (operatingPage != nil) {
 			doc.setCurrentPage(operatingPage)
@@ -44,9 +41,7 @@ var runTestingEnvironment = function(context) {
 			answers.push(answer)
 			
 		}
-		else {
-			skippedPagesNames++
-		}
+		else { skippedPagesNames++ }
 	}
 	
 	
@@ -61,7 +56,6 @@ var runTestingEnvironment = function(context) {
 		resultingString += "" + readReferenceFromFile + "\n"
 		
 		if (showLog) {
-			
 			if (diff == nil) {log((i + 1) + " OK")}
 			else { log((i + 1) + ": " + diff) }
 		}
@@ -75,9 +69,6 @@ var runTestingEnvironment = function(context) {
 	}
 	
 	
-	doc.setCurrentPage(runningPage)
-	
-	
 	if (skippedPagesNames == 0 && skippedLayersNames == 0) {
 		[doc showMessage:"Passed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests"]
 	}
@@ -87,6 +78,7 @@ var runTestingEnvironment = function(context) {
 	
 	resultingString += "\n\nPassed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests\n"
 	
+	doc.setCurrentPage(runningPage)
 	writeTestingLog(resultingString)
 }
 
@@ -143,8 +135,8 @@ var compareTextsPhrase = function(text1, text2) {
 					if (text1Array[i] != text2Array[i]) {
 						var prev = ""
 						if (i != 0) { prev = text1Array[i - 1] }
-						var errorLocalString = "IN LINE STARTS: " + lines1[l].split(" ", 1) + "\n"
-						errorLocalString += "DIFF: " + prev + " " + text1Array[i]
+						var errorLocalString = "ERROR LINE: " + lines1[l].split(" ", 1) + "\n"
+						errorLocalString += "Diff: " + prev + " " + text1Array[i]
 						// log(errorLocalString)
 						return errorLocalString
 					}
@@ -161,7 +153,16 @@ var compareTextsPhrase = function(text1, text2) {
 // TESTS
 var generatePairs = function() {
 	var pairs = []
+	var testsPaths = pluginPath + "/tests"
 	
+	var dirFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:testsPaths error:nil]
+	for (var i = 0; i < dirFiles.count(); i++) {
+		var currentFile = [dirFiles objectAtIndex:i]
+		var fileName = currentFile.replace('.txt','')
+		pairs.push(fileName)
+	}
+	
+	/*
 	pairs.push("01 shapes")
 	
 	// check params
@@ -219,6 +220,7 @@ var generatePairs = function() {
 	pairs.push("35 symbols and groups main symbol")
 	pairs.push("36 symbols and groups main group")
 	
+	*/
 	
 	return pairs
 }
