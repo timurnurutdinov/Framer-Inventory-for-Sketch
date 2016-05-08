@@ -1,3 +1,5 @@
+@import 'actions/order.cocoascript'
+
 @import 'actions/workers/action-replicate-layers.cocoascript'
 @import 'actions/workers/action-generate-states.cocoascript'
 @import 'actions/workers/action-simulate-keynote.cocoascript'
@@ -221,25 +223,33 @@ FramerInventory.organiseSelection = function(userSelection) {
 		FramerInventory.analyseMobile(frame.width)
 	}
 	
-	var cleanedTypes = FramerInventory.cleanTypes(userSelection)
+	
+	OrderInventory.initSelection(userSelection)
+	
+	var unorderedLayers = OrderInventory.returnUnorderedLayers()
+	var orderedLayers = OrderInventory.analyseOrder(unorderedLayers)
+	
+	// var cleanedTypes = FramerInventory.cleanTypes(userSelection)
 	
 	
-	var cleanedSelection = FramerInventory.cleanSelection(cleanedTypes)
+	// var cleanedSelection = FramerInventory.cleanSelection(cleanedTypes)
 	// if (showLog) { log("Cleaned selection: " + cleanedSelection.count() + " -> " + cleanedSelection) }
 	
-	var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
+	// var queue = FramerInventory.configureQueue(artboards, cleanedSelection)
+	
+	
+	
+	// var merged = FramerInventory.mergeQueue(queue)
+	
+	// merged = FramerInventory.cleanDuplicates(merged)
+	// if (showLog) { log("Duplicates cleaned: " + merged) }
+	
+	// var newSelection = FramerInventory.composeSelection(merged, cleanedSelection)
+	// if (showLog) { log("Composed: " + newSelection) }
 	
 	FramerInventory.restoreSelection(userSelection)
 	
-	var merged = FramerInventory.mergeQueue(queue)
-	
-	merged = FramerInventory.cleanDuplicates(merged)
-	// if (showLog) { log("Duplicates cleaned: " + merged) }
-	
-	var newSelection = FramerInventory.composeSelection(merged, cleanedSelection)
-	// if (showLog) { log("Composed: " + newSelection) }
-	
-	return newSelection
+	return orderedLayers
 }
 
 
