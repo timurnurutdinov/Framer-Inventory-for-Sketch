@@ -26,6 +26,7 @@ var currentDocument = nil
 var usedStates = []
 
 var pluginPath = ""
+var methodStartTime = nil
 
 var pixelDensity = 1
 var phoneModel = 0
@@ -38,6 +39,7 @@ var contextUserSelection = NSArray.new()
 
 var chooseAction = function(context, actionIdentifier, testing) {
 	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
+	methodStartTime = [NSDate date]
 	
 	if (showLog) { log("Current document is initialised") }
 	FramerInventory.initCurrentDocument(context)
@@ -350,6 +352,10 @@ FramerInventory.showDoneMessage = function() {
 	FramerInventory.restoreSelection(contextUserSelection)
 	
 	if (showLog) { log("Framer Inventory: Completed") }
+	
+	var methodFinishTime = [NSDate date]
+	var executionTime = [methodFinishTime timeIntervalSinceDate:methodStartTime]
+	if (showLog) { log("Execution time: " + executionTime) }
 }
 
 
