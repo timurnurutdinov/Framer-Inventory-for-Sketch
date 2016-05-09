@@ -8,7 +8,7 @@ var runReplicateLayers = function(context) {
 	[[NSPasteboard generalPasteboard] clearContents]
 	
 	var layers = []
-	var pasteboardContent = []
+	var pasteboardContent = ""
 	
 	var currentPage = FramerInventory.getCurrentPage()
 	FramerInventory.addExportPageAndReturn(currentPage)

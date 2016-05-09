@@ -12,7 +12,7 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 	}
 	
 	var layers = []
-	var pasteboardContent = []
+	var pasteboardContent = ""
 	
 	var currentPage = FramerInventory.getCurrentPage()
 	FramerInventory.addExportPageAndReturn(currentPage)

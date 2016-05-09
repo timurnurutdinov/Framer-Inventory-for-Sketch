@@ -30,8 +30,9 @@ OrderInventory.getWarnings = function() {
 OrderInventory.composeSelectionMap = function() {
 	for (var i = 0; i < userSelection.count(); i++) {
 		var layer = [userSelection objectAtIndex:i]
-		var type = [layer className]
 		var layerName = [layer name]
+		var type = [layer className]
+		if (TypeInventory.isSliceType(type)) { continue }
 		
 		if (selectionMap[layerName] == nil) { 
 			if (layerName != nil && type != nil) { selectionMap[layerName] = type }
@@ -95,6 +96,7 @@ OrderInventory.isFound = function(layer) {
 	var type = [layer className]
 	var layerName = [layer name]
 	
+	if (TypeInventory.isSliceType(type)) { return false }
 	if ([type isEqualToString:selectionMap[layerName]]) { return true }
 	return false
 }

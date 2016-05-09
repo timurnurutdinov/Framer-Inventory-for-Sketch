@@ -98,7 +98,7 @@ TestingEnvironment.getTestingSelection = function() {
 // compare functions
 var compareAnswer = function(answer, fileName) {
 	var readText = readFileForAnswer(fileName)
-	if (readText == "" || readText == '' || readText == nil) { return false }
+	if (readText == nil) { return false }
 	return compareTextsPhrase(answer, "" + readText)
 }
 
@@ -114,7 +114,7 @@ var compareTexts = function(text1, text2) {
 
 
 var compareTextsPhrase = function(text1, text2) {
-	if (text1 == "" || text2 == "") { return "NULL" }
+	if (text1 == nil || text2 == nil) { return "NULL" }
 
 	var lines1 = text1.split("\n");
 	var lines2 = text2.split("\n");
