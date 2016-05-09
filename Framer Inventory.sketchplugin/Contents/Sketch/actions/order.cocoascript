@@ -241,6 +241,8 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 			var score = OrderInventory.analyseAveragePosition(existingLayer, currentLayer)
 
 			if (score < 0) {
+				unknownRelationPosition = -1
+				
 				// added on existing layer
 				[orderedArray insertObject:currentLayer atIndex:j+1]
 				break;
@@ -251,6 +253,7 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 			}
 			else if (score > 0 && unknownRelationPosition != -1) {
 				unknownRelationPosition = -1
+				
 				// added under existing layer
 				[orderedArray insertObject:currentLayer atIndex:j]
 				break;
@@ -259,7 +262,8 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 		
 		if (unknownRelationPosition != -1) {
 			// out of scope layer -> artboard should be skipped
-			log("ERROR: " + [currentLayer name] + " is out of order detection")
+			log("ERROR: " + [currentLayer name] + " -> out of order detection")
+			// OrderInventory.presentOrder(orderedArray)
 			[orderedArray insertObject:currentLayer atIndex:0]
 		}
 	} 
