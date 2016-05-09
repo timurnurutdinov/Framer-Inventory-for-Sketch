@@ -223,20 +223,6 @@ OrderInventory.analyseAveragePosition = function(baseLayer, currentLayer) {
 	return localScore
 }
 
-// OrderInventory.addIntoArray = function(item, position, array) {
-// 	var head = NSMutableArray.new()
-// 	if (array == nil) { return head }
-//
-// 	for (var i = 0; i < array.count(); i++) {
-// 		var currentItem = [array objectAtIndex:i]
-// 		[head addObject:currentItem]
-//
-// 		if (i == position) { [head addObject:item] }
-// 	}
-//
-// 	return head
-// }
-
 OrderInventory.analyseOrder = function(unorderedArray) {
 	var orderedArray = NSMutableArray.new()
 	var prevLayer = nil
@@ -247,6 +233,7 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 	
 	for (var i = 1; i < unorderedArray.count(); i++) {
 		var currentLayer = [unorderedArray objectAtIndex:i]
+		var unknownRelationPosition = -1
 		
 		if (orderedArray.count() == 0) { break }
 		for (var j = orderedArray.count() - 1; j >= 0; j--) {
@@ -254,10 +241,26 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 			var score = OrderInventory.analyseAveragePosition(existingLayer, currentLayer)
 
 			if (score < 0) {
-				// orderedArray = OrderInventory.addIntoArray(currentLayer, j, orderedArray)
+				// added on existing layer
 				[orderedArray insertObject:currentLayer atIndex:j+1]
 				break;
-			}	
+			}
+			else if (score == 0) {
+				// need more investigation
+				unknownRelationPosition = j
+			}
+			else if (score > 0 && unknownRelationPosition != -1) {
+				unknownRelationPosition = -1
+				// added under existing layer
+				[orderedArray insertObject:currentLayer atIndex:j]
+				break;
+			}		
+		}
+		
+		if (unknownRelationPosition != -1) {
+			// out of scope layer -> artboard should be skipped
+			log("ERROR: " + [currentLayer name] + " is out of order detection")
+			[orderedArray insertObject:currentLayer atIndex:0]
 		}
 	} 
 	
