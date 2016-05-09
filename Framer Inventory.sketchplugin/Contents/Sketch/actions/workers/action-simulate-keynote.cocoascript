@@ -3,7 +3,6 @@
 
 // generate code for layers
 var runSimulateKeynote = function(context, isTestingEnvironment) {
-	
 	var doc = context.document
 	var selection = context.selection
 	
@@ -16,60 +15,60 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanExportPage()
 	
-	var artboards = [[doc currentPage] artboards]
 	
-	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(artboards)
+	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards([[doc currentPage] artboards])
 	if (duplicatedArtboard != nil) {
 		if (showLog) { log("Warning: duplicated artboards names are found") }
 		selectDuplicatedArtboards([duplicatedArtboard name])
 		return
 	}
 	
-
 	var sortedSelection = FramerInventory.organiseSelection([currentPage exportableLayers])
 	if (sortedSelection == nil) {
 		[doc showMessage:"Nothing to simulate. Please, make some layers exportable"]
 		return
 	}
 	
+	
+	var artboardsMaps = OrderInventory.getArtboardsLayers()
+	var artboardsNames = OrderInventory.getArtboardsNames()
+	
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]
-		var layer = new Layer([currentLayer name])
+		var layerName = [currentLayer name]
+		var layer = new Layer(layerName)
+		
 		var hasInitialState = false
 		var hasCurrentState = false
 		
-		var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
-																						 [currentLayer className])
-		for (var j = 0; j < [artboards count]; j++) {
+		for (var j = 0; j < artboardsMaps.length; j++) {
+			var currentMap = artboardsMaps[j]
 			
 			var hasPrevState = hasCurrentState
-			var prevLayers = matchingLayers
+			var prevMapLayer = mapStateLayer
 			
-			var matchingLayers = FramerInventory.findMatchingLayers(predicate, currentLayer, [artboards objectAtIndex: j])
+			var mapStateLayer = currentMap[layerName]
 			
-			
-			if ([matchingLayers count] > 0) {
+			if (mapStateLayer != nil) {
 				hasCurrentState = true
 
-				if (j == 0) { 
-					hasInitialState = true
-				}
+				if (j == 0) { hasInitialState = true }
 				else if (!hasInitialState) {
-					var fakeFirstState = new State([matchingLayers firstObject])
-					fakeFirstState.createHiddenState([[artboards firstObject] name])
+					var fakeFirstState = new State(mapStateLayer)
+					fakeFirstState.createHiddenState(artboardsNames[0])
 					layer.addState(fakeFirstState)
 					hasInitialState = true
 				}
 				
-				layer.composeState([matchingLayers firstObject])
+				layer.composeState(mapStateLayer)
 			}
 			else {
 				hasCurrentState = false
 				
 				if (hasPrevState) {
-					var fakeCloseStep = new State([prevLayers firstObject])
-					fakeCloseStep.createHiddenState([[artboards objectAtIndex: j] name])
-					layer.addState(fakeCloseStep)
+					var fakeCloseState = new State(prevMapLayer)
+					fakeCloseState.createHiddenState(artboardsNames[j])
+					layer.addState(fakeCloseState)
 				}
 			}
 		}
@@ -79,8 +78,7 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	
 
 	pasteboardContent += DescribeInventory.generateRetinaVariable() + ln()
-	pasteboardContent += DescribeInventory.generatePhoneModel()
-	pasteboardContent += dln()
+	pasteboardContent += DescribeInventory.generatePhoneModel() + dln()
 	pasteboardContent += "# view" + ln()
 	
 	for (var i = 0; i < layers.length; i++) {
@@ -99,7 +97,6 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 	pasteboardContent += DescribeInventory.generateHandler()
 	
 
-	
 	if (!isTestingEnvironment) {
 		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 		FramerInventory.showDoneMessage()

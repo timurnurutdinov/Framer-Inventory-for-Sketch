@@ -349,13 +349,11 @@ FramerInventory.showDoneMessage = function() {
 	[currentDocument showMessage:message]
 	
 	FramerInventory.createExportSelection()
-	FramerInventory.restoreSelection(contextUserSelection)
-	
-	if (showLog) { log("Framer Inventory: Completed") }
+	FramerInventory.restoreSelection(contextUserSelection)	
 	
 	var methodFinishTime = [NSDate date]
 	var executionTime = [methodFinishTime timeIntervalSinceDate:methodStartTime]
-	if (showLog) { log("Execution time: " + executionTime) }
+	if (showLog) { log("Completion time: " + executionTime) }
 }
 
 
