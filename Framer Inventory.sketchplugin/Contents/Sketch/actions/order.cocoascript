@@ -35,18 +35,16 @@ OrderInventory.composeSelectionMap = function() {
 		
 		if (selectionMap[layerName] == nil) { 
 			if (layerName != nil && type != nil) { selectionMap[layerName] = type }
-			else { if(showLog) { log("ERROE: NIL KEY OR VALUE FOR SELECTION") } }
+			else { if(showLog) { log("ERROR: Nil key or value for " + layer) } }
 		}
 		else {
 			var currentvalue = selectionMap[layerName]
 			if (![currentvalue isEqualToString:type]) {
 				typeWarning = layerName
-				if (showLog) { log("WARNING: SEVERAL TYPES OF " + layerName) }
+				if (showLog) { log("WARNING: Several types of " + layerName) }
 			}
 		}
 	}
-	
-	// if (showLog) { log("Map size: " + OrderInventory.mapSize(selectionMap)) }
 }
 
 OrderInventory.removeDuplicatedLayers = function(array) {
@@ -88,7 +86,7 @@ OrderInventory.isContainer = function(layer) {
 	if (layer == nil) { return false }
 	var type = [layer className]
 	
-	if (type == "MSLayerGroup" || type == "MSArtboardGroup") { return true }
+	if (TypeInventory.isLayerGroup(type) || TypeInventory.isArtboardType(type)) { return true }
 	return false
 }
 
@@ -131,7 +129,7 @@ OrderInventory.returnScope = function(layer) {
 }
 
 OrderInventory.returnArtboardOrder = function(artboard) {
-	if (artboard == nil || [artboard className] != "MSArtboardGroup") { return nil }
+	if (artboard == nil || !TypeInventory.isArtboardType([artboard className])) { return nil }
 
 	var artboardScope = OrderInventory.returnScope(artboard)
 	return OrderInventory.removeDuplicatedLayers(artboardScope)
@@ -144,6 +142,7 @@ OrderInventory.returnArtboardOrder = function(artboard) {
 
 OrderInventory.returnMapFromArray = function(array) {
 	var map = [,]
+	if (array == nil) { return map }
 	
 	for (var i = 0; i < array.count(); i++) {
 		var layerName = [[array objectAtIndex:i] name]
@@ -151,7 +150,6 @@ OrderInventory.returnMapFromArray = function(array) {
 			map[layerName] = i
 		}
 	}
-	// log(OrderInventory.mapSize(map))
 	return map
 }
 
@@ -201,6 +199,7 @@ OrderInventory.analyseAveragePosition = function(baseLayer, currentLayer) {
 
 OrderInventory.addIntoArray = function(item, position, array) {
 	var head = NSArray.new()
+	if (array == nil) { return head }
 	
 	for (var i = 0; i < array.count(); i++) {
 		var currentItem = [array objectAtIndex:i]
@@ -226,22 +225,13 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 		if (orderedArray.count() == 0) { break }
 		for (var j = orderedArray.count() - 1; j >= 0; j--) {
 			var existingLayer = [orderedArray objectAtIndex:j]
-			
 			var score = OrderInventory.analyseAveragePosition(existingLayer, currentLayer)
-			
-			// if (score > 0) { log([existingLayer name] + " > " + [currentLayer name]) }
-			// else if (score < 0) { log([existingLayer name] + " < " + [currentLayer name]) }
 
-			
 			if (score < 0) {
-				// add between current and tail
 				orderedArray = OrderInventory.addIntoArray(currentLayer, j, orderedArray)
-				// log(orderedArray)
 				break;
-			}
-			
+			}	
 		}
-		
 	} 
 	
 	return orderedArray
