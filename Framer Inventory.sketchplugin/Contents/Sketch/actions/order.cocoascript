@@ -65,9 +65,9 @@ OrderInventory.composeSelectionMap = function() {
 }
 
 OrderInventory.removeDuplicatedLayers = function(array) {
-	var cleanedLayers = NSArray.new()
+	var cleanedLayers = NSMutableArray.new()
 	if (array == nil) { return cleanedLayers }
-	
+
 	for (var i = 0; i < array.count(); i++) {
 		var currentLayer = [array objectAtIndex: i]
 		var isExist = false
@@ -81,11 +81,9 @@ OrderInventory.removeDuplicatedLayers = function(array) {
 			}
 		}
 
-		if (!isExist) {
-			cleanedLayers = FramerInventory.addItemToArray(currentLayer, cleanedLayers)
-		}
+		if (!isExist) { [cleanedLayers addObject:currentLayer] }
 	}
-	
+
 	return cleanedLayers
 }
 
@@ -121,20 +119,21 @@ OrderInventory.returnScope = function(layer) {
 	if (layer == nil) { return nil }
 
 	if (OrderInventory.isFound(layer)) { 
-		var localOrder = NSArray.new()
-		return FramerInventory.addItemToArray(layer, localOrder)
+		var localOrder = NSMutableArray.new()
+		[localOrder addObject:layer]
+		return localOrder
 	}
 	else {
 		if (OrderInventory.isContainer(layer)) {
 			var layers = OrderInventory.returnLayers(layer)
-			var localOrder = NSArray.new()
+			var localOrder = NSMutableArray.new()
 
 			for (var i = 0; i < layers.count(); i++) {
 				var currentChild = [layers objectAtIndex:i]
 				var localScope = OrderInventory.returnScope(currentChild)
 				
 				if (localScope != nil && localScope.count() > 0) {
-					localOrder = FramerInventory.addArrayToArray(localScope, localOrder)
+					[localOrder addObjectsFromArray:localScope]
 				}
 				
 			}
@@ -184,7 +183,7 @@ OrderInventory.returnIndexMapFromArray = function(array) {
 
 OrderInventory.returnUnorderedLayers = function() {
 	var artboards = FramerInventory.getCurrentPage().artboards()
-	var globalOrder = NSArray.new()
+	var globalOrder = NSMutableArray.new()
 	
 	for (var i = 0; i < artboards.count(); i++) {
 		var artboard = [artboards objectAtIndex:i]
@@ -196,8 +195,8 @@ OrderInventory.returnUnorderedLayers = function() {
 		artboardsIndexesArray.push(localIndexMap)
 		artboardsLayersArray.push(localLayerMap)
 		artboardsNamesArray.push([artboard name])
-
-		globalOrder = FramerInventory.addArrayToArray(localOrder, globalOrder)
+		
+		[globalOrder addObjectsFromArray:localOrder]
 	}
 	
 	return OrderInventory.removeDuplicatedLayers(globalOrder)
@@ -207,7 +206,6 @@ OrderInventory.currentPosition = function(a, b) {
 	if (a == nil || b == nil) { return 0 }
 	else if (a < b) { return -1 }
 	else if (a > b) { return 1 }
-	
 	return 0
 }
 
@@ -219,35 +217,32 @@ OrderInventory.analyseAveragePosition = function(baseLayer, currentLayer) {
 
 		var baseLayerPosition = currentMap[[baseLayer name]]
 		var currentLayerPosition = currentMap[[currentLayer name]]
-
-		var currentScore = OrderInventory.currentPosition(baseLayerPosition, currentLayerPosition)
-
-		localScore += currentScore
+		localScore += OrderInventory.currentPosition(baseLayerPosition, currentLayerPosition)
 	}
 	
 	return localScore
 }
 
-OrderInventory.addIntoArray = function(item, position, array) {
-	var head = NSArray.new()
-	if (array == nil) { return head }
-	
-	for (var i = 0; i < array.count(); i++) {
-		var currentItem = [array objectAtIndex:i]
-		head = FramerInventory.addItemToArray(currentItem, head)
-
-		if (i == position) { head = FramerInventory.addItemToArray(item, head) }
-	}
-
-	return head
-}
+// OrderInventory.addIntoArray = function(item, position, array) {
+// 	var head = NSMutableArray.new()
+// 	if (array == nil) { return head }
+//
+// 	for (var i = 0; i < array.count(); i++) {
+// 		var currentItem = [array objectAtIndex:i]
+// 		[head addObject:currentItem]
+//
+// 		if (i == position) { [head addObject:item] }
+// 	}
+//
+// 	return head
+// }
 
 OrderInventory.analyseOrder = function(unorderedArray) {
-	var orderedArray = NSArray.new()
+	var orderedArray = NSMutableArray.new()
 	var prevLayer = nil
 	
 	if (unorderedArray != nil && unorderedArray.count() > 0) {
-		orderedArray = FramerInventory.addItemToArray([unorderedArray firstObject], orderedArray)
+		[orderedArray addObject:[unorderedArray firstObject]]
 	}
 	
 	for (var i = 1; i < unorderedArray.count(); i++) {
@@ -259,7 +254,8 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 			var score = OrderInventory.analyseAveragePosition(existingLayer, currentLayer)
 
 			if (score < 0) {
-				orderedArray = OrderInventory.addIntoArray(currentLayer, j, orderedArray)
+				// orderedArray = OrderInventory.addIntoArray(currentLayer, j, orderedArray)
+				[orderedArray insertObject:currentLayer atIndex:j+1]
 				break;
 			}	
 		}

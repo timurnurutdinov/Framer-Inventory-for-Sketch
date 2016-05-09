@@ -181,17 +181,19 @@ FramerInventory.cleanLayer = function(layer, page) {
 
 
 
-// add item to NSArray 
-FramerInventory.addItemToArray = function(item, array) {
-	if (array == nil) { return nil }
-    return array.arrayByAddingObjectsFromArray(NSArray.arrayWithObjects(item, nil))
-}
+// add item to NSMutableArray 
+// FramerInventory.addItemToArray = function(item, array) {
+// 	if (array == nil) { return nil }
+// 	[array addObject:item]
+//     return array
+// }
 
-// add NSArray to NSArray
-FramerInventory.addArrayToArray = function(itemArray, array) {
-	if (array == nil) { return nil }
-	return array.arrayByAddingObjectsFromArray(itemArray)
-}
+// add NSMutableArray to NSMutableArray
+// FramerInventory.addArrayToArray = function(itemArray, array) {
+// 	if (array == nil) { return nil }
+// 	// return array.arrayByAddingObjectsFromArray(itemArray)
+// 	return [[array arrayByAddingObjectsFromArray:itemArray] mutableCopy]
+// }
 
 
 
@@ -362,7 +364,7 @@ FramerInventory.showDoneMessage = function() {
 
 
 
-
+/*
 FramerInventory.findMatchingLayers = function(predicate, currentLayer, artboard) {
 	var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, artboard)
 	
@@ -382,4 +384,7 @@ FramerInventory.findMatchingLayers = function(predicate, currentLayer, artboard)
 	
 	return matchingLayers
 }
+
+*/
+
 
