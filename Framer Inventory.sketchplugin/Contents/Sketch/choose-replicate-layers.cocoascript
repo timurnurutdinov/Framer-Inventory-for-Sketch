@@ -1,4 +1,4 @@
-@import 'actions/actionFactory.cocoascript'
+@import 'actions/action-inventory.cocoascript'
 
 var runReplicateLayersIdentifier = 0
 var currentCommandIdentifier = runReplicateLayersIdentifier

@@ -1,4 +1,4 @@
-@import 'inventory/getters/exportable.cocoascript'
+@import 'actions/type-inventory.cocoascript'
 
 @import 'inventory/getters/get-place.cocoascript'
 @import 'inventory/getters/get-opacity.cocoascript'
@@ -7,7 +7,7 @@
 @import 'inventory/getters/get-borders.cocoascript'
 @import 'inventory/getters/get-background-color.cocoascript'
 
-@import 'inventory/strings/generate.cocoascript'
+@import 'actions/generate-inventory.cocoascript'
 @import 'inventory/libs/logic.cocoascript'
 
 
@@ -252,7 +252,6 @@ State.cloneState = function(baseState) {
 State.prototype.getMinimalState = function(compareState) {
 	var state = State.cloneState(compareState)
 	// state.stateName = this.stateName
-	//log("GM: " + this.stateName + " for " + state.stateName + " | " + this.stateName)
 	
 	if (this.width == state.width) { state.width = nil }
 	if (this.height == state.height) { state.height = nil }

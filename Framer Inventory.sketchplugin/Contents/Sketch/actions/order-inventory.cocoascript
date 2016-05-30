@@ -1,4 +1,5 @@
 
+
 var userSelection = nil
 var selectionMap = [,]
 
@@ -20,6 +21,18 @@ OrderInventory.initSelection = function(selection) {
 	artboardsLayersArray = []
 	
 	OrderInventory.composeSelectionMap()
+}
+
+OrderInventory.removeArtboardsFromSelection = function(selection) {
+	var cleanSelection = NSMutableArray.new()
+	for (var i = 0; i < selection.count(); i++) { 
+		var currentLayer = [selection objectAtIndex:i]
+		if (TypeInventory.isArtboardType([currentLayer className])) {
+			// skipped
+		}
+		else { [cleanSelection addObject:currentLayer] }
+	}
+	return cleanSelection
 }
 
 OrderInventory.getArtboardsLayers = function() {

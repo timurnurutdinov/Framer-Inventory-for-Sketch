@@ -1,4 +1,4 @@
-@import 'actions/order.cocoascript'
+@import 'actions/order-inventory.cocoascript'
 
 @import 'actions/workers/action-replicate-layers.cocoascript'
 @import 'actions/workers/action-generate-states.cocoascript'
@@ -8,7 +8,7 @@
 
 @import 'inventory/classes/layer.cocoascript'
 @import 'inventory/libs/pluginDefaults.js'
-@import 'inventory/libs/search.js'
+// @import 'inventory/libs/search.js'
 
 var presets = {
 	myRetinaEnabled: 0,
@@ -162,42 +162,21 @@ FramerInventory.returnDuplicatedArtboards = function(artboards) {
 }
 
 FramerInventory.cleanLayer = function(layer, page) {
-	var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [layer name], [layer className])
-	var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
-
-	for (var i = 0; i < deleteLayers.count(); i++) {
-		if ([deleteLayers objectAtIndex: i] != nil) {
-			[[deleteLayers objectAtIndex: i] removeFromParent]
+	// var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [layer name], [layer className])
+	// var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
+	
+	var pageLayers = [[page layers] array]
+	for (var i = 0; i < pageLayers.count(); i++) {
+		var currentLayer = [pageLayers objectAtIndex: i]
+		var name = [currentLayer name]
+		var type = [currentLayer className]
+		if ([[currentLayer name] isEqualToString([layer name])] && [currentLayer className].isEqualToString([layer className]))
+			[currentLayer removeFromParent]
 		}
 	}
 
 	return
 }
-
-
-
-
-
-
-
-
-// add item to NSMutableArray 
-// FramerInventory.addItemToArray = function(item, array) {
-// 	if (array == nil) { return nil }
-// 	[array addObject:item]
-//     return array
-// }
-
-// add NSMutableArray to NSMutableArray
-// FramerInventory.addArrayToArray = function(itemArray, array) {
-// 	if (array == nil) { return nil }
-// 	// return array.arrayByAddingObjectsFromArray(itemArray)
-// 	return [[array arrayByAddingObjectsFromArray:itemArray] mutableCopy]
-// }
-
-
-
-
 
 
 
@@ -215,6 +194,7 @@ FramerInventory.organiseSelection = function(userSelection) {
 		FramerInventory.analyseMobile(frame.width)
 	}	
 	
+	var artboardsFreeSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
 	OrderInventory.initSelection(userSelection)
 	
 	var unorderedLayers = OrderInventory.returnUnorderedLayers()
@@ -359,32 +339,5 @@ FramerInventory.showDoneMessage = function() {
 }
 
 
-
-
-
-
-
-/*
-FramerInventory.findMatchingLayers = function(predicate, currentLayer, artboard) {
-	var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, artboard)
-	
-	
-	if ([matchingLayers count] == 0 && ([currentLayer className] == "MSLayerGroup" || [currentLayer className] == "MSSymbolInstance")) {
-		
-		if ([currentLayer className] == "MSLayerGroup") {
-			var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSSymbolInstance")
-		}
-		else {
-			var predicateNext = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name], "MSLayerGroup")
-		}
-			
-		matchingLayersNext = findLayersMatchingPredicate_inContainer_filterByType(predicateNext, artboard)
-		matchingLayers = FramerInventory.addArrayToArray(matchingLayersNext, matchingLayers)
-	}
-	
-	return matchingLayers
-}
-
-*/
 
 

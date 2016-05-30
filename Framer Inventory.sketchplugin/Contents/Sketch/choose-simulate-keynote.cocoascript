@@ -1,4 +1,4 @@
-@import 'actions/actionFactory.cocoascript'
+@import 'actions/action-inventory.cocoascript'
 
 var runSimulateKeynoteIdentifier = 2
 var currentCommandIdentifier = runSimulateKeynoteIdentifier

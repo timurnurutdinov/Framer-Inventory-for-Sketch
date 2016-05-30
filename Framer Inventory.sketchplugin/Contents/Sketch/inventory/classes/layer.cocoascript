@@ -3,8 +3,8 @@
 @import 'inventory/getters/normalize.cocoascript'
 @import 'inventory/getters/get-place.cocoascript'
 
-@import 'inventory/strings/generate.cocoascript'
-@import 'inventory/strings/describe.cocoascript'
+@import 'actions/generate-inventory.cocoascript'
+@import 'actions/describe-inventory.cocoascript'
 
 @import 'inventory/libs/logic.cocoascript'
 
