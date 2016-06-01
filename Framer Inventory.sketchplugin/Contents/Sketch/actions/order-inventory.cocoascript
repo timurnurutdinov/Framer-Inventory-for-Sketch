@@ -61,7 +61,9 @@ OrderInventory.composeSelectionMap = function() {
 		var layer = [userSelection objectAtIndex:i]
 		var layerName = [layer name]
 		var type = [layer className]
+		
 		if (TypeInventory.isSliceType(type)) { continue }
+		if (TypeInventory.isArtboardType(type)) { continue }
 		
 		if (selectionMap[layerName] == nil || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) { 
 			if (layerName != nil && type != nil) { selectionMap[layerName] = type }

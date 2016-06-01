@@ -162,17 +162,13 @@ FramerInventory.returnDuplicatedArtboards = function(artboards) {
 }
 
 FramerInventory.cleanLayer = function(layer, page) {
-	// var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [layer name], [layer className])
-	// var deleteLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, page)
-	
 	var pageLayers = [[page layers] array]
+	
 	for (var i = 0; i < pageLayers.count(); i++) {
 		var currentLayer = [pageLayers objectAtIndex: i]
-		var name = [currentLayer name]
+		var layerName = [currentLayer name]
 		var type = [currentLayer className]
-		if ([[currentLayer name] isEqualToString([layer name])] && [currentLayer className].isEqualToString([layer className]))
-			[currentLayer removeFromParent]
-		}
+		if ([layerName isEqualToString:[layer name]]) { [currentLayer removeFromParent] }
 	}
 
 	return
@@ -184,6 +180,9 @@ FramerInventory.cleanLayer = function(layer, page) {
 // selection based magic
 
 FramerInventory.organiseSelection = function(userSelection) {
+	userSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
+	if (userSelection.count() == 0) { return }
+	
 	FramerInventory.setUserSelection(userSelection)
 	
 	var page = FramerInventory.getCurrentPage()
@@ -194,7 +193,6 @@ FramerInventory.organiseSelection = function(userSelection) {
 		FramerInventory.analyseMobile(frame.width)
 	}	
 	
-	var artboardsFreeSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
 	OrderInventory.initSelection(userSelection)
 	
 	var unorderedLayers = OrderInventory.returnUnorderedLayers()

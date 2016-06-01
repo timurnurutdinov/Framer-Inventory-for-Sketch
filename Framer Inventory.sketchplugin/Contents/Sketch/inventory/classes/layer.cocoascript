@@ -370,10 +370,11 @@ Layer.returnLayerCopy = function(layer) {
 
 Layer.cleanLayerShadows = function(layer) {
 	layer.style().setSharedObjectID(null)
-	var shadowsCollection = [[layer style] shadows]
-	for (var i = 0; i < shadowsCollection.count(); i++) {
-		[shadowsCollection removeStylePartAtIndex: i]
-	}
+	[[layer style] setShadows:nil]
+	// var shadowsCollection = [[layer style] shadows]
+	// for (var i = 0; i < shadowsCollection.count(); i++) {
+		// [shadowsCollection removeStylePartAtIndex: i]
+	// }
 }
 
 Layer.pasteLayer = function(layer) {
