@@ -1,0 +1,291 @@
+
+
+var userSelection = nil
+var selectionMap = [,]
+
+var artboardsIndexesArray = []
+var artboardsNamesArray = []
+var artboardsLayersArray = []
+
+
+var typeWarning = ""
+
+function OrderInventory () {}
+
+OrderInventory.initSelection = function(selection) {
+	userSelection = selection
+	selectionMap = [,]
+	
+	artboardsIndexesArray = []
+	artboardsNamesArray = []
+	artboardsLayersArray = []
+	
+	OrderInventory.composeSelectionMap()
+}
+
+OrderInventory.removeArtboardsFromSelection = function(selection) {
+	var cleanSelection = NSMutableArray.new()
+	for (var i = 0; i < selection.count(); i++) { 
+		var currentLayer = [selection objectAtIndex:i]
+		if (TypeInventory.isArtboardType([currentLayer className])) {
+			// skipped
+		}
+		else { [cleanSelection addObject:currentLayer] }
+	}
+	return cleanSelection
+}
+
+OrderInventory.getArtboardsLayers = function() {
+	return artboardsLayersArray
+}
+
+OrderInventory.getArtboardsNames = function() {
+	return artboardsNamesArray
+}
+
+OrderInventory.mapSize = function(map) {
+	return Object.keys(map).length
+}
+
+OrderInventory.presentOrder = function(array) {
+	if (array == nil) { return }
+	for (var i = 0; i < array.count(); i++) { log(i + ": " + [[array objectAtIndex:i] name]) } log("")
+}
+
+OrderInventory.getWarnings = function() {
+	return typeWarning
+}
+
+OrderInventory.composeSelectionMap = function() {
+	for (var i = 0; i < userSelection.count(); i++) {
+		var layer = [userSelection objectAtIndex:i]
+		var layerName = [layer name]
+		var type = [layer className]
+		
+		if (TypeInventory.isSliceType(type)) { continue }
+		if (TypeInventory.isArtboardType(type)) { continue }
+		
+		if (selectionMap[layerName] == nil || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) { 
+			if (layerName != nil && type != nil) { selectionMap[layerName] = type }
+			else { if(showLog) { log("ERROR: Nil key or value for " + layer) } }
+		}
+		else {
+			var currentvalue = selectionMap[layerName]
+			if (![currentvalue isEqualToString:type]) {
+				typeWarning = layerName
+				if (showLog) { log("WARNING: Several types of " + layerName) }
+			}
+		}
+	}
+}
+
+OrderInventory.removeDuplicatedLayers = function(array) {
+	var cleanedLayers = NSMutableArray.new()
+	if (array == nil) { return cleanedLayers }
+
+	for (var i = 0; i < array.count(); i++) {
+		var currentLayer = [array objectAtIndex: i]
+		var isExist = false
+
+		for (var c = 0; c < cleanedLayers.count(); c++) {
+			var currentCleaned = [cleanedLayers objectAtIndex: c]
+
+			if ([[currentLayer name] isEqualToString:[currentCleaned name]]) {
+				isExist = true
+				break
+			}
+		}
+
+		if (!isExist) { [cleanedLayers addObject:currentLayer] }
+	}
+
+	return cleanedLayers
+}
+
+
+
+
+
+
+
+OrderInventory.returnLayers = function(layer) {
+	return layer.layers().array()
+}
+
+OrderInventory.isContainer = function(layer) {
+	if (layer == nil) { return false }
+	var type = [layer className]
+	
+	if (TypeInventory.isLayerGroup(type) || TypeInventory.isArtboardType(type)) { return true }
+	return false
+}
+
+OrderInventory.isFound = function(layer) {
+	if (layer == nil || [layer className] == nil || [layer name] == nil) { return false }
+	var type = [layer className]
+	var layerName = [layer name]
+	
+	if (TypeInventory.isSliceType(type)) { return false }
+	if ([type isEqualToString:selectionMap[layerName]] || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) { return true }
+	return false
+}
+
+OrderInventory.returnScope = function(layer) {
+	if (layer == nil) { return nil }
+
+	if (OrderInventory.isFound(layer)) { 
+		var localOrder = NSMutableArray.new()
+		[localOrder addObject:layer]
+		return localOrder
+	}
+	else {
+		if (OrderInventory.isContainer(layer)) {
+			var layers = OrderInventory.returnLayers(layer)
+			var localOrder = NSMutableArray.new()
+
+			for (var i = 0; i < layers.count(); i++) {
+				var currentChild = [layers objectAtIndex:i]
+				var localScope = OrderInventory.returnScope(currentChild)
+				
+				if (localScope != nil && localScope.count() > 0) {
+					[localOrder addObjectsFromArray:localScope]
+				}
+				
+			}
+
+			if (localOrder == nil || localOrder.count() == 0) { return nil }
+			return localOrder
+		}
+		else { return nil }
+	}
+}
+
+OrderInventory.returnArtboardOrder = function(artboard) {
+	if (artboard == nil || !TypeInventory.isArtboardType([artboard className])) { return nil }
+
+	var artboardScope = OrderInventory.returnScope(artboard)
+	return OrderInventory.removeDuplicatedLayers(artboardScope)
+}
+
+
+
+
+OrderInventory.returnLayerMapFromArray = function(array) {
+	var map = [,]
+	if (array == nil) { return map }
+	
+	for (var i = 0; i < array.count(); i++) {
+		var layerName = [[array objectAtIndex:i] name]
+		if (layerName != nil) {
+			map[layerName] = [array objectAtIndex:i]
+		}
+	}
+	return map
+}
+
+OrderInventory.returnIndexMapFromArray = function(array) {
+	var map = [,]
+	if (array == nil) { return map }
+	
+	for (var i = 0; i < array.count(); i++) {
+		var layerName = [[array objectAtIndex:i] name]
+		if (layerName != nil) {
+			map[layerName] = i
+		}
+	}
+	return map
+}
+
+OrderInventory.returnUnorderedLayers = function() {
+	var artboards = FramerInventory.getCurrentPage().artboards()
+	var globalOrder = NSMutableArray.new()
+	
+	for (var i = 0; i < artboards.count(); i++) {
+		var artboard = [artboards objectAtIndex:i]
+
+		var localOrder = OrderInventory.returnArtboardOrder(artboard)
+		var localIndexMap = OrderInventory.returnIndexMapFromArray(localOrder)
+		var localLayerMap = OrderInventory.returnLayerMapFromArray(localOrder)
+
+		artboardsIndexesArray.push(localIndexMap)
+		artboardsLayersArray.push(localLayerMap)
+		artboardsNamesArray.push([artboard name])
+		
+		[globalOrder addObjectsFromArray:localOrder]
+	}
+	
+	return OrderInventory.removeDuplicatedLayers(globalOrder)
+}
+
+OrderInventory.currentPosition = function(a, b) {
+	if (a == nil || b == nil) { return 0 }
+	else if (a < b) { return -1 }
+	else if (a > b) { return 1 }
+	return 0
+}
+
+OrderInventory.analyseAveragePosition = function(baseLayer, currentLayer) {
+	var localScore = 0
+	
+	for (var i = 0; i < artboardsIndexesArray.length; i++) {
+		var currentMap = artboardsIndexesArray[i]
+
+		var baseLayerPosition = currentMap[[baseLayer name]]
+		var currentLayerPosition = currentMap[[currentLayer name]]
+		localScore += OrderInventory.currentPosition(baseLayerPosition, currentLayerPosition)
+	}
+	
+	return localScore
+}
+
+OrderInventory.analyseOrder = function(unorderedArray) {
+	var orderedArray = NSMutableArray.new()
+	var prevLayer = nil
+	
+	if (unorderedArray != nil && unorderedArray.count() > 0) {
+		[orderedArray addObject:[unorderedArray firstObject]]
+	}
+	
+	for (var i = 1; i < unorderedArray.count(); i++) {
+		var currentLayer = [unorderedArray objectAtIndex:i]
+		var unknownRelationPosition = -1
+		
+		if (orderedArray.count() == 0) { break }
+		for (var j = orderedArray.count() - 1; j >= 0; j--) {
+			var existingLayer = [orderedArray objectAtIndex:j]
+			var score = OrderInventory.analyseAveragePosition(existingLayer, currentLayer)
+
+			if (score < 0) {
+				unknownRelationPosition = -1
+				
+				// added on existing layer
+				[orderedArray insertObject:currentLayer atIndex:j+1]
+				break;
+			}
+			else if (score == 0) {
+				// need more investigation
+				unknownRelationPosition = j
+			}
+			else if (score > 0 && unknownRelationPosition != -1) {
+				unknownRelationPosition = -1
+				
+				// added under existing layer
+				[orderedArray insertObject:currentLayer atIndex:j]
+				break;
+			}		
+		}
+		
+		if (unknownRelationPosition != -1) {
+			// out of scope layer -> artboard should be skipped
+			log("ERROR: " + [currentLayer name] + " -> out of order detection")
+			// OrderInventory.presentOrder(orderedArray)
+			[orderedArray insertObject:currentLayer atIndex:0]
+		}
+	} 
+	
+	return orderedArray
+}
+
+
+
+

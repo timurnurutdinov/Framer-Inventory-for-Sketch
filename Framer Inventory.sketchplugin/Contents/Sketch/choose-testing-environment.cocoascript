@@ -1,4 +1,4 @@
-@import 'actions/actionFactory.cocoascript'
+@import 'actions/action-inventory.cocoascript'
 
 var runGenerateStatesIdentifier = 3
 var currentCommandIdentifier = runGenerateStatesIdentifier

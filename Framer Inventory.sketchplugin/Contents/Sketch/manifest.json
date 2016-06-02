@@ -2,11 +2,11 @@
   "name" : "Framer Inventory",
   "author" : "Timur Nurutdinov",
   "authorEmail" : "addleimb@gmail.com",
-  "description": "Export FramerJS layers & states from Sketch",
-  "homepage": "https://github.com/timurnurutdinov/Framer-Inventory",
+  "description": "Generate FramerJS prototypes from Sketch",
+  "homepage": "https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch",
   "identifier": "com.tilllur.framer-inventory",
-  "version": "2.0.0",
-  "compatibleVersion": 3.5,
+  "version": "2.2.0",
+  "compatibleVersion": 3.7,
   "commands" : [
     {
       "script" : "choose-replicate-layers.cocoascript",

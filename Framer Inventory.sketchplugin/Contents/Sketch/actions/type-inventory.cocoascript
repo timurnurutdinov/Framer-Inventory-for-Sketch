@@ -1,0 +1,96 @@
+
+function TypeInventory () {}
+
+
+TypeInventory.isArtboardType = function(type) { return (type == "MSArtboardGroup") ? true : false }
+TypeInventory.isPageType = function(type) { return (type == "MSPage") ? true : false }
+
+TypeInventory.isSliceType = function(type) { return (type == "MSSliceLayer") ? true : false }
+TypeInventory.isTextType = function(type) { return (type == "MSTextLayer") ? true : false }
+TypeInventory.isImageType = function(type) { return (type == "MSBitmapLayer") ? true : false }
+TypeInventory.isShapeGroupType = function(type) { return (type == "MSShapeGroup") ? true : false }
+
+TypeInventory.isLayerGroup = function(type) { return (type == "MSLayerGroup") ? true : false }
+TypeInventory.isSymbolGroup = function(type) { return (type == "MSSymbolInstance") ? true : false }
+TypeInventory.isGroupType = function(type) { 
+	return (TypeInventory.isLayerGroup(type) || TypeInventory.isSymbolGroup(type)) ? true : false 
+}
+
+
+
+// types:
+// -1 - unsupported
+//  1 - group, image, symbol
+//  2 - rectangle 
+//  3 - oval
+//  4 - text layer
+//  5 - other shape
+
+TypeInventory.getObjectType = function(localLayer) {
+	if (localLayer == nil) { return nil }
+
+	var answer = 0
+	var type = [localLayer className]
+	
+	if (TypeInventory.isSliceType(type)) { answer = -1 }
+	else if (TypeInventory.isTextType(type)) { answer = 4 }
+	else if (TypeInventory.isGroupType(type)) { answer = 1 }
+	else if (TypeInventory.isImageType(type)) { answer = 1 }
+	else if (TypeInventory.isShapeGroupType(type)) { answer = TypeInventory.getShapeType(localLayer) }
+	else { asnwer = -1 }
+	
+	if (answer == -1) { log("ERROR: Can't get layer type") }
+	return answer
+}
+
+
+TypeInventory.getShapeType = function(localLayer) {
+	if (!TypeInventory.isShapeGroupType([localLayer className])) { return -1 }
+	var magicLayers = localLayer.layers()
+	if (magicLayers.count() > 1) { return 5 }
+	
+	var shape = magicLayers.firstObject()
+	if(shape && shape.isKindOfClass(MSOvalShape)) {
+		if ([[[shape path] points] count] != 4) { return 5 }
+		return 3
+	}
+	else if(shape && shape.isKindOfClass(MSRectangleShape)) {
+		if ([[[shape path] points] count] != 4) { return 5 }
+		return 2
+	}
+	
+	log("ERROR: Can't get shape type")
+	return 5
+}
+
+
+
+
+
+
+// relative to Parent/Artboard
+
+TypeInventory.findParentArtboard = function(layer) {
+	if (layer == nil) { return nil }
+	var lookingForParentArtboard = true
+	var localParent = layer
+	
+	while (lookingForParentArtboard) {
+		localParent = [localParent parentGroup]
+		if (TypeInventory.isArtboardType([localParent className])) { lookingForParentArtboard = false }
+		else if (TypeInventory.isPageType([localParent className])) { lookingForParentArtboard = false }
+	}
+	return localParent
+}
+
+TypeInventory.findParentPage = function(layer) {
+	var lookingForParentPage = true
+	var localParent = layer
+	
+	while (lookingForParentPage) {
+		localParent = [localParent parentGroup]
+		if (TypeInventory.isPageType([localParent className])) { lookingForParentPage = false }
+	}
+	return localParent
+}
+

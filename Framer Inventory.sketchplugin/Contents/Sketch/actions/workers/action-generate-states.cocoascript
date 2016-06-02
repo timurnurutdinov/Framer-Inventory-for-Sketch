@@ -1,35 +1,27 @@
 
 // gererate code for layers and their states
 var runGenerateStates = function(context, isTestingEnvironment) {
-	
 	var doc = context.document
 	var selection = context.selection
 	
 	[[NSPasteboard generalPasteboard] clearContents]
 	
-	if (isTestingEnvironment != nil && isTestingEnvironment) { 
-		if (showLog) { log("Prepare custom selection for tests") }
-		selection = TestingEnvironment.getTestingSelection()
-		
-		if (showLog) { log(selection) }
-	}
+	if (isTestingEnvironment != nil && isTestingEnvironment) { selection = TestingEnvironment.getTestingSelection() }
 	
 	var layers = []
-	var pasteboardContent = []
+	var pasteboardContent = ""
 	
 	var currentPage = FramerInventory.getCurrentPage()
-	var framerInventoryPage = FramerInventory.addPage(currentPage)
-	FramerInventory.cleanPage(framerInventoryPage)
+	FramerInventory.addExportPageAndReturn(currentPage)
+	FramerInventory.cleanExportPage()
 	
-	var artboards = [[doc currentPage] artboards]
 	
-	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(artboards)
+	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards([[doc currentPage] artboards])
 	if (duplicatedArtboard != nil) {
 		if (showLog) { log("Warning: duplicated artboards names are found") }
 		selectDuplicatedArtboards([duplicatedArtboard name])
 		return
 	}
-	
 	
 	var sortedSelection = FramerInventory.organiseSelection(selection)
 	if (sortedSelection == nil) {
@@ -37,26 +29,26 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 		return
 	}
 	
+	var artboardsMaps = OrderInventory.getArtboardsLayers()
+	var artboardsNames = OrderInventory.getArtboardsNames()
+	
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]
-		var layer = new Layer([currentLayer name])
+		var layerName = [currentLayer name]
+		var layer = new Layer(layerName)
 		
-		var predicate = NSPredicate.predicateWithFormat("name == %@ && className == %@", [currentLayer name],
-																						 [currentLayer className])
-		for (var j = 0; j < [artboards count]; j++) {
+		for (var j = 0; j < artboardsMaps.length; j++) {
+			var currentMap = artboardsMaps[j]
+			var mapStateLayer = currentMap[layerName]
 			
-			// var matchingLayers = findLayersMatchingPredicate_inContainer_filterByType(predicate, [artboards objectAtIndex: j])
-			var matchingLayers = FramerInventory.findMatchingLayers(predicate, currentLayer, [artboards objectAtIndex: j])
-			
-			if ([matchingLayers count] > 0) {
-				layer.composeState([matchingLayers firstObject])
+			if (mapStateLayer != nil) {
+				layer.composeState(mapStateLayer)
 			}
 		}
 		
 		layers.push(layer)
 	}
 
-	
 	
 	for (var i = 0; i < layers.length; i++) {
 		pasteboardContent += layers[i].printLayer()

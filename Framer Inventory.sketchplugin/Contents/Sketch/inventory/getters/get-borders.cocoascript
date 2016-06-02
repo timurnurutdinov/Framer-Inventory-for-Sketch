@@ -3,13 +3,11 @@ var getBorders = function(layer) {
 	
 	var enabledBorders = []
 	
-	var bordersCollection = [[layer style] borders]
+	var bordersCollection = [[layer style] enabledBorders]
 	for (var b = bordersCollection.count() - 1; b >= 0; b--) {
 		var localBorder = [bordersCollection objectAtIndex:b]
-		if ([localBorder isEnabled]) {
-			var border = [[localBorder position], [localBorder thickness], [localBorder fillType], [[localBorder color] alpha], [[localBorder color] hexValue]];
-			enabledBorders.push(border)
-		}
+		var border = [[localBorder position], [localBorder thickness], [localBorder fillType], [[localBorder color] alpha], [[localBorder color] hexValue]];
+		enabledBorders.push(border)
 	}
 	
 	if (enabledBorders == '') { return nil }

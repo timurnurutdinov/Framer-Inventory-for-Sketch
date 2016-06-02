@@ -1,0 +1,341 @@
+@import 'actions/order-inventory.cocoascript'
+
+@import 'actions/workers/action-replicate-layers.cocoascript'
+@import 'actions/workers/action-generate-states.cocoascript'
+@import 'actions/workers/action-simulate-keynote.cocoascript'
+@import 'actions/workers/action-testing-environment.cocoascript'
+@import 'actions/workers/action-settings.cocoascript'
+
+@import 'inventory/classes/layer.cocoascript'
+@import 'inventory/libs/pluginDefaults.js'
+// @import 'inventory/libs/search.js'
+
+var presets = {
+	myRetinaEnabled: 0,
+	myRetinaValue: 1,
+    myRetinaString: "retina",
+	myMobile: 1,
+	myMinimalExport: 1,
+	myAutoplay: 0
+}
+
+var pluginDomain = "com.addleimb.framer-inventory.retina"
+var userDefaults = initDefaults(pluginDomain, presets)
+
+var currentDocument = nil
+var usedStates = []
+
+var pluginPath = ""
+var methodStartTime = nil
+
+var pixelDensity = 1
+var phoneModel = 0
+
+var exportPageRequired = false
+var exportPageName = "Export for Framer Inventory"
+
+var contextUserSelection = NSArray.new()
+
+
+var chooseAction = function(context, actionIdentifier, testing) {
+	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
+	methodStartTime = [NSDate date]
+	
+	if (showLog) { log("Current document is initialised") }
+	FramerInventory.initCurrentDocument(context)
+
+	if (testing) {
+		if (showLog) { log("Starting Testing Environment...") }
+		runTestingEnvironment(context)
+	}
+	else {
+		if (actionIdentifier == 0) {
+			if (showLog) { log("Starting Replicating Layers...") }
+			runReplicateLayers(context)
+		}
+		else if (actionIdentifier == 1) {
+			if (showLog) { log("Starting Analysing States...") }
+			runGenerateStates(context)
+		}
+		else if (actionIdentifier == 2) {
+			if (showLog) { log("Starting Simulating Keynote...") }
+			runSimulateKeynote(context)
+		}
+		else if (actionIdentifier == 3) {
+			if (showLog) { log("Starting Settings...") }
+			runSettings(context)
+		}
+		else if (actionIdentifier == 4) {
+			FramerInventory.showDoneMessage()
+		}
+		else {
+			if (showLog) { log("ERROR: Action is undetermined") }
+		}
+	}
+}
+
+
+
+
+
+
+
+
+function FramerInventory () {}
+
+FramerInventory.initCurrentDocument = function(context) {
+	currentDocument = context.document
+}
+
+FramerInventory.getCurrentPage = function () {
+	return [currentDocument currentPage]
+}
+
+FramerInventory.deselectLayers = function() {
+	[[currentDocument currentPage] deselectAllLayers]
+}
+
+FramerInventory.addExportPageAndReturn = function(oldPage) {
+	var newPage = nil
+	var pageExistsIndex = -1
+
+	var pages = [currentDocument pages]
+	for (var i = 0; i < pages.count(); i++) {
+		if ([[pages objectAtIndex: i] name] == exportPageName) {
+			pageExistsIndex = i
+			break
+		}
+	}
+
+	if (pageExistsIndex != -1) {
+		newPage = [pages objectAtIndex: pageExistsIndex]
+	}
+	else {
+	    newPage = currentDocument.addBlankPage();
+	    newPage.setName(exportPageName);
+	}
+
+	currentDocument.setCurrentPage(oldPage);
+    return newPage;
+}
+
+FramerInventory.cleanExportPage = function() {
+	var exportPage = FramerInventory.findPageWithName(exportPageName)
+	var exportableLayers = [exportPage exportableLayers]
+	
+	for (var i = 0; i < exportableLayers.count(); i++) {
+		[[exportableLayers objectAtIndex: i] removeFromParent]
+	}
+}
+
+FramerInventory.removePage = function(pageName) {
+	var oldPage = [currentDocument currentPage]
+	var pages = [currentDocument pages]
+	
+	for (var i = 0; i < pages.count(); i++) {
+		var page = [pages objectAtIndex: i]
+		if ([page name] == pageName) { [currentDocument removePage:page] }
+	}
+	
+	currentDocument.setCurrentPage(oldPage)
+}
+
+FramerInventory.findPageWithName = function(pageName) {
+	var pages = [currentDocument pages]
+	for (var p = 0; p < [pages count]; p++) {
+		if ([[pages objectAtIndex:p] name] == pageName) { return [pages objectAtIndex:p] }
+	}
+	return nil
+}
+
+FramerInventory.returnDuplicatedArtboards = function(artboards) {
+	for (var i = 0; i < artboards.count(); i++) {
+		var current = [artboards objectAtIndex:i]
+		
+		for (var j = 0; j < i; j++) {
+			var comparableCurrent = [artboards objectAtIndex:j]
+			if ([current name] == [comparableCurrent name]) { return comparableCurrent }
+		}
+	}
+	
+	return nil
+}
+
+FramerInventory.cleanLayer = function(layer, page) {
+	var pageLayers = [[page layers] array]
+	
+	for (var i = 0; i < pageLayers.count(); i++) {
+		var currentLayer = [pageLayers objectAtIndex: i]
+		var layerName = [currentLayer name]
+		var type = [currentLayer className]
+		if ([layerName isEqualToString:[layer name]]) { [currentLayer removeFromParent] }
+	}
+
+	return
+}
+
+
+
+
+// selection based magic
+
+FramerInventory.organiseSelection = function(userSelection) {
+	userSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
+	if (userSelection.count() == 0) { return }
+	
+	FramerInventory.setUserSelection(userSelection)
+	
+	var page = FramerInventory.getCurrentPage()
+	var artboards = [page artboards]
+	
+	if ([[page artboards] firstObject] != nil) {
+		var frame = [[[artboards firstObject] frame] size]
+		FramerInventory.analyseMobile(frame.width)
+	}	
+	
+	OrderInventory.initSelection(userSelection)
+	
+	var unorderedLayers = OrderInventory.returnUnorderedLayers()
+	var orderedLayers = OrderInventory.analyseOrder(unorderedLayers)
+	
+	// FramerInventory.restoreSelection(userSelection)
+	
+	return orderedLayers
+}
+
+FramerInventory.setUserSelection = function(userSelection) {
+	contextUserSelection = userSelection
+}
+
+FramerInventory.restoreSelection = function(selection) {
+	var currentPage = FramerInventory.getCurrentPage()
+	[currentPage deselectAllLayers]
+	
+	for (var i = 0; i < selection.count(); i++) {
+		[[selection objectAtIndex:i] select:true byExpandingSelection:true]
+	}
+}
+
+FramerInventory.createExportSelection = function() {
+	var exportPage = FramerInventory.findPageWithName(exportPageName)
+	if (exportPage == nil) { return }
+	[exportPage deselectAllLayers]
+	
+	var exportables = [exportPage exportableLayers]
+	for (var i = 0; i < exportables.count(); i++) {
+		[[exportables objectAtIndex:i] select:true byExpandingSelection:true]
+	}
+}
+
+
+
+
+
+
+
+
+FramerInventory.addStateName = function(stateName) {
+	if (usedStates != nil) {
+		for (var i = 0; i < usedStates.length; i++) { if (usedStates[i] == stateName) { return } }
+	}
+	usedStates.push(stateName)
+}
+
+FramerInventory.getUsedStatesNames = function() {
+	var page = FramerInventory.getCurrentPage()
+	var artboards = [page artboards]
+	var usedArtboardsNames = []
+	
+	for (var i = 0; i < artboards.count(); i++) {
+		var currentArtboardName = [[artboards objectAtIndex: i] name]
+		if (FramerInventory.isUsed(currentArtboardName)) { usedArtboardsNames.push(currentArtboardName) }
+	}
+	
+	return usedArtboardsNames
+}
+
+FramerInventory.isUsed = function(artboardName) {
+	if (usedStates == nil) { return false }
+	
+	for (var i = 0; i < usedStates.length; i++) {
+		if (artboardName == usedStates[i]) { return true }
+	}
+	
+	return false
+}
+
+
+
+
+
+
+
+
+FramerInventory.analyseMobile = function(artboardWidth) {
+	FramerInventory.setRetinaValue(artboardWidth)
+	FramerInventory.setPhoneValue(artboardWidth)
+}
+
+FramerInventory.setPhoneValue = function(artboardWidth) {
+	if (userDefaults.myMobile == 0 || artboardWidth == nil) { phoneModel = 0 }
+	else if (artboardWidth == 320 || artboardWidth == 640) { phoneModel = 1 }
+	else if (artboardWidth == 375 || artboardWidth == 750) { phoneModel = 2 }
+	else if (artboardWidth == 414 || artboardWidth == 1242) { phoneModel = 3 }
+	else { phoneModel = 0 }
+}
+
+FramerInventory.getPhoneValue = function() {
+	return phoneModel
+}
+
+FramerInventory.setRetinaValue = function(artboardWidth) {
+	if (userDefaults.myMobile == 0 || artboardWidth == nil) { pixelDensity = 1 }
+	else if (artboardWidth == 640 || artboardWidth == 750 || artboardWidth == 1242) { pixelDensity = 1 }
+	else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
+	else if (artboardWidth == 414) { pixelDensity = 3 }
+	else {
+		if (showLog) { log("Pixel density is undetermined") }
+		pixelDensity = 1
+	}
+}
+
+FramerInventory.getRetinaValue = function() {
+	return pixelDensity
+}
+
+
+
+
+
+
+
+
+FramerInventory.requireExportPage = function() {
+	exportPageRequired = true
+}
+
+FramerInventory.isExportPageRequired = function() {
+	return exportPageRequired
+}
+
+FramerInventory.showDoneMessage = function() {
+	var message = "Done"
+	
+	if (OrderInventory.getWarnings() != "") { message += ". Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
+	
+	if (FramerInventory.isExportPageRequired()) { message = "Done. Export assets from \"" + exportPageName + "\" page" }
+	else { FramerInventory.removePage(exportPageName) }
+	
+	[currentDocument showMessage:message]
+	
+	FramerInventory.createExportSelection()
+	FramerInventory.restoreSelection(contextUserSelection)	
+	
+	var methodFinishTime = [NSDate date]
+	var executionTime = [methodFinishTime timeIntervalSinceDate:methodStartTime]
+	if (showLog) { log("Completion time: " + executionTime) }
+}
+
+
+
+

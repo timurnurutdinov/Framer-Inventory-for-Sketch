@@ -3,8 +3,8 @@
 @import 'inventory/getters/normalize.cocoascript'
 @import 'inventory/getters/get-place.cocoascript'
 
-@import 'inventory/strings/generate.cocoascript'
-@import 'inventory/strings/describe.cocoascript'
+@import 'actions/generate-inventory.cocoascript'
+@import 'actions/describe-inventory.cocoascript'
 
 @import 'inventory/libs/logic.cocoascript'
 
@@ -370,15 +370,16 @@ Layer.returnLayerCopy = function(layer) {
 
 Layer.cleanLayerShadows = function(layer) {
 	layer.style().setSharedObjectID(null)
-	var shadowsCollection = [[layer style] shadows]
-	for (var i = 0; i < shadowsCollection.count(); i++) {
-		[shadowsCollection removeStylePartAtIndex: i]
-	}
+	[[layer style] setShadows:nil]
+	// var shadowsCollection = [[layer style] shadows]
+	// for (var i = 0; i < shadowsCollection.count(); i++) {
+		// [shadowsCollection removeStylePartAtIndex: i]
+	// }
 }
 
 Layer.pasteLayer = function(layer) {
 	var currentPage = FramerInventory.getCurrentPage()
-	var framerInventoryPage = FramerInventory.addPage(currentPage)
+	var framerInventoryPage = FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanLayer(layer, framerInventoryPage)
 	if (![layer isVisible]) { [layer setIsVisible:true] }
 	if ([[[layer style] contextSettings] opacity] == 0) { [[[layer style] contextSettings] setOpacity:1] }

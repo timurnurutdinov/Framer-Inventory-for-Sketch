@@ -1,8 +1,0 @@
-var onRun = function(context) {
-	var doc = context.document
-	
-	[[doc currentPage] deselectAllLayers]
-	[NSApp sendAction:"collapseGroupsInLayerList:" to:nil from:doc];
-}
-	
-	

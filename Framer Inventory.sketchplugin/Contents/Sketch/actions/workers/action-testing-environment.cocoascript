@@ -26,61 +26,47 @@ var runTestingEnvironment = function(context) {
 	
 	for (var i = 0; i < pairs.length; i++) {
 		var answer = ""
-		var pageName = pairs[i]
 		testingSelection = NSMutableArray.array()
+		var pageName = pairs[i]
 		
 		var operatingPage = FramerInventory.findPageWithName(pageName)
-		if (showTestLog) { log("Running on page: " + pageName) }
-		if (showTestLog) { log("Operating page: " + [operatingPage name]) }
+		if (showTestLog) { log("Running: " + pageName) }
 		
 		if (operatingPage != nil) {
-			
 			doc.setCurrentPage(operatingPage)
 			[[doc currentPage] deselectAllLayers]
 			
 			testingSelection = [operatingPage exportableLayers]
-			if (showTestLog) { log("exportable layers: " + testingSelection) }
-			
 			answer = runGenerateStates(context, runTests)
 			answers.push(answer)
 			
 		}
-		else {
-			skippedPagesNames++
-		}
+		else { skippedPagesNames++ }
 	}
 	
 	
 	resultingString += "Initialised " + pairs.length + " tests\n"
-	if (skippedPagesNames == 0) {
-		resultingString += "All testing layers are found\n"
-	}
+	if (skippedPagesNames == 0) { resultingString += "All testing layers are found\n" }
 	resultingString += "\n\n\n\n"
 
 
 	for (var i = 0; i < answers.length; i++) {
 		var readReferenceFromFile = pairs[i]
-		
+		var diff = compareAnswer(answers[i], readReferenceFromFile)
 		resultingString += "" + readReferenceFromFile + "\n"
 		
-		var diff = compareAnswer(answers[i], readReferenceFromFile)
 		if (showLog) {
-			if (diff == nil) {log(i + " Correct test. Diff is null: " + diff)}
-			else { log(i + " diff: " + diff) }
+			if (diff == nil) {log((i + 1) + " OK")}
+			else { log((i + 1) + ": " + diff) }
 		}
 
 		if (diff != nil) {
 			resultingString += diff
 			errorAnswers.push(i)
 		}
-		else {
-			resultingString += "Passed"
-		}
+		else { resultingString += "Passed" }
 		resultingString += "\n\n"
 	}
-	
-	
-	doc.setCurrentPage(runningPage)
 	
 	
 	if (skippedPagesNames == 0 && skippedLayersNames == 0) {
@@ -91,6 +77,8 @@ var runTestingEnvironment = function(context) {
 	}
 	
 	resultingString += "\n\nPassed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests\n"
+	
+	doc.setCurrentPage(runningPage)
 	writeTestingLog(resultingString)
 }
 
@@ -109,11 +97,8 @@ TestingEnvironment.getTestingSelection = function() {
 
 // compare functions
 var compareAnswer = function(answer, fileName) {
-	
 	var readText = readFileForAnswer(fileName)
-	if(showLog) { log("Read file: " + readText) }
-	
-	if (readText == "" || readText == '' || readText == nil) { return false }
+	if (readText == nil) { return false }
 	return compareTextsPhrase(answer, "" + readText)
 }
 
@@ -129,7 +114,7 @@ var compareTexts = function(text1, text2) {
 
 
 var compareTextsPhrase = function(text1, text2) {
-	if (text1 == "" || text2 == "") { return "NULL" }
+	if (text1 == nil || text2 == nil) { return "NULL" }
 
 	var lines1 = text1.split("\n");
 	var lines2 = text2.split("\n");
@@ -150,9 +135,9 @@ var compareTextsPhrase = function(text1, text2) {
 					if (text1Array[i] != text2Array[i]) {
 						var prev = ""
 						if (i != 0) { prev = text1Array[i - 1] }
-						var errorLocalString = "IN LINE STARTS: " + lines1[l].split(" ", 1) + "\n"
-						errorLocalString += "DIFF: " + prev + " " + text1Array[i]
-						log(errorLocalString)
+						var errorLocalString = "ERROR LINE: " + lines1[l].split(" ", 1) + "\n"
+						errorLocalString += "Diff: " + prev + " " + text1Array[i]
+						// log(errorLocalString)
 						return errorLocalString
 					}
 				}
@@ -168,7 +153,16 @@ var compareTextsPhrase = function(text1, text2) {
 // TESTS
 var generatePairs = function() {
 	var pairs = []
+	var testsPaths = pluginPath + "/tests"
 	
+	var dirFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:testsPaths error:nil]
+	for (var i = 0; i < dirFiles.count(); i++) {
+		var currentFile = [dirFiles objectAtIndex:i]
+		var fileName = currentFile.replace('.txt','')
+		pairs.push(fileName)
+	}
+	
+	/*
 	pairs.push("01 shapes")
 	
 	// check params
@@ -225,6 +219,8 @@ var generatePairs = function() {
 	// check new symbols in Sketch 3.7+
 	pairs.push("35 symbols and groups main symbol")
 	pairs.push("36 symbols and groups main group")
+	
+	*/
 	
 	return pairs
 }
