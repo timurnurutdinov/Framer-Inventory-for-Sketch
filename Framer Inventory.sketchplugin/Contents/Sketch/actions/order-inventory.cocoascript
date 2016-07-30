@@ -109,7 +109,8 @@ OrderInventory.removeDuplicatedLayers = function(array) {
 
 
 OrderInventory.returnLayers = function(layer) {
-	return layer.layers().array()
+	// return layer.layers().array()
+	return layer.layers()
 }
 
 OrderInventory.isContainer = function(layer) {

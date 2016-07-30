@@ -162,7 +162,8 @@ FramerInventory.returnDuplicatedArtboards = function(artboards) {
 }
 
 FramerInventory.cleanLayer = function(layer, page) {
-	var pageLayers = [[page layers] array]
+	// var pageLayers = [[page layers] array]
+	var pageLayers = [page layers]
 	
 	for (var i = 0; i < pageLayers.count(); i++) {
 		var currentLayer = [pageLayers objectAtIndex: i]

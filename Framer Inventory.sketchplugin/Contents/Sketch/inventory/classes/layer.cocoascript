@@ -382,7 +382,9 @@ Layer.pasteLayer = function(layer) {
 	var framerInventoryPage = FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanLayer(layer, framerInventoryPage)
 	if (![layer isVisible]) { [layer setIsVisible:true] }
-	if ([[[layer style] contextSettings] opacity] == 0) { [[[layer style] contextSettings] setOpacity:1] }
+	// if ([[[layer style] contextSettings] opacity] == 0) { [[[layer style] contextSettings] setOpacity:1] }
+	[[[layer style] contextSettings] setOpacity:1]
+	
 	[framerInventoryPage addLayers: [layer]]
 }
 
@@ -392,7 +394,7 @@ Layer.addExportOptions = function(layer) {
 	if (FramerInventory.getPhoneValue() != 0) { scaleData = FramerInventory.getRetinaValue() }
 	
 	var exportSizes = [[layer exportOptions] exportFormats]
-	while([exportSizes count] > 0) { [[exportSizes firstObject] remove] }
+	[[layer exportOptions] setExportFormats:[]];
 
 	var size = [[layer exportOptions] addExportFormat]
     [size setScale:scaleData]
