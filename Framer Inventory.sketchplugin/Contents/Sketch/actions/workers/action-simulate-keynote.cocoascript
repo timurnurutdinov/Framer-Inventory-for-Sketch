@@ -41,6 +41,7 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 		var hasInitialState = false
 		var hasCurrentState = false
 		
+		
 		for (var j = 0; j < artboardsMaps.length; j++) {
 			var currentMap = artboardsMaps[j]
 			
@@ -76,7 +77,6 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 		layers.push(layer)
 	}
 	
-
 	pasteboardContent += DescribeInventory.generateRetinaVariable() + ln()
 	pasteboardContent += DescribeInventory.generatePhoneModel() + dln()
 	pasteboardContent += "# view" + ln()
