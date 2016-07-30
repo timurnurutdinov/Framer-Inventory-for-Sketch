@@ -1,5 +1,6 @@
 # Framer Inventory 2.2 for Sketch
 
+####<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2.1”>Download for Sketch 3.9</a>
 ####<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2">Download for Sketch 3.8</a>
 - Landing page with video: http://timurnurutdinov.github.io/framerinventory/
 
