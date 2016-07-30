@@ -392,7 +392,7 @@ Layer.addExportOptions = function(layer) {
 	if (FramerInventory.getPhoneValue() != 0) { scaleData = FramerInventory.getRetinaValue() }
 	
 	var exportSizes = [[layer exportOptions] exportFormats]
-	while([exportSizes count] > 0) { [[exportSizes firstObject] remove] }
+	[[layer exportOptions] setExportFormats:[]];
 
 	var size = [[layer exportOptions] addExportFormat]
     [size setScale:scaleData]
