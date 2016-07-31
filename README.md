@@ -1,7 +1,8 @@
 # Framer Inventory 2.2 for Sketch
 ### Landing page with video: http://timurnurutdinov.github.io/framerinventory/
 
-<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2.1">Download for Sketch 3.9</a>
+##<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2.1">Download for Sketch 3.9</a>
+
 <a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2">Download for Sketch 3.8</a>
 
 >Framer Inventory operates within the current Sketch page, handles FramerJS code generation & helps exporting assets manually from automatically generated page. The only tool to analyse the whole scene rather than separate screens.
