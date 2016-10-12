@@ -33,6 +33,7 @@ var getPlaceImage = function(layer) {
 	var currentPage = TypeInventory.findParentPage(layer)
 	var parentArtboard = TypeInventory.findParentArtboard(layer)
 	var parentRect = [parentArtboard absoluteRect]
+	// if (layer)
 
 	// copy layer and place it to artboard
 	var layer_copy = [layer duplicate]
@@ -63,6 +64,49 @@ var getPlaceImage = function(layer) {
 	return values
 }
 
+
+
+var getPlaceImageFromParent = function(layer) {
+	
+	if (layer == nil) { 
+		if (showLog) { log("WARNING: Nil layer") }
+		return [100, 100, 0, 0]
+	}
+	
+	var currentPage = TypeInventory.findParentPage(layer)
+	var parentGroup = [layer parentGroup]
+	
+	var parentRect = [layer absoluteRect]
+	if (parentGroup != nil) { parentRect = [parentGroup absoluteRect] }
+
+	// copy layer and place it to artboard
+	var layer_copy = [layer duplicate]
+	[layer_copy removeFromParent]
+	[currentPage addLayers: [layer_copy]]
+	
+	
+	var frame = [layer_copy frame]
+	[frame setX: [[layer absoluteRect] x]]
+	[frame setY: [[layer absoluteRect] y]]
+	
+	
+	// normalize layer for export
+	[layer_copy setRotation: 0]
+	
+	if ([[[layer_copy style] contextSettings] opacity] == 0) {
+		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
+	}
+	if (![layer_copy isVisible]) { [layer_copy setIsVisible:true] }
+		
+		
+	var values = []
+	var temp = [MSSliceTrimming trimmedRectForSlice:layer_copy];
+	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
+	//if (showLog) { log("Values of " + [layer name] + ": " + values) }
+	
+	[layer_copy removeFromParent]	
+	return values
+}
 
 
 var getPlaceRect = function(layer) {

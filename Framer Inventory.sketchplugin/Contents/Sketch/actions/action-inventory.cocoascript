@@ -1,6 +1,7 @@
 @import 'actions/order-inventory.cocoascript'
 
 @import 'actions/workers/action-replicate-layers.cocoascript'
+@import 'actions/workers/action-compose-symbol.cocoascript'
 @import 'actions/workers/action-generate-states.cocoascript'
 @import 'actions/workers/action-simulate-keynote.cocoascript'
 @import 'actions/workers/action-testing-environment.cocoascript'
@@ -67,6 +68,10 @@ var chooseAction = function(context, actionIdentifier, testing) {
 		}
 		else if (actionIdentifier == 4) {
 			FramerInventory.showDoneMessage()
+		}
+		else if (actionIdentifier == 5) {
+			if (showLog) { log("Starting Compose Symbol...") }
+			runComposeSymbol(context)
 		}
 		else {
 			if (showLog) { log("ERROR: Action is undetermined") }

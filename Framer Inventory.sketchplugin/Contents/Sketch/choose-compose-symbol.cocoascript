@@ -1,0 +1,11 @@
+@import 'actions/action-inventory.cocoascript'
+
+var runReplicateLayersIdentifier = 5
+var currentCommandIdentifier = runReplicateLayersIdentifier
+var showLog = true
+var testing = false
+
+var onRun = function(context) {
+	if (showLog) { log("Running Composing Symbols") }
+	chooseAction(context, currentCommandIdentifier, testing)
+}

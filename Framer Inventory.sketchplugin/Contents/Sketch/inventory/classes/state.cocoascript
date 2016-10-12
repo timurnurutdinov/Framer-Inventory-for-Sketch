@@ -18,6 +18,7 @@ function State (layer) {
 	this.layer = nil
 	this.type = nil
 	
+	// this.relative = false
 	
 	// active properties
 	this.position = nil

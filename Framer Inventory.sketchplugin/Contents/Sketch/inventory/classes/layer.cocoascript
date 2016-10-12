@@ -12,6 +12,7 @@
 function Layer (layerName) {
 	// name of layer
 	this.layerName = layerName;
+	this.relative = false
 	this.states = [];
 	
 	this.filterRequired = false

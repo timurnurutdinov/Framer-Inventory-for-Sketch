@@ -49,6 +49,13 @@
       "shortcut" : "",
       "name" : "Remove Export Page",
       "identifier" : "choose-remove-export-page"
+    },
+    {
+      "script" : "choose-compose-symbol.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "◉   Compose Symbol",
+      "identifier" : "choose-compose-symbol"
     }
   ],
   "menu": {
@@ -56,6 +63,7 @@
       "items": [
 		  "choose-simulate-keynote",
 		  "choose-generate-states",
+		  "choose-compose-symbol",
 		  "choose-replicate-layers",
 		  {
 		         "title": "      Utils",
