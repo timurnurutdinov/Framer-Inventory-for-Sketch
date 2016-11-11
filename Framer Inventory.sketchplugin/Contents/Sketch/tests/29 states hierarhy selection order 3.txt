@@ -1,5 +1,4 @@
 bg = new Layer width: 375*retina, height: 667*retina, x: 0*retina, y: 0*retina, backgroundColor: "rgba(74,144,226,1)"
-
 square = new Layer width: 200*retina, height: 200*retina, x: 100*retina, backgroundColor: "rgba(255,255,255,1)"
 
 square.states.add {
@@ -9,6 +8,4 @@ square.states.add {
 square.states.switchInstant "s1"
 
 nice = new Layer width: 90*retina, height: 90*retina, x: 155*retina, y: 355*retina, backgroundColor: "rgba(0,0,0,1)"
-
 oval = new Layer width: 100*retina, height: 100*retina, x: 200*retina, y: 200*retina, borderRadius: "100%", backgroundColor: "rgba(245,166,35,1)"
-

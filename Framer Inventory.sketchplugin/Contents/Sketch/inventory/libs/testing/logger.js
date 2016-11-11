@@ -24,6 +24,7 @@ var readFileForAnswer = function(fileName) {
 var writeTestingLog = function(outputString) {
 	var folderName = createTempFolderNamed(homeDirectory)
 	writeTextToFile(outputString, folderName + "/testsResults.txt")
+	if (showLog) { log("Have written to: " + folderName + "/testsResults.txt") }
 }
 
 

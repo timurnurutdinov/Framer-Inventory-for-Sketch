@@ -1,5 +1,4 @@
 bg = new Layer width: 178*retina, height: 197*retina, x: 39*retina, y: 214*retina, backgroundColor: "rgba(59,59,59,1)"
-
 nice = new Layer image: "images/nice.png"
 
 nice.states.add {
@@ -9,4 +8,3 @@ nice.states.add {
 nice.states.switchInstant "position_a"
 
 topper = new Layer width: 178*retina, height: 197*retina, x: 188*retina, y: 38*retina, backgroundColor: "rgba(216,216,216,1)"
-
