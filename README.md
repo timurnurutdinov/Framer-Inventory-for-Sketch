@@ -2,6 +2,7 @@
 ### Landing page with video: http://timurnurutdinov.github.io/framerinventory/
 
 ##<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2.1">Download for Sketch 3.9</a>
+#### Beta version for v41: https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/tree/relative-properties
 
 <a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2">Download for Sketch 3.8</a>
 
