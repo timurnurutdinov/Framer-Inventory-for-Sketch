@@ -17,7 +17,9 @@ var presets = {
     myRetinaString: "retina",
 	myMobile: 1,
 	myMinimalExport: 1,
-	myAutoplay: 0
+	myAutoplay: 0,
+
+	myExportPath: ""
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"
@@ -75,9 +77,13 @@ var chooseAction = function(context, actionIdentifier, testing) {
 		}
 		else if (actionIdentifier == 6) {
 			if (showLog) { log("Select Export Folder...") }
-			var message = FramerInventory.getExportPath()
-			if (!message) { message = "Canceled. Export folder is not selected" }
-			else  { message = "Done. Selected folder: " + message }
+			var isPathSelected = FramerInventory.getExportPath()
+			saveDefaults(userDefaults)
+
+			var message = userDefaults.myExportPath
+			if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
+			else if (!isPathSelected) { message = "Canceled. Export folder is not selected" }
+			else { message = "Done. Selected folder: " + message }
 			[currentDocument showMessage:message]
 
 		}
@@ -189,11 +195,9 @@ FramerInventory.cleanLayer = function(layer, page) {
 }
 
 FramerInventory.getExportPath = function() {
-    var filePath = currentDocument.fileURL()? currentDocument.fileURL().path().stringByDeletingLastPathComponent(): "~";
-    var fileName = currentDocument.displayName().stringByDeletingPathExtension();
+    // var filePath = userDefaults.myExportPath
+    // var fileName = currentDocument.displayName().stringByDeletingPathExtension();
     var openPanel = NSOpenPanel.openPanel();
-
-    log(filePath + "\n" + fileName)
 
     openPanel.setTitle("Select Images Folder");
     openPanel.setPrompt("Select Folder");
@@ -203,7 +207,8 @@ FramerInventory.getExportPath = function() {
 
     if (openPanel.runModal() != NSOKButton) { return false; }
 
-    return openPanel.URL().path();
+    userDefaults.myExportPath = openPanel.URL().path();
+		return true;
 }
 
 
