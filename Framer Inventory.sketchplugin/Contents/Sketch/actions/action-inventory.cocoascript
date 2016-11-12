@@ -41,7 +41,7 @@ var contextUserSelection = NSArray.new()
 var chooseAction = function(context, actionIdentifier, testing) {
 	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
 	methodStartTime = [NSDate date]
-	
+
 	if (showLog) { log("Current document is initialised") }
 	FramerInventory.initCurrentDocument(context)
 
@@ -72,6 +72,14 @@ var chooseAction = function(context, actionIdentifier, testing) {
 		else if (actionIdentifier == 5) {
 			if (showLog) { log("Starting Compose Symbol...") }
 			runComposeSymbol(context)
+		}
+		else if (actionIdentifier == 6) {
+			if (showLog) { log("Select Export Folder...") }
+			var message = FramerInventory.getExportPath()
+			if (!message) { message = "Canceled. Export folder is not selected" }
+			else  { message = "Done. Selected folder: " + message }
+			[currentDocument showMessage:message]
+
 		}
 		else {
 			if (showLog) { log("ERROR: Action is undetermined") }
@@ -127,7 +135,7 @@ FramerInventory.addExportPageAndReturn = function(oldPage) {
 FramerInventory.cleanExportPage = function() {
 	var exportPage = FramerInventory.findPageWithName(exportPageName)
 	var exportableLayers = [exportPage exportableLayers]
-	
+
 	for (var i = 0; i < exportableLayers.count(); i++) {
 		[[exportableLayers objectAtIndex: i] removeFromParent]
 	}
@@ -136,12 +144,12 @@ FramerInventory.cleanExportPage = function() {
 FramerInventory.removePage = function(pageName) {
 	var oldPage = [currentDocument currentPage]
 	var pages = [currentDocument pages]
-	
+
 	for (var i = 0; i < pages.count(); i++) {
 		var page = [pages objectAtIndex: i]
 		if ([page name] == pageName) { [currentDocument removePage:page] }
 	}
-	
+
 	currentDocument.setCurrentPage(oldPage)
 }
 
@@ -156,20 +164,20 @@ FramerInventory.findPageWithName = function(pageName) {
 FramerInventory.returnDuplicatedArtboards = function(artboards) {
 	for (var i = 0; i < artboards.count(); i++) {
 		var current = [artboards objectAtIndex:i]
-		
+
 		for (var j = 0; j < i; j++) {
 			var comparableCurrent = [artboards objectAtIndex:j]
 			if ([current name] == [comparableCurrent name]) { return comparableCurrent }
 		}
 	}
-	
+
 	return nil
 }
 
 FramerInventory.cleanLayer = function(layer, page) {
 	// var pageLayers = [[page layers] array]
 	var pageLayers = [page layers]
-	
+
 	for (var i = 0; i < pageLayers.count(); i++) {
 		var currentLayer = [pageLayers objectAtIndex: i]
 		var layerName = [currentLayer name]
@@ -180,6 +188,23 @@ FramerInventory.cleanLayer = function(layer, page) {
 	return
 }
 
+FramerInventory.getExportPath = function() {
+    var filePath = currentDocument.fileURL()? currentDocument.fileURL().path().stringByDeletingLastPathComponent(): "~";
+    var fileName = currentDocument.displayName().stringByDeletingPathExtension();
+    var openPanel = NSOpenPanel.openPanel();
+
+    log(filePath + "\n" + fileName)
+
+    openPanel.setTitle("Select Images Folder");
+    openPanel.setPrompt("Select Folder");
+    openPanel.setCanCreateDirectories(true);
+    openPanel.setCanChooseDirectories(true);
+    openPanel.setNameFieldStringValue("");
+
+    if (openPanel.runModal() != NSOKButton) { return false; }
+
+    return openPanel.URL().path();
+}
 
 
 
@@ -188,24 +213,24 @@ FramerInventory.cleanLayer = function(layer, page) {
 FramerInventory.organiseSelection = function(userSelection) {
 	userSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
 	if (userSelection.count() == 0) { return }
-	
+
 	FramerInventory.setUserSelection(userSelection)
-	
+
 	var page = FramerInventory.getCurrentPage()
 	var artboards = [page artboards]
-	
+
 	if ([[page artboards] firstObject] != nil) {
 		var frame = [[[artboards firstObject] frame] size]
 		FramerInventory.analyseMobile(frame.width)
-	}	
-	
+	}
+
 	OrderInventory.initSelection(userSelection)
-	
+
 	var unorderedLayers = OrderInventory.returnUnorderedLayers()
 	var orderedLayers = OrderInventory.analyseOrder(unorderedLayers)
-	
+
 	// FramerInventory.restoreSelection(userSelection)
-	
+
 	return orderedLayers
 }
 
@@ -216,7 +241,7 @@ FramerInventory.setUserSelection = function(userSelection) {
 FramerInventory.restoreSelection = function(selection) {
 	var currentPage = FramerInventory.getCurrentPage()
 	[currentPage deselectAllLayers]
-	
+
 	for (var i = 0; i < selection.count(); i++) {
 		[[selection objectAtIndex:i] select:true byExpandingSelection:true]
 	}
@@ -226,7 +251,7 @@ FramerInventory.createExportSelection = function() {
 	var exportPage = FramerInventory.findPageWithName(exportPageName)
 	if (exportPage == nil) { return }
 	[exportPage deselectAllLayers]
-	
+
 	var exportables = [exportPage exportableLayers]
 	for (var i = 0; i < exportables.count(); i++) {
 		[[exportables objectAtIndex:i] select:true byExpandingSelection:true]
@@ -251,22 +276,22 @@ FramerInventory.getUsedStatesNames = function() {
 	var page = FramerInventory.getCurrentPage()
 	var artboards = [page artboards]
 	var usedArtboardsNames = []
-	
+
 	for (var i = 0; i < artboards.count(); i++) {
 		var currentArtboardName = [[artboards objectAtIndex: i] name]
 		if (FramerInventory.isUsed(currentArtboardName)) { usedArtboardsNames.push(currentArtboardName) }
 	}
-	
+
 	return usedArtboardsNames
 }
 
 FramerInventory.isUsed = function(artboardName) {
 	if (usedStates == nil) { return false }
-	
+
 	for (var i = 0; i < usedStates.length; i++) {
 		if (artboardName == usedStates[i]) { return true }
 	}
-	
+
 	return false
 }
 
@@ -326,22 +351,18 @@ FramerInventory.isExportPageRequired = function() {
 
 FramerInventory.showDoneMessage = function() {
 	var message = "Done"
-	
+
 	if (OrderInventory.getWarnings() != "") { message += ". Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
-	
+
 	if (FramerInventory.isExportPageRequired()) { message = "Done. Export assets from \"" + exportPageName + "\" page" }
 	else { FramerInventory.removePage(exportPageName) }
-	
+
 	[currentDocument showMessage:message]
-	
+
 	FramerInventory.createExportSelection()
-	FramerInventory.restoreSelection(contextUserSelection)	
-	
+	FramerInventory.restoreSelection(contextUserSelection)
+
 	var methodFinishTime = [NSDate date]
 	var executionTime = [methodFinishTime timeIntervalSinceDate:methodStartTime]
 	if (showLog) { log("Completion time: " + executionTime) }
 }
-
-
-
-

@@ -56,6 +56,13 @@
       "shortcut" : "",
       "name" : "◉   Compose Symbol",
       "identifier" : "choose-compose-symbol"
+    },
+    {
+      "script" : "choose-select-export-path.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Select Export Folder",
+      "identifier" : "choose-select-export-path"
     }
   ],
   "menu": {
@@ -69,6 +76,7 @@
 		         "title": "      Utils",
 		         "items": [
 				 	"choose-settings",
+          "choose-select-export-path",
 					"choose-remove-export-page",
           "choose-testing-environment"
 		         ],
