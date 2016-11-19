@@ -78,7 +78,6 @@ var chooseAction = function(context, actionIdentifier, testing) {
 		else if (actionIdentifier == 6) {
 			if (showLog) { log("Select Export Folder...") }
 			var isPathSelected = FramerInventory.getExportPath()
-			saveDefaults(userDefaults)
 
 			var message = userDefaults.myExportPath
 			if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
@@ -87,6 +86,12 @@ var chooseAction = function(context, actionIdentifier, testing) {
 
 			[currentDocument showMessage:message]
 
+		}
+		else if (actionIdentifier == 7) {
+				if (showLog) { log("Removing path to folder") }
+				userDefaults.myExportPath = ""
+				saveDefaults(userDefaults)
+				[currentDocument showMessage:"Done. No Export Folder selected"]
 		}
 		else {
 			if (showLog) { log("ERROR: Action is undetermined") }
@@ -237,6 +242,7 @@ FramerInventory.getExportPath = function() {
     if (openPanel.runModal() != NSOKButton) { return false; }
 
     userDefaults.myExportPath = openPanel.URL().path();
+		saveDefaults(userDefaults)
 		return true;
 }
 

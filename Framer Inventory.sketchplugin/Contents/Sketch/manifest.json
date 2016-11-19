@@ -61,8 +61,15 @@
       "script" : "choose-select-export-path.cocoascript",
       "handler" : "onRun",
       "shortcut" : "",
-      "name" : "Select Export Folder",
+      "name" : "Select Export Path",
       "identifier" : "choose-select-export-path"
+    },
+    {
+      "script" : "choose-remove-export-path.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "Remove Export Path",
+      "identifier" : "choose-remove-export-path"
     }
   ],
   "menu": {
@@ -75,11 +82,17 @@
 		  {
 		         "title": "      Utils",
 		         "items": [
-				 	"choose-settings",
-          "choose-select-export-path",
-					"choose-remove-export-page",
-          "choose-testing-environment"
-		         ],
+				 	         "choose-settings",
+                   {
+                     "title": "Export Folder",
+                     "items": [
+                       "choose-select-export-path",
+                       "choose-remove-export-path"
+                     ],
+                   },
+					          "choose-remove-export-page",
+                    "choose-testing-environment"
+		          ],
 		  }
       ]
     }
