@@ -7,16 +7,18 @@ function DescribeInventory () {}
 
 DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 	if (generatedStates == nil || generatedStates.length == 0) { return "" }
-	
-	var stateSectionName = GenerateInventory.clearName(layerName) + ".states.add {" + ln()
-	var stateBottomSection = "}" + ln()
-	
+
+	var stateSectionName = GenerateInventory.clearName(layerName) + ".states =" + ln()
+	var stateBottomSection = ln()
+
 	var states = ""
 	for (var i = 0; i < generatedStates.length; i++) {
-		var correctBeginString = generatedStates[i].replace("{,", "{")
+		var correctBeginString = generatedStates[i].replace(" {, ", ln()+tln()+tln())
+		correctBeginString = correctBeginString.replace(" { ", ln()+tln()+tln())
+		correctBeginString = correctBeginString.replace("}", "")
 		states += tln() + correctBeginString + ln()
 	}
-	
+
 	return stateSectionName + states + stateBottomSection
 }
 
@@ -27,7 +29,7 @@ DescribeInventory.generateState = function(stateName, stateContent) {
 
 
 DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
-	return "" + GenerateInventory.clearName(layerName) + ".states.switchInstant \"" + GenerateInventory.clearName(stateName) + "\"" + dln()
+	return "" + GenerateInventory.clearName(layerName) + ".stateSwitch(\"" + GenerateInventory.clearName(stateName) + "\")" + dln()
 }
 
 DescribeInventory.generateRetinaVariable = function() {
@@ -39,25 +41,25 @@ DescribeInventory.generateRetinaVariable = function() {
 DescribeInventory.generatePhoneModel = function() {
 	var model = FramerInventory.getPhoneValue()
 	var modelDescription = ""
-	
+
 	if (model == 1 || model == 2 || model == 3) {
 		modelDescription += "# mobile" + ln()
-	} 
-	
+	}
+
 	if (model == 1) {
 		modelDescription += "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln()
 	}
 	else if (model == 2) {
 		modelDescription += "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln()
 		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.853" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 320/375" + ln()
 	}
 	else if (model == 3) {
 		modelDescription += "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln()
 		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.515" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 320/414" + ln()
 		modelDescription += "if Screen.width == 750" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.604" + ln()
+		modelDescription += tln() + "Framer.Device.contentScale = 375/414" + ln()
 	}
 	return modelDescription
 }
@@ -103,7 +105,7 @@ DescribeInventory.generateLayers = function(layers) {
 	}
 	layersDescription += "]" + ln()
 	return layersDescription
-	
+
 }
 
 
@@ -125,13 +127,13 @@ function getFunctionName() {
 
 DescribeInventory.generateHandler = function() {
 	var handlerDescription = ""
-	
+
 	if (userDefaults.myAutoplay == 0) {
 		handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
 		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
 		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
 		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.animate(nextState)" + ln()
 		handlerDescription += tln() + tln() + "catch error" + dln()
 	}
 	else {
@@ -139,13 +141,12 @@ DescribeInventory.generateHandler = function() {
 		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
 		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
 		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
+		handlerDescription += tln() + tln() + tln() + "item.animate(nextState)" + ln()
 		handlerDescription += tln() + tln() + "catch error" + ln()
 		handlerDescription += tln() + "Utils.delay 2, ->" + ln()
 		handlerDescription += tln() + tln() + getFunctionName() + "()" + dln()
-		
+
 		handlerDescription += getFunctionName() + "()"
 	}
 	return handlerDescription
 }
-
