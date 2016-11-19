@@ -21,7 +21,7 @@ function componentToHex(c) {
 }
 
 function createHexString(r, g, b) {
-    if (showLog) { log(r + " " + g + " " + b) }
+    // if (showLog) { log(r + " " + g + " " + b) }
     return componentToHex(formatRGB(r)) + componentToHex(formatRGB(g)) + componentToHex(formatRGB(b));
 }
 

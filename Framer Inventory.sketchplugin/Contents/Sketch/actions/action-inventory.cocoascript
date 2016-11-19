@@ -84,6 +84,7 @@ var chooseAction = function(context, actionIdentifier, testing) {
 			if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
 			else if (!isPathSelected) { message = "Canceled. Export folder is not selected" }
 			else { message = "Done. Selected folder: " + message }
+
 			[currentDocument showMessage:message]
 
 		}
@@ -113,6 +114,34 @@ FramerInventory.getCurrentPage = function () {
 FramerInventory.deselectLayers = function() {
 	[[currentDocument currentPage] deselectAllLayers]
 }
+
+FramerInventory.exportLayersFromExportPage = function(oldPage) {
+		if (userDefaults.myExportPath == "") { return }
+		var framerInvetoryPage = FramerInventory.addExportPageAndReturn(oldPage)
+		currentDocument.setCurrentPage(framerInvetoryPage);
+
+		var exportPageLayers = [framerInvetoryPage layers]
+		for (var i = 0; i < [exportPageLayers count]; i++) {
+				var currentLayer = [exportPageLayers objectAtIndex: i]
+				var ancestry = MSImmutableLayerAncestry.ancestryWithMSLayer(currentLayer)
+    		var maybeRect = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
+
+				var request = MSExportRequest.new()
+    		request.rect = maybeRect
+				var exportSizes = [[[currentLayer exportOptions] exportFormats] firstObject]
+    		request.scale = exportSizes.scale()
+	    	request.includeArtboardBackground = false
+		    request.configureForLayer(ancestry)
+
+
+				var dirtyPath = [currentLayer name]
+				var fileName = "/" + GenerateInventory.removePath(dirtyPath) + ".png"
+				var imageExportPath = userDefaults.myExportPath + fileName
+				[currentDocument saveArtboardOrSlice:request toFile:imageExportPath]
+		}
+		currentDocument.setCurrentPage(oldPage);
+}
+
 
 FramerInventory.addExportPageAndReturn = function(oldPage) {
 	var newPage = nil
@@ -359,7 +388,16 @@ FramerInventory.showDoneMessage = function() {
 
 	if (OrderInventory.getWarnings() != "") { message += ". Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
 
-	if (FramerInventory.isExportPageRequired()) { message = "Done. Export assets from \"" + exportPageName + "\" page" }
+	if (FramerInventory.isExportPageRequired()) {
+			if (userDefaults.myExportPath != "") {
+				FramerInventory.exportLayersFromExportPage(FramerInventory.getCurrentPage())
+				message = "Done. Assets are exported to " + userDefaults.myExportPath
+				FramerInventory.removePage(exportPageName)
+			}
+			else {
+				message = "Done. Export assets from \"" + exportPageName + "\" page"
+			}
+	}
 	else { FramerInventory.removePage(exportPageName) }
 
 	[currentDocument showMessage:message]

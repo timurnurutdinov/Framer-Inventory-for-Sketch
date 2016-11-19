@@ -56,7 +56,9 @@ var getPlaceImage = function(layer) {
 
 
 	var values = []
-	var temp = layer.absoluteInfluenceRect()
+	// var temp = layer.absoluteInfluenceRect()
+	var ancestry = MSImmutableLayerAncestry.ancestryWithMSLayer(layer_copy)
+	var temp = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
 	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
 	//if (showLog) { log("Values of " + [layer name] + ": " + values) }
 
@@ -100,7 +102,9 @@ var getPlaceImageFromParent = function(layer) {
 
 
 	var values = []
-	var temp = layer.absoluteInfluenceRect()
+	// var temp = layer.absoluteInfluenceRect()
+	var ancestry = MSImmutableLayerAncestry.ancestryWithMSLayer(layer_copy)
+	var temp = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
 	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
 	//if (showLog) { log("Values of " + [layer name] + ": " + values) }
 
