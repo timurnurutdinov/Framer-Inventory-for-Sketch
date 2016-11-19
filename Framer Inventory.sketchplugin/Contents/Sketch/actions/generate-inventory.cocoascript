@@ -73,7 +73,9 @@ function vout(val) {
 function GenerateInventory () {}
 
 GenerateInventory.returnLayerName = function(layerName) {
-	return GenerateInventory.clearName(layerName) + " = new Layer"
+  var newLayerString = GenerateInventory.clearName(layerName) + " = new Layer"
+  if (userDefaults.myCodeStyleClassic == 0) { return newLayerString + ln() }
+	return newLayerString
 }
 
 GenerateInventory.removePath = function(longPath) {
@@ -91,20 +93,20 @@ GenerateInventory.clearName = function(longName) {
 
 GenerateInventory.generateOpacity = function(value) {
 	if (value == nil) { return "" }
-	return ", opacity: " + niceValue(value,0)
+	return br() + "opacity: " + niceValue(value,0)
 }
 
 
 GenerateInventory.generateRotation = function(value) {
 	if (value == nil) { return "" }
-	return ", rotation: " + niceValue(value)
+	return br() + "rotation: " + niceValue(value)
 }
 
 
 GenerateInventory.generateCorner = function(value) {
 	if (value == nil) { return "" }
-	else if (value == "100%") { return ", borderRadius: \"" + value + "\"" }
-	return ", borderRadius: " + vout(value)
+	else if (value == "100%") { return br() + "borderRadius: \"" + value + "\"" }
+	return br() + "borderRadius: " + vout(value)
 }
 
 
@@ -116,12 +118,12 @@ GenerateInventory.generateShadows = function(values) {
 		var value = values[0]
 
 		var color = ""
-		if (value[5] != nil && value[4] != nil) { color = ", shadowColor: " + convertHex(value[5], value[4]) }
+		if (value[5] != nil && value[4] != nil) { color = br() + "shadowColor: " + convertHex(value[5], value[4]) }
 
-		if (value[0] != nil) { composedShadow += ", shadowX: " + vout(value[0]) }
-		if (value[1] != nil) { composedShadow += ", shadowY: " + vout(value[1]) }
-		if (value[2] != nil) { composedShadow += ", shadowBlur: " + vout(value[2]) }
-		if (value[3] != nil) { composedShadow += ", shadowSpread: " + vout(value[3]) }
+		if (value[0] != nil) { composedShadow += br() + "shadowX: " + vout(value[0]) }
+		if (value[1] != nil) { composedShadow += br() + "shadowY: " + vout(value[1]) }
+		if (value[2] != nil) { composedShadow += br() + "shadowBlur: " + vout(value[2]) }
+		if (value[3] != nil) { composedShadow += br() + "shadowSpread: " + vout(value[3]) }
 
 		return composedShadow + color
 	}
@@ -146,12 +148,12 @@ GenerateInventory.generateFilterShadows = function(values) {
 		var shadowVariable = ""
 		// BAD CODE: REFACTORING NEEDED
 		if (userDefaults.myRetinaEnabled == 0) {
-			var shadowVariable = ", style: {\"" + "-webkit-filter\"" + ": \"" + "drop-shadow" + '('
+			var shadowVariable = br() + "style: {\"" + "-webkit-filter\"" + ": \"" + "drop-shadow" + '('
 			shadowVariable += vout(value[0]) + "px " + vout(value[1]) + "px "
 			shadowVariable += vout(value[2]) + "px " + color + ')' + "\"" + "}"
 		}
 		else {
-			shadowVariable = ", style: {\"-webkit-filter\": \"drop-shadow(" + calc(niceValue(value[0]))
+			shadowVariable = br() + "style: {\"-webkit-filter\": \"drop-shadow(" + calc(niceValue(value[0]))
 			shadowVariable += calc(niceValue(value[1])) + calc(niceValue(value[2])) + calcColor(color) + "}"
 		}
 
@@ -170,9 +172,9 @@ GenerateInventory.generateBorders = function(values) {
 		var value = values[0]
 
 		var color = ""
-		if (value[3] != nil && value[4] != nil) { color += ", borderColor: "  + convertHex(value[4], value[3]) }
+		if (value[3] != nil && value[4] != nil) { color += br() + "borderColor: "  + convertHex(value[4], value[3]) }
 
-		if (value[1] != nil) { composedBorder += ", borderWidth: " + vout(value[1]) }
+		if (value[1] != nil) { composedBorder += br() + "borderWidth: " + vout(value[1]) }
 
 		return composedBorder + color
 	}
@@ -188,7 +190,7 @@ GenerateInventory.generateBackgrounds = function(values) {
 		var value = values[0]
 
 		var color = ""
-		if (value[2] != nil && value[1] != nil) { color += ", backgroundColor: "  + convertHex(value[2], value[1]) }
+		if (value[2] != nil && value[1] != nil) { color += br() + "backgroundColor: "  + convertHex(value[2], value[1]) }
 
 		return color
 	}
@@ -205,10 +207,10 @@ GenerateInventory.generatePosition = function(values) {
 		var x = ""
 		var y = ""
 
-		if (values[0] != nil) { width = " width: " + vout(values[0]) }
-		if (values[1] != nil) { height = ", height: " + vout(values[1]) }
-		if (values[2] != nil) { x = ", x: " + vout(values[2]) }
-		if (values[3] != nil) { y = ", y: " + vout(values[3]) }
+		if (values[0] != nil) { width = brf() + "width: " + vout(values[0]) }
+		if (values[1] != nil) { height = br() + "height: " + vout(values[1]) }
+		if (values[2] != nil) { x = br() + "x: " + vout(values[2]) }
+		if (values[3] != nil) { y = br() + "y: " + vout(values[3]) }
 
 		return "" + width + height + x + y
 	}
@@ -216,5 +218,5 @@ GenerateInventory.generatePosition = function(values) {
 
 
 GenerateInventory.generateImagePath = function(dirtyPath) {
-	return ", image: \"images/" + GenerateInventory.removePath(dirtyPath) + ".png\""
+	return br() + "image: \"images/" + GenerateInventory.removePath(dirtyPath) + ".png\""
 }

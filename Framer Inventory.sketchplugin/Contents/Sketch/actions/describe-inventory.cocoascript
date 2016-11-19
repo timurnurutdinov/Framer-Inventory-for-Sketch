@@ -13,10 +13,21 @@ DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 
 	var states = ""
 	for (var i = 0; i < generatedStates.length; i++) {
-		var correctBeginString = generatedStates[i].replace(" {, ", ln()+tln()+tln())
-		correctBeginString = correctBeginString.replace(" { ", ln()+tln()+tln())
+		log(generatedStates[i])
+		var correctBeginString = generatedStates[i].replace(" {, ", "")
+		correctBeginString = correctBeginString.replace(" {", "")
 		correctBeginString = correctBeginString.replace("}", "")
+		if (userDefaults.myCodeStyleClassic == 0)	{
+			correctBeginString = correctBeginString.replace(/\t/g, tln()+tln())
+		}
+		else {
+			correctBeginString = correctBeginString.replace(/:/g, ": ")
+			correctBeginString = correctBeginString.replace(": ", ": { ")
+			correctBeginString = correctBeginString.replace(/:  /g, ": ")
+			correctBeginString += " }"
+		}
 		states += tln() + correctBeginString + ln()
+		log(correctBeginString)
 	}
 
 	return stateSectionName + states + stateBottomSection

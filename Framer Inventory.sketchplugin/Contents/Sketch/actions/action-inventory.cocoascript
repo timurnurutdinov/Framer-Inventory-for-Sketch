@@ -14,12 +14,13 @@
 var presets = {
 	myRetinaEnabled: 0,
 	myRetinaValue: 1,
-    myRetinaString: "retina",
+  myRetinaString: "retina",
 	myMobile: 1,
 	myMinimalExport: 1,
 	myAutoplay: 0,
 
-	myExportPath: ""
+	myExportPath: "",
+	myCodeStyleClassic: 1
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"
