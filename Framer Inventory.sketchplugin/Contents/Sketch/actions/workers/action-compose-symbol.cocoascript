@@ -1,42 +1,47 @@
-
+@import 'lib.js'
 // generate code for layers
 var runComposeSymbol = function(context) {
-	
+	log("RUNNING?")
+	log(context)
+	log("nO?")
+
 	var doc = context.document
 	var selection = context.selection
-	
-	[[NSPasteboard generalPasteboard] clearContents]
-	
-	var layers = []
-	var pasteboardContent = ""
-	
-	var currentPage = FramerInventory.getCurrentPage()
-	FramerInventory.addExportPageAndReturn(currentPage)
-	FramerInventory.cleanExportPage()
-	
-	var sortedSelection = OrderInventory.removeDuplicatedLayers(selection)
-	if (sortedSelection == nil || sortedSelection.count() < 1) {
-		[doc showMessage:"Nothing to replicate. Please, select some layers"]
-		return
-	}
-	
-	FramerInventory.setUserSelection(sortedSelection)
-	
-	for (var i = 0; i < [sortedSelection count]; i++) {
-		log([sortedSelection objectAtIndex: i])
-		// var currentLayer = [sortedSelection objectAtIndex: i]
-		// var layer = new Layer([currentLayer name])
-		// layer.composeState(currentLayer)
-		// layers.push(layer)
-	}
-	
 
-	for (var i = 0; i < layers.length; i++) {
-		pasteboardContent += layers[i].printLayer()
-	}
-	
-	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
+	CX.init(context, "controlbar");
+
+	[[NSPasteboard generalPasteboard] clearContents]
+
+	// var layers = []
+	// var pasteboardContent = ""
+	//
+	// var currentPage = FramerInventory.getCurrentPage()
+	// FramerInventory.addExportPageAndReturn(currentPage)
+	// FramerInventory.cleanExportPage()
+	//
+	// var sortedSelection = OrderInventory.removeDuplicatedLayers(selection)
+	// if (sortedSelection == nil || sortedSelection.count() < 1) {
+	// 	[doc showMessage:"Nothing to replicate. Please, select some layers"]
+	// 	return
+	// }
+	//
+	// FramerInventory.setUserSelection(sortedSelection)
+	//
+	// for (var i = 0; i < [sortedSelection count]; i++) {
+	// 	log([sortedSelection objectAtIndex: i])
+	// 	// var currentLayer = [sortedSelection objectAtIndex: i]
+	// 	// var layer = new Layer([currentLayer name])
+	// 	// layer.composeState(currentLayer)
+	// 	// layers.push(layer)
+	// }
+	//
+	//
+	// for (var i = 0; i < layers.length; i++) {
+	// 	pasteboardContent += layers[i].printLayer()
+	// }
+	//
+	// [[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 	FramerInventory.showDoneMessage()
-	
-	return pasteboardContent
+	//
+	// return pasteboardContent
 }
