@@ -76,9 +76,11 @@
 	  "title": "Framer Inventory",
       "items": [
 		  "choose-simulate-keynote",
+      "-",
 		  "choose-generate-states",
 		  "choose-compose-symbol",
 		  "choose-replicate-layers",
+      "-",
 		  {
 		         "title": "      Utils",
 		         "items": [

@@ -13,13 +13,13 @@
 
 
 function State (layer) {
-	
+
 	this.stateName = nil
 	this.layer = nil
 	this.type = nil
-	
+
 	// this.relative = false
-	
+
 	// active properties
 	this.position = nil
 	this.width = nil
@@ -31,7 +31,7 @@ function State (layer) {
 	this.corner = nil
 	this.rotation = nil
 	this.inners = nil
-	
+
 	this.shadows = nil
 	this.shadowX = nil
 	this.shadowY = nil
@@ -39,35 +39,35 @@ function State (layer) {
 	this.shadowSpread = nil
 	this.shadowOpacity = nil
 	this.shadowHex = nil
-	
+
 	this.borders = nil
 	this.borderWidth = nil
 	this.borderOpacity = nil
 	this.borderHex = nil
-	
+
 	this.backgrounds = nil
 	this.backgroundOpacity = nil
 	this.backgroundHex = nil
-	
-	
+
+
 	// active conditions
 	this.opacityActive = false
 	this.cornerActive = false
 	this.rotationActive = false
 	this.positionActive = false
-	
+
 	this.shadowsActive = false
 	this.innersActive = false
 	this.bordersActive = false
 	this.backgroundsActive = false
-	
+
 	// exportable conditions
 	this.shadowsExportable = false
 	this.innersExportable = false
 	this.bordersExportable = false
 	this.backgroundsExportable = false
 	this.generatable = false
-	
+
 	this.prepareState(layer)
 	this.updateState()
 }
@@ -75,25 +75,25 @@ function State (layer) {
 
 State.prototype.prepareState = function(layer) {
 	if (layer == nil) { return nil }
-	
+
 	var parentArtboard = TypeInventory.findParentArtboard(layer)
 	this.stateName = [parentArtboard name]
-	
+
 	this.layer = layer
 	this.type = TypeInventory.getObjectType(layer)
-	
+
 	if (this.type == 2 || this.type == 3) { this.position = getPlaceRect(layer) }
 	else { this.position = getPlaceImage(layer) }
-	
+
 	this.opacity = getOpacity(layer)
 	this.corner = getCornerRadius(layer)
 	if ([layer rotation] != 0) { this.rotation = (-[layer rotation]) }
-	
+
 	this.shadows = getShadows(layer)
 	this.inners = getInners(layer)
 	this.borders = getBorders(layer)
 	this.backgrounds = getBackgroundColors(layer)
-		
+
 }
 
 
@@ -104,10 +104,10 @@ State.prototype.updateState = function() {
 		this.x = this.position[2]
 		this.y = this.position[3]
 	}
-	
+
 	if (this.shadows != nil) {
 		var firstShadow = this.shadows[0]
-		
+
 		this.shadowX = firstShadow[0]
 		this.shadowY = firstShadow[1]
 		this.shadowBlur = firstShadow[2]
@@ -115,31 +115,31 @@ State.prototype.updateState = function() {
 		this.shadowOpacity = firstShadow[4]
 		this.shadowHex = firstShadow[5]
 	}
-	
+
 	if (this.borders != nil) {
 		var firstBorder = this.borders[0]
-		
+
 		this.borderWidth = firstBorder[1]
 		this.borderOpacity = firstBorder[3]
 		this.borderHex = firstBorder[4]
 	}
-	
+
 	if (this.backgrounds != nil) {
 		this.backgroundOpacity = this.backgrounds[0][1]
 		this.backgroundHex = this.backgrounds[0][2]
 	}
-	
+
 	// active conditions
 	this.opacityActive = (this.opacity == nil) ? false : true
 	this.cornerActive = (this.corner == nil) ? false : true
 	this.rotationActive = (this.rotation == nil) ? false : true
 	this.positionActive = (this.position == nil) ? false : true
-	
+
 	this.shadowsActive = (this.shadows == nil) ? false : true
 	this.innersActive = (this.inners == nil) ? false : true
 	this.bordersActive = (this.borders == nil) ? false : true
 	this.backgroundsActive = (this.backgrounds == nil) ? false : true
-	
+
 	// exportable conditions
 	this.shadowsExportable = this.isShadowsExportale()
 	this.innersExportable = this.isInnersExportale()
@@ -155,19 +155,19 @@ State.prototype.updateState = function() {
 
 State.prototype.isEqualToState = function(state) {
 	if (state == nil) { return false }
-	
+
 	if (this.type != state.type) { return false }
 	if (this.opacity != state.opacity) { return false }
 	if (this.corner != state.corner) { return false }
 	if (this.rotation != state.rotation) { return false }
-	
+
 	if (!LogicInventory.compareArrays(this.position, state.position)) { return false }
 
 	if (!LogicInventory.compareMatrices(this.shadows, state.shadows)) { return false }
 	if (!LogicInventory.compareMatrices(this.inners, state.inners)) { return false }
 	if (!LogicInventory.compareMatrices(this.borders, state.borders)) { return false }
 	if (!LogicInventory.compareMatrices(this.backgrounds, state.backgrounds)) { return false }
-	
+
 	return true
 }
 
@@ -221,30 +221,30 @@ State.prototype.isBackgroundsExportale = function() {
 State.cloneState = function(baseState) {
 	var layer = baseState.layer
 	var state = new State(layer)
-	
+
 	state.width = baseState.width
 	state.height = baseState.height
 	state.x = baseState.x
 	state.y = baseState.y
-	
+
 	state.shadowX = baseState.shadowX
 	state.shadowY = baseState.shadowY
 	state.shadowBlur = baseState.shadowBlur
 	state.shadowSpread = baseState.shadowSpread
 	state.shadowOpacity = baseState.shadowOpacity
 	state.shadowHex = baseState.shadowHex
-	
+
 	state.borderWidth = baseState.borderWidth
 	state.borderOpacity = baseState.borderOpacity
 	state.borderHex = baseState.borderHex
-	
+
 	state.backgroundOpacity = baseState.backgroundOpacity
 	state.backgroundHex = baseState.backgroundHex
-	
+
 	state.opacity = baseState.opacity
 	state.corner = baseState.corner
 	state.rotation = baseState.rotation
-	
+
 	return state
 }
 
@@ -253,12 +253,12 @@ State.cloneState = function(baseState) {
 State.prototype.getMinimalState = function(compareState) {
 	var state = State.cloneState(compareState)
 	// state.stateName = this.stateName
-	
+
 	if (this.width == state.width) { state.width = nil }
 	if (this.height == state.height) { state.height = nil }
 	if (this.x == state.x) { state.x = nil }
 	if (this.y == state.y) { state.y = nil }
-	
+
 	if (this.shadowX == state.shadowX) { state.shadowX = nil }
 	if (this.shadowY == state.shadowY) { state.shadowY = nil }
 	if (this.shadowBlur == state.shadowBlur) { state.shadowBlur = nil }
@@ -267,18 +267,18 @@ State.prototype.getMinimalState = function(compareState) {
 		state.shadowOpacity = nil
 		state.shadowHex = nil
 	}
-	
+
 	if (this.borderWidth == state.borderWidth) { state.borderWidth = nil }
 	if (this.borderOpacity == state.borderOpacity && this.borderHex == state.borderHex) {
 		state.borderOpacity = nil
 		state.borderHex = nil
 	}
-	
+
 	if (this.backgroundHex == state.backgroundHex && this.backgroundOpacity == state.backgroundOpacity) {
 		state.backgroundOpacity = nil
 		state.backgroundHex = nil
 	}
-	
+
 	if (this.opacity == state.opacity) { state.opacity = nil }
 	if (this.corner == state.corner) { state.corner = nil }
 	if (this.rotation == state.rotation) { state.rotation = nil }
@@ -299,18 +299,18 @@ State.prototype.createHiddenState = function(firstArtboardName) {
 
 
 
-State.prototype.composePosition = function() {
-	var composedPosition = []
-	
-	composedPosition.push(this.width)
-	composedPosition.push(this.height)
-	composedPosition.push(this.x)
-	composedPosition.push(this.y)
+// State.prototype.composePosition = function() {
+// 	var composedPosition = []
+//
+// 	composedPosition.push(this.width)
+// 	composedPosition.push(this.height)
+// 	composedPosition.push(this.x)
+// 	composedPosition.push(this.y)
+//
+// 	return composedPosition
+// }
 
-	return composedPosition
-}
-
-State.prototype.composeShadows = function() {	
+State.prototype.composeShadows = function() {
 	var shadows = []
 	shadows.push(this.shadowX)
 	shadows.push(this.shadowY)
@@ -318,11 +318,11 @@ State.prototype.composeShadows = function() {
 	shadows.push(this.shadowSpread)
 	shadows.push(this.shadowOpacity)
 	shadows.push(this.shadowHex)
-	
+
 	return [shadows]
 }
 
-State.prototype.composeBorders = function() {	
+State.prototype.composeBorders = function() {
 	var borders = []
 	borders.push(1)
 	borders.push(this.borderWidth)
@@ -332,7 +332,7 @@ State.prototype.composeBorders = function() {
 	return [borders]
 }
 
-State.prototype.composeBackgrounds = function() {	
+State.prototype.composeBackgrounds = function() {
 	var backgrounds = []
 	backgrounds.push(0)
 	backgrounds.push(this.backgroundOpacity)
@@ -356,12 +356,12 @@ State.prototype.cleanTitledDescriptionShadows = function() {
 // a little helper
 State.prototype.printState = function() {
 	log("#########: " + this.stateName)
-	
+
 	log("Position " + this.position)
 	log("Opacity: " + this.opacity)
 	log("Corner: " + this.corner)
 	log("Rotation: " + this.rotation)
-	
+
 	if (this.shadows != nil) { log("Shadows: S=" + this.shadows.length + "| " + this.shadows) }
 	if (this.inners != nil) { log("Inners: I=" + this.inners.length + "| " + this.inners) }
 	if (this.borders != nil) { log("Borders: Bo=" + this.borders.length + "| " + this.borders) }

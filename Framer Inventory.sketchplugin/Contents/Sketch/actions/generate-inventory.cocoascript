@@ -74,7 +74,7 @@ function GenerateInventory () {}
 
 GenerateInventory.returnLayerName = function(layerName) {
   var newLayerString = GenerateInventory.clearName(layerName) + " = new Layer"
-  if (userDefaults.myCodeStyleClassic == 0) { return newLayerString + ln() }
+  // if (userDefaults.myCodeStyleClassic == 0) { return newLayerString }
 	return newLayerString
 }
 
@@ -198,23 +198,46 @@ GenerateInventory.generateBackgrounds = function(values) {
 }
 
 
-
-GenerateInventory.generatePosition = function(values) {
-	if (values == nil || values.length < 4) { return "" }
-	else {
-		var width = ""
-		var height = ""
-		var x = ""
-		var y = ""
-
-		if (values[0] != nil) { width = brf() + "width: " + vout(values[0]) }
-		if (values[1] != nil) { height = br() + "height: " + vout(values[1]) }
-		if (values[2] != nil) { x = br() + "x: " + vout(values[2]) }
-		if (values[3] != nil) { y = br() + "y: " + vout(values[3]) }
-
-		return "" + width + height + x + y
-	}
+GenerateInventory.generateX = function(value) {
+  if (value == nil) { return "" }
+  // else if (value == 0) { return "" }
+	return br() + "x: " + vout(value)
 }
+
+GenerateInventory.generateY = function(value) {
+  if (value == nil) { return "" }
+  // else if (value == 0) { return "" }
+	return br() + "y: " + vout(value)
+}
+
+GenerateInventory.generateHeight = function(value) {
+  if (value == nil || value == 0) { return "" }
+	return br() + "height: " + vout(value)
+}
+
+GenerateInventory.generateWidth = function(value) {
+  if (value == nil || value == 0) { return "" }
+	return br() + "width: " + vout(value)
+}
+
+
+
+// GenerateInventory.generatePosition = function(values) {
+// 	if (values == nil || values.length < 4) { return "" }
+// 	else {
+// 		var width = ""
+// 		var height = ""
+// 		var x = ""
+// 		var y = ""
+//
+// 		if (values[0] != nil) { width = br() + "width: " + vout(values[0]) }
+// 		if (values[1] != nil) { height = br() + "height: " + vout(values[1]) }
+// 		if (values[2] != nil) { x = br() + "x: " + vout(values[2]) }
+// 		if (values[3] != nil) { y = br() + "y: " + vout(values[3]) }
+//
+// 		return "" + width + height + x + y
+// 	}
+// }
 
 
 GenerateInventory.generateImagePath = function(dirtyPath) {

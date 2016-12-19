@@ -18,9 +18,8 @@ var presets = {
 	myMobile: 1,
 	myMinimalExport: 1,
 	myAutoplay: 0,
-
 	myExportPath: "",
-	myCodeStyleClassic: 1
+	myCodeStyleClassic: 1,
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"
@@ -42,6 +41,11 @@ var contextUserSelection = NSArray.new()
 
 
 var chooseAction = function(context, actionIdentifier, testing) {
+	// log("UDC: " + userDefaults.myCodeStyleClassic)
+	userDefaults.myCodeStyleClassic = 0
+	saveDefaults(userDefaults)
+	// log("UDC: " + userDefaults.myCodeStyleClassic)
+
 	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
 	methodStartTime = [NSDate date]
 
@@ -361,14 +365,16 @@ FramerInventory.getPhoneValue = function() {
 }
 
 FramerInventory.setRetinaValue = function(artboardWidth) {
-	if (userDefaults.myMobile == 0 || artboardWidth == nil) { pixelDensity = 1 }
-	else if (artboardWidth == 640 || artboardWidth == 750 || artboardWidth == 1242) { pixelDensity = 1 }
-	else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
-	else if (artboardWidth == 414) { pixelDensity = 3 }
-	else {
-		if (showLog) { log("Pixel density is undetermined") }
-		pixelDensity = 1
+	if (userDefaults.myMobile == 1) {
+		if (artboardWidth == 640 || artboardWidth == 750 || artboardWidth == 1242) { pixelDensity = 1 }
+		else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
+		else if (artboardWidth == 414) { pixelDensity = 3 }
+		else {
+			if (showLog) { log("Pixel density is undetermined") }
+			pixelDensity = pixelDensity = userDefaults.myRetinaValue
+		}
 	}
+	else { pixelDensity = userDefaults.myRetinaValue }
 }
 
 FramerInventory.getRetinaValue = function() {

@@ -106,7 +106,12 @@ Layer.prototype.describeState = function(currentState, imageRequired) {
 	if (imageRequired == nil) { imageRequired = false }
 
 	var stateDescription = ""
-	stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	// stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	stateDescription += GenerateInventory.generateWidth(currentState.width)
+	stateDescription += GenerateInventory.generateHeight(currentState.height)
+	stateDescription += GenerateInventory.generateX(currentState.x)
+	stateDescription += GenerateInventory.generateY(currentState.y)
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateCorner(currentState.corner) }
 
 	if (!imageRequired) { stateDescription += GenerateInventory.generateBackgrounds(currentState.composeBackgrounds()) }
@@ -132,7 +137,12 @@ Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	currentState.cleanTitledDescriptionShadows()
 
 	var stateDescription = GenerateInventory.returnLayerName(this.layerName)
-	stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	// stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	stateDescription += GenerateInventory.generateWidth(currentState.width)
+	stateDescription += GenerateInventory.generateHeight(currentState.height)
+	stateDescription += GenerateInventory.generateX(currentState.x)
+	stateDescription += GenerateInventory.generateY(currentState.y)
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateCorner(currentState.corner) }
 
 	if (!imageRequired) { stateDescription += GenerateInventory.generateBackgrounds(currentState.composeBackgrounds()) }
@@ -289,7 +299,7 @@ Layer.prototype.generateFramerStates = function() {
 	var titleState = this.generateFramerTitle(imageRequired)
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
 
-	if (currentCommandIdentifier == 2 && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
+	if ((currentCommandIdentifier == 2 || currentCommandIdentifier == 1) && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
 
 	for (var i = 0; i < this.states.length; i++) {
 		var currentState = this.states[i]
@@ -398,7 +408,8 @@ Layer.pasteLayer = function(layer) {
 
 Layer.addExportOptions = function(layer) {
 	var scaleData = 1
-	if (userDefaults.myRetinaEnabled == 0) { scaleData = userDefaults.myRetinaValue }
+	// if (userDefaults.myRetinaEnabled == 0) { scaleData = userDefaults.myRetinaValue }
+	scaleData = userDefaults.myRetinaValue
 	if (FramerInventory.getPhoneValue() != 0) { scaleData = FramerInventory.getRetinaValue() }
 
 	var exportSizes = [[layer exportOptions] exportFormats]
@@ -1160,7 +1171,7 @@ var ln = function() { return "\n" }
 var dln = function() { return ln() + ln() }
 var tln = function() { return "\t" }
 
-var br = function() {
+var br = function() {	
 	if (userDefaults.myCodeStyleClassic == 0) { return ln() + tln() }
 	else { return ", " }
 }
