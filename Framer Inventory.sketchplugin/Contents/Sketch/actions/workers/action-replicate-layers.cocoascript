@@ -1,7 +1,7 @@
 
 // generate code for layers
 var runReplicateLayers = function(context) {
-
+	log("inside replication")
 	var doc = context.document
 	var selection = context.selection
 

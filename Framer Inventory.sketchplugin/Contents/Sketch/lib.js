@@ -10,15 +10,14 @@ var CX = {
                 .stringByDeletingLastPathComponent();
         // this.pluginSketch = this.pluginRoot + "/Contents/Sketch/library";
         localPluginRoot = this.pluginRoot + "/Contents/Sketch/";
-        log("PSPath");
-        // log(this.pluginSketch);
+
         this.doc = context.document;
         this.docData = this.doc.documentData();
         this.page = this.doc.currentPage();
         this.artboard = this.page.currentArtboard();
         this.current = this.artboard || this.page;
         coscript.setShouldKeepAround(true);
-        
+
         if(command && command == "controlbar"){
             this.ControlBar();
             return false;
@@ -79,6 +78,7 @@ CX.extend({
         };
     },
     updateContext: function(){
+        currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
         this.context.document = NSDocumentController.sharedDocumentController().currentDocument();
         this.context.selection = this.context.document.selectedLayers();
         return this.context;
@@ -149,6 +149,7 @@ CX.extend({
         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().right);
     },
     bottomGuide: function(){
+        log("is replicating?")
         runReplicateLayers(this.context)
         // var self = this;
         // if(!this.selectError()) return;
@@ -212,7 +213,7 @@ CX.extend({
             log("CB3")
             ControlBar = NSPanel.alloc().init();
             ControlBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
-            ControlBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.99, 0.99, 0.99, 1));
+            ControlBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.15, 0.15, 0.15, 1));
             ControlBar.setTitleVisibility(NSWindowTitleHidden);
             ControlBar.setTitlebarAppearsTransparent(true);
             ControlBar.setFrame_display(NSMakeRect(0, 0, 640, 50), false);
