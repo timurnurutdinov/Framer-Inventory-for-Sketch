@@ -3,53 +3,55 @@
 
 // generate code for layers
 var runSimulateKeynote = function(context, isTestingEnvironment) {
+	StatisticsInventory.sendSimulateRequest()
+
 	var doc = context.document
 	var selection = context.selection
-	
+
 	[[NSPasteboard generalPasteboard] clearContents]
-	
+
 	var layers = []
 	var pasteboardContent = ""
-	
+
 	var currentPage = FramerInventory.getCurrentPage()
 	FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanExportPage()
-	
-	
+
+
 	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards([[doc currentPage] artboards])
 	if (duplicatedArtboard != nil) {
 		if (showLog) { log("Warning: duplicated artboards names are found") }
 		selectDuplicatedArtboards([duplicatedArtboard name])
 		return
 	}
-	
+
 	var sortedSelection = FramerInventory.organiseSelection([currentPage exportableLayers])
 	if (sortedSelection == nil) {
 		[doc showMessage:"Nothing to simulate. Please, make some layers exportable"]
 		return
 	}
-	
-	
+
+
 	var artboardsMaps = OrderInventory.getArtboardsLayers()
 	var artboardsNames = OrderInventory.getArtboardsNames()
-	
+
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]
 		var layerName = [currentLayer name]
 		var layer = new Layer(layerName)
-		
+
 		var hasInitialState = false
 		var hasCurrentState = false
-		
-		
+
+
 		for (var j = 0; j < artboardsMaps.length; j++) {
 			var currentMap = artboardsMaps[j]
-			
+
 			var hasPrevState = hasCurrentState
 			var prevMapLayer = mapStateLayer
-			
+
 			var mapStateLayer = currentMap[layerName]
-			
+
 			if (mapStateLayer != nil) {
 				hasCurrentState = true
 
@@ -60,12 +62,12 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 					layer.addState(fakeFirstState)
 					hasInitialState = true
 				}
-				
+
 				layer.composeState(mapStateLayer)
 			}
 			else {
 				hasCurrentState = false
-				
+
 				if (hasPrevState) {
 					var fakeCloseState = new State(prevMapLayer)
 					fakeCloseState.createHiddenState(artboardsNames[j])
@@ -73,35 +75,34 @@ var runSimulateKeynote = function(context, isTestingEnvironment) {
 				}
 			}
 		}
-		
+
 		layers.push(layer)
 	}
-	
+
 	pasteboardContent += DescribeInventory.generateRetinaVariable() + ln()
 	pasteboardContent += DescribeInventory.generatePhoneModel() + dln()
 	pasteboardContent += "# view" + ln()
-	
+
 	for (var i = 0; i < layers.length; i++) {
 		pasteboardContent += layers[i].printLayer()
 	}
-	
+
 	pasteboardContent += ln()
 	pasteboardContent += "# model" + ln()
 	pasteboardContent += DescribeInventory.generateCycleButton()
-	
+
 	var cycleStates = FramerInventory.getUsedStatesNames())
 	pasteboardContent += DescribeInventory.generateCycleStates(cycleStates)
-	
+
 	pasteboardContent += DescribeInventory.generateLayers(sortedSelection)
 	pasteboardContent += DescribeInventory.generateCycler()
 	pasteboardContent += DescribeInventory.generateHandler()
-	
+
 
 	if (!isTestingEnvironment) {
 		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 		FramerInventory.showDoneMessage()
 	}
-	
+
 	return pasteboardContent
 }
-

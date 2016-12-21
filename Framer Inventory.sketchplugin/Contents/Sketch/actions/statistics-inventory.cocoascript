@@ -1,0 +1,35 @@
+
+function StatisticsInventory () {}
+
+var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-58418174-3"
+var simulateRequest = ["actions", "action_run", "simulate_keynote", "1"]
+var generateRequest = ["actions", "action_run", "generate_states", "1"]
+var replicateRequest = ["actions", "action_run", "replicate_layers", "1"]
+
+StatisticsInventory.sendSimulateRequest = function() {
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(simulateRequest))
+}
+
+StatisticsInventory.sendGenerateRequest = function() {
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(generateRequest))
+}
+
+StatisticsInventory.sendReplicateRequest = function() {
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(replicateRequest))
+}
+
+
+
+
+StatisticsInventory.returnRequestURL = function(request) {
+    if (request == nil || request.length != 4) { return "" }
+    return analyticsLink + "&cid=" + userDefaults.myUserID + "&ec=" + request[0] + "&ea=" + request[1] + "&el=" + request[2] + "&ev=" + request[3]
+}
+
+StatisticsInventory.sendRequest = function(urlString) {
+  if (urlString == nil || urlString == "") { return }
+
+  var url = [NSURL URLWithString:urlString]
+  var analyticsTask = [[NSURLSession sharedSession] downloadTaskWithURL:url completionHandler:nil];
+  [analyticsTask resume];
+}

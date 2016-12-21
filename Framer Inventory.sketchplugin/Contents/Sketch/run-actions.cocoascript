@@ -1,0 +1,70 @@
+@import 'actions/action-inventory.cocoascript'
+
+var currentCommandIdentifier = -1
+
+var runReplicateLayersIdentifier = 0
+var runGenerateStatesIdentifier = 1
+var runSimulateKeynoteIdentifier = 2
+var runSettingsIdentifier = 3
+var runRemoveExportPageIdentifier = 4
+var runSelectProjectFolderIdentifier = 6
+var runRemoveProjectFolderIdentifier = 7
+var runShowBarIdentifier = 8
+
+var showLog = true
+var showTestLog = true
+var testing = true
+
+
+
+var onReplicateLayersRun = function(context) {
+	if (showLog) { log("Running Replace Layers") }
+	chooseAction(context, runReplicateLayersIdentifier, !testing)
+}
+
+var onGenerateStatesRun = function(context) {
+	if (showLog) { log("Running Replicate States") }
+	chooseAction(context, runGenerateStatesIdentifier, !testing)
+}
+
+var onSimulateKeynoteRun = function(context) {
+	if (showLog) { log("Running Simulate Keynote") }
+	chooseAction(context, runSimulateKeynoteIdentifier, !testing)
+}
+
+var onSettingRun = function(context) {
+	if (showLog) { log("Running Settings") }
+	chooseAction(context, runSettingsIdentifier, !testing)
+}
+
+var onRemoveExportPageRun = function(context) {
+	if (showLog) { log("Running Remove Export Page...") }
+	chooseAction(context, runRemoveExportPageIdentifier, !testing)
+}
+
+var onShowBarRun = function(context) {
+	if (showLog) { log("Showing Bar") }
+	chooseAction(context, runShowBarIdentifier, !testing)
+}
+
+var onSelectProjectFolderRun = function(context) {
+	if (showLog) { log("Running Select Project Folder...") }
+	chooseAction(context, runSelectProjectFolderIdentifier, !testing)
+}
+
+var onRemoveProjectFolderRun = function(context) {
+	if (showLog) { log("Running Remove Project Folder...") }
+	chooseAction(context, runRemoveProjectFolderIdentifier, !testing)
+}
+
+//
+// var runGenerateStatesIdentifier = 3
+// var currentCommandIdentifier = runGenerateStatesIdentifier
+// var showLog = true
+// var showTestLog = true
+// var testing = true
+//
+var onTestingRun = function(context) {
+	if (showLog) { log("Running Testing Environment") }
+	chooseAction(context, runGenerateStatesIdentifier, testing)
+}

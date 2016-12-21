@@ -1,11 +1,11 @@
 @import 'actions/action-inventory.cocoascript'
 
-var runReplicateLayersIdentifier = 5
-var currentCommandIdentifier = runReplicateLayersIdentifier
+var runShowBarIdentifier = 5
+var currentCommandIdentifier = runShowBarIdentifier
 var showLog = true
 var testing = false
 
 var onRun = function(context) {
-	if (showLog) { log("Running Composing Symbols") }
+	if (showLog) { log("Showing Bar") }
 	chooseAction(context, currentCommandIdentifier, testing)
 }

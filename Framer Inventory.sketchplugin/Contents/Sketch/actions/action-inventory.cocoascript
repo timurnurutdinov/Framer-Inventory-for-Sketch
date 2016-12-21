@@ -1,7 +1,8 @@
 @import 'actions/order-inventory.cocoascript'
+@import 'actions/statistics-inventory.cocoascript'
 
 @import 'actions/workers/action-replicate-layers.cocoascript'
-@import 'actions/workers/action-compose-symbol.cocoascript'
+@import 'actions/workers/action-show-bar.cocoascript'
 @import 'actions/workers/action-generate-states.cocoascript'
 @import 'actions/workers/action-simulate-keynote.cocoascript'
 @import 'actions/workers/action-testing-environment.cocoascript'
@@ -20,6 +21,7 @@ var presets = {
 	myAutoplay: 0,
 	myExportPath: "",
 	myCodeStyleClassic: 1,
+	myUserID: [[[NSDate date] descriptionWithLocale:[NSLocale currentLocale]] hash] + ""
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"
@@ -41,9 +43,10 @@ var contextUserSelection = NSArray.new()
 
 
 var chooseAction = function(context, actionIdentifier, testing) {
+		currentCommandIdentifier = actionIdentifier
 	// log("UDC: " + userDefaults.myCodeStyleClassic)
-	userDefaults.myCodeStyleClassic = 0
-	saveDefaults(userDefaults)
+	// userDefaults.myCodeStyleClassic = 0
+	// saveDefaults(userDefaults)
 	// log("UDC: " + userDefaults.myCodeStyleClassic)
 
 	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
@@ -77,8 +80,8 @@ var chooseAction = function(context, actionIdentifier, testing) {
 			FramerInventory.showDoneMessage()
 		}
 		else if (actionIdentifier == 5) {
-			if (showLog) { log("Starting Compose Symbol...") }
-			runComposeSymbol(context)
+			// if (showLog) { log("Starting Compose Symbol...") }
+			// runShowBar(context)
 		}
 		else if (actionIdentifier == 6) {
 			if (showLog) { log("Select Export Folder...") }
@@ -97,6 +100,9 @@ var chooseAction = function(context, actionIdentifier, testing) {
 				userDefaults.myExportPath = ""
 				saveDefaults(userDefaults)
 				[currentDocument showMessage:"Done. No Export Folder selected"]
+		}
+		else if (actionIdentifier == 8) {
+			runShowBar(context)
 		}
 		else {
 			if (showLog) { log("ERROR: Action is undetermined") }

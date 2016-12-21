@@ -1,7 +1,8 @@
 
 // generate code for layers
 var runReplicateLayers = function(context) {
-	log("inside replication")
+	StatisticsInventory.sendReplicateRequest()
+
 	var doc = context.document
 	var selection = context.selection
 

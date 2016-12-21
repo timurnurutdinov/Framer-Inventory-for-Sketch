@@ -1,16 +1,13 @@
 @import 'lib.js'
 // generate code for layers
-var runComposeSymbol = function(context) {
-	log("RUNNING?")
-	log(context)
-	log("nO?")
+var runShowBar = function(context) {
 
 	var doc = context.document
 	var selection = context.selection
 
-	CX.init(context, "controlbar");
+	CX.init(context, "uibar");
 
-	[[NSPasteboard generalPasteboard] clearContents]
+	// [[NSPasteboard generalPasteboard] clearContents]
 
 	// var layers = []
 	// var pasteboardContent = ""
@@ -41,7 +38,7 @@ var runComposeSymbol = function(context) {
 	// }
 	//
 	// [[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
-	FramerInventory.showDoneMessage()
+	// FramerInventory.showDoneMessage()
 	//
 	// return pasteboardContent
 }

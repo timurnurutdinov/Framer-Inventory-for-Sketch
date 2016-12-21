@@ -1,6 +1,6 @@
 @import 'actions/action-inventory.cocoascript'
 
-var runGenerateStatesIdentifier = 3
+var runGenerateStatesIdentifier = 1
 var currentCommandIdentifier = runGenerateStatesIdentifier
 var showLog = true
 var showTestLog = true

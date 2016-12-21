@@ -18,8 +18,8 @@ var CX = {
         this.current = this.artboard || this.page;
         coscript.setShouldKeepAround(true);
 
-        if(command && command == "controlbar"){
-            this.ControlBar();
+        if(command && command == "uibar"){
+            this.UIBar();
             return false;
         }
         if(command){
@@ -55,7 +55,7 @@ var CX = {
         }
 
     },
-    extend: function( options, target ){
+    extend: function( options, target ) {
         var target = target || this;
         for ( var key in options ){
             target[key] = options[key];
@@ -66,101 +66,110 @@ var CX = {
 
 
 CX.extend({
-    getRect: function(layer){
-        var rect = layer.absoluteRect();
-        return {
-            x: Math.round(rect.x()),
-            y: Math.round(rect.y()),
-            width: Math.round(rect.width()),
-            height: Math.round(rect.height()),
-            maxX: Math.round(rect.x() + rect.width()),
-            maxY: Math.round(rect.y() + rect.height()),
-        };
-    },
+    // getRect: function(layer){
+    //     var rect = layer.absoluteRect();
+    //     return {
+    //         x: Math.round(rect.x()),
+    //         y: Math.round(rect.y()),
+    //         width: Math.round(rect.width()),
+    //         height: Math.round(rect.height()),
+    //         maxX: Math.round(rect.x() + rect.width()),
+    //         maxY: Math.round(rect.y() + rect.height()),
+    //     };
+    // },
     updateContext: function(){
         currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
         this.context.document = NSDocumentController.sharedDocumentController().currentDocument();
-        this.context.selection = this.context.document.selectedLayers();
+        // this.context.selection = this.context.document.selectedLayers();
         return this.context;
     },
 });
+//
+// CX.extend({
+//     getDistance: function(targetRect, containerRect){
+//         var containerRect = containerRect || this.getRect(this.current);
+//         return {
+//             top: (targetRect.y - containerRect.y),
+//             right: ((targetRect.x - containerRect.x) + targetRect.width),
+//             bottom: ((targetRect.y - containerRect.y) + targetRect.height),
+//             left:(targetRect.x - containerRect.x),
+//             vCenter:((targetRect.x - containerRect.x) + (targetRect.width / 2)),
+//             hCenter:((targetRect.y - containerRect.y) + (targetRect.height / 2)),
+//         };
+//     },
+//     message: function(message){
+//         this.doc.showMessage(message);
+//     }
+// });
 
-CX.extend({
-    getDistance: function(targetRect, containerRect){
-        var containerRect = containerRect || this.getRect(this.current);
-        return {
-            top: (targetRect.y - containerRect.y),
-            right: ((targetRect.x - containerRect.x) + targetRect.width),
-            bottom: ((targetRect.y - containerRect.y) + targetRect.height),
-            left:(targetRect.x - containerRect.x),
-            vCenter:((targetRect.x - containerRect.x) + (targetRect.width / 2)),
-            hCenter:((targetRect.y - containerRect.y) + (targetRect.height / 2)),
-        };
-    },
-    message: function(message){
-        this.doc.showMessage(message);
-    }
-});
 
-
-CX.extend({
-    selectError: function(){
-        var self = this,
-            selection = this.selection,
-            inArtboard = false;
-
-        if( selection.count() <= 0 ){
-            this.message("Select an element.")
-            return false;
-        }
-        if(selection.count() == 2){
-            this.message("Can't select mutiple element.")
-            return false;
-        }
-        if(inArtboard || !this.artboard){
-            this.message("Element should be inside Artboard")
-            return false;
-        }
-        return true;
-    },
-    setCount: function(gain){
-        var self = this,
-            selection = this.selection,
-            layer = selection.firstObject();
-        var targetRect = this.getRect(layer),
-            containerRect = this.getRect(this.artboard),
-            eleCount = this.getDistance(targetRect, containerRect);
-        return eleCount;
-    }
-});
+// CX.extend({
+//     selectError: function(){
+//         var self = this,
+//             selection = this.selection,
+//             inArtboard = false;
+//
+//         if( selection.count() <= 0 ){
+//             this.message("Select an element.")
+//             return false;
+//         }
+//         if(selection.count() == 2){
+//             this.message("Can't select mutiple element.")
+//             return false;
+//         }
+//         if(inArtboard || !this.artboard){
+//             this.message("Element should be inside Artboard")
+//             return false;
+//         }
+//         return true;
+//     },
+//     setCount: function(gain){
+//         var self = this,
+//             selection = this.selection,
+//             layer = selection.firstObject();
+//         var targetRect = this.getRect(layer),
+//             containerRect = this.getRect(this.artboard),
+//             eleCount = this.getDistance(targetRect, containerRect);
+//         return eleCount;
+//     }
+// });
 
 
 CX.extend({
     topGuide: function(){
-      runSimulateKeynote(this.context)
+      // runSimulateKeynote(this.context)
+      onSimulateKeynoteRun(this.context)
         // var self = this;
         // if(!this.selectError()) return;
         // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().top);
     },
     rightGuide: function(){
-        runGenerateStates(this.context)
+        onGenerateStatesRun(this.context)
         // var self = this;
         // if(!this.selectError()) return;
         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().right);
     },
     bottomGuide: function(){
-        log("is replicating?")
-        runReplicateLayers(this.context)
+        onReplicateLayersRun(this.context)
         // var self = this;
         // if(!this.selectError()) return;
         // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().bottom);
     },
     leftGuide: function(){
+        var localPath = pluginPath + "/manifest.json"
+        log("generating path" + localPath)
+        var manifestText = readTextFromFile(localPath)
+        log(manifestText)
+        writeTextToFile(manifestText, pluginPath + "/manifest2.json")
         // var self = this;
         // if(!this.selectError()) return;
         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().left);
     },
     vCenterGuide: function(){
+        // log("URL")
+        // var url = [NSURL URLWithString:"https://bit.ly/2i1Usqq"]
+
+
         // var self = this;
         // if(!this.selectError()) return;
         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().vCenter);
@@ -183,8 +192,16 @@ CX.extend({
         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().left);
     },
     removeAllGuides: function(){
-        log("Setting instead RemoveAllGuides")
-        runSettings(this.context)
+        // log("Setting instead RemoveAllGuides")
+        // runSettings(this.context)
+
+        // StatisticsInventory.sendTestRequest()
+
+        // var url = [NSURL URLWithString:"https://goo.gl/nQYNuf/?ref=framer_inventory"];
+        // var downloadPhotoTask = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:nil];
+        // [downloadPhotoTask resume];
+        // StatisticsInventory.sendSimulateRequest()
+        // log("downloadPhotoTask?")
 
         // var self = this;
         // horizontalGuideCount = this.artboard.horizontalRulerData().numberOfGuides();
@@ -202,31 +219,29 @@ CX.extend({
 
 
 CX.extend({
-    ControlBar: function(){
+    UIBar: function(){
         log("CB1")
         var self = this,
             identifier = "com.tilllur.framer-inventory",
             threadDictionary = NSThread.mainThread().threadDictionary(),
-            ControlBar = threadDictionary[identifier];
+            UIBar = threadDictionary[identifier];
             log("CB2")
-        if(!ControlBar){
+        if(!UIBar){
             log("CB3")
-            ControlBar = NSPanel.alloc().init();
-            ControlBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
-            ControlBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.15, 0.15, 0.15, 1));
-            ControlBar.setTitleVisibility(NSWindowTitleHidden);
-            ControlBar.setTitlebarAppearsTransparent(true);
-            ControlBar.setFrame_display(NSMakeRect(0, 0, 640, 50), false);
-            ControlBar.setMovableByWindowBackground(true);
-            ControlBar.setHasShadow(true);
-            ControlBar.setLevel(NSFloatingWindowLevel);
-            var contentView = ControlBar.contentView(),
+            UIBar = NSPanel.alloc().init();
+            UIBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+            UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.15, 0.15, 0.15, 1));
+            UIBar.setTitleVisibility(NSWindowTitleHidden);
+            UIBar.setTitlebarAppearsTransparent(true);
+            UIBar.setFrame_display(NSMakeRect(0, 0, 640, 50), false);
+            UIBar.setMovableByWindowBackground(true);
+            UIBar.setHasShadow(true);
+            UIBar.setLevel(NSFloatingWindowLevel);
+            var contentView = UIBar.contentView(),
                 getImage = function(size, name){
                     var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
                         suffix = (isRetinaDisplay)? "@2x": "";
-                        imageURL = NSURL.fileURLWithPath(localPluginRoot + "/images" + "/controlbar/" + name + suffix + ".png"),
-                        // imageURL = NSURL.fileURLWithPath(this.pluginRoot + "/Contents/Sketch/images" + "/controlbar/" + name + suffix + ".png"),
-                        log(imageURL)
+                        imageURL = NSURL.fileURLWithPath(localPluginRoot + "/images" + "/uibar/" + name + suffix + ".png"),
                         image = NSImage.alloc().initWithContentsOfURL(imageURL);
                     return image
                 },
@@ -253,7 +268,7 @@ CX.extend({
                     function(sender){
                         coscript.setShouldKeepAround(false);
                         threadDictionary.removeObjectForKey(identifier);
-                        ControlBar.close();
+                        UIBar.close();
                 }),
                 topGuideB = addButton( NSMakeRect(100, 10, 30, 30), "top-guide",
                     function(sender){
@@ -304,6 +319,7 @@ CX.extend({
                 separate2 = addImage( NSMakeRect(300, 10, 10, 30), "separate"),
                 separate3 = addImage( NSMakeRect(430, 10, 10, 30), "separate"),
                 separate4 = addImage( NSMakeRect(560, 10, 10, 30), "separate");
+
             contentView.addSubview(closeButton);
             contentView.addSubview(separate1);
             contentView.addSubview(topGuideB);
@@ -318,9 +334,9 @@ CX.extend({
             contentView.addSubview(rightLeftGuides);
             contentView.addSubview(separate4);
             contentView.addSubview(removeAllGuidesB);
-            threadDictionary[identifier] = ControlBar;
-            ControlBar.center();
-            ControlBar.makeKeyAndOrderFront(nil);
+            threadDictionary[identifier] = UIBar;
+            UIBar.center();
+            UIBar.makeKeyAndOrderFront(nil);
         }
     }
 });

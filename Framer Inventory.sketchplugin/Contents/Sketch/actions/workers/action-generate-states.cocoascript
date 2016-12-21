@@ -1,64 +1,66 @@
 
 // gererate code for layers and their states
 var runGenerateStates = function(context, isTestingEnvironment) {
+	StatisticsInventory.sendGenerateRequest()
+
 	var doc = context.document
 	var selection = context.selection
-	
+
 	[[NSPasteboard generalPasteboard] clearContents]
-	
+
 	if (isTestingEnvironment != nil && isTestingEnvironment) { selection = TestingEnvironment.getTestingSelection() }
-	
+
 	var layers = []
 	var pasteboardContent = ""
-	
+
 	var currentPage = FramerInventory.getCurrentPage()
 	FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanExportPage()
-	
-	
+
+
 	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards([[doc currentPage] artboards])
 	if (duplicatedArtboard != nil) {
 		if (showLog) { log("Warning: duplicated artboards names are found") }
 		selectDuplicatedArtboards([duplicatedArtboard name])
 		return
 	}
-	
+
 	var sortedSelection = FramerInventory.organiseSelection(selection)
 	if (sortedSelection == nil) {
 		[doc showMessage:"Nothing to generate. Please, select some layers"]
 		return
 	}
-	
+
 	var artboardsMaps = OrderInventory.getArtboardsLayers()
 	var artboardsNames = OrderInventory.getArtboardsNames()
-	
+
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]
 		var layerName = [currentLayer name]
 		var layer = new Layer(layerName)
-		
+
 		for (var j = 0; j < artboardsMaps.length; j++) {
 			var currentMap = artboardsMaps[j]
 			var mapStateLayer = currentMap[layerName]
-			
+
 			if (mapStateLayer != nil) {
 				layer.composeState(mapStateLayer)
 			}
 		}
-		
+
 		layers.push(layer)
 	}
 
-	
+
 	for (var i = 0; i < layers.length; i++) {
 		pasteboardContent += layers[i].printLayer()
 	}
 
-	
+
 	if (!isTestingEnvironment) {
 		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType]
 		FramerInventory.showDoneMessage()
 	}
-	
+
 	return pasteboardContent
 }

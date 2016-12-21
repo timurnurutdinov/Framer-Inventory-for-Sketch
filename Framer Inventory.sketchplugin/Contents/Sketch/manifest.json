@@ -5,68 +5,68 @@
   "description": "Generate FramerJS prototypes from Sketch",
   "homepage": "https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch",
   "identifier": "com.tilllur.framer-inventory",
-  "version": "2.2.0",
-  "compatibleVersion": 3.7,
+  "version": "2.5.0",
+  "compatibleVersion": 4.1,
   "commands" : [
     {
-      "script" : "choose-replicate-layers.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onReplicateLayersRun",
       "shortcut" : "",
       "name" : "◉   Replicate Layers",
       "identifier" : "choose-replicate-layers"
     },
     {
-      "script" : "choose-generate-states.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onGenerateStatesRun",
       "shortcut" : "",
       "name" : "◉   Generate States",
       "identifier" : "choose-generate-states"
     },
     {
-      "script" : "choose-simulate-keynote.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSimulateKeynoteRun",
       "shortcut" : "",
       "name" : "◎   Simulate Keynote",
       "identifier" : "choose-simulate-keynote"
     },
     {
-      "script" : "choose-testing-environment.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onTestingRun",
       "shortcut" : "",
       "name" : "Run testing environment",
       "identifier" : "choose-testing-environment"
     },
     {
-      "script" : "choose-settings.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSettingRun",
       "shortcut" : "",
       "name" : "Settings",
       "identifier" : "choose-settings"
     },
     {
-      "script" : "choose-remove-export-page.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onRemoveExportPageRun",
       "shortcut" : "",
       "name" : "Remove Export Page",
       "identifier" : "choose-remove-export-page"
     },
     {
-      "script" : "choose-compose-symbol.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onShowBarRun",
       "shortcut" : "",
-      "name" : "◉   Compose Symbol",
-      "identifier" : "choose-compose-symbol"
+      "name" : "    Show Toolbar",
+      "identifier" : "show-bar"
     },
     {
-      "script" : "choose-select-export-path.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSelectProjectFolderRun",
       "shortcut" : "",
       "name" : "Select Export Path",
       "identifier" : "choose-select-export-path"
     },
     {
-      "script" : "choose-remove-export-path.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onRemoveProjectFolderRun",
       "shortcut" : "",
       "name" : "Remove Export Path",
       "identifier" : "choose-remove-export-path"
@@ -75,10 +75,10 @@
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "choose-simulate-keynote",
+      "show-bar",
       "-",
+      "choose-simulate-keynote",
 		  "choose-generate-states",
-		  "choose-compose-symbol",
 		  "choose-replicate-layers",
       "-",
 		  {
