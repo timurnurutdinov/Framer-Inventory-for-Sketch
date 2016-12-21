@@ -27,11 +27,7 @@ var presets = {
 var pluginDomain = "com.addleimb.framer-inventory.retina"
 var userDefaults = initDefaults(pluginDomain, presets)
 
-var currentDocument = nil
 var usedStates = []
-
-var pluginPath = ""
-var methodStartTime = nil
 
 var pixelDensity = 1
 var phoneModel = 0
@@ -42,39 +38,36 @@ var exportPageName = "Export for Framer Inventory"
 var contextUserSelection = NSArray.new()
 
 
-var chooseAction = function(context, actionIdentifier, testing) {
-		currentCommandIdentifier = actionIdentifier
-	// log("UDC: " + userDefaults.myCodeStyleClassic)
-	// userDefaults.myCodeStyleClassic = 0
-	// saveDefaults(userDefaults)
-	// log("UDC: " + userDefaults.myCodeStyleClassic)
+var chooseAction = function(localDocument, localSelection, actionIdentifier, testing) {
+	currentCommandIdentifier = actionIdentifier
 
-	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
+	log("inside action?")
+
 	methodStartTime = [NSDate date]
 
-	if (showLog) { log("Current document is initialised") }
-	FramerInventory.initCurrentDocument(context)
+	// FramerInventory.initCurrentDocument(localDocument)
+	// FramerInventory.initCurrentSelection(localSelection)
 
 	if (testing) {
 		if (showLog) { log("Starting Testing Environment...") }
-		runTestingEnvironment(context)
+		runTestingEnvironment()
 	}
 	else {
 		if (actionIdentifier == 0) {
 			if (showLog) { log("Starting Replicating Layers...") }
-			runReplicateLayers(context)
+			runReplicateLayers()
 		}
 		else if (actionIdentifier == 1) {
 			if (showLog) { log("Starting Analysing States...") }
-			runGenerateStates(context)
+			runGenerateStates()
 		}
 		else if (actionIdentifier == 2) {
 			if (showLog) { log("Starting Simulating Keynote...") }
-			runSimulateKeynote(context)
+			runSimulateKeynote()
 		}
 		else if (actionIdentifier == 3) {
 			if (showLog) { log("Starting Settings...") }
-			runSettings(context)
+			runSettings()
 		}
 		else if (actionIdentifier == 4) {
 			FramerInventory.showDoneMessage()
@@ -85,24 +78,14 @@ var chooseAction = function(context, actionIdentifier, testing) {
 		}
 		else if (actionIdentifier == 6) {
 			if (showLog) { log("Select Export Folder...") }
-			var isPathSelected = FramerInventory.getExportPath()
-
-			var message = userDefaults.myExportPath
-			if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
-			else if (!isPathSelected) { message = "Canceled. Export folder is not selected" }
-			else { message = "Done. Selected folder: " + message }
-
-			[currentDocument showMessage:message]
-
+			FramerInventory.runSelectProjectFolder()
 		}
 		else if (actionIdentifier == 7) {
 				if (showLog) { log("Removing path to folder") }
-				userDefaults.myExportPath = ""
-				saveDefaults(userDefaults)
-				[currentDocument showMessage:"Done. No Export Folder selected"]
+				FramerInventory.runRemoveProjectFolder()
 		}
 		else if (actionIdentifier == 8) {
-			runShowBar(context)
+			runShowBar()
 		}
 		else {
 			if (showLog) { log("ERROR: Action is undetermined") }
@@ -121,6 +104,10 @@ function FramerInventory () {}
 
 FramerInventory.initCurrentDocument = function(context) {
 	currentDocument = context.document
+}
+
+FramerInventory.initCurrentSelection = function(context) {
+	currentDocument = context.document.selectedLayers()
 }
 
 FramerInventory.getCurrentPage = function () {
@@ -427,4 +414,26 @@ FramerInventory.showDoneMessage = function() {
 	var methodFinishTime = [NSDate date]
 	var executionTime = [methodFinishTime timeIntervalSinceDate:methodStartTime]
 	if (showLog) { log("Completion time: " + executionTime) }
+}
+
+
+FramerInventory.runSelectProjectFolder = function() {
+		var isPathSelected = FramerInventory.getExportPath()
+
+		var message = userDefaults.myExportPath
+		if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
+		else if (!isPathSelected) { message = "Canceled. Export folder is not selected" }
+		else { message = "Done. Selected folder: " + message }
+
+		[currentDocument showMessage:message]
+}
+
+FramerInventory.runRemoveProjectFolder = function() {
+		if (userDefaults.myExportPath == "") {
+				[currentDocument showMessage:"No Export Folder selected"]
+				return
+		}
+		userDefaults.myExportPath = ""
+		saveDefaults(userDefaults)
+		[currentDocument showMessage:"Done. No Export Folder selected"]
 }

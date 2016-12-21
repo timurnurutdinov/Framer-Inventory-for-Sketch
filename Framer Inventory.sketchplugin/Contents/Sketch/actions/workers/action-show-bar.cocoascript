@@ -1,11 +1,13 @@
 @import 'lib.js'
 // generate code for layers
-var runShowBar = function(context) {
+var runShowBar = function() {
 
-	var doc = context.document
-	var selection = context.selection
+	ToolbarInventory.createUIBar()
 
-	CX.init(context, "uibar");
+	// var doc = context.document
+	// var selection = context.selection
+
+
 
 	// [[NSPasteboard generalPasteboard] clearContents]
 

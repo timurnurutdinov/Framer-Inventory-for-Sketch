@@ -8,7 +8,7 @@ var runTests = true
 var testingSelection = NSMutableArray.array()
 
 var runTestingEnvironment = function(context) {
-	var doc = context.document
+	var doc = currentDocument
 	var pages = [doc pages]
 	var runningPage = [doc currentPage]
 

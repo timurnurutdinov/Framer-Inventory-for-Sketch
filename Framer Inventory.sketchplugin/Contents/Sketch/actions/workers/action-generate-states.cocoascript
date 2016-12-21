@@ -3,8 +3,8 @@
 var runGenerateStates = function(context, isTestingEnvironment) {
 	StatisticsInventory.sendGenerateRequest()
 
-	var doc = context.document
-	var selection = context.selection
+	var doc = currentDocument
+	var selection = currentSelection
 
 	[[NSPasteboard generalPasteboard] clearContents]
 

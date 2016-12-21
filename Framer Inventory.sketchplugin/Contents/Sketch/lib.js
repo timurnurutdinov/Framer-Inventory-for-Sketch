@@ -1,89 +1,177 @@
-localPluginRoot = ""
+function ToolbarInventory () {}
 
-var CX = {
-    init: function(context, command){
-        this.context = context;
-        this.extend(context);
-        this.pluginRoot = this.scriptPath
-                .stringByDeletingLastPathComponent()
-                .stringByDeletingLastPathComponent()
-                .stringByDeletingLastPathComponent();
-        // this.pluginSketch = this.pluginRoot + "/Contents/Sketch/library";
-        localPluginRoot = this.pluginRoot + "/Contents/Sketch/";
+// UIBar.init = function(context, command){
+//     this.context = context;
+//     this.extend(context);
+//     this.pluginRoot = this.scriptPath
+//             .stringByDeletingLastPathComponent()
+//             .stringByDeletingLastPathComponent()
+//             .stringByDeletingLastPathComponent();
+//     // this.pluginSketch = this.pluginRoot + "/Contents/Sketch/library";
+//     localPluginRoot = this.pluginRoot + "/Contents/Sketch/";
+//
+//     this.doc = context.document;
+//     this.docData = this.doc.documentData();
+//     this.page = this.doc.currentPage();
+//     this.artboard = this.page.currentArtboard();
+//     this.current = this.artboard || this.page;
+//     // coscript.setShouldKeepAround(true);
+//
+//     if(command && command == "uibar"){
+//         UIBar.createUIBar();
+//         return false;
+//     }
+//     if(command){
+//         switch(command){
+//             case "top-guide":
+//                 // this.topGuide();
+//                 onSimulateKeynoteRun(this.context)
+//                 break;
+//             case "right-guide":
+//                 // this.rightGuide();
+//                 onGenerateStatesRun(this.context)
+//                 break;
+//             case "bottom-guide":
+//                 // this.bottomGuide();
+//                 onReplicateLayersRun(this.context)
+//                 break;
+//             case "left-guide":
+//                 // this.leftGuide();
+//                 var localPath = pluginPath + "/manifest.json"
+//                 log("generating path" + localPath)
+//                 var manifestText = readTextFromFile(localPath)
+//                 log(manifestText)
+//                 writeTextToFile(manifestText, pluginPath + "/manifest2.json")
+//
+//                 break;
+//             case "v-center-guide":
+//                 // this.vCenterGuide();
+//                 onSelectProjectFolderRun(this.context)
+//                 break;
+//             case "h-center-guide":
+//                 // this.hCenterGuide();
+//                 onRemoveProjectFolderRun(this.context)
+//                 break;
+//             case "top-bottom-guides":
+//                 // this.topBottomGuides();
+//                 break;
+//             case "right-left-guides":
+//                 // this.rightLeftGuides();
+//                 break;
+//             case "remove-all-guides":
+//                 // this.removeAllGuides();
+//                 break;
+//         }
+//     }
+//
+// }
+//
+// UIBar.extend = function(options, target) {
+//     var target = target || this;
+//     for (var key in options) {
+//         target[key] = options[key];
+//     }
+//     return target;
+// }
 
-        this.doc = context.document;
-        this.docData = this.doc.documentData();
-        this.page = this.doc.currentPage();
-        this.artboard = this.page.currentArtboard();
-        this.current = this.artboard || this.page;
-        coscript.setShouldKeepAround(true);
-
-        if(command && command == "uibar"){
-            this.UIBar();
-            return false;
-        }
-        if(command){
-            switch(command){
-                case "top-guide":
-                    this.topGuide();
-                    break;
-                case "right-guide":
-                    this.rightGuide();
-                    break;
-                case "bottom-guide":
-                    this.bottomGuide();
-                    break;
-                case "left-guide":
-                    this.leftGuide();
-                    break;
-                case "v-center-guide":
-                    this.vCenterGuide();
-                    break;
-                case "h-center-guide":
-                    this.hCenterGuide();
-                    break;
-                case "top-bottom-guides":
-                    this.topBottomGuides();
-                    break;
-                case "right-left-guides":
-                    this.rightLeftGuides();
-                    break;
-                case "remove-all-guides":
-                    this.removeAllGuides();
-                    break;
-            }
-        }
-
-    },
-    extend: function( options, target ) {
-        var target = target || this;
-        for ( var key in options ){
-            target[key] = options[key];
-        }
-        return target;
-    }
-};
 
 
-CX.extend({
-    // getRect: function(layer){
-    //     var rect = layer.absoluteRect();
-    //     return {
-    //         x: Math.round(rect.x()),
-    //         y: Math.round(rect.y()),
-    //         width: Math.round(rect.width()),
-    //         height: Math.round(rect.height()),
-    //         maxX: Math.round(rect.x() + rect.width()),
-    //         maxY: Math.round(rect.y() + rect.height()),
-    //     };
-    // },
-    updateContext: function(){
-        currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
-        this.context.document = NSDocumentController.sharedDocumentController().currentDocument();
-        // this.context.selection = this.context.document.selectedLayers();
-        return this.context;
-    },
-});
+
+// var CX = {
+//     init: function(context, command){
+//         this.context = context;
+//         this.extend(context);
+//         this.pluginRoot = this.scriptPath
+//                 .stringByDeletingLastPathComponent()
+//                 .stringByDeletingLastPathComponent()
+//                 .stringByDeletingLastPathComponent();
+//         // this.pluginSketch = this.pluginRoot + "/Contents/Sketch/library";
+//         localPluginRoot = this.pluginRoot + "/Contents/Sketch/";
+//
+//         this.doc = context.document;
+//         this.docData = this.doc.documentData();
+//         this.page = this.doc.currentPage();
+//         this.artboard = this.page.currentArtboard();
+//         this.current = this.artboard || this.page;
+//         coscript.setShouldKeepAround(true);
+//
+//         if(command && command == "uibar"){
+//             this.UIBar();
+//             return false;
+//         }
+//         if(command){
+//             switch(command){
+//                 case "top-guide":
+//                     // this.topGuide();
+//                     onSimulateKeynoteRun(this.context)
+//                     break;
+//                 case "right-guide":
+//                     // this.rightGuide();
+//                     onGenerateStatesRun(this.context)
+//                     break;
+//                 case "bottom-guide":
+//                     // this.bottomGuide();
+//                     onReplicateLayersRun(this.context)
+//                     break;
+//                 case "left-guide":
+//                     // this.leftGuide();
+//                     var localPath = pluginPath + "/manifest.json"
+//                     log("generating path" + localPath)
+//                     var manifestText = readTextFromFile(localPath)
+//                     log(manifestText)
+//                     writeTextToFile(manifestText, pluginPath + "/manifest2.json")
+//
+//                     break;
+//                 case "v-center-guide":
+//                     // this.vCenterGuide();
+//                     onSelectProjectFolderRun(this.context)
+//                     break;
+//                 case "h-center-guide":
+//                     // this.hCenterGuide();
+//                     onRemoveProjectFolderRun(this.context)
+//                     break;
+//                 case "top-bottom-guides":
+//                     // this.topBottomGuides();
+//                     break;
+//                 case "right-left-guides":
+//                     // this.rightLeftGuides();
+//                     break;
+//                 case "remove-all-guides":
+//                     // this.removeAllGuides();
+//                     break;
+//             }
+//         }
+//
+//     },
+//     extend: function( options, target ) {
+//         var target = target || this;
+//         for ( var key in options ){
+//             target[key] = options[key];
+//         }
+//         return target;
+//     }
+// };
+
+
+// CX.extend({
+//     // getRect: function(layer){
+//     //     var rect = layer.absoluteRect();
+//     //     return {
+//     //         x: Math.round(rect.x()),
+//     //         y: Math.round(rect.y()),
+//     //         width: Math.round(rect.width()),
+//     //         height: Math.round(rect.height()),
+//     //         maxX: Math.round(rect.x() + rect.width()),
+//     //         maxY: Math.round(rect.y() + rect.height()),
+//     //     };
+//     // },
+//     updateContext: function(){
+//         currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
+//         this.context.document = NSDocumentController.sharedDocumentController().currentDocument();
+//         // this.context.selection = this.context.document.selectedLayers();
+//         return this.context;
+//     },
+// });
 //
 // CX.extend({
 //     getDistance: function(targetRect, containerRect){
@@ -135,208 +223,356 @@ CX.extend({
 // });
 
 
-CX.extend({
-    topGuide: function(){
-      // runSimulateKeynote(this.context)
-      onSimulateKeynoteRun(this.context)
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().top);
-    },
-    rightGuide: function(){
-        onGenerateStatesRun(this.context)
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().right);
-    },
-    bottomGuide: function(){
-        onReplicateLayersRun(this.context)
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().bottom);
-    },
-    leftGuide: function(){
-        var localPath = pluginPath + "/manifest.json"
-        log("generating path" + localPath)
-        var manifestText = readTextFromFile(localPath)
-        log(manifestText)
-        writeTextToFile(manifestText, pluginPath + "/manifest2.json")
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().left);
-    },
-    vCenterGuide: function(){
-        // log("URL")
-        // var url = [NSURL URLWithString:"https://bit.ly/2i1Usqq"]
+// CX.extend({
+//     topGuide: function(){
+//       // runSimulateKeynote(this.context)
+//       onSimulateKeynoteRun(this.context)
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().top);
+//     },
+//     rightGuide: function(){
+//         onGenerateStatesRun(this.context)
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().right);
+//     },
+//     bottomGuide: function(){
+//         onReplicateLayersRun(this.context)
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().bottom);
+//     },
+//     leftGuide: function(){
+//         var localPath = pluginPath + "/manifest.json"
+//         log("generating path" + localPath)
+//         var manifestText = readTextFromFile(localPath)
+//         log(manifestText)
+//         writeTextToFile(manifestText, pluginPath + "/manifest2.json")
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().left);
+//     },
+//     vCenterGuide: function() {
+//         onSelectProjectFolderRun(this.context)
+//         // log("URL")
+//         // var url = [NSURL URLWithString:"https://bit.ly/2i1Usqq"]
+//
+//
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().vCenter);
+//     },
+//     hCenterGuide: function(){
+//         onRemoveProjectFolderRun(this.context)
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().hCenter);
+//     },
+//     topBottomGuides: function(){
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().top);
+//         // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().bottom);
+//     },
+//     rightLeftGuides: function(){
+//         // var self = this;
+//         // if(!this.selectError()) return;
+//         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().right);
+//         // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().left);
+//     },
+//     removeAllGuides: function(){
+//         // log("Setting instead RemoveAllGuides")
+//         // runSettings(this.context)
+//
+//         // StatisticsInventory.sendTestRequest()
+//
+//         // var url = [NSURL URLWithString:"https://goo.gl/nQYNuf/?ref=framer_inventory"];
+//         // var downloadPhotoTask = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:nil];
+//         // [downloadPhotoTask resume];
+//         // StatisticsInventory.sendSimulateRequest()
+//         // log("downloadPhotoTask?")
+//
+//         // var self = this;
+//         // horizontalGuideCount = this.artboard.horizontalRulerData().numberOfGuides();
+//         // verticalGuideCount = this.artboard.verticalRulerData().numberOfGuides();
+//         // while (verticalGuideCount > 0) {
+//         //     this.artboard.verticalRulerData().removeGuideAtIndex(0);
+//         //     verticalGuideCount = this.artboard.verticalRulerData().numberOfGuides();
+//         // }
+//         // while (horizontalGuideCount > 0) {
+//         //     this.artboard.horizontalRulerData().removeGuideAtIndex(0);
+//         //     horizontalGuideCount = this.artboard.horizontalRulerData().numberOfGuides();
+//         // }
+//     }
+// });
 
 
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().vCenter);
-    },
-    hCenterGuide: function(){
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().hCenter);
-    },
-    topBottomGuides: function(){
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().top);
-        // this.artboard.verticalRulerData().addGuideWithValue(this.setCount().bottom);
-    },
-    rightLeftGuides: function(){
-        // var self = this;
-        // if(!this.selectError()) return;
-        // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().right);
-        // this.artboard.horizontalRulerData().addGuideWithValue(this.setCount().left);
-    },
-    removeAllGuides: function(){
-        // log("Setting instead RemoveAllGuides")
-        // runSettings(this.context)
+// CX.extend({
+//     UIBar: function(){
+//         log("CB1")
+//         var self = this,
+//             identifier = "com.tilllur.framer-inventory",
+//             threadDictionary = NSThread.mainThread().threadDictionary(),
+//             UIBar = threadDictionary[identifier];
+//             log("CB2")
+//         if(!UIBar){
+//             log("CB3")
+//             UIBar = NSPanel.alloc().init();
+//             UIBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+//             UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.15, 0.15, 0.15, 1));
+//             UIBar.setTitleVisibility(NSWindowTitleHidden);
+//             UIBar.setTitlebarAppearsTransparent(true);
+//             UIBar.setFrame_display(NSMakeRect(0, 0, 640, 50), false);
+//             UIBar.setMovableByWindowBackground(true);
+//             UIBar.setHasShadow(true);
+//             UIBar.setLevel(NSFloatingWindowLevel);
+//             var contentView = UIBar.contentView(),
+//                 getImage = function(size, name){
+//                     var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
+//                         suffix = (isRetinaDisplay)? "@2x": "";
+//                         imageURL = NSURL.fileURLWithPath(localPluginRoot + "/images" + "/uibar/" + name + suffix + ".png"),
+//                         image = NSImage.alloc().initWithContentsOfURL(imageURL);
+//                     return image
+//                 },
+//                 addButton = function(rect, name, callAction){
+//                     var button = NSButton.alloc().initWithFrame(rect),
+//                         image = getImage(rect.size, name);
+//
+//                     button.setImage(image);
+//                     button.setBordered(false);
+//                     button.sizeToFit();
+//                     button.setButtonType(NSMomentaryChangeButton);
+//                     button.setCOSJSTargetFunction(callAction);
+//                     button.setAction("callAction:");
+//                     return button;
+//                 },
+//                 addImage = function(rect, name){
+//                     var view = NSImageView.alloc().initWithFrame(rect),
+//                         image = getImage(rect.size, name);
+//                     view.setImage(image);
+//                     return view;
+//                 },
+//
+//                 closeButton = addButton( NSMakeRect(20, 10, 30, 30), "close-control",
+//                     function(sender){
+//                         coscript.setShouldKeepAround(false);
+//                         threadDictionary.removeObjectForKey(identifier);
+//                         UIBar.close();
+//                 }),
+//                 topGuideB = addButton( NSMakeRect(100, 10, 30, 30), "top-guide",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "top-guide");
+//                 }),
+//                 rightGuideB = addButton( NSMakeRect(150, 10,30,30), "right-guide",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "right-guide");
+//                 }),
+//                 bottomGuideB = addButton( NSMakeRect(200, 10,30,30), "bottom-guide",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "bottom-guide");
+//                 }),
+//                 leftGuideB = addButton( NSMakeRect(250, 10,30,30), "left-guide",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "left-guide");
+//                 }),
+//                 vCenterGuideB = addButton( NSMakeRect(330, 10,30,30), "v-center-guide",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "v-center-guide");
+//                 }),
+//                 hCenterGuideB = addButton( NSMakeRect(380, 10,30,30), "h-center-guide",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "h-center-guide");
+//                 }),
+//                 topBottomGuides = addButton( NSMakeRect(460,10,30,30),"top-bottom-guides",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "top-bottom-guides");
+//                 }),
+//                 rightLeftGuides = addButton ( NSMakeRect(510, 10, 30,30), "right-left-guides",
+//                     function(sneder){
+//                         self.updateContext();
+//                         self.init(self.context, "right-left-guides");
+//                 }),
+//                 removeAllGuidesB = addButton( NSMakeRect(590, 10,30,30), "remove-all-guides",
+//                     function(sender){
+//                         self.updateContext();
+//                         self.init(self.context, "remove-all-guides");
+//                 }),
+//                 separate1 = addImage( NSMakeRect(70, 10, 10, 30), "separate"),
+//                 separate2 = addImage( NSMakeRect(300, 10, 10, 30), "separate"),
+//                 separate3 = addImage( NSMakeRect(430, 10, 10, 30), "separate"),
+//                 separate4 = addImage( NSMakeRect(560, 10, 10, 30), "separate");
+//
+//             contentView.addSubview(closeButton);
+//             contentView.addSubview(separate1);
+//             contentView.addSubview(topGuideB);
+//             contentView.addSubview(rightGuideB);
+//             contentView.addSubview(bottomGuideB);
+//             contentView.addSubview(leftGuideB);
+//             contentView.addSubview(separate2);
+//             contentView.addSubview(vCenterGuideB);
+//             contentView.addSubview(hCenterGuideB);
+//             contentView.addSubview(separate3);
+//             contentView.addSubview(topBottomGuides);
+//             contentView.addSubview(rightLeftGuides);
+//             contentView.addSubview(separate4);
+//             contentView.addSubview(removeAllGuidesB);
+//             threadDictionary[identifier] = UIBar;
+//             UIBar.center();
+//             UIBar.makeKeyAndOrderFront(nil);
+//         }
+//     }
+// });
 
-        // StatisticsInventory.sendTestRequest()
 
-        // var url = [NSURL URLWithString:"https://goo.gl/nQYNuf/?ref=framer_inventory"];
-        // var downloadPhotoTask = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:nil];
-        // [downloadPhotoTask resume];
-        // StatisticsInventory.sendSimulateRequest()
-        // log("downloadPhotoTask?")
+// ToolbarInventory.updateContext = function() {
+//     currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
+//     this.context.document = NSDocumentController.sharedDocumentController().currentDocument();
+//     return this.context;
+// }
 
-        // var self = this;
-        // horizontalGuideCount = this.artboard.horizontalRulerData().numberOfGuides();
-        // verticalGuideCount = this.artboard.verticalRulerData().numberOfGuides();
-        // while (verticalGuideCount > 0) {
-        //     this.artboard.verticalRulerData().removeGuideAtIndex(0);
-        //     verticalGuideCount = this.artboard.verticalRulerData().numberOfGuides();
-        // }
-        // while (horizontalGuideCount > 0) {
-        //     this.artboard.horizontalRulerData().removeGuideAtIndex(0);
-        //     horizontalGuideCount = this.artboard.horizontalRulerData().numberOfGuides();
-        // }
+ToolbarInventory.updateContext = function() {
+    methodStartTime = [NSDate date]
+    currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
+    currentSelection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
+    // return this.context;
+}
+
+
+ToolbarInventory.getImage = function(size, name) {
+    var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
+    var suffix = (isRetinaDisplay)? "@2x": "";
+    var imageURL = NSURL.fileURLWithPath(pluginPath + "/" + "/images" + "/uibar/" + name + suffix + ".png");
+    var image = NSImage.alloc().initWithContentsOfURL(imageURL);
+    return image
+}
+
+ToolbarInventory.addButton = function(rect, name, callAction) {
+    log("inside add Button")
+    var button = NSButton.alloc().initWithFrame(rect);
+    log("let's try get image")
+    var image = ToolbarInventory.getImage(rect.size, name);
+    log("fucing image is done")
+
+    button.setImage(image);
+    button.setBordered(false);
+    button.sizeToFit();
+    button.setButtonType(NSMomentaryChangeButton);
+    button.setCOSJSTargetFunction(callAction);
+    button.setAction("callAction:");
+    return button;
+}
+
+ToolbarInventory.addImage = function(rect, name) {
+    var view = NSImageView.alloc().initWithFrame(rect)
+    var image = ToolbarInventory.getImage(rect.size, name);
+    view.setImage(image);
+    return view;
+}
+
+
+
+
+ToolbarInventory.createUIBar = function() {
+
+    coscript.setShouldKeepAround(true);
+
+    var identifier = "com.tilllur.framer-inventory"
+    var threadDictionary = NSThread.mainThread().threadDictionary()
+    var UIBar = threadDictionary[identifier]
+
+    if(!UIBar){
+        UIBar = NSPanel.alloc().init();
+        UIBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+        UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.15, 0.15, 0.15, 1));
+        UIBar.setTitleVisibility(NSWindowTitleHidden);
+        UIBar.setTitlebarAppearsTransparent(true);
+        UIBar.setFrame_display(NSMakeRect(0, 0, 640, 50), false);
+        UIBar.setMovableByWindowBackground(true);
+        UIBar.setHasShadow(true);
+        UIBar.setLevel(NSFloatingWindowLevel);
+
+        var contentView = UIBar.contentView()
+
+        var closeButton = ToolbarInventory.addButton(NSMakeRect(20, 10, 30, 30), "close-control",
+            function(sender){
+                coscript.setShouldKeepAround(false);
+                threadDictionary.removeObjectForKey(identifier);
+                UIBar.close();
+            }
+        )
+
+        var topGuideB = ToolbarInventory.addButton( NSMakeRect(100, 10, 30, 30), "top-guide",
+            function(sender){
+                ToolbarInventory.updateContext();
+                runSimulateKeynote()
+        })
+        var rightGuideB = ToolbarInventory.addButton( NSMakeRect(150, 10,30,30), "right-guide",
+            function(sender){
+                ToolbarInventory.updateContext();
+                runGenerateStates()
+        })
+        var bottomGuideB = ToolbarInventory.addButton( NSMakeRect(200, 10,30,30), "bottom-guide",
+            function(sender){
+                ToolbarInventory.updateContext();
+                runReplicateLayers()
+        })
+        var leftGuideB = ToolbarInventory.addButton( NSMakeRect(250, 10,30,30), "left-guide",
+            function(sender){
+                ToolbarInventory.updateContext();
+                runSettings()
+        })
+        var vCenterGuideB = ToolbarInventory.addButton( NSMakeRect(330, 10,30,30), "v-center-guide",
+            function(sender){
+                ToolbarInventory.updateContext();
+                FramerInventory.runSelectProjectFolder()
+        })
+        var hCenterGuideB = ToolbarInventory.addButton( NSMakeRect(380, 10,30,30), "h-center-guide",
+            function(sender){
+                ToolbarInventory.updateContext();
+                FramerInventory.runRemoveProjectFolder()
+        })
+        var topBottomGuides = ToolbarInventory.addButton( NSMakeRect(460,10,30,30),"top-bottom-guides",
+            function(sender){
+                ToolbarInventory.updateContext();
+        })
+        var rightLeftGuides = ToolbarInventory.addButton ( NSMakeRect(510, 10, 30,30), "right-left-guides",
+            function(sneder){
+                ToolbarInventory.updateContext();
+        })
+        var removeAllGuidesB = ToolbarInventory.addButton( NSMakeRect(590, 10,30,30), "remove-all-guides",
+            function(sender){
+                ToolbarInventory.updateContext();
+        })
+
+        var separate1 = ToolbarInventory.addImage( NSMakeRect(70, 10, 10, 30), "separate")
+        var separate2 = ToolbarInventory.addImage( NSMakeRect(300, 10, 10, 30), "separate")
+        var separate3 = ToolbarInventory.addImage( NSMakeRect(430, 10, 10, 30), "separate")
+        var separate4 = ToolbarInventory.addImage( NSMakeRect(560, 10, 10, 30), "separate")
+
+        contentView.addSubview(closeButton);
+        contentView.addSubview(separate1);
+        contentView.addSubview(topGuideB);
+        contentView.addSubview(rightGuideB);
+        contentView.addSubview(bottomGuideB);
+        contentView.addSubview(leftGuideB);
+        contentView.addSubview(separate2);
+        contentView.addSubview(vCenterGuideB);
+        contentView.addSubview(hCenterGuideB);
+        contentView.addSubview(separate3);
+        contentView.addSubview(topBottomGuides);
+        contentView.addSubview(rightLeftGuides);
+        contentView.addSubview(separate4);
+        contentView.addSubview(removeAllGuidesB);
+        threadDictionary[identifier] = UIBar;
+        UIBar.center();
+        UIBar.makeKeyAndOrderFront(nil);
     }
-});
-
-
-CX.extend({
-    UIBar: function(){
-        log("CB1")
-        var self = this,
-            identifier = "com.tilllur.framer-inventory",
-            threadDictionary = NSThread.mainThread().threadDictionary(),
-            UIBar = threadDictionary[identifier];
-            log("CB2")
-        if(!UIBar){
-            log("CB3")
-            UIBar = NSPanel.alloc().init();
-            UIBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
-            UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.15, 0.15, 0.15, 1));
-            UIBar.setTitleVisibility(NSWindowTitleHidden);
-            UIBar.setTitlebarAppearsTransparent(true);
-            UIBar.setFrame_display(NSMakeRect(0, 0, 640, 50), false);
-            UIBar.setMovableByWindowBackground(true);
-            UIBar.setHasShadow(true);
-            UIBar.setLevel(NSFloatingWindowLevel);
-            var contentView = UIBar.contentView(),
-                getImage = function(size, name){
-                    var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
-                        suffix = (isRetinaDisplay)? "@2x": "";
-                        imageURL = NSURL.fileURLWithPath(localPluginRoot + "/images" + "/uibar/" + name + suffix + ".png"),
-                        image = NSImage.alloc().initWithContentsOfURL(imageURL);
-                    return image
-                },
-                addButton = function(rect, name, callAction){
-                    var button = NSButton.alloc().initWithFrame(rect),
-                        image = getImage(rect.size, name);
-
-                    button.setImage(image);
-                    button.setBordered(false);
-                    button.sizeToFit();
-                    button.setButtonType(NSMomentaryChangeButton);
-                    button.setCOSJSTargetFunction(callAction);
-                    button.setAction("callAction:");
-                    return button;
-                },
-                addImage = function(rect, name){
-                    var view = NSImageView.alloc().initWithFrame(rect),
-                        image = getImage(rect.size, name);
-                    view.setImage(image);
-                    return view;
-                },
-
-                closeButton = addButton( NSMakeRect(20, 10, 30, 30), "close-control",
-                    function(sender){
-                        coscript.setShouldKeepAround(false);
-                        threadDictionary.removeObjectForKey(identifier);
-                        UIBar.close();
-                }),
-                topGuideB = addButton( NSMakeRect(100, 10, 30, 30), "top-guide",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "top-guide");
-                }),
-                rightGuideB = addButton( NSMakeRect(150, 10,30,30), "right-guide",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "right-guide");
-                }),
-                bottomGuideB = addButton( NSMakeRect(200, 10,30,30), "bottom-guide",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "bottom-guide");
-                }),
-                leftGuideB = addButton( NSMakeRect(250, 10,30,30), "left-guide",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "left-guide");
-                }),
-                vCenterGuideB = addButton( NSMakeRect(330, 10,30,30), "v-center-guide",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "v-center-guide");
-                }),
-                hCenterGuideB = addButton( NSMakeRect(380, 10,30,30), "h-center-guide",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "h-center-guide");
-                }),
-                topBottomGuides = addButton( NSMakeRect(460,10,30,30),"top-bottom-guides",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "top-bottom-guides");
-                }),
-                rightLeftGuides = addButton ( NSMakeRect(510, 10, 30,30), "right-left-guides",
-                    function(sneder){
-                        self.updateContext();
-                        self.init(self.context, "right-left-guides");
-                }),
-                removeAllGuidesB = addButton( NSMakeRect(590, 10,30,30), "remove-all-guides",
-                    function(sender){
-                        self.updateContext();
-                        self.init(self.context, "remove-all-guides");
-                }),
-                separate1 = addImage( NSMakeRect(70, 10, 10, 30), "separate"),
-                separate2 = addImage( NSMakeRect(300, 10, 10, 30), "separate"),
-                separate3 = addImage( NSMakeRect(430, 10, 10, 30), "separate"),
-                separate4 = addImage( NSMakeRect(560, 10, 10, 30), "separate");
-
-            contentView.addSubview(closeButton);
-            contentView.addSubview(separate1);
-            contentView.addSubview(topGuideB);
-            contentView.addSubview(rightGuideB);
-            contentView.addSubview(bottomGuideB);
-            contentView.addSubview(leftGuideB);
-            contentView.addSubview(separate2);
-            contentView.addSubview(vCenterGuideB);
-            contentView.addSubview(hCenterGuideB);
-            contentView.addSubview(separate3);
-            contentView.addSubview(topBottomGuides);
-            contentView.addSubview(rightLeftGuides);
-            contentView.addSubview(separate4);
-            contentView.addSubview(removeAllGuidesB);
-            threadDictionary[identifier] = UIBar;
-            UIBar.center();
-            UIBar.makeKeyAndOrderFront(nil);
-        }
-    }
-});
+}

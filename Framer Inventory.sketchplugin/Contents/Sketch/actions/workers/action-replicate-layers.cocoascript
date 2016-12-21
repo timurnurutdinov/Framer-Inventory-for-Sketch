@@ -3,8 +3,8 @@
 var runReplicateLayers = function(context) {
 	StatisticsInventory.sendReplicateRequest()
 
-	var doc = context.document
-	var selection = context.selection
+	var doc = currentDocument
+	var selection = currentSelection
 
 	[[NSPasteboard generalPasteboard] clearContents]
 
