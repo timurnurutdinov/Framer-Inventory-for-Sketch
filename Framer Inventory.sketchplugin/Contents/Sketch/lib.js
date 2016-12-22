@@ -1,3 +1,5 @@
+var pathLabel = nil
+
 function ToolbarInventory () {}
 
 // UIBar.init = function(context, command){
@@ -455,11 +457,8 @@ ToolbarInventory.getImage = function(size, name) {
 }
 
 ToolbarInventory.addButton = function(rect, name, callAction) {
-    log("inside add Button")
     var button = NSButton.alloc().initWithFrame(rect);
-    log("let's try get image")
     var image = ToolbarInventory.getImage(rect.size, name);
-    log("fucing image is done")
 
     button.setImage(image);
     button.setBordered(false);
@@ -478,7 +477,14 @@ ToolbarInventory.addImage = function(rect, name) {
 }
 
 
-
+ToolbarInventory.updatePathLabel = function() {
+    log(" is updating?!")
+    if (pathLabel != nil) {
+      log("updating label!")
+      log(userDefaults.myExportPath)
+      [pathLabel setStringValue:userDefaults.myExportPath];
+    }
+}
 
 ToolbarInventory.createUIBar = function() {
 
@@ -494,7 +500,7 @@ ToolbarInventory.createUIBar = function() {
         UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.15, 0.15, 0.15, 1));
         UIBar.setTitleVisibility(NSWindowTitleHidden);
         UIBar.setTitlebarAppearsTransparent(true);
-        UIBar.setFrame_display(NSMakeRect(0, 0, 640, 50), false);
+        UIBar.setFrame_display(NSMakeRect(0, 0, 640, 70), false);
         UIBar.setMovableByWindowBackground(true);
         UIBar.setHasShadow(true);
         UIBar.setLevel(NSFloatingWindowLevel);
@@ -533,15 +539,18 @@ ToolbarInventory.createUIBar = function() {
             function(sender){
                 ToolbarInventory.updateContext();
                 FramerInventory.runSelectProjectFolder()
+                ToolbarInventory.updatePathLabel()
         })
         var hCenterGuideB = ToolbarInventory.addButton( NSMakeRect(380, 10,30,30), "h-center-guide",
             function(sender){
                 ToolbarInventory.updateContext();
                 FramerInventory.runRemoveProjectFolder()
+                ToolbarInventory.updatePathLabel()
         })
         var topBottomGuides = ToolbarInventory.addButton( NSMakeRect(460,10,30,30),"top-bottom-guides",
             function(sender){
                 ToolbarInventory.updateContext();
+                // currentSelection
         })
         var rightLeftGuides = ToolbarInventory.addButton ( NSMakeRect(510, 10, 30,30), "right-left-guides",
             function(sneder){
@@ -557,6 +566,16 @@ ToolbarInventory.createUIBar = function() {
         var separate3 = ToolbarInventory.addImage( NSMakeRect(430, 10, 10, 30), "separate")
         var separate4 = ToolbarInventory.addImage( NSMakeRect(560, 10, 10, 30), "separate")
 
+        pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 50, 400, 30)];
+        [pathLabel setEditable:false];
+        [pathLabel setBordered:false];
+        [pathLabel setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
+        [pathLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
+        [pathLabel setDrawsBackground:false];
+        [pathLabel setStringValue:userDefaults.myExportPath];
+        [pathLabel sizeToFit];
+        log("label DONE path-:P")
+
         contentView.addSubview(closeButton);
         contentView.addSubview(separate1);
         contentView.addSubview(topGuideB);
@@ -571,6 +590,8 @@ ToolbarInventory.createUIBar = function() {
         contentView.addSubview(rightLeftGuides);
         contentView.addSubview(separate4);
         contentView.addSubview(removeAllGuidesB);
+        contentView.addSubview(pathLabel);
+
         threadDictionary[identifier] = UIBar;
         UIBar.center();
         UIBar.makeKeyAndOrderFront(nil);
