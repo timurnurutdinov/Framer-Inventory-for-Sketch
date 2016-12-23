@@ -13,147 +13,153 @@ function getPosition(layer, type, isStillExportable) {
 	if (type == nil) { type = TypeInventory.getObjectType(layer) }
 	if (isStillExportable == nil) { if (showLog) { log("Warning: isStillExportable is unknown") } }
 
-	if (isStillExportable && (type == 2 || type == 3)) { return getPlaceRect(layer) }
-	return getPlaceImage(layer)
+	if (isStillExportable && (type == 2 || type == 3)) { return getPlace(layer, false) }
+	return getPlace(layer, true)
 }
 
 
 
 
 
+var normaliseImage = function(layer) {
+	var currentPage = currentDocument.currentPage()
 
-
-var getPlaceImage = function(layer) {
-
-	if (layer == nil) {
-		if (showLog) { log("WARNING: Nil layer") }
-		return [100, 100, 0, 0]
-	}
-
-	var currentPage = TypeInventory.findParentPage(layer)
-	var parentArtboard = TypeInventory.findParentArtboard(layer)
-	var parentRect = [parentArtboard absoluteRect]
-	// if (layer)
-
-	// copy layer and place it to artboard
 	var layer_copy = [layer duplicate]
 	[layer_copy removeFromParent]
 	[currentPage addLayers: [layer_copy]]
-
 
 	var frame = [layer_copy frame]
 	[frame setX: [[layer absoluteRect] x]]
 	[frame setY: [[layer absoluteRect] y]]
 
-
-	// normalize layer for export
 	[layer_copy setRotation: 0]
-
-	if ([[[layer_copy style] contextSettings] opacity] == 0) {
-		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
-	}
+	if ([[[layer_copy style] contextSettings] opacity] == 0) { [[[layer_copy style] contextSettings] setOpacity:(1.0)] }
 	if (![layer_copy isVisible]) { [layer_copy setIsVisible:true] }
 
+	return layer_copy
+}
 
-	var values = []
-	// var temp = layer.absoluteInfluenceRect()
-	var ancestry = MSImmutableLayerAncestry.ancestryWithMSLayer(layer_copy)
-	var temp = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
-	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
-	//if (showLog) { log("Values of " + [layer name] + ": " + values) }
 
-	[layer_copy removeFromParent]
+var getAbsolutePlaceImage = function(layer) {
+	if (layer == nil) { return [100, 100, 0, 0] }
+	var normalisedLayer = normaliseImage(layer)
+	var temp = MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(normalisedLayer))
+	var values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
+
+	[normalisedLayer removeFromParent]
 	return values
 }
 
 
 
-var getPlaceImageFromParent = function(layer) {
 
-	if (layer == nil) {
-		if (showLog) { log("WARNING: Nil layer") }
-		return [100, 100, 0, 0]
-	}
+var normaliseRect = function(layer) {
+	var currentPage = currentDocument.currentPage()
 
-	var currentPage = TypeInventory.findParentPage(layer)
-	var parentGroup = [layer parentGroup]
-
-	var parentRect = [layer absoluteRect]
-	if (parentGroup != nil) { parentRect = [parentGroup absoluteRect] }
-
-	// copy layer and place it to artboard
 	var layer_copy = [layer duplicate]
 	[layer_copy removeFromParent]
 	[currentPage addLayers: [layer_copy]]
-
 
 	var frame = [layer_copy frame]
 	[frame setX: [[layer absoluteRect] x]]
 	[frame setY: [[layer absoluteRect] y]]
 
-
-	// normalize layer for export
 	[layer_copy setRotation: 0]
-
-	if ([[[layer_copy style] contextSettings] opacity] == 0) {
+	if (![layer_copy isVisible]) {
+		[layer_copy setIsVisible:true]
 		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
 	}
-	if (![layer_copy isVisible]) { [layer_copy setIsVisible:true] }
 
-
-	var values = []
-	// var temp = layer.absoluteInfluenceRect()
-	var ancestry = MSImmutableLayerAncestry.ancestryWithMSLayer(layer_copy)
-	var temp = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
-	var values = [temp.size.width, temp.size.height, temp.origin.x - [parentRect x], temp.origin.y - [parentRect y]]
-	//if (showLog) { log("Values of " + [layer name] + ": " + values) }
-
-	[layer_copy removeFromParent]
-	return values
+	return layer_copy
 }
 
-
-var getPlaceRect = function(layer) {
+var getAbsolutePlaceRect = function(layer) {
 	if (layer == nil) { return nil }
+	var normalisedRect = normaliseRect(layer)
+	var values = [[[normalisedRect frame] width], [[normalisedRect frame] width], [[normalisedRect absoluteRect] x], [[normalisedRect absoluteRect] y]]
 
-	var parentArtboard = TypeInventory.findParentArtboard(layer)
-
-	var layer_copy = [layer duplicate]
-	[layer_copy setRotation: 0]
-
-	var copied_x = getX(layer_copy, parentArtboard)
-	var copied_y = getY(layer_copy, parentArtboard)
-
-	var values = [getWidth(layer), getHeight(layer), copied_x, copied_y]
-
-	[layer_copy removeFromParent]
-
+	[normalisedRect removeFromParent]
 	return values
 }
 
 
+
+
+
+
+
+
+
+
+
+
+var getPlace = function(layer, isImage) {
+	if (layer == nil) { return [100, 100, 0, 0] }
+	if (TypeInventory.isArtboardType(layer)) { return getAbsolutePlaceRect(layer) }
+
+	var currentPage = currentDocument.currentPage()
+	var parentValues = nil
+
+	log("Get place")
+	
+	if (userDefaults.myRelativeGroup == 1 && (currentCommandIdentifier == runGenerateStatesIdentifier || currentCommandIdentifier == runReplicateLayersIdentifier)) {
+		log("SHOLD ME REL==1")
+		parentValues = getAbsolutePlaceImage([layer parentGroup])
+	}
+	else { parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer)) }
+
+
+	var layerValues = (isImage) ? getAbsolutePlaceImage(layer) : getAbsolutePlaceRect(layer)
+	var resultValues = [layerValues[0], layerValues[1], layerValues[2] - parentValues[2], layerValues[3] - parentValues[3]]
+
+	return resultValues
+}
+
+
+
+
+
+
+
+//
+// var getPlaceRect = function(layer) {
+// 	if (layer == nil) { return [100, 100, 0, 0] }
+//
+// 	var currentPage = currentDocument.currentPage()
+// 	var parentValues = nil
+//
+// 	if (userDefaults.myRelativeGroup == 1 && (currentCommandIdentifier == runGenerateStatesIdentifier || currentCommandIdentifier == runReplicateLayersIdentifier)) {
+// 		parentValues = getAbsolutePlaceImage([layer parentGroup])
+// 	}
+// 	else { parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer)) }
+//
+// 	var layerValues = getAbsolutePlaceRect(layer)
+// 	var resultValues = [layerValues[0], layerValues[1], layerValues[2] - parentValues[2], layerValues[3] - parentValues[3]]
+//
+// 	return resultValues
+// }
 
 
 
 
 // support
-
-var getY = function(layer, parentLayer) {
-	var parentY = [[parentLayer absoluteRect] y]
-	var layerY = [[layer absoluteRect] y]
-	return -(parentY - layerY)
-}
-
-var getX = function(layer, parentLayer) {
-	var parentX = [[parentLayer absoluteRect] x]
-	var layerX = [[layer absoluteRect] x]
-	return -(parentX - layerX)
-}
-
-var getHeight = function(layer) {
-	return [[layer frame] height]
-}
-
-var getWidth = function(layer) {
-	return [[layer frame] width]
-}
+//
+// var getY = function(layer, parentLayer) {
+// 	var parentY = [[parentLayer absoluteRect] y]
+// 	var layerY = [[layer absoluteRect] y]
+// 	return -(parentY - layerY)
+// }
+//
+// var getX = function(layer, parentLayer) {
+// 	var parentX = [[parentLayer absoluteRect] x]
+// 	var layerX = [[layer absoluteRect] x]
+// 	return -(parentX - layerX)
+// }
+//
+// var getHeight = function(layer) {
+// 	return [[layer frame] height]
+// }
+//
+// var getWidth = function(layer) {
+// 	return [[layer frame] width]
+// }

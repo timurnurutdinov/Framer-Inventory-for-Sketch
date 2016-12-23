@@ -12,8 +12,8 @@ TypeInventory.isShapeGroupType = function(type) { return (type == "MSShapeGroup"
 
 TypeInventory.isLayerGroup = function(type) { return (type == "MSLayerGroup") ? true : false }
 TypeInventory.isSymbolGroup = function(type) { return (type == "MSSymbolInstance") ? true : false }
-TypeInventory.isGroupType = function(type) { 
-	return (TypeInventory.isLayerGroup(type) || TypeInventory.isSymbolGroup(type)) ? true : false 
+TypeInventory.isGroupType = function(type) {
+	return (TypeInventory.isLayerGroup(type) || TypeInventory.isSymbolGroup(type)) ? true : false
 }
 
 
@@ -21,7 +21,7 @@ TypeInventory.isGroupType = function(type) {
 // types:
 // -1 - unsupported
 //  1 - group, image, symbol
-//  2 - rectangle 
+//  2 - rectangle
 //  3 - oval
 //  4 - text layer
 //  5 - other shape
@@ -31,14 +31,14 @@ TypeInventory.getObjectType = function(localLayer) {
 
 	var answer = 0
 	var type = [localLayer className]
-	
+
 	if (TypeInventory.isSliceType(type)) { answer = -1 }
 	else if (TypeInventory.isTextType(type)) { answer = 4 }
 	else if (TypeInventory.isGroupType(type)) { answer = 1 }
 	else if (TypeInventory.isImageType(type)) { answer = 1 }
 	else if (TypeInventory.isShapeGroupType(type)) { answer = TypeInventory.getShapeType(localLayer) }
 	else { asnwer = -1 }
-	
+
 	if (answer == -1) { log("ERROR: Can't get layer type") }
 	return answer
 }
@@ -48,7 +48,7 @@ TypeInventory.getShapeType = function(localLayer) {
 	if (!TypeInventory.isShapeGroupType([localLayer className])) { return -1 }
 	var magicLayers = localLayer.layers()
 	if (magicLayers.count() > 1) { return 5 }
-	
+
 	var shape = magicLayers.firstObject()
 	if(shape && shape.isKindOfClass(MSOvalShape)) {
 		if ([[[shape path] points] count] != 4) { return 5 }
@@ -58,7 +58,7 @@ TypeInventory.getShapeType = function(localLayer) {
 		if ([[[shape path] points] count] != 4) { return 5 }
 		return 2
 	}
-	
+
 	log("ERROR: Can't get shape type")
 	return 5
 }
@@ -74,7 +74,7 @@ TypeInventory.findParentArtboard = function(layer) {
 	if (layer == nil) { return nil }
 	var lookingForParentArtboard = true
 	var localParent = layer
-	
+
 	while (lookingForParentArtboard) {
 		localParent = [localParent parentGroup]
 		if (TypeInventory.isArtboardType([localParent className])) { lookingForParentArtboard = false }
@@ -83,14 +83,14 @@ TypeInventory.findParentArtboard = function(layer) {
 	return localParent
 }
 
+
 TypeInventory.findParentPage = function(layer) {
 	var lookingForParentPage = true
 	var localParent = layer
-	
+
 	while (lookingForParentPage) {
 		localParent = [localParent parentGroup]
 		if (TypeInventory.isPageType([localParent className])) { lookingForParentPage = false }
 	}
 	return localParent
 }
-

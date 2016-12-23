@@ -1,6 +1,7 @@
 
 // gererate code for layers and their states
 var runGenerateStates = function(context, isTestingEnvironment) {
+	currentCommandIdentifier = runGenerateStatesIdentifier
 	StatisticsInventory.sendGenerateRequest()
 
 	var doc = currentDocument

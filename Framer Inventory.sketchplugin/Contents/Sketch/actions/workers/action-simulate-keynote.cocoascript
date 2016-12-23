@@ -3,6 +3,7 @@
 
 // generate code for layers
 var runSimulateKeynote = function(context, isTestingEnvironment) {
+	currentCommandIdentifier = runSimulateKeynoteIdentifier
 	StatisticsInventory.sendSimulateRequest()
 
 	var doc = currentDocument

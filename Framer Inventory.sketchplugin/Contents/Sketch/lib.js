@@ -1,5 +1,8 @@
 var pathLabel = nil
+var topBottomGuides = nil
+
 var defaultPathLabel = "Please, select Framer folder"
+
 
 function ToolbarInventory () {}
 
@@ -549,10 +552,14 @@ ToolbarInventory.createUIBar = function() {
                 FramerInventory.runRemoveProjectFolder()
                 ToolbarInventory.updatePathLabel()
         })
-        var topBottomGuides = ToolbarInventory.addButton( NSMakeRect(228, 6, 56, 26), "relative",
+
+        var relativeButtonType = (userDefaults.myRelativeGroup == 0) ? "relative/artboard" : "relative/group"
+        topBottomGuides = ToolbarInventory.addButton( NSMakeRect(226, 6, 58, 26), relativeButtonType,
             function(sender){
                 ToolbarInventory.updateContext();
-                // ToolbarInventory.nextLayerState(true)
+                userDefaults.myRelativeGroup = (userDefaults.myRelativeGroup == 0) ? 1 : 0
+                saveDefaults(userDefaults)
+                ToolbarInventory.changeRelativeButton()
 
         })
         var rightLeftGuides = ToolbarInventory.addButton ( NSMakeRect(292, 6, 26, 26), "density",
@@ -668,3 +675,16 @@ ToolbarInventory.createUIBar = function() {
 //       }
 //   }
 // }
+
+
+
+ToolbarInventory.changeRelativeButton = function() {
+    if (topBottomGuides != nil) {
+      log("SWitch")
+      log(topBottomGuides)
+      // log(topBottomGuides.rect)
+      var relativeButtonName = (userDefaults.myRelativeGroup == 0) ? "relative/artboard" : "relative/group"
+      var image = ToolbarInventory.getImage(topBottomGuides.frame.size, relativeButtonName);
+      topBottomGuides.setImage(image);
+    }
+}

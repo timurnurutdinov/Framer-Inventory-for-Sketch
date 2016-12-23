@@ -20,6 +20,7 @@ var presets = {
 	myMinimalExport: 1,
 	myAutoplay: 0,
 	myExportPath: "",
+	myRelativeGroup: 0,
 	myCodeStyleClassic: 1,
 	myUserID: [[[NSDate date] descriptionWithLocale:[NSLocale currentLocale]] hash] + ""
 }

@@ -1,6 +1,7 @@
 
 // generate code for layers
 var runReplicateLayers = function(context) {
+	currentCommandIdentifier = runReplicateLayersIdentifier
 	StatisticsInventory.sendReplicateRequest()
 
 	var doc = currentDocument

@@ -82,8 +82,8 @@ State.prototype.prepareState = function(layer) {
 	this.layer = layer
 	this.type = TypeInventory.getObjectType(layer)
 
-	if (this.type == 2 || this.type == 3) { this.position = getPlaceRect(layer) }
-	else { this.position = getPlaceImage(layer) }
+	if (this.type == 2 || this.type == 3) { this.position = getPlace(layer, false) }
+	else { this.position = getPlace(layer, true) }
 
 	this.opacity = getOpacity(layer)
 	this.corner = getCornerRadius(layer)
