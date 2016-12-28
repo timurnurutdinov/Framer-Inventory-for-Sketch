@@ -578,7 +578,7 @@ ToolbarInventory.createUIBar = function() {
         // var separate4 = ToolbarInventory.addImage( NSMakeRect(560, 10, 10, 30), "separate")
         var breaker = ToolbarInventory.addImage( NSMakeRect(10, 38, 420, 2), "breaker")
 
-        pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(46, 47, 300, 20)];
+        pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(46, 47, 400, 20)];
         [pathLabel setEditable:false];
         [pathLabel setBordered:false];
         // [pathLabel setFont:[NSFont boldSystemFontOfSize:smallFontSize]];

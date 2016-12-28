@@ -22,7 +22,7 @@ var presets = {
 	myExportPath: "",
 	myRelativeGroup: 0,
 	myCodeStyleClassic: 1,
-	myUserID: [[[NSDate date] descriptionWithLocale:[NSLocale currentLocale]] hash] + ""
+	myUserID:  [[NSUUID UUID] UUIDString] + ""
 }
 
 var pluginDomain = "com.addleimb.framer-inventory.retina"

@@ -76,7 +76,7 @@ var normaliseRect = function(layer) {
 var getAbsolutePlaceRect = function(layer) {
 	if (layer == nil) { return nil }
 	var normalisedRect = normaliseRect(layer)
-	var values = [[[normalisedRect frame] width], [[normalisedRect frame] width], [[normalisedRect absoluteRect] x], [[normalisedRect absoluteRect] y]]
+	var values = [[[normalisedRect frame] width], [[normalisedRect frame] height], [[normalisedRect absoluteRect] x], [[normalisedRect absoluteRect] y]]
 
 	[normalisedRect removeFromParent]
 	return values
@@ -101,7 +101,7 @@ var getPlace = function(layer, isImage) {
 	var parentValues = nil
 
 	log("Get place")
-	
+
 	if (userDefaults.myRelativeGroup == 1 && (currentCommandIdentifier == runGenerateStatesIdentifier || currentCommandIdentifier == runReplicateLayersIdentifier)) {
 		log("SHOLD ME REL==1")
 		parentValues = getAbsolutePlaceImage([layer parentGroup])
