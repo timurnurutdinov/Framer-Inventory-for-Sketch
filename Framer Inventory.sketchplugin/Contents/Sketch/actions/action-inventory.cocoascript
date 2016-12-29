@@ -5,8 +5,10 @@
 @import 'actions/workers/action-show-bar.cocoascript'
 @import 'actions/workers/action-generate-states.cocoascript'
 @import 'actions/workers/action-simulate-keynote.cocoascript'
+
 @import 'actions/workers/action-testing-environment.cocoascript'
 @import 'actions/workers/action-settings.cocoascript'
+@import 'actions/workers/action-select-device.cocoascript'
 
 @import 'inventory/classes/layer.cocoascript'
 @import 'inventory/libs/pluginDefaults.js'
