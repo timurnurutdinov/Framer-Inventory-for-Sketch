@@ -63,19 +63,27 @@ ToolbarInventory.createUIBar = function() {
     var UIBar = threadDictionary[identifier]
 
     if(!UIBar){
+        var measureWindowHeight = 70;
+        var measureWindowWidth = 440;
+
         UIBar = NSPanel.alloc().init();
         UIBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
         UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1));
         UIBar.setTitleVisibility(NSWindowTitleHidden);
         UIBar.setTitlebarAppearsTransparent(true);
-        UIBar.setFrame_display(NSMakeRect(0, 0, 440, 70), false);
+        UIBar.setFrame_display(NSMakeRect(0, 0, measureWindowWidth, measureWindowHeight), false);
         UIBar.setMovableByWindowBackground(true);
         UIBar.setHasShadow(true);
         UIBar.setLevel(NSFloatingWindowLevel);
-
         var contentView = UIBar.contentView()
 
-        var closeButton = ToolbarInventory.addButton(NSMakeRect(418, 48, 12, 12), "close",
+
+        var measureRoundButtonsSide = 10
+        var measureRoundButtons = 6
+        var measureRoundButtonsBottom = measureWindowHeight - measureRoundButtons * 3
+
+
+        var closeButton = ToolbarInventory.addButton(NSMakeRect(measureRoundButtonsSide, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "close",
             function(sender){
                 coscript.setShouldKeepAround(false);
                 threadDictionary.removeObjectForKey(identifier);
@@ -83,38 +91,46 @@ ToolbarInventory.createUIBar = function() {
             }
         )
 
-        var topGuideB = ToolbarInventory.addButton( NSMakeRect(10, 6, 26, 26), "simulate",
-            function(sender){
-                ToolbarInventory.updateContext();
-                runSimulateKeynote()
-        })
-        var rightGuideB = ToolbarInventory.addButton( NSMakeRect(68, 6, 26, 26), "generate",
-            function(sender){
-                ToolbarInventory.updateContext();
-                runGenerateStates()
-        })
-        var bottomGuideB = ToolbarInventory.addButton( NSMakeRect(102, 6, 26,26), "replicate",
-            function(sender){
-                ToolbarInventory.updateContext();
-                runReplicateLayers()
-        })
-        var leftGuideB = ToolbarInventory.addButton( NSMakeRect(402, 48, 12, 12), "settings",
+
+        var settingsButton = ToolbarInventory.addButton( NSMakeRect(measureRoundButtonsSide + measureRoundButtons * 3, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "settings",
             function(sender){
                 ToolbarInventory.updateContext();
                 runSettings()
         })
-        var vCenterGuideB = ToolbarInventory.addButton( NSMakeRect(26, 48,12,12), "add",
+        var addButton = ToolbarInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 5, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "add",
             function(sender){
                 ToolbarInventory.updateContext();
                 FramerInventory.runSelectProjectFolder()
                 ToolbarInventory.updatePathLabel()
         })
-        var hCenterGuideB = ToolbarInventory.addButton( NSMakeRect(10, 48,12,12), "remove",
+        var removeButton = ToolbarInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 8, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "remove",
             function(sender){
                 ToolbarInventory.updateContext();
                 FramerInventory.runRemoveProjectFolder()
                 ToolbarInventory.updatePathLabel()
         })
+
+        // Action Icons
+        var measureIcons = 16
+
+        var layersButton = ToolbarInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "simulate",
+            function(sender){
+                ToolbarInventory.updateContext();
+                runSimulateKeynote()
+        })
+        var statesButton = ToolbarInventory.addButton( NSMakeRect(measureIcons*4 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "generate",
+            function(sender){
+                ToolbarInventory.updateContext();
+                runGenerateStates()
+        })
+        var sceneButton = ToolbarInventory.addButton( NSMakeRect(measureIcons - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "replicate",
+            function(sender){
+                ToolbarInventory.updateContext();
+                runReplicateLayers()
+        })
+
+
+
 
         // var relativeButtonType = (userDefaults.myRelativeGroup == 0) ? "relative/artboard" : "relative/group"
         // topBottomGuides = ToolbarInventory.addButton( NSMakeRect(226, 6, 58, 26), relativeButtonType,
@@ -135,7 +151,7 @@ ToolbarInventory.createUIBar = function() {
         // NSShadowlessSquareBezelStyle
         var accessoryFontSize = 10
 
-        var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64-80, 6, 80, 28))
+        var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64-80, 16, 80, 28))
         [[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
         // [relativeAccessory setBordered:false];
         // [[relativeAccessory cell] setArrowPosition:NSPopUpNoArrow];
@@ -150,7 +166,7 @@ ToolbarInventory.createUIBar = function() {
             log(userDefaults.myRelativeGroup)
       	})
 
-        var densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64, 6, 64, 28))
+        var densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64, 16, 64, 28))
         [[densityAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
         // [densityAccessory setBordered:false];
         // [[densityAccessory cell] setArrowPosition:NSPopUpNoArrow];
@@ -166,7 +182,7 @@ ToolbarInventory.createUIBar = function() {
       	})
 
 
-        var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340, 6, 90, 28))
+        var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340, 16, 90, 28))
         [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
         // [deviceAccessory setBordered:false];
         // [[deviceAccessory cell] setArrowPosition:NSPopUpNoArrow];
@@ -191,41 +207,40 @@ ToolbarInventory.createUIBar = function() {
         // var separate2 = ToolbarInventory.addImage( NSMakeRect(300, 10, 10, 30), "separate")
         // var separate3 = ToolbarInventory.addImage( NSMakeRect(430, 10, 10, 30), "separate")
         // var separate4 = ToolbarInventory.addImage( NSMakeRect(560, 10, 10, 30), "separate")
-        var breaker = ToolbarInventory.addImage( NSMakeRect(10, 38, 420, 2), "breaker")
+        // var breaker = ToolbarInventory.addImage( NSMakeRect(10, 38, 420, 2), "breaker")
 
-        pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(46, 47, 400, 20)];
+        var textsView = ToolbarInventory.addImage(NSMakeRect(0, 0, measureWindowWidth, measureIcons), "texts")
+
+        pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 48, measureWindowWidth, 20)];
         [pathLabel setEditable:false];
         [pathLabel setBordered:false];
+        [pathLabel setAlignment:NSCenterTextAlignment]
         // [pathLabel setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
         [pathLabel setFont:[NSFont fontWithName:@"System" size:12]];
         [pathLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
         [pathLabel setDrawsBackground:false];
 
         [pathLabel setStringValue:defaultPathLabel];
-        [pathLabel sizeToFit];
+        // [pathLabel sizeToFit];
 
         // ToolbarInventory.updatePathLabel();
 
-        contentView.addSubview(breaker);
+        // contentView.addSubview(breaker);
+        contentView.addSubview(textsView);
+        contentView.addSubview(pathLabel);
 
-        contentView.addSubview(topGuideB);
-        contentView.addSubview(rightGuideB);
-        contentView.addSubview(bottomGuideB);
+        contentView.addSubview(layersButton);
+        contentView.addSubview(statesButton);
+        contentView.addSubview(sceneButton);
 
-        // contentView.addSubview(separate2);
-        contentView.addSubview(vCenterGuideB);
-        contentView.addSubview(hCenterGuideB);
-        // contentView.addSubview(separate3);
-        // contentView.addSubview(topBottomGuides);
-        // contentView.addSubview(rightLeftGuides);
-        // contentView.addSubview(separate4);
         contentView.addSubview(deviceAccessory);
         contentView.addSubview(densityAccessory);
         contentView.addSubview(relativeAccessory);
 
-        contentView.addSubview(pathLabel);
-        contentView.addSubview(leftGuideB);
+        contentView.addSubview(settingsButton);
         contentView.addSubview(closeButton);
+        contentView.addSubview(addButton);
+        contentView.addSubview(removeButton);
 
         threadDictionary[identifier] = UIBar;
         UIBar.center();
