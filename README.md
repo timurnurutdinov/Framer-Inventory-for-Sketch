@@ -1,8 +1,8 @@
 # Framer Inventory 2.2 for Sketch
 ### Landing page with video: http://timurnurutdinov.github.io/framerinventory/
 
-##<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2.1">Download for Sketch 3.9</a>
-#### Beta version for v41: https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/tree/relative-properties
+##<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2.1">Download for Sketch 3.9 & 4.0</a>
+#### Ping me (@tilllur) in Twitter for beta version for Sketch v41. 
 
 <a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2">Download for Sketch 3.8</a>
 
