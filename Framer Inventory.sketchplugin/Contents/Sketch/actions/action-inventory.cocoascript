@@ -21,7 +21,7 @@ var presets = {
 	myMobile: 1,
 	myMinimalExport: 1,
 	myAutoplay: 0,
-	myExportPath: "",
+	exportFramerFolder: "",
 	myRelativeGroup: 0,
 	myCodeStyleClassic: 1,
 	myUserID:  [[NSUUID UUID] UUIDString] + ""
@@ -122,7 +122,7 @@ FramerInventory.deselectLayers = function() {
 }
 
 FramerInventory.exportLayersFromExportPage = function(oldPage) {
-		if (userDefaults.myExportPath == "") { return }
+		if (userDefaults.exportFramerFolder == "") { return }
 		var framerInvetoryPage = FramerInventory.addExportPageAndReturn(oldPage)
 		currentDocument.setCurrentPage(framerInvetoryPage);
 
@@ -140,9 +140,9 @@ FramerInventory.exportLayersFromExportPage = function(oldPage) {
 		    request.configureForLayer(ancestry)
 
 
-				var dirtyPath = [currentLayer name]
-				var fileName = "/" + GenerateInventory.removePath(dirtyPath) + ".png"
-				var imageExportPath = userDefaults.myExportPath + fileName
+				var projectPath = [currentLayer name]
+				var fileName = "/" + GenerateInventory.removePath(projectPath) + ".png"
+				var imageExportPath = userDefaults.exportFramerFolder + "/images" + fileName
 				[currentDocument saveArtboardOrSlice:request toFile:imageExportPath]
 		}
 		currentDocument.setCurrentPage(oldPage);
@@ -229,20 +229,35 @@ FramerInventory.cleanLayer = function(layer, page) {
 	return
 }
 
+
+FramerInventory.cleanExportFolderPath = function(rawPath) {
+	var pathComps = rawPath.split("/");
+	var lastPart = pathComps.pop();
+	if (lastPart == "images") {
+			var realFolderPath = ""
+			for (var i = 0; i < pathComps.length; i++) {
+					if (pathComps[i] != "") { realFolderPath += ("/" + pathComps[i]) }
+			}
+			return realFolderPath
+	}
+	return rawPath
+}
+
 FramerInventory.getExportPath = function() {
-    // var filePath = userDefaults.myExportPath
+    // var filePath = userDefaults.exportFramerFolder
     // var fileName = currentDocument.displayName().stringByDeletingPathExtension();
     var openPanel = NSOpenPanel.openPanel();
 
     openPanel.setTitle("Select Images Folder");
     openPanel.setPrompt("Select Folder");
-    openPanel.setCanCreateDirectories(true);
+    openPanel.setCanCreateDirectories(false);
     openPanel.setCanChooseDirectories(true);
+		openPanel.setCanChooseFiles(false);
     openPanel.setNameFieldStringValue("");
 
     if (openPanel.runModal() != NSOKButton) { return false; }
 
-    userDefaults.myExportPath = openPanel.URL().path();
+    userDefaults.exportFramerFolder = FramerInventory.cleanExportFolderPath(openPanel.URL().path())
 		saveDefaults(userDefaults)
 		return true;
 }
@@ -393,14 +408,14 @@ FramerInventory.isExportPageRequired = function() {
 }
 
 FramerInventory.showDoneMessage = function() {
-	var message = "Done"
+	var message = "👍"
 
 	if (OrderInventory.getWarnings() != "") { message += ". Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
 
 	if (FramerInventory.isExportPageRequired()) {
-			if (userDefaults.myExportPath != "") {
+			if (userDefaults.exportFramerFolder != "") {
 				FramerInventory.exportLayersFromExportPage(FramerInventory.getCurrentPage())
-				message = "Done. Assets are exported to " + userDefaults.myExportPath
+				message = "👍"
 				FramerInventory.removePage(exportPageName)
 			}
 			else {
@@ -423,20 +438,20 @@ FramerInventory.showDoneMessage = function() {
 FramerInventory.runSelectProjectFolder = function() {
 		var isPathSelected = FramerInventory.getExportPath()
 
-		var message = userDefaults.myExportPath
+		var message = userDefaults.exportFramerFolder
 		if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
 		else if (!isPathSelected) { message = "Canceled. Export folder is not selected" }
-		else { message = "Done. Selected folder: " + message }
+		else { message = "👍🏻 Selected: " + message }
 
 		[currentDocument showMessage:message]
 }
 
 FramerInventory.runRemoveProjectFolder = function() {
-		if (userDefaults.myExportPath == "") {
-				[currentDocument showMessage:"No Export Folder selected"]
+		if (userDefaults.exportFramerFolder == "") {
+				[currentDocument showMessage:"🙈"]
 				return
 		}
-		userDefaults.myExportPath = ""
+		userDefaults.exportFramerFolder = ""
 		saveDefaults(userDefaults)
-		[currentDocument showMessage:"Done. No Export Folder selected"]
+		[currentDocument showMessage:"🙈"]
 }

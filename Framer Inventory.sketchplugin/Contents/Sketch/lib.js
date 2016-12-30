@@ -58,16 +58,14 @@ ToolbarInventory.addImage = function(rect, name) {
 
 ToolbarInventory.updatePathLabel = function() {
     if (UIBar != nil) {
-      if (userDefaults.myExportPath == "") {
+      if (userDefaults.exportFramerFolder == "") {
         UIBar.setContentView(ToolbarInventory.createEmptyContentView())
       }
       else {
         UIBar.setContentView(ToolbarInventory.createGeneralContentView())
 
         if (pathLabel != nil) {
-          var pathComps = userDefaults.myExportPath.split("/");
-          pathComps.pop();
-          log("RE ->>>>>>>")
+          var pathComps = userDefaults.exportFramerFolder.split("/");
           var localLabel = pathComps.pop()
           [pathLabel setStringValue:localLabel];
         }
@@ -288,7 +286,7 @@ ToolbarInventory.createUIBar = function() {
         // contentView.addSubview(pathLabel);
 
         // var views = []
-        if (userDefaults.myExportPath == "") {
+        if (userDefaults.exportFramerFolder == "") {
           UIBar.setContentView(ToolbarInventory.createEmptyContentView())
         }
         else { UIBar.setContentView(ToolbarInventory.createGeneralContentView()) }
