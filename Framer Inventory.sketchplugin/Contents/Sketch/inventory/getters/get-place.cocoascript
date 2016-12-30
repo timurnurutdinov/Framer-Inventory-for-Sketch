@@ -75,6 +75,8 @@ var normaliseRect = function(layer) {
 
 var getAbsolutePlaceRect = function(layer) {
 	if (layer == nil) { return nil }
+	if (TypeInventory.isPageType([layer className])) { return [0,0,0,0] }
+
 	var normalisedRect = normaliseRect(layer)
 	var values = [[[normalisedRect frame] width], [[normalisedRect frame] height], [[normalisedRect absoluteRect] x], [[normalisedRect absoluteRect] y]]
 
@@ -100,10 +102,7 @@ var getPlace = function(layer, isImage) {
 	var currentPage = currentDocument.currentPage()
 	var parentValues = nil
 
-	log("Get place")
-
 	if (userDefaults.myRelativeGroup == 1 && (currentCommandIdentifier == runGenerateStatesIdentifier || currentCommandIdentifier == runReplicateLayersIdentifier)) {
-		log("SHOLD ME REL==1")
 		parentValues = getAbsolutePlaceImage([layer parentGroup])
 	}
 	else { parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer)) }
