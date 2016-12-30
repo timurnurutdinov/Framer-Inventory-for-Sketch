@@ -19,7 +19,7 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 	FramerInventory.cleanExportPage()
 
 
-	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards([[doc currentPage] artboards])
+	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(FramerInventory.returnArtboardsScope())
 	if (duplicatedArtboard != nil) {
 		if (showLog) { log("Warning: duplicated artboards names are found") }
 		selectDuplicatedArtboards([duplicatedArtboard name])

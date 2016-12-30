@@ -121,6 +121,19 @@ FramerInventory.deselectLayers = function() {
 	[[currentDocument currentPage] deselectAllLayers]
 }
 
+FramerInventory.returnArtboardsScope = function() {
+		if (isSmartAction) {
+				var artboardsScope = NSMutableArray.new()
+				for(var i = 0; i < currentSelection.count(); i++) {
+						var currentLayer = [currentSelection objectAtIndex: i]
+						var currentArtboard = TypeInventory.findParentArtboard(currentLayer)
+						[artboardsScope addObject: currentArtboard]
+				}
+				return artboardsScope
+		}
+		return FramerInventory.getCurrentPage().artboards()
+}
+
 FramerInventory.exportLayersFromExportPage = function(oldPage) {
 		if (userDefaults.exportFramerFolder == "") { return }
 		var framerInvetoryPage = FramerInventory.addExportPageAndReturn(oldPage)
@@ -454,4 +467,15 @@ FramerInventory.runRemoveProjectFolder = function() {
 		userDefaults.exportFramerFolder = ""
 		saveDefaults(userDefaults)
 		[currentDocument showMessage:"🙈"]
+}
+
+
+FramerInventory.isSmartGenerateAction = function(localSelection) {
+		if (localSelection.count() < 2) { return false }
+		var localName = localSelection.firstObject().name()
+		for (var i = 1; i < localSelection.count(); i++) {
+				var currentLayerName = [[localSelection objectAtIndex: i] name]
+				if (![localName isEqualToString: currentLayerName]) { return false }
+		}
+		return true
 }

@@ -1,6 +1,6 @@
 
 // generate code for layers
-var runReplicateLayers = function(context) {
+var runReplicateLayers = function() {
 	currentCommandIdentifier = runReplicateLayersIdentifier
 	StatisticsInventory.sendReplicateRequest()
 
@@ -15,6 +15,12 @@ var runReplicateLayers = function(context) {
 	var currentPage = FramerInventory.getCurrentPage()
 	FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanExportPage()
+
+	if (FramerInventory.isSmartGenerateAction(selection)) {
+			isSmartAction = true
+			runGenerateStates()
+			return
+	}
 
 	var sortedSelection = OrderInventory.removeDuplicatedLayers(selection)
 	if (sortedSelection == nil || sortedSelection.count() < 1) {

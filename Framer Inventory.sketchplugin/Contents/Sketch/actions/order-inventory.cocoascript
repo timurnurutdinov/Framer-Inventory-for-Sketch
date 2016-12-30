@@ -15,17 +15,17 @@ function OrderInventory () {}
 OrderInventory.initSelection = function(selection) {
 	userSelection = selection
 	selectionMap = [,]
-	
+
 	artboardsIndexesArray = []
 	artboardsNamesArray = []
 	artboardsLayersArray = []
-	
+
 	OrderInventory.composeSelectionMap()
 }
 
 OrderInventory.removeArtboardsFromSelection = function(selection) {
 	var cleanSelection = NSMutableArray.new()
-	for (var i = 0; i < selection.count(); i++) { 
+	for (var i = 0; i < selection.count(); i++) {
 		var currentLayer = [selection objectAtIndex:i]
 		if (TypeInventory.isArtboardType([currentLayer className])) {
 			// skipped
@@ -61,11 +61,11 @@ OrderInventory.composeSelectionMap = function() {
 		var layer = [userSelection objectAtIndex:i]
 		var layerName = [layer name]
 		var type = [layer className]
-		
+
 		if (TypeInventory.isSliceType(type)) { continue }
 		if (TypeInventory.isArtboardType(type)) { continue }
-		
-		if (selectionMap[layerName] == nil || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) { 
+
+		if (selectionMap[layerName] == nil || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) {
 			if (layerName != nil && type != nil) { selectionMap[layerName] = type }
 			else { if(showLog) { log("ERROR: Nil key or value for " + layer) } }
 		}
@@ -116,7 +116,7 @@ OrderInventory.returnLayers = function(layer) {
 OrderInventory.isContainer = function(layer) {
 	if (layer == nil) { return false }
 	var type = [layer className]
-	
+
 	if (TypeInventory.isLayerGroup(type) || TypeInventory.isArtboardType(type)) { return true }
 	return false
 }
@@ -125,7 +125,7 @@ OrderInventory.isFound = function(layer) {
 	if (layer == nil || [layer className] == nil || [layer name] == nil) { return false }
 	var type = [layer className]
 	var layerName = [layer name]
-	
+
 	if (TypeInventory.isSliceType(type)) { return false }
 	if ([type isEqualToString:selectionMap[layerName]] || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) { return true }
 	return false
@@ -134,7 +134,7 @@ OrderInventory.isFound = function(layer) {
 OrderInventory.returnScope = function(layer) {
 	if (layer == nil) { return nil }
 
-	if (OrderInventory.isFound(layer)) { 
+	if (OrderInventory.isFound(layer)) {
 		var localOrder = NSMutableArray.new()
 		[localOrder addObject:layer]
 		return localOrder
@@ -147,11 +147,11 @@ OrderInventory.returnScope = function(layer) {
 			for (var i = 0; i < layers.count(); i++) {
 				var currentChild = [layers objectAtIndex:i]
 				var localScope = OrderInventory.returnScope(currentChild)
-				
+
 				if (localScope != nil && localScope.count() > 0) {
 					[localOrder addObjectsFromArray:localScope]
 				}
-				
+
 			}
 
 			if (localOrder == nil || localOrder.count() == 0) { return nil }
@@ -174,7 +174,7 @@ OrderInventory.returnArtboardOrder = function(artboard) {
 OrderInventory.returnLayerMapFromArray = function(array) {
 	var map = [,]
 	if (array == nil) { return map }
-	
+
 	for (var i = 0; i < array.count(); i++) {
 		var layerName = [[array objectAtIndex:i] name]
 		if (layerName != nil) {
@@ -187,7 +187,7 @@ OrderInventory.returnLayerMapFromArray = function(array) {
 OrderInventory.returnIndexMapFromArray = function(array) {
 	var map = [,]
 	if (array == nil) { return map }
-	
+
 	for (var i = 0; i < array.count(); i++) {
 		var layerName = [[array objectAtIndex:i] name]
 		if (layerName != nil) {
@@ -198,9 +198,10 @@ OrderInventory.returnIndexMapFromArray = function(array) {
 }
 
 OrderInventory.returnUnorderedLayers = function() {
-	var artboards = FramerInventory.getCurrentPage().artboards()
+	// var artboards = FramerInventory.getCurrentPage().artboards()
+	var artboards = FramerInventory.returnArtboardsScope()
 	var globalOrder = NSMutableArray.new()
-	
+
 	for (var i = 0; i < artboards.count(); i++) {
 		var artboard = [artboards objectAtIndex:i]
 
@@ -211,10 +212,10 @@ OrderInventory.returnUnorderedLayers = function() {
 		artboardsIndexesArray.push(localIndexMap)
 		artboardsLayersArray.push(localLayerMap)
 		artboardsNamesArray.push([artboard name])
-		
+
 		[globalOrder addObjectsFromArray:localOrder]
 	}
-	
+
 	return OrderInventory.removeDuplicatedLayers(globalOrder)
 }
 
@@ -227,7 +228,7 @@ OrderInventory.currentPosition = function(a, b) {
 
 OrderInventory.analyseAveragePosition = function(baseLayer, currentLayer) {
 	var localScore = 0
-	
+
 	for (var i = 0; i < artboardsIndexesArray.length; i++) {
 		var currentMap = artboardsIndexesArray[i]
 
@@ -235,22 +236,22 @@ OrderInventory.analyseAveragePosition = function(baseLayer, currentLayer) {
 		var currentLayerPosition = currentMap[[currentLayer name]]
 		localScore += OrderInventory.currentPosition(baseLayerPosition, currentLayerPosition)
 	}
-	
+
 	return localScore
 }
 
 OrderInventory.analyseOrder = function(unorderedArray) {
 	var orderedArray = NSMutableArray.new()
 	var prevLayer = nil
-	
+
 	if (unorderedArray != nil && unorderedArray.count() > 0) {
 		[orderedArray addObject:[unorderedArray firstObject]]
 	}
-	
+
 	for (var i = 1; i < unorderedArray.count(); i++) {
 		var currentLayer = [unorderedArray objectAtIndex:i]
 		var unknownRelationPosition = -1
-		
+
 		if (orderedArray.count() == 0) { break }
 		for (var j = orderedArray.count() - 1; j >= 0; j--) {
 			var existingLayer = [orderedArray objectAtIndex:j]
@@ -258,7 +259,7 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 
 			if (score < 0) {
 				unknownRelationPosition = -1
-				
+
 				// added on existing layer
 				[orderedArray insertObject:currentLayer atIndex:j+1]
 				break;
@@ -269,24 +270,20 @@ OrderInventory.analyseOrder = function(unorderedArray) {
 			}
 			else if (score > 0 && unknownRelationPosition != -1) {
 				unknownRelationPosition = -1
-				
+
 				// added under existing layer
 				[orderedArray insertObject:currentLayer atIndex:j]
 				break;
-			}		
+			}
 		}
-		
+
 		if (unknownRelationPosition != -1) {
 			// out of scope layer -> artboard should be skipped
 			log("ERROR: " + [currentLayer name] + " -> out of order detection")
 			// OrderInventory.presentOrder(orderedArray)
 			[orderedArray insertObject:currentLayer atIndex:0]
 		}
-	} 
-	
+	}
+
 	return orderedArray
 }
-
-
-
-

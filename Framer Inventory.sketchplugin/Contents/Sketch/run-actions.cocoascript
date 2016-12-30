@@ -20,6 +20,7 @@ var runShowBarIdentifier = 8
 var showLog = true
 var showTestLog = true
 var testing = true
+var isSmartAction = false
 
 var decomposeContext = function(context) {
 		log(context)
