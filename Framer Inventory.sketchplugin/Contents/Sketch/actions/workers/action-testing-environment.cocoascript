@@ -7,7 +7,9 @@ var environmentPagesNames = []
 var runTests = true
 var testingSelection = NSMutableArray.array()
 
-var runTestingEnvironment = function(context) {
+var runTestingEnvironment = function() {
+	duplicateCurrentDefaults()
+
 	var doc = currentDocument
 	var pages = [doc pages]
 	var runningPage = [doc currentPage]
@@ -38,12 +40,12 @@ var runTestingEnvironment = function(context) {
 			[[doc currentPage] deselectAllLayers]
 
 			testingSelection = [operatingPage exportableLayers]
-			answer = runGenerateStates(context, runTests)
+			answer = runGenerateStates()
 			answers.push(answer)
 
 		}
 		else {
-			// if (showTestLog) { log("Operation page is null") }
+			if (showTestLog) { log("Can't find " + pageName) }
 			skippedPagesNames++
 		}
 	}
@@ -67,6 +69,7 @@ var runTestingEnvironment = function(context) {
 		if (diff != nil) {
 			resultingString += diff
 			errorAnswers.push(i)
+			writeFailedTest(answers[i], i)
 		}
 		else { resultingString += "Passed" }
 		resultingString += "\n\n"
@@ -84,6 +87,7 @@ var runTestingEnvironment = function(context) {
 
 	doc.setCurrentPage(runningPage)
 	writeTestingLog(resultingString)
+	restoreCurrentDefaults()
 }
 
 
@@ -227,4 +231,23 @@ var generatePairs = function() {
 	*/
 
 	return pairs
+}
+
+
+var duplicateCurrentDefaults = function() {
+		if (isTestingEnvironment) {
+			writeUserDefaults(userDefaults)
+			preTestingDefaults = userDefaults
+
+			var testingDefaults = userDefaults
+			testingDefaults.myRetinaEnabled = 1
+			testingDefaults.myRetinaString = "retina"
+			testingDefaults.myRelativeGroup = 0
+			testingDefaults.myCodeStyleClassic = 1
+			saveDefaults(testingDefaults)
+		}
+}
+
+var restoreCurrentDefaults = function() {
+	 if (isTestingEnvironment) { saveDefaults(preTestingDefaults) }
 }

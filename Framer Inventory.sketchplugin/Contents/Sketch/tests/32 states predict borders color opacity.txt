@@ -1,9 +1,8 @@
 nice = new Layer width: 240*retina, height: 240*retina, x: 68*retina, y: 94*retina, backgroundColor: "rgba(74,144,226,1)"
 
-nice.states.add {
-	position_a: { borderWidth: 10*retina, borderColor: "rgba(126,211,33,1)"}
-	position_b: { borderWidth: 0*retina, borderColor: "rgba(126,211,33,0.5)"}
-	position_c: { borderWidth: 10*retina, borderColor: "rgba(126,211,33,0.5)"}
-}
-nice.states.switchInstant "position_a"
+nice.states =
+	"position_a": { borderWidth: 10*retina, borderColor: "rgba(126,211,33,1)" }
+	"position_b": { borderWidth: 0*retina, borderColor: "rgba(126,211,33,0.5)" }
+	"position_c": { borderWidth: 10*retina, borderColor: "rgba(126,211,33,0.5)" }
 
+nice.stateSwitch("position_a")

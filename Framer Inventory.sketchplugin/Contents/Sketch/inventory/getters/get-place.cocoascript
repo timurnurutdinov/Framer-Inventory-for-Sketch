@@ -21,8 +21,11 @@ function getPosition(layer, type, isStillExportable) {
 
 
 
-var normaliseImage = function(layer) {
+var normaliseLayer = function(layer) {
 	var currentPage = currentDocument.currentPage()
+
+  var existingRotation = [layer rotation]
+  [layer setRotation: 0]
 
 	var layer_copy = [layer duplicate]
 	[layer_copy removeFromParent]
@@ -33,16 +36,17 @@ var normaliseImage = function(layer) {
 	[frame setY: [[layer absoluteRect] y]]
 
 	[layer_copy setRotation: 0]
-	if ([[[layer_copy style] contextSettings] opacity] == 0) { [[[layer_copy style] contextSettings] setOpacity:(1.0)] }
-	if (![layer_copy isVisible]) { [layer_copy setIsVisible:true] }
+	[[[layer_copy style] contextSettings] setOpacity:(1.0)]
+	[layer_copy setIsVisible:true]
 
+  [layer setRotation: existingRotation]
 	return layer_copy
 }
 
 
 var getAbsolutePlaceImage = function(layer) {
 	if (layer == nil) { return [100, 100, 0, 0] }
-	var normalisedLayer = normaliseImage(layer)
+	var normalisedLayer = normaliseLayer(layer)
 	var temp = MSSliceTrimming.trimmedRectForLayerAncestry(MSImmutableLayerAncestry.ancestryWithMSLayer(normalisedLayer))
 	var values = [temp.size.width, temp.size.height, temp.origin.x, temp.origin.y]
 
@@ -53,31 +57,31 @@ var getAbsolutePlaceImage = function(layer) {
 
 
 
-var normaliseRect = function(layer) {
-	var currentPage = currentDocument.currentPage()
-
-	var layer_copy = [layer duplicate]
-	[layer_copy removeFromParent]
-	[currentPage addLayers: [layer_copy]]
-
-	var frame = [layer_copy frame]
-	[frame setX: [[layer absoluteRect] x]]
-	[frame setY: [[layer absoluteRect] y]]
-
-	[layer_copy setRotation: 0]
-	if (![layer_copy isVisible]) {
-		[layer_copy setIsVisible:true]
-		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
-	}
-
-	return layer_copy
-}
+// var normaliseRect = function(layer) {
+// 	var currentPage = currentDocument.currentPage()
+//
+// 	var layer_copy = [layer duplicate]
+// 	[layer_copy removeFromParent]
+// 	[currentPage addLayers: [layer_copy]]
+//
+// 	var frame = [layer_copy frame]
+// 	[frame setX: [[layer absoluteRect] x]]
+// 	[frame setY: [[layer absoluteRect] y]]
+//
+// 	[layer_copy setRotation: 0]
+// 	if (![layer_copy isVisible]) {
+// 		[layer_copy setIsVisible:true]
+// 		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
+// 	}
+//
+// 	return layer_copy
+// }
 
 var getAbsolutePlaceRect = function(layer) {
 	if (layer == nil) { return nil }
 	if (TypeInventory.isPageType([layer className])) { return [0,0,0,0] }
 
-	var normalisedRect = normaliseRect(layer)
+	var normalisedRect = normaliseLayer(layer)
 	var values = [[[normalisedRect frame] width], [[normalisedRect frame] height], [[normalisedRect absoluteRect] x], [[normalisedRect absoluteRect] y]]
 
 	[normalisedRect removeFromParent]

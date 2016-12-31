@@ -1,11 +1,21 @@
 selection_1 = new Layer width: 60*retina, height: 60*retina, x: 20*retina, y: 20*retina, backgroundColor: "rgba(144,19,254,1)", borderWidth: 1*retina, borderColor: "rgba(255,255,255,1)"
+
 selection_2 = new Layer width: 60*retina, height: 60*retina, x: 100*retina, y: 20*retina, image: "images/selection 2.png"
+
 selection_3 = new Layer width: 60*retina, height: 60*retina, x: 180*retina, y: 20*retina, image: "images/selection 3.png"
+
 selection_4 = new Layer width: 62*retina, height: 62*retina, x: 19*retina, y: 119*retina, image: "images/selection 4.png"
+
 selection_5 = new Layer width: 62*retina, height: 62*retina, x: 99*retina, y: 119*retina, image: "images/selection 5.png"
+
 selection_6 = new Layer width: 60*retina, height: 60*retina, x: 180*retina, y: 120*retina, image: "images/selection 6.png"
+
 selection_7 = new Layer width: 60*retina, height: 60*retina, x: 20*retina, y: 220*retina, backgroundColor: "rgba(255,255,255,1)", shadowY: 20*retina, shadowBlur: 10*retina, shadowSpread: 1*retina, shadowColor: "rgba(208,2,27,1)"
+
 selection_8 = new Layer width: 84*retina, height: 88*retina, x: 86*retina, y: 206*retina, image: "images/selection 8.png"
+
 selection_9 = new Layer width: 60*retina, height: 60*retina, x: 20*retina, y: 320*retina, image: "images/selection 9.png"
+
 oval_1 = new Layer width: 60*retina, height: 60*retina, x: 20*retina, y: 420*retina, borderRadius: 30*retina, backgroundColor: "rgba(144,19,254,1)", borderWidth: 1*retina, borderColor: "rgba(255,255,255,1)"
+
 oval_2 = new Layer width: 60*retina, height: 60*retina, x: 100*retina, y: 420*retina, borderRadius: "100%", backgroundColor: "rgba(144,19,254,1)", borderWidth: 1*retina, borderColor: "rgba(255,255,255,1)"

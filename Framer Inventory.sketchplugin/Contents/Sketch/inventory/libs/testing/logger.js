@@ -27,7 +27,15 @@ var writeTestingLog = function(outputString) {
 	if (showLog) { log("Have written to: " + folderName + "/testsResults.txt") }
 }
 
+var writeUserDefaults = function(outputString) {
+	var folderName = createTempFolderNamed(homeDirectory)
+	writeTextToFile(outputString, folderName + "/userDefaults.txt")
+}
 
+var writeFailedTest = function(outputString, number) {
+	var folderName = createTempFolderNamed(homeDirectory + "/failed")
+	writeTextToFile(outputString, folderName + "/test" + (++number) + ".txt")
+}
 
 
 

@@ -13,13 +13,19 @@ var runGenerateStatesIdentifier = 1
 var runSimulateKeynoteIdentifier = 2
 var runSettingsIdentifier = 3
 var runRemoveExportPageIdentifier = 4
+// no 5
 var runSelectProjectFolderIdentifier = 6
 var runRemoveProjectFolderIdentifier = 7
 var runShowBarIdentifier = 8
 
+var runTestingEnvironmentIdentifier = -2
+var isTestingEnvironment = false
+var preTestingDefaults = {}
+
 var showLog = true
 var showTestLog = true
-var testing = true
+var sendLog = true
+
 var isSmartAction = false
 
 var decomposeContext = function(context) {
@@ -34,49 +40,49 @@ var decomposeContext = function(context) {
 var onReplicateLayersRun = function(context) {
 	if (showLog) { log("Running Replace Layers") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runReplicateLayersIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runReplicateLayersIdentifier)
 }
 
 var onGenerateStatesRun = function(context) {
 	if (showLog) { log("Running Replicate States") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runGenerateStatesIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runGenerateStatesIdentifier)
 }
 
 var onSimulateKeynoteRun = function(context) {
 	if (showLog) { log("Running Simulate Keynote") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runSimulateKeynoteIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runSimulateKeynoteIdentifier)
 }
 
 var onSettingRun = function(context) {
 	if (showLog) { log("Running Settings") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runSettingsIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runSettingsIdentifier)
 }
 
 var onRemoveExportPageRun = function(context) {
 	if (showLog) { log("Running Remove Export Page...") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runRemoveExportPageIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runRemoveExportPageIdentifier)
 }
 
 var onShowBarRun = function(context) {
 	if (showLog) { log("Showing Bar") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runShowBarIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runShowBarIdentifier)
 }
 
 var onSelectProjectFolderRun = function(context) {
 	if (showLog) { log("Running Select Project Folder...") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runSelectProjectFolderIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runSelectProjectFolderIdentifier)
 }
 
 var onRemoveProjectFolderRun = function(context) {
 	if (showLog) { log("Running Remove Project Folder...") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runRemoveProjectFolderIdentifier, !testing)
+	chooseAction(currentDocument, currentSelection, runRemoveProjectFolderIdentifier)
 }
 
 //
@@ -87,7 +93,9 @@ var onRemoveProjectFolderRun = function(context) {
 // var testing = true
 //
 var onTestingRun = function(context) {
-	// ??????
 	if (showLog) { log("Running Testing Environment") }
-	chooseAction(context, runGenerateStatesIdentifier, testing)
+	isTestingEnvironment = true
+	sendLog = false
+	decomposeContext(context)
+	chooseAction(currentDocument, currentSelection, runTestingEnvironmentIdentifier)
 }

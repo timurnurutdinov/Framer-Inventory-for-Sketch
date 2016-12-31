@@ -1,6 +1,6 @@
 
 // gererate code for layers and their states
-var runGenerateStates = function(context, isTestingEnvironment) {
+var runGenerateStates = function() {
 	currentCommandIdentifier = runGenerateStatesIdentifier
 	StatisticsInventory.sendGenerateRequest()
 
@@ -9,7 +9,7 @@ var runGenerateStates = function(context, isTestingEnvironment) {
 
 	[[NSPasteboard generalPasteboard] clearContents]
 
-	if (isTestingEnvironment != nil && isTestingEnvironment) { selection = TestingEnvironment.getTestingSelection() }
+	if (isTestingEnvironment) { selection = TestingEnvironment.getTestingSelection() }
 
 	var layers = []
 	var pasteboardContent = ""
