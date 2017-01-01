@@ -70,6 +70,13 @@
       "shortcut" : "",
       "name" : "Remove Export Path",
       "identifier" : "choose-remove-export-path"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onCheckUpdatesRun",
+      "shortcut" : "",
+      "name" : "Check for Updates",
+      "identifier" : "choose-check-updates"
     }
   ],
   "menu": {
@@ -93,6 +100,7 @@
                      ],
                    },
 					          "choose-remove-export-page",
+                    "choose-check-updates",
                     "choose-testing-environment"
 		          ],
 		  }

@@ -8,7 +8,8 @@
 
 @import 'actions/workers/action-testing-environment.cocoascript'
 @import 'actions/workers/action-settings.cocoascript'
-@import 'actions/workers/action-select-device.cocoascript'
+@import 'actions/workers/action-check-updates.cocoascript'
+// @import 'actions/workers/action-select-device.cocoascript'
 
 @import 'inventory/classes/layer.cocoascript'
 @import 'inventory/libs/pluginDefaults.js'
@@ -45,48 +46,17 @@ var chooseAction = function(localDocument, localSelection, actionIdentifier) {
 	currentCommandIdentifier = actionIdentifier
 	methodStartTime = [NSDate date]
 
-	// FramerInventory.initCurrentDocument(localDocument)
-	// FramerInventory.initCurrentSelection(localSelection)
-
-
-	if (actionIdentifier == 0) {
-		if (showLog) { log("Starting Replicating Layers...") }
-		runReplicateLayers()
-	}
-	else if (actionIdentifier == 1) {
-		if (showLog) { log("Starting Analysing States...") }
-		runGenerateStates()
-	}
-	else if (actionIdentifier == 2) {
-		if (showLog) { log("Starting Simulating Keynote...") }
-		runSimulateKeynote()
-	}
-	else if (actionIdentifier == 3) {
-		if (showLog) { log("Starting Settings...") }
-		runSettings()
-	}
-	else if (actionIdentifier == 4) {
-		FramerInventory.showDoneMessage()
-	}
-
-	else if (actionIdentifier == 6) {
-		if (showLog) { log("Select Export Folder...") }
-		FramerInventory.runSelectProjectFolder()
-	}
-	else if (actionIdentifier == 7) {
-			if (showLog) { log("Removing path to folder") }
-			FramerInventory.runRemoveProjectFolder()
-	}
-	else if (actionIdentifier == 8) {
-		runShowBar()
-	}
-	else if (actionIdentifier == runTestingEnvironmentIdentifier) {
-		if (showLog) { log("Starting Testing Environment...") }
-		runTestingEnvironment()
-	}
-	else {
-		if (showLog) { log("ERROR: Action is undetermined") }
-	}
+	if (actionIdentifier == 0) { runReplicateLayers() }
+	else if (actionIdentifier == 1) { runGenerateStates() }
+	else if (actionIdentifier == 2) { runSimulateKeynote() }
+	else if (actionIdentifier == 3) { runSettings() }
+	else if (actionIdentifier == 4) { FramerInventory.showDoneMessage() }
+	else if (actionIdentifier == 6) { FramerInventory.runSelectProjectFolder() }
+	else if (actionIdentifier == 7) { FramerInventory.runRemoveProjectFolder() }
+	else if (actionIdentifier == 8) { runShowBar() }
+	else if (actionIdentifier == runCheckUpdatesIdentifier) { runCheckUpdates()	}
+	else if (actionIdentifier == runTestingEnvironmentIdentifier) { runTestingEnvironment() }
+	else if (showLog) { log("ERROR: Action is undetermined") }
 }
 
 

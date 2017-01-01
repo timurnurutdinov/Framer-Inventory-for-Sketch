@@ -3,6 +3,7 @@
 var methodStartTime = nil
 
 var pluginPath = ""
+var pluginVersion = ""
 var currentDocument = nil
 var currentSelection = nil
 
@@ -17,6 +18,7 @@ var runRemoveExportPageIdentifier = 4
 var runSelectProjectFolderIdentifier = 6
 var runRemoveProjectFolderIdentifier = 7
 var runShowBarIdentifier = 8
+var runCheckUpdatesIdentifier = 9
 
 var runTestingEnvironmentIdentifier = -2
 var isTestingEnvironment = false
@@ -29,10 +31,9 @@ var sendLog = true
 var isSmartAction = false
 
 var decomposeContext = function(context) {
-		log(context)
-		if (showLog) { log("Current document is initialised") }
+		pluginVersion = context.plugin.version()
 		pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
-		if (showLog) { log(pluginPath) }
+
 		currentDocument = context.document
 		currentSelection = context.document.selectedLayers()
 }
@@ -85,13 +86,12 @@ var onRemoveProjectFolderRun = function(context) {
 	chooseAction(currentDocument, currentSelection, runRemoveProjectFolderIdentifier)
 }
 
-//
-// var runGenerateStatesIdentifier = 3
-// var currentCommandIdentifier = runGenerateStatesIdentifier
-// var showLog = true
-// var showTestLog = true
-// var testing = true
-//
+var onCheckUpdatesRun = function(context) {
+		if (showLog) { log("Running Updates Checker") }
+		decomposeContext(context)
+		chooseAction(currentDocument, currentSelection, runCheckUpdatesIdentifier)
+}
+
 var onTestingRun = function(context) {
 	if (showLog) { log("Running Testing Environment") }
 	isTestingEnvironment = true
