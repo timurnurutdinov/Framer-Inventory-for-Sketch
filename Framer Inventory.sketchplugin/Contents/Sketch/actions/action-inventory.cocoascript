@@ -417,7 +417,7 @@ FramerInventory.runSelectProjectFolder = function() {
 		var message = userDefaults.exportFramerFolder
 		if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
 		else if (!isPathSelected) { message = "Canceled. Export folder is not selected" }
-		else { message = "👍🏻 Selected: " + message }
+		else { message = "👍🏻 Selected folder: " + message }
 
 		[currentDocument showMessage:message]
 }

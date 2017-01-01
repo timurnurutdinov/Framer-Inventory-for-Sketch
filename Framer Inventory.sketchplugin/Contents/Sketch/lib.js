@@ -23,7 +23,6 @@ ToolbarInventory.updateContext = function() {
       currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
       currentSelection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
     }
-    // return this.context;
 }
 
 
