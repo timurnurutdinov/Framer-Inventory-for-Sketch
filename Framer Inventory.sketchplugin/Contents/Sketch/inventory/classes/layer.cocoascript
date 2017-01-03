@@ -402,17 +402,15 @@ Layer.pasteLayer = function(layer) {
 }
 
 Layer.addExportOptions = function(layer) {
-	var scaleData = 1
-	// if (userDefaults.myRetinaEnabled == 0) { scaleData = userDefaults.myRetinaValue }
-	scaleData = userDefaults.myRetinaValue
-	if (FramerInventory.getPhoneValue() != 0) { scaleData = FramerInventory.getRetinaValue() }
+	if (scaleInstance == nil) { scaleInstance = new ScaleInventory() }
+	var scaleData = scaleInstance.returnScaleExport()
 
 	var exportSizes = [[layer exportOptions] exportFormats]
 	[[layer exportOptions] setExportFormats:[]];
 
 	var size = [[layer exportOptions] addExportFormat]
-    [size setScale:scaleData]
-    [size setName:""]
+  [size setScale:scaleData]
+  [size setName:""]
 }
 
 

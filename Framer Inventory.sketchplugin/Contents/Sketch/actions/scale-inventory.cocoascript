@@ -1,0 +1,60 @@
+
+function ScaleInventory () {
+		this.scale = ScaleInventory.returnScale()
+}
+
+
+
+ScaleInventory.prototype.returnScaleCode = function() {
+		if (this.scale == -1) { return 1 }
+		return this.scale
+}
+
+ScaleInventory.prototype.returnScaleExport = function() {
+		if (this.scale == -1) { return 2 }
+		return this.scale
+}
+
+
+
+
+ScaleInventory.returnMostPopularArtboardSize = function() {
+		return FramerInventory.returnArtboardsScope().firstObject().frame().width()
+}
+
+ScaleInventory.returnScale = function() {
+		var selectedDevice = userDefaults.myDevice
+		var originWidth = ScaleInventory.returnMostPopularArtboardSize()
+
+		if (selectedDevice == 0) { return 1 }
+		else if (selectedDevice == 1) { return 2 }
+		else if (selectedDevice == 2) {
+				if (originWidth == 320) { return 2 }
+				else if (originWidth == 320*2) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 3) {
+				if (originWidth == 375) { return 2 }
+				else if (originWidth == 375*2) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 4) {
+				if (originWidth == 414) { return 3 }
+				else if (originWidth == 414*3) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 5) {
+				if (originWidth == 360) { return 3 }
+				else if (originWidth == 360*3) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 6) {
+				if (originWidth == 360) { return 4 }
+				else if (originWidth == 360*2) { return 2 }
+				// else if (originWidth == 360*3) { return 4/3 }
+				else if (originWidth == 360*4) { return 1 }
+				else { return - 1 }
+		}
+
+		return -1
+}

@@ -8,6 +8,8 @@ var pluginVersion = ""
 var currentDocument = nil
 var currentSelection = nil
 
+
+
 var currentCommandIdentifier = -1
 
 var runReplicateLayersIdentifier = 0
@@ -24,6 +26,8 @@ var runCheckUpdatesIdentifier = 9
 var runTestingEnvironmentIdentifier = -2
 var isTestingEnvironment = false
 var preTestingDefaults = {}
+
+
 
 var showLog = true
 var showTestLog = true

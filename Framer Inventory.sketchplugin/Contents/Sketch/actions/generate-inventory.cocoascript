@@ -56,9 +56,8 @@ function niceValue(val, accuracy) {
 // value out -> vout :)
 function vout(val) {
 	if (userDefaults.myRetinaEnabled == 0) {
-		var currentMultiplier = userDefaults.myRetinaValue
-		if (FramerInventory.getPhoneValue() != 0) { currentMultiplier = FramerInventory.getRetinaValue() }
-		return (niceValue(val) * currentMultiplier) + ""
+    if (scaleInstance == nil) { scaleInstance = new ScaleInventory() }
+		return (niceValue(val) * scaleInstance.returnScaleCode()) + ""
 	}
 	else { return niceValue(val) + "*" + userDefaults.myRetinaString }
 }

@@ -1,5 +1,6 @@
 @import 'actions/order-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
+@import 'actions/scale-inventory.cocoascript'
 
 @import 'actions/workers/action-replicate-layers.cocoascript'
 @import 'actions/workers/action-show-bar.cocoascript'
@@ -43,6 +44,7 @@ var exportPageRequired = false
 var exportPageName = "Export for Framer Inventory"
 
 var contextUserSelection = NSArray.new()
+var scaleInstance = nil
 
 
 var chooseAction = function(localDocument, localSelection, actionIdentifier) {
@@ -254,10 +256,10 @@ FramerInventory.organiseSelection = function(userSelection) {
 	var page = FramerInventory.getCurrentPage()
 	var artboards = [page artboards]
 
-	if ([[page artboards] firstObject] != nil) {
-		var frame = [[[artboards firstObject] frame] size]
-		FramerInventory.analyseMobile(frame.width)
-	}
+	// if ([[page artboards] firstObject] != nil) {
+	// 	var frame = [[[artboards firstObject] frame] size]
+	// 	FramerInventory.analyseMobile(frame.width)
+	// }
 
 	OrderInventory.initSelection(userSelection)
 
@@ -338,40 +340,38 @@ FramerInventory.isUsed = function(artboardName) {
 
 
 FramerInventory.analyseMobile = function(artboardWidth) {
-	FramerInventory.setRetinaValue(artboardWidth)
-	FramerInventory.setPhoneValue(artboardWidth)
+	// FramerInventory.setRetinaValue(artboardWidth)
+	// FramerInventory.setPhoneValue(artboardWidth)
 }
 
-FramerInventory.setPhoneValue = function(artboardWidth) {
-	if (userDefaults.myMobile == 0 || artboardWidth == nil) { phoneModel = 0 }
-	else if (artboardWidth == 320 || artboardWidth == 640) { phoneModel = 1 }
-	else if (artboardWidth == 375 || artboardWidth == 750) { phoneModel = 2 }
-	else if (artboardWidth == 414 || artboardWidth == 1242) { phoneModel = 3 }
-	else { phoneModel = 0 }
-}
+// FramerInventory.setPhoneValue = function(artboardWidth) {
+// 	if (userDefaults.myMobile == 0 || artboardWidth == nil) { phoneModel = 0 }
+// 	else if (artboardWidth == 320 || artboardWidth == 640) { phoneModel = 1 }
+// 	else if (artboardWidth == 375 || artboardWidth == 750) { phoneModel = 2 }
+// 	else if (artboardWidth == 414 || artboardWidth == 1242) { phoneModel = 3 }
+// 	else { phoneModel = 0 }
+// }
 
-FramerInventory.getPhoneValue = function() {
-	return phoneModel
-}
+// FramerInventory.getPhoneValue = function() {
+// 	return phoneModel
+// }
 
-FramerInventory.setRetinaValue = function(artboardWidth) {
-	if (userDefaults.myMobile == 1) {
-		if (artboardWidth == 640 || artboardWidth == 750 || artboardWidth == 1242) { pixelDensity = 1 }
-		else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
-		else if (artboardWidth == 414) { pixelDensity = 3 }
-		else {
-			if (showLog) { log("Pixel density is undetermined") }
-			pixelDensity = pixelDensity = userDefaults.myRetinaValue
-		}
-	}
-	else { pixelDensity = userDefaults.myRetinaValue }
-}
+// FramerInventory.setRetinaValue = function(artboardWidth) {
+// 	if (userDefaults.myMobile == 1) {
+// 		if (artboardWidth == 640 || artboardWidth == 750 || artboardWidth == 1242) { pixelDensity = 1 }
+// 		else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
+// 		else if (artboardWidth == 414) { pixelDensity = 3 }
+// 		else {
+// 			if (showLog) { log("Pixel density is undetermined") }
+// 			pixelDensity = pixelDensity = userDefaults.myRetinaValue
+// 		}
+// 	}
+// 	else { pixelDensity = userDefaults.myRetinaValue }
+// }
 
-FramerInventory.getRetinaValue = function() {
-	return pixelDensity
-}
-
-
+// FramerInventory.getRetinaValue = function() {
+// 	return pixelDensity
+// }
 
 
 

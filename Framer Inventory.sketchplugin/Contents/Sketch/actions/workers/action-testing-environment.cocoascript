@@ -244,6 +244,8 @@ var duplicateCurrentDefaults = function() {
 			testingDefaults.myRetinaString = "retina"
 			testingDefaults.myRelativeGroup = 0
 			testingDefaults.myDetailedNotation = 0
+			testingDefaults.myDevice = 0
+			testingDefaults.myMinimalExport = 0
 			saveDefaults(testingDefaults)
 		}
 }
