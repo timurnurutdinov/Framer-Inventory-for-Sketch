@@ -123,11 +123,6 @@ Layer.prototype.describeState = function(currentState, imageRequired) {
 
 	stateDescription += GenerateInventory.generateOpacity(currentState.opacity)
 
-	// if (userDefaults.myCodeStyleClassic == 0) {
-	// 	stateDescription = stateDescription.replace(/\,/g, tln())
-	// }
-	// log(stateDescription)
-
 	return stateDescription
 }
 
@@ -1172,10 +1167,10 @@ var dln = function() { return ln() + ln() }
 var tln = function() { return "\t" }
 
 var br = function() {
-	if (userDefaults.myCodeStyleClassic == 0) { return ln() + tln() }
+	if (userDefaults.myDetailedNotation == 1) { return ln() + tln() }
 	else { return ", " }
 }
 var brf = function() {
-	if (userDefaults.myCodeStyleClassic == 0) { return tln() }
+	if (userDefaults.myDetailedNotation == 1) { return tln() }
 	else { return " " }
 }

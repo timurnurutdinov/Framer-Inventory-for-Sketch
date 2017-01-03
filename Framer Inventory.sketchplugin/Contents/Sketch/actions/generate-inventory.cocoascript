@@ -74,7 +74,6 @@ function GenerateInventory () {}
 
 GenerateInventory.returnLayerName = function(layerName) {
   var newLayerString = GenerateInventory.clearName(layerName) + " = new Layer"
-  // if (userDefaults.myCodeStyleClassic == 0) { return newLayerString }
 	return newLayerString
 }
 

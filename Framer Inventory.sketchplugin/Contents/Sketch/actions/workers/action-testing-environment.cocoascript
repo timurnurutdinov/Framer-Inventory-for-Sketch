@@ -243,7 +243,7 @@ var duplicateCurrentDefaults = function() {
 			testingDefaults.myRetinaEnabled = 1
 			testingDefaults.myRetinaString = "retina"
 			testingDefaults.myRelativeGroup = 0
-			testingDefaults.myCodeStyleClassic = 1
+			testingDefaults.myDetailedNotation = 0
 			saveDefaults(testingDefaults)
 		}
 }

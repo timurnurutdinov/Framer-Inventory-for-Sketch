@@ -24,7 +24,7 @@ var presets = {
 	myAutoplay: 0,
 	exportFramerFolder: "",
 	myRelativeGroup: 0,
-	myCodeStyleClassic: 1,
+	myDetailedNotation: 1,
 	myUserID:  [[NSUUID UUID] UUIDString] + ""
 }
 

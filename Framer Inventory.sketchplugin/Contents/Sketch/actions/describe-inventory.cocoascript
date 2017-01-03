@@ -17,7 +17,7 @@ DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 		correctBeginString = correctBeginString.replace(" {", "")
 		correctBeginString = correctBeginString.replace("}", "")
 
-		if (userDefaults.myCodeStyleClassic == 0)	{
+		if (userDefaults.myDetailedNotation == 1)	{
 			correctBeginString = correctBeginString.replace(/\t/g, tln() + tln())
 		}
 		else {

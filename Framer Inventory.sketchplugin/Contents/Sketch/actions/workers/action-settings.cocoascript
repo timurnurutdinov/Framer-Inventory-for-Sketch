@@ -22,59 +22,106 @@ var retinaValues = [0.5, 1, 1.5, 2, 3, 4]
 
 
 
+
+var measureSettingsHeight = 480
+var measureSettingsWidth = 300
+var measureSettingBlock = 16
+
+
+
 // configure plugin
 var runSettings = function() {
-	initConfigureValues()
+	// initConfigureValues()
 
 	var exportWindow = [[NSWindow alloc] init]
-	[exportWindow setFrame:NSMakeRect(0, 0, 275, 430) display:false];
-	[exportWindow setBackgroundColor:backgroundColor];
+	exportWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	exportWindow.setTitlebarAppearsTransparent(true);
+	exportWindow.setTitleVisibility(NSWindowTitleHidden);
+	exportWindow.setTitlebarAppearsTransparent(true);
+	exportWindow.setMovableByWindowBackground(true);
+	exportWindow.setHasShadow(true);
+	exportWindow.setLevel(NSFloatingWindowLevel);
+	[exportWindow setFrame:NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight) display:true];
 
 
-	createLogo(exportWindow)
-	createMobileCheckbox(exportWindow)
-	createTip(exportWindow)
-	var dimensionsType = createAutocodeDropdown(exportWindow)
-	var retinaValueField = createRetinaValueInput(exportWindow)
-	var retinaStringField = createRetinaStringInput(exportWindow)
+	var bgImage = ViewInventory.addImage(NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight), "settings/bg")
+	[[exportWindow contentView] addSubview:bgImage]
 
-	createMinimalExportCheckbox(exportWindow)
-	createAutoplayCheckbox(exportWindow)
+	var topImage = ViewInventory.addImage(NSMakeRect(0, 312, measureSettingsWidth, measureSettingsHeight-312), "settings/top")
+	[[exportWindow contentView] addSubview:topImage]
+
+	var firstLineViews = createFirstLine()
+	for (var i = 0; i < firstLineViews.length; i++) { [[exportWindow contentView] addSubview:firstLineViews[i]] }
+	var retinaInput = firstLineViews[0]
+
+	var secondLineViews = createSecondLine()
+	for (var i = 0; i < secondLineViews.length; i++) { [[exportWindow contentView] addSubview:secondLineViews[i]] }
+
+	var checkViews = createCheckViews()
+	for (var i = 0; i < checkViews.length; i++) { [[exportWindow contentView] addSubview:checkViews[i]] }
+
+	var versionView = createVersionView()
+	for (var i = 0; i < versionView.length; i++) { [[exportWindow contentView] addSubview:versionView[i]] }
+
+
+
+	// createLogo(exportWindow)
+	// createMobileCheckbox(exportWindow)
+	// createTip(exportWindow)
+	// var dimensionsType = createAutocodeDropdown(exportWindow)
+	// var retinaValueField = createRetinaValueInput(exportWindow)
+	// var retinaStringField = createRetinaStringInput(exportWindow)
+
+	// createAutoplayCheckbox(exportWindow)
 
 	createHelpButton(exportWindow)
 
 
 
-	var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft - 6, 0, 64, 50)];
-	[saveButton setTitle:"Save"];
+	var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock-4, 20, 72, 32)];
+	[saveButton setTitle:"Close"];
 	[saveButton setBezelStyle:NSRoundedBezelStyle];
 	[saveButton setKeyEquivalent:"\r"];
 	[saveButton setCOSJSTargetFunction:function(sender) {
 		[exportWindow orderOut:nil]
 		[NSApp stopModal]
 
-		configureRetinaEnabled = dimensionsType.indexOfSelectedItem()
-		configureRetinaValue = retinaValues[retinaValueField.indexOfSelectedItem()]
-		configureRetinaString = retinaStringField.stringValue()
-		saveSettings()
+		var newRetinaValue = retinaInput.stringValue() + ""
+		var trimmedRetinaValue = newRetinaValue.trim()
+		if (trimmedRetinaValue == "") {
+			[currentDocument showMessage:"Scale variable can't be empty. Back to \"" + userDefaults.myRetinaString + "\""]
+		}
+		else if (/^[a-zA-Z]+$/.test(trimmedRetinaValue)) {
+			userDefaults.myRetinaString = trimmedRetinaValue
+			saveDefaults(userDefaults)
+			[currentDocument showMessage:"👍🏻"]
+		}
+		else {
+			[currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""]
+		}
+
+		// configureRetinaEnabled = dimensionsType.indexOfSelectedItem()
+		// configureRetinaValue = retinaValues[retinaValueField.indexOfSelectedItem()]
+		// configureRetinaString = retinaStringField.stringValue()
+		// saveSettings()
 	}];
 	[saveButton setAction:"callAction:"];
 	[[exportWindow contentView] addSubview:saveButton];
 
 
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft + 78 - 22, 0, 72, 50)];
-	[cancelButton setTitle:"Cancel"];
-	[cancelButton setBezelStyle:NSRoundedBezelStyle];
-	[cancelButton setKeyEquivalent:"\033"]
-	[cancelButton setCOSJSTargetFunction:function(sender) {
-		[exportWindow orderOut:nil]
-		[NSApp stopModal]
-	}];
-	[cancelButton setAction:"callAction:"]
-	[[exportWindow contentView] addSubview:cancelButton];
+	// var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock + 54, 20, 72, 32)];
+	// [cancelButton setTitle:"Cancel"];
+	// [cancelButton setBezelStyle:NSRoundedBezelStyle];
+	// [cancelButton setKeyEquivalent:"\033"]
+	// [cancelButton setCOSJSTargetFunction:function(sender) {
+	// 	[exportWindow orderOut:nil]
+	// 	[NSApp stopModal]
+	// }];
+	// [cancelButton setAction:"callAction:"]
+	// [[exportWindow contentView] addSubview:cancelButton];
 
-	if (configureRetinaEnabled == 0) { exportWindow.makeFirstResponder(retinaValueField) }
-	else { exportWindow.makeFirstResponder(retinaStringField) }
+	// if (configureRetinaEnabled == 0) { exportWindow.makeFirstResponder(retinaValueField) }
+	// exportWindow.makeFirstResponder(retinaStringField)
 
 	[NSApp runModalForWindow:exportWindow];
 }
@@ -109,203 +156,313 @@ function isRetinaRequired() {
 
 
 
+var createFirstLine = function() {
+	// NSShadowlessSquareBezelStyle
+	var accessoryFontSize = 10
+
+
+	var retinaInput = [[NSTextField alloc] initWithFrame:NSMakeRect(88, 264-4, 90, 20)];
+  [[retinaInput cell] setPlaceholderString:"Ex: \"retina\""];
+	[retinaInput setFocusRingType:NSFocusRingTypeNone];
+	[retinaInput becomeFirstResponder];
+  [retinaInput setBordered:false];
+  [retinaInput setBackgroundColor:fieldColor];
+  [retinaInput setStringValue:userDefaults.myRetinaString];
+	[retinaInput setFont:ViewInventory.fontInputControls()];
+
+
+	var densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(measureSettingBlock, 260-4, 64, 28))
+	[[densityAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
+	var densityValues = ["Pixels", "Points"];
+	densityAccessory.addItemsWithTitles(densityValues)
+	densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
+	[densityAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
+
+	densityAccessory.setCOSJSTargetFunction(function(sender){
+			log("YEAP!")
+			userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
+			saveDefaults(userDefaults)
+			log(userDefaults.myRetinaEnabled)
+	})
+
+
+	var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(186, 260-4, 90, 28))
+	[[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
+	var devices = [["Canvas", "Canvas @2x"], ["iPhone 5S", "iPhone 7", "iPhone 7 Plus"], ["Nexus 5P", "Nexus 6X"]]
+	for (var i = 0; i < devices.length; i++) {
+			deviceAccessory.addItemsWithTitles(devices[i])
+			if (i != devices.length - 1) { [[deviceAccessory menu] addItem:[NSMenuItem separatorItem]] }
+	}
+	deviceAccessory.selectItemAtIndex(0)
+	[deviceAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
+
+	deviceAccessory.setCOSJSTargetFunction(function(sender){
+			log("REALLY")
+			log(deviceAccessory.indexOfSelectedItem())
+	})
+
+	return [retinaInput, densityAccessory, deviceAccessory]
+}
+
+
+
+var createSecondLine = function() {
+	var accessoryFontSize = 10
+
+	var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(measureSettingBlock, 206-4, 80, 28))
+	[[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
+	// [relativeAccessory setBordered:false];
+	// [[relativeAccessory cell] setArrowPosition:NSPopUpNoArrow];
+	relativeAccessory.addItemsWithTitles(["Artboard", "Group"])
+	relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
+	[relativeAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
+
+	relativeAccessory.setCOSJSTargetFunction(function(sender){
+			userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
+			saveDefaults(userDefaults)
+			log(userDefaults.myRelativeGroup)
+	})
+
+	return [relativeAccessory]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 // COMPOSE UI
 
-var createAutocodeDropdown = function(exportWindow) {
-	var labelDescription = "Dimensions"
-	var paddingBottom = 294-17+5+10
+// var createAutocodeDropdown = function(exportWindow) {
+// 	var labelDescription = "Dimensions"
+// 	var paddingBottom = 294-17+5+10
+//
+// 	var selectedItemIndex = configureRetinaEnabled
+// 	var dimensionsValues = ["Pixels", "Points"]
+// 	if (selectedItemIndex < 0) { selectedItemIndex = 0; }
+//
+// 	// var accessory = NSComboBox.alloc().initWithFrame(NSMakeRect(paddingLeft,paddingBottom-4, columnWidth, 28))
+// 	var accessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(paddingLeft,paddingBottom-4, columnWidth, 28))
+//
+// 	// [accessory setEditable:false];
+// 	// accessory.addItemsWithObjectValues(dimensionsValues)
+//
+// 	accessory.addItemsWithTitles(dimensionsValues)
+// 	accessory.selectItemAtIndex(selectedItemIndex)
+//
+// 	// var tempColor = [NSColor colorWithSRGBRed:0.71 green:0.71 blue:0.71 alpha:1.00]
+// 	// [accessory setBackgroundColor:tempColor];
+// 	[accessory setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
+// 	// [accessory setFocusRingType:NSFocusRingTypeNone];
+// 	[[exportWindow contentView] addSubview:accessory];
+//
+//
+// 	var titleMinimalExport = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom+24, columnWidth, 16)];
+//     [titleMinimalExport setEditable:false];
+//     [titleMinimalExport setBordered:false];
+//     [titleMinimalExport setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
+//     [titleMinimalExport setTextColor:lightColor];
+//     [titleMinimalExport setDrawsBackground:false];
+//     [titleMinimalExport setStringValue:labelDescription];
+//     [titleMinimalExport sizeToFit];
+//     [[exportWindow contentView] addSubview:titleMinimalExport];
+//
+// 	return accessory
+// }
+//
+// var createRetinaValueInput = function(exportWindow) {
+// 	var labelDescription = "Pixels"
+// 	var paddingBottom = 239-17+5+10
+//
+// 	var selectedItemIndex = -1
+// 	var retinaTextValues = []
+//
+// 	for (var i = 0; i < retinaValues.length; i++) {
+// 		if (retinaValues[i] == configureRetinaValue) { selectedItemIndex = i; }
+// 		retinaTextValues.push(retinaValues[i] + "x")
+// 	}
+//
+// 	if (selectedItemIndex < 0) { selectedItemIndex = 1; }
+//
+//
+// 	var accessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(paddingLeft+10,paddingBottom-4, 80, 28))
+// 		accessory.addItemsWithTitles(retinaTextValues)
+//     // accessory.addItemsWithObjectValues(retinaTextValues)
+//     accessory.selectItemAtIndex(selectedItemIndex)
+//
+// 	// [accessory setEditable:false];
+// 	[accessory setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
+// 	[[exportWindow contentView] addSubview:accessory];
+//
+// 	return accessory
+// }
 
-	var selectedItemIndex = configureRetinaEnabled
-	var dimensionsValues = ["Pixels", "Points"]
-	if (selectedItemIndex < 0) { selectedItemIndex = 0; }
-
-	// var accessory = NSComboBox.alloc().initWithFrame(NSMakeRect(paddingLeft,paddingBottom-4, columnWidth, 28))
-	var accessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(paddingLeft,paddingBottom-4, columnWidth, 28))
-
-	// [accessory setEditable:false];
-	// accessory.addItemsWithObjectValues(dimensionsValues)
-
-	accessory.addItemsWithTitles(dimensionsValues)
-	accessory.selectItemAtIndex(selectedItemIndex)
-
-	// var tempColor = [NSColor colorWithSRGBRed:0.71 green:0.71 blue:0.71 alpha:1.00]
-	// [accessory setBackgroundColor:tempColor];
-	[accessory setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-	// [accessory setFocusRingType:NSFocusRingTypeNone];
-	[[exportWindow contentView] addSubview:accessory];
-
-
-	var titleMinimalExport = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom+24, columnWidth, 16)];
-    [titleMinimalExport setEditable:false];
-    [titleMinimalExport setBordered:false];
-    [titleMinimalExport setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-    [titleMinimalExport setTextColor:lightColor];
-    [titleMinimalExport setDrawsBackground:false];
-    [titleMinimalExport setStringValue:labelDescription];
-    [titleMinimalExport sizeToFit];
-    [[exportWindow contentView] addSubview:titleMinimalExport];
-
-	return accessory
-}
-
-var createRetinaValueInput = function(exportWindow) {
-	var labelDescription = "Pixels"
-	var paddingBottom = 239-17+5+10
-
-	var selectedItemIndex = -1
-	var retinaTextValues = []
-
-	for (var i = 0; i < retinaValues.length; i++) {
-		if (retinaValues[i] == configureRetinaValue) { selectedItemIndex = i; }
-		retinaTextValues.push(retinaValues[i] + "x")
-	}
-
-	if (selectedItemIndex < 0) { selectedItemIndex = 1; }
-
-
-	var accessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(paddingLeft+10,paddingBottom-4, 80, 28))
-		accessory.addItemsWithTitles(retinaTextValues)
-    // accessory.addItemsWithObjectValues(retinaTextValues)
-    accessory.selectItemAtIndex(selectedItemIndex)
-
-	// [accessory setEditable:false];
-	[accessory setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-	[[exportWindow contentView] addSubview:accessory];
-
-	return accessory
-}
-
-var createRetinaStringInput = function(exportWindow) {
-	var labelDescription = "Points"
-	var labelPlaceholder = "Ex: \"retina\""
-	var paddingBottom = 239-17+5+10
-
-	var retinaInput = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft+115, paddingBottom, 90, 20)];
-    [[retinaInput cell] setPlaceholderString:labelPlaceholder];
-	// [retinaInput setFocusRingType:NSFocusRingTypeNone];
-    [retinaInput setBordered:false];
-    [retinaInput setBackgroundColor:fieldColor];
-    [retinaInput setStringValue:configureRetinaString];
-	[retinaInput setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-    [[exportWindow contentView] addSubview:retinaInput];
-
-	return retinaInput
-}
-
-
-var createTip = function(exportWindow) {
-	var paddingBottom = 178-17+5+10
-
-	var imagePath = pluginPath + '/images/' + 'tip' + isRetinaRequired() + '.png';
-	var image = NSImage.alloc().initByReferencingFile(imagePath);
-	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(0, paddingBottom, 275, 110)];
-	[imageView setImage: image];
-	[[exportWindow contentView] addSubview:imageView];
-}
+// var createRetinaStringInput = function(exportWindow) {
+//
+//
+//
+//
+//   [[exportWindow contentView] addSubview:retinaInput];
+//
+// 	return retinaInput
+// }
 
 
 
 
 
-var createMobileCheckbox = function(exportWindow) {
-	var labelDescription = "iPhone Prototyping"
-	var paddingBottom = 140-17+10-2
 
-	var titleMobile = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft+21, paddingBottom, columnWidth, 16)];
-    [titleMobile setEditable:false];
-    [titleMobile setBordered:false];
-    [titleMobile setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-    [titleMobile setTextColor:lightColor];
-    [titleMobile setDrawsBackground:false];
-    [titleMobile setStringValue:labelDescription];
-    [titleMobile sizeToFit];
-    [[exportWindow contentView] addSubview:titleMobile];
 
-	var mobileCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth, 16)];
-	[mobileCheckbox setButtonType:NSSwitchButton];
-	[mobileCheckbox setTitle:""];
-	[mobileCheckbox setState:configureMobile];
-	mobileCheckbox.setCOSJSTargetFunction(function(sender){
-		configureMobile = configureMobile == 0 ? 1 : 0
+
+// var createMobileCheckbox = function(exportWindow) {
+// 	var labelDescription = "iPhone Prototyping"
+// 	var paddingBottom = 140-17+10-2
+//
+// 	var titleMobile = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft+21, paddingBottom, columnWidth, 16)];
+//   [titleMobile setEditable:false];
+//   [titleMobile setBordered:false];
+//   [titleMobile setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
+//   [titleMobile setTextColor:lightColor];
+//   [titleMobile setDrawsBackground:false];
+//   [titleMobile setStringValue:labelDescription];
+//   [titleMobile sizeToFit];
+//   [[exportWindow contentView] addSubview:titleMobile];
+//
+// 	var mobileCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth, 16)];
+// 	[mobileCheckbox setButtonType:NSSwitchButton];
+// 	[mobileCheckbox setTitle:""];
+// 	[mobileCheckbox setState:configureMobile];
+// 	mobileCheckbox.setCOSJSTargetFunction(function(sender){
+// 		configureMobile = configureMobile == 0 ? 1 : 0
+// 	})
+// 	[[exportWindow contentView] addSubview:mobileCheckbox];
+//
+// 	return mobileCheckbox
+// }
+
+var createCheckViews = function() {
+
+	var titleMinimalExport = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock*2+2, 136, measureSettingsWidth - measureSettingBlock*3, measureSettingBlock)];
+  [titleMinimalExport setEditable:false];
+  [titleMinimalExport setBordered:false];
+	[titleMinimalExport setFont:ViewInventory.fontCheckControls()];
+  [titleMinimalExport setTextColor:ViewInventory.colorBlack()];
+  [titleMinimalExport setDrawsBackground:false];
+  [titleMinimalExport setStringValue:"Export Minimal States"];
+  [titleMinimalExport sizeToFit];
+
+	var checkboxMinimalExport = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-1, measureSettingBlock, measureSettingBlock)];
+	[checkboxMinimalExport setButtonType:NSSwitchButton];
+	[checkboxMinimalExport setTitle:""];
+	[checkboxMinimalExport setState:userDefaults.myMinimalExport];
+	checkboxMinimalExport.setCOSJSTargetFunction(function(sender){
+		userDefaults.myMinimalExport = userDefaults.myMinimalExport == 0 ? 1 : 0
+		saveDefaults(userDefaults)
 	})
-	[[exportWindow contentView] addSubview:mobileCheckbox];
 
-	return mobileCheckbox
-}
 
-var createMinimalExportCheckbox = function(exportWindow) {
-	var labelDescription = "Minimal Export"
-	var paddingBottom = 110-17+10-1
 
-	var titleMinimalExport = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft+21, paddingBottom, columnWidth, 16)];
-    [titleMinimalExport setEditable:false];
-    [titleMinimalExport setBordered:false];
-    [titleMinimalExport setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-    [titleMinimalExport setTextColor:lightColor];
-    [titleMinimalExport setDrawsBackground:false];
-    [titleMinimalExport setStringValue:labelDescription];
-    [titleMinimalExport sizeToFit];
-    [[exportWindow contentView] addSubview:titleMinimalExport];
+	var titleNotation = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock*2+2, 136-44, measureSettingsWidth - measureSettingBlock*3, measureSettingBlock)];
+  [titleNotation setEditable:false];
+  [titleNotation setBordered:false];
+	[titleNotation setFont:ViewInventory.fontCheckControls()];
+  [titleNotation setTextColor:ViewInventory.colorBlack()];
+  [titleNotation setDrawsBackground:false];
+  [titleNotation setStringValue:"Detailed Notation"];
+  [titleNotation sizeToFit];
 
-	var minimalExportCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth, 16)];
-	[minimalExportCheckbox setButtonType:NSSwitchButton];
-	[minimalExportCheckbox setTitle:""];
-	[minimalExportCheckbox setState:configureMinimalExport];
-	minimalExportCheckbox.setCOSJSTargetFunction(function(sender){
-		configureMinimalExport = configureMinimalExport == 0 ? 1 : 0
+	var checkboxNotation = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-44-1, measureSettingBlock, measureSettingBlock)];
+	[checkboxNotation setButtonType:NSSwitchButton];
+	[checkboxNotation setTitle:""];
+	[checkboxNotation setState:userDefaults.myDetailedNotation];
+	checkboxNotation.setCOSJSTargetFunction(function(sender){
+		userDefaults.myDetailedNotation = userDefaults.myDetailedNotation == 0 ? 1 : 0
+		saveDefaults(userDefaults)
 	})
-	[[exportWindow contentView] addSubview:minimalExportCheckbox];
 
-	return minimalExportCheckbox
-}
-
-var createAutoplayCheckbox = function(exportWindow) {
-	var labelDescription = "Autoplay"
-	var paddingBottom = 80-17+10
-
-	var titleAutoplay = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft + 21, paddingBottom, columnWidth, 16)];
-    [titleAutoplay setEditable:false];
-    [titleAutoplay setBordered:false];
-    [titleAutoplay setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
-    [titleAutoplay setTextColor:lightColor];
-    [titleAutoplay setDrawsBackground:false];
-    [titleAutoplay setStringValue:labelDescription];
-    [titleAutoplay sizeToFit];
-    [[exportWindow contentView] addSubview:titleAutoplay];
-
-	var autoplayCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth, 16)];
-	[autoplayCheckbox setButtonType:NSSwitchButton];
-	[autoplayCheckbox setTitle:""];
-	[autoplayCheckbox setState:configureAutoplay];
-	autoplayCheckbox.setCOSJSTargetFunction(function(sender){
-		configureAutoplay = configureAutoplay == 0 ? 1 : 0
-	})
-	[[exportWindow contentView] addSubview:autoplayCheckbox];
-
-	return autoplayCheckbox
+	return [titleMinimalExport, checkboxMinimalExport, titleNotation, checkboxNotation]
 }
 
 
+var createVersionView = function() {
+	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 325, measureSettingsWidth, measureSettingBlock)];
+	[titleVersion setEditable:false];
+	[titleVersion setBordered:false];
+	[titleVersion setFont:ViewInventory.fontCheckControls()];
+	[titleVersion setTextColor:ViewInventory.colorVersion()];
+	[titleVersion setDrawsBackground:false];
+	[titleVersion setStringValue:"v" + pluginVersion];
+	[titleVersion setAlignment:NSCenterTextAlignment]
+	// [titleVersion sizeToFit];
 
-
-
-var createLogo = function(exportWindow) {
-	var paddingBottom = 358-17
-
-	var imagePath = pluginPath + '/images/' + 'logo' + isRetinaRequired() + '.png';
-	var image = NSImage.alloc().initByReferencingFile(imagePath);
-	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(0, paddingBottom, 275, 62)];
-	[imageView setImage: image];
-	[[exportWindow contentView] addSubview:imageView];
+	return [titleVersion]
 }
+
+// var createTip = function(exportWindow) {
+// 	var paddingBottom = 178-17+5+10
+//
+// 	var imagePath = pluginPath + '/images/' + 'tip' + isRetinaRequired() + '.png';
+// 	var image = NSImage.alloc().initByReferencingFile(imagePath);
+// 	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(0, paddingBottom, 275, 110)];
+// 	[imageView setImage: image];
+// 	[[exportWindow contentView] addSubview:imageView];
+// }
+
+// var createAutoplayCheckbox = function(exportWindow) {
+// 	var labelDescription = "Autoplay"
+// 	var paddingBottom = 80-17+10
+//
+// 	var titleAutoplay = [[NSTextField alloc] initWithFrame:NSMakeRect(paddingLeft + 21, paddingBottom, columnWidth, 16)];
+//     [titleAutoplay setEditable:false];
+//     [titleAutoplay setBordered:false];
+//     [titleAutoplay setFont:[NSFont boldSystemFontOfSize:smallFontSize]];
+//     [titleAutoplay setTextColor:lightColor];
+//     [titleAutoplay setDrawsBackground:false];
+//     [titleAutoplay setStringValue:labelDescription];
+//     [titleAutoplay sizeToFit];
+//     [[exportWindow contentView] addSubview:titleAutoplay];
+//
+// 	var autoplayCheckbox = [[NSButton alloc] initWithFrame:NSMakeRect(paddingLeft, paddingBottom, columnWidth, 16)];
+// 	[autoplayCheckbox setButtonType:NSSwitchButton];
+// 	[autoplayCheckbox setTitle:""];
+// 	[autoplayCheckbox setState:configureAutoplay];
+// 	autoplayCheckbox.setCOSJSTargetFunction(function(sender){
+// 		configureAutoplay = configureAutoplay == 0 ? 1 : 0
+// 	})
+// 	[[exportWindow contentView] addSubview:autoplayCheckbox];
+//
+// 	return autoplayCheckbox
+// }
+
+
+
+
+
+// var createLogo = function(exportWindow) {
+// 	var paddingBottom = 358-17
+//
+// 	var imagePath = pluginPath + '/images/' + 'logo' + isRetinaRequired() + '.png';
+// 	var image = NSImage.alloc().initByReferencingFile(imagePath);
+// 	var imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(0, paddingBottom, 275, 62)];
+// 	[imageView setImage: image];
+// 	[[exportWindow contentView] addSubview:imageView];
+// }
 
 
 var createHelpButton = function(exportWindow) {
-    var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(275-30-24, 10, 32, 32)];
+    var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingsWidth-32-20+2, 22, 32, 32)];
 	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
 	[helpButton setTitle:nil];
 	[helpButton setCOSJSTargetFunction:function(sender) {

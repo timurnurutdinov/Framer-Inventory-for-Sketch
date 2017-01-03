@@ -1,4 +1,5 @@
 @import 'actions/action-inventory.cocoascript'
+@import 'actions/view-inventory.cocoascript'
 
 var methodStartTime = nil
 
