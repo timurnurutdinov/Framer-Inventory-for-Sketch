@@ -1,6 +1,10 @@
 var pathLabel = nil
 var topBottomGuides = nil
 
+var relativeAccessory = nil
+var densityAccessory = nil
+var deviceAccessory = nil
+
 var measureWindowHeight = 70;
 var measureWindowWidth = 440;
 
@@ -55,24 +59,6 @@ ToolbarInventory.addImage = function(rect, name) {
 }
 
 
-ToolbarInventory.updatePathLabel = function() {
-    if (UIBar != nil) {
-      if (userDefaults.exportFramerFolder == "") {
-        UIBar.setContentView(ToolbarInventory.createEmptyContentView())
-      }
-      else {
-        UIBar.setContentView(ToolbarInventory.createGeneralContentView())
-
-        if (pathLabel != nil) {
-          var pathComps = userDefaults.exportFramerFolder.split("/");
-          var localLabel = pathComps.pop()
-          [pathLabel setStringValue:localLabel];
-        }
-
-      }
-    }
-}
-
 
 
 ToolbarInventory.getEmptyToolbarViews = function() {
@@ -98,7 +84,7 @@ ToolbarInventory.getGeneralToolbarViews = function() {
     [pathLabel setEditable:false];
     [pathLabel setBordered:false];
     [pathLabel setAlignment:NSCenterTextAlignment]
-    [pathLabel setFont:[NSFont fontWithName:@"System" size:12]];
+    [pathLabel setFont:ViewInventory.fontCheckControls()];
     [pathLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
     [pathLabel setDrawsBackground:false];
     [pathLabel setStringValue:defaultPathLabel];
@@ -136,55 +122,44 @@ ToolbarInventory.getGeneralToolbarViews = function() {
     })
 
 
-    // NSShadowlessSquareBezelStyle
-    var accessoryFontSize = 10
-
-    var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64-80, 16, 80, 28))
+    relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64-80, 16, 80, 28))
     [[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-    // [relativeAccessory setBordered:false];
-    // [[relativeAccessory cell] setArrowPosition:NSPopUpNoArrow];
     var densityValues = ["Artboard", "Group"];
     relativeAccessory.addItemsWithTitles(densityValues)
     relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
-    [relativeAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
+    [relativeAccessory setFont:ViewInventory.fontAccessory()];
 
     relativeAccessory.setCOSJSTargetFunction(function(sender){
         userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
         saveDefaults(userDefaults)
-        log(userDefaults.myRelativeGroup)
     })
 
-    var densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64, 16, 64, 28))
+    densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64, 16, 64, 28))
     [[densityAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-    // [densityAccessory setBordered:false];
-    // [[densityAccessory cell] setArrowPosition:NSPopUpNoArrow];
     var densityValues = ["Pixels", "Points"];
     densityAccessory.addItemsWithTitles(densityValues)
     densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
-    [densityAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
+    [densityAccessory setFont:ViewInventory.fontAccessory()];
 
     densityAccessory.setCOSJSTargetFunction(function(sender){
         userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
         saveDefaults(userDefaults)
-        log(userDefaults.myRetinaEnabled)
     })
 
 
-    var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340, 16, 90, 28))
+    deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340, 16, 90, 28))
     [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-    // [deviceAccessory setBordered:false];
-    // [[deviceAccessory cell] setArrowPosition:NSPopUpNoArrow];
-    var devices = [["Canvas", "Canvas @2x"], ["iPhone 5S", "iPhone 7", "iPhone 7 Plus"], ["Nexus 5P", "Nexus 6X"]]
+    var devices = ViewInventory.returnDevices()
     for (var i = 0; i < devices.length; i++) {
         deviceAccessory.addItemsWithTitles(devices[i])
         if (i != devices.length - 1) { [[deviceAccessory menu] addItem:[NSMenuItem separatorItem]] }
     }
-    deviceAccessory.selectItemAtIndex(0)
-    [deviceAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
+    deviceAccessory.selectItemAtIndex(ViewInventory.deviceToSelect(userDefaults.myDevice))
+    [deviceAccessory setFont:ViewInventory.fontAccessory()];
 
     deviceAccessory.setCOSJSTargetFunction(function(sender){
-        log("REALLY")
-        log(deviceAccessory.indexOfSelectedItem())
+        userDefaults.myDevice = ViewInventory.selectedDeviceIndex(deviceAccessory.indexOfSelectedItem())
+        saveDefaults(userDefaults)
     })
 
 
@@ -211,11 +186,6 @@ ToolbarInventory.getCloseToolbarViews = function() {
     return [closeButton, settingsButton]
 }
 
-
-ToolbarInventory.createContentView = function() {
-    var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, measureWindowWidth, measureWindowHeight)];
-    return view
-}
 
 
 ToolbarInventory.createGeneralContentView = function() {
@@ -264,38 +234,10 @@ ToolbarInventory.createUIBar = function() {
         UIBar.setMovableByWindowBackground(true);
         UIBar.setHasShadow(true);
         UIBar.setLevel(NSFloatingWindowLevel);
-        // var contentView = UIBar.contentView()
 
 
-
-
-
-
-
-
-        // pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 48, measureWindowWidth, 20)];
-        // [pathLabel setEditable:false];
-        // [pathLabel setBordered:false];
-        // [pathLabel setAlignment:NSCenterTextAlignment]
-        // [pathLabel setFont:[NSFont fontWithName:@"System" size:12]];
-        // [pathLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
-        // [pathLabel setDrawsBackground:false];
-        // [pathLabel setStringValue:defaultPathLabel];
-        //
-        // contentView.addSubview(pathLabel);
-
-        // var views = []
-        if (userDefaults.exportFramerFolder == "") {
-          UIBar.setContentView(ToolbarInventory.createEmptyContentView())
-        }
+        if (userDefaults.exportFramerFolder == "") { UIBar.setContentView(ToolbarInventory.createEmptyContentView()) }
         else { UIBar.setContentView(ToolbarInventory.createGeneralContentView()) }
-
-        // for (var i = 0; i < views.length; i++) {
-        //     contentView.addSubview(views[i])
-        // }
-        //
-        // contentView.addSubview(settingsButton);
-        // contentView.addSubview(closeButton);
 
 
         threadDictionary[threadIdentifier] = UIBar;
@@ -363,3 +305,35 @@ ToolbarInventory.createUIBar = function() {
 //       }
 //   }
 // }
+
+
+ToolbarInventory.updateAccessoryControls = function() {
+    if (relativeAccessory != nil) {
+        relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
+    }
+    if (densityAccessory != nil) {
+        densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
+    }
+    if (deviceAccessory != nil) {
+        deviceAccessory.selectItemAtIndex(ViewInventory.deviceToSelect(userDefaults.myDevice))
+    }
+}
+
+
+ToolbarInventory.updatePathLabel = function() {
+    if (UIBar != nil) {
+      if (userDefaults.exportFramerFolder == "") {
+        UIBar.setContentView(ToolbarInventory.createEmptyContentView())
+      }
+      else {
+        UIBar.setContentView(ToolbarInventory.createGeneralContentView())
+
+        if (pathLabel != nil) {
+          var pathComps = userDefaults.exportFramerFolder.split("/");
+          var localLabel = pathComps.pop()
+          [pathLabel setStringValue:localLabel];
+        }
+
+      }
+    }
+}

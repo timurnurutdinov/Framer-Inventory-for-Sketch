@@ -85,6 +85,7 @@ var runSettings = function() {
 	[saveButton setCOSJSTargetFunction:function(sender) {
 		[exportWindow orderOut:nil]
 		[NSApp stopModal]
+		ToolbarInventory.updateAccessoryControls()
 
 		var newRetinaValue = retinaInput.stringValue() + ""
 		var trimmedRetinaValue = newRetinaValue.trim()
@@ -179,26 +180,24 @@ var createFirstLine = function() {
 	[densityAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
 
 	densityAccessory.setCOSJSTargetFunction(function(sender){
-			log("YEAP!")
 			userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
 			saveDefaults(userDefaults)
-			log(userDefaults.myRetinaEnabled)
 	})
 
 
 	var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(186, 260-4, 90, 28))
 	[[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-	var devices = [["Canvas", "Canvas @2x"], ["iPhone 5S", "iPhone 7", "iPhone 7 Plus"], ["Nexus 5P", "Nexus 6X"]]
+	var devices = ViewInventory.returnDevices()
 	for (var i = 0; i < devices.length; i++) {
 			deviceAccessory.addItemsWithTitles(devices[i])
 			if (i != devices.length - 1) { [[deviceAccessory menu] addItem:[NSMenuItem separatorItem]] }
 	}
-	deviceAccessory.selectItemAtIndex(0)
+	deviceAccessory.selectItemAtIndex(ViewInventory.deviceToSelect(userDefaults.myDevice))
 	[deviceAccessory setFont:[NSFont boldSystemFontOfSize:accessoryFontSize]];
 
-	deviceAccessory.setCOSJSTargetFunction(function(sender){
-			log("REALLY")
-			log(deviceAccessory.indexOfSelectedItem())
+	deviceAccessory.setCOSJSTargetFunction(function(sender) {
+			userDefaults.myDevice = ViewInventory.selectedDeviceIndex(deviceAccessory.indexOfSelectedItem())
+			saveDefaults(userDefaults)
 	})
 
 	return [retinaInput, densityAccessory, deviceAccessory]

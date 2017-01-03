@@ -8,6 +8,7 @@ ViewInventory.colorBackground = function() { return [NSColor colorWithRed:0.15 g
 
 ViewInventory.fontCheckControls = function() { return [NSFont systemFontOfSize:12 weight:NSFontWeightRegular] }
 ViewInventory.fontInputControls = function() { return [NSFont systemFontOfSize:12 weight:NSFontWeightMedium] }
+ViewInventory.fontAccessory = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightBold] }
 
 
 ViewInventory.getImage = function(size, name) {
@@ -36,4 +37,25 @@ ViewInventory.addImage = function(rect, name) {
     var image = ViewInventory.getImage(rect.size, name);
     view.setImage(image);
     return view;
+}
+
+
+
+// Devices Magic
+ViewInventory.returnDevices = function() {
+    return [["Canvas", "Canvas @2x"], ["iPhone 5S", "iPhone 7", "iPhone 7 Plus"], ["Nexus 5P", "Nexus 6X"]]
+}
+
+ViewInventory.selectedDeviceIndex = function(selectedItemIndex) {
+    if (selectedItemIndex == 0 || selectedItemIndex == 1) { return selectedItemIndex }
+    else if (selectedItemIndex == 3 || selectedItemIndex == 4 || selectedItemIndex == 5) { return (selectedItemIndex - 1) }
+    else if (selectedItemIndex == 7 || selectedItemIndex == 8) { return (selectedItemIndex - 2) }
+    return 0
+}
+
+ViewInventory.deviceToSelect = function(index) {
+    if (index == 0 || index == 1) { return index }
+    else if (index == 2 || index == 3 || index == 4) { return (index + 1) }
+    else if (index == 5 || index == 6) { return (index + 2) }
+    return 0
 }

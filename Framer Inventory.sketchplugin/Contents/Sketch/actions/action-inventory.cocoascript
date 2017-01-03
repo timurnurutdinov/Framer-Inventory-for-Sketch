@@ -17,14 +17,17 @@
 
 var presets = {
 	myRetinaEnabled: 0,
-	myRetinaValue: 1,
   myRetinaString: "retina",
-	myMobile: 1,
 	myMinimalExport: 1,
-	myAutoplay: 0,
-	exportFramerFolder: "",
 	myRelativeGroup: 0,
 	myDetailedNotation: 1,
+	exportFramerFolder: "",
+	myDevice: 0,
+
+	myRetinaValue: 1,
+	myMobile: 1,
+	myAutoplay: 0,
+
 	myUserID:  [[NSUUID UUID] UUIDString] + ""
 }
 
