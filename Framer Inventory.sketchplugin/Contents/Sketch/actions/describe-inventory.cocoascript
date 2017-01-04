@@ -50,27 +50,23 @@ DescribeInventory.generateRetinaVariable = function() {
 }
 
 DescribeInventory.generatePhoneModel = function() {
-	var model = FramerInventory.getPhoneValue()
+	var model = userDefaults.myDevice
 	var modelDescription = ""
 
-	if (model == 1 || model == 2 || model == 3) {
-		modelDescription += "# mobile" + ln()
-	}
-
-	if (model == 1) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln()
-	}
-	else if (model == 2) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln()
-		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 320/375" + ln()
+	if (model == 2) {
+		modelDescription += "Framer.Device.deviceType = \"apple-iphone-5s-space-gray\"" + ln()
 	}
 	else if (model == 3) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln()
-		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 320/414" + ln()
-		modelDescription += "if Screen.width == 750" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 375/414" + ln()
+		modelDescription += "Framer.Device.deviceType = \"apple-iphone-6s-space-gray\"" + ln()
+	}
+	else if (model == 4) {
+		modelDescription += "Framer.Device.deviceType = \"apple-iphone-6s-plus-space-gray\"" + ln()
+	}
+	else if (model == 5) {
+		modelDescription += "Framer.Device.deviceType = \"google-nexus-5x\"" + ln()
+	}
+	else if (model == 6) {
+		modelDescription += "Framer.Device.deviceType = \"google-nexus-6p\"" + ln()
 	}
 	return modelDescription
 }

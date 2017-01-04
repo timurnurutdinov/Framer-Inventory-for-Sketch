@@ -150,16 +150,16 @@ ToolbarInventory.getGeneralToolbarViews = function() {
 
     deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340, 16, 90, 28))
     [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-    var devices = ViewInventory.returnDevices()
+    var devices = ScaleInventory.returnDevices()
     for (var i = 0; i < devices.length; i++) {
         deviceAccessory.addItemsWithTitles(devices[i])
         if (i != devices.length - 1) { [[deviceAccessory menu] addItem:[NSMenuItem separatorItem]] }
     }
-    deviceAccessory.selectItemAtIndex(ViewInventory.deviceToSelect(userDefaults.myDevice))
+    deviceAccessory.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
     [deviceAccessory setFont:ViewInventory.fontAccessory()];
 
     deviceAccessory.setCOSJSTargetFunction(function(sender){
-        userDefaults.myDevice = ViewInventory.selectedDeviceIndex(deviceAccessory.indexOfSelectedItem())
+        userDefaults.myDevice = ScaleInventory.selectedDeviceIndex(deviceAccessory.indexOfSelectedItem())
         saveDefaults(userDefaults)
     })
 
@@ -316,7 +316,7 @@ ToolbarInventory.updateAccessoryControls = function() {
         densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
     }
     if (deviceAccessory != nil) {
-        deviceAccessory.selectItemAtIndex(ViewInventory.deviceToSelect(userDefaults.myDevice))
+        deviceAccessory.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
     }
 }
 
