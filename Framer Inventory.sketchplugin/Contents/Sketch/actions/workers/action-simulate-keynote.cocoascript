@@ -1,5 +1,5 @@
 @import 'inventory/classes/state.cocoascript'
-@import 'actions/workers/action-select-duplicated-artboards.cocoascript'
+@import 'actions/workers/modals/action-select-duplicated-artboards.cocoascript'
 
 // generate code for layers
 var runSimulateKeynote = function() {

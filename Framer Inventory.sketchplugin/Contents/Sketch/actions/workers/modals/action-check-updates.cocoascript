@@ -1,0 +1,96 @@
+var measureArtboardsPaddingLeft = 16
+var measureArtboardsWindowHeight = 320;
+var measureArtboardsWindowWidth = 240;
+
+var showUpdateWindow = function(json) {
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
+	[artboardsWindow setBackgroundColor:NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1)];
+
+	var imageView = ViewInventory.addImage(NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight), "modals/update");
+	[[artboardsWindow contentView] addSubview:imageView];
+
+	var updateText = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock, measureSettingBlock*4, (measureSettingsWidth - measureSettingBlock*5), measureSettingBlock*7)];
+	[updateText setPreferredMaxLayoutWidth:measureSettingsWidth - measureSettingBlock*2]
+  [updateText setEditable:false];
+  [updateText setBordered:false];
+	[updateText setFont:ViewInventory.fontCheckControls()];
+  [updateText setTextColor:ViewInventory.colorBlack()];
+  [updateText setDrawsBackground:false];
+
+	var updateTextValue = json.valueForKey("description");
+	if (updateTextValue == nil) { updateTextValue = "Bug fixes and perfomance optimisations" }
+  [updateText setStringValue:updateTextValue];
+	[[artboardsWindow contentView] addSubview:updateText];
+
+
+
+
+	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 32, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[showDuplicatesButton setTitle:"Download Update"];
+	[showDuplicatesButton setBezelStyle:NSRoundedBezelStyle];
+	[showDuplicatesButton setFont:ViewInventory.fontActionButton()];
+	[showDuplicatesButton setKeyEquivalent:"\r"];
+	[showDuplicatesButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		var websiteURL = NSURL.URLWithString(json.valueForKey("websiteURL"));
+		NSWorkspace.sharedWorkspace().openURL(websiteURL);
+	}];
+	[showDuplicatesButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:showDuplicatesButton];
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 6, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[cancelButton setTitle:"Remind Later"];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}
+
+
+
+// generate code for layers
+var runCheckUpdates = function() {
+
+	// currentDocument.showMessage("Checking for updates...");
+
+	var json = NSJSONSerialization.JSONObjectWithData_options_error(NSData.dataWithContentsOfURL(NSURL.URLWithString("https://timurnurutdinov.github.io/framerinventory/version.json")), 0, nil)
+
+	var currentVersionAsInt = getVersionNumberFromString(json.valueForKey("currentVersion"))
+	var installedVersionAsInt = getVersionNumberFromString(pluginVersion)
+	if (currentVersionAsInt > installedVersionAsInt) {
+			log(json.valueForKey("description"))
+			showUpdateWindow(json)
+			// var websiteURL = NSURL.URLWithString(json.valueForKey("websiteURL"));
+			// NSWorkspace.sharedWorkspace().openURL(websiteURL);
+	}
+	else {
+			currentDocument.showMessage("👍🏻 Latest version");
+	}
+
+}
+
+var getVersionNumberFromString = function(versionString) {
+	var versionNumber = versionString.stringByReplacingOccurrencesOfString_withString(".", "") + ""
+	while(versionNumber.length != 3) {
+		versionNumber += "0"
+	}
+	return parseInt(versionNumber)
+}

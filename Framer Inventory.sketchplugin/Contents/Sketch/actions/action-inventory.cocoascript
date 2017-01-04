@@ -11,7 +11,7 @@
 
 @import 'actions/workers/action-testing-environment.cocoascript'
 @import 'actions/workers/action-settings.cocoascript'
-@import 'actions/workers/action-check-updates.cocoascript'
+@import 'actions/workers/modals/action-check-updates.cocoascript'
 // @import 'actions/workers/action-select-device.cocoascript'
 
 @import 'inventory/classes/layer.cocoascript'

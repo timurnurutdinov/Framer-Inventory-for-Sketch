@@ -21,7 +21,7 @@ var selectDuplicatedArtboards = function(artboardName) {
 	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
 	[artboardsWindow setBackgroundColor:NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1)];
 
-	var imageView = ToolbarInventory.addImage(NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight), "messages/artboards");
+	var imageView = ViewInventory.addImage(NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight), "modals/artboards");
 	[[artboardsWindow contentView] addSubview:imageView];
 
 	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 32, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
