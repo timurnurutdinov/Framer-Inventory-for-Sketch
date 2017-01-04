@@ -1,6 +1,7 @@
 
 function ScaleInventory () {
-		this.scale = ScaleInventory.returnScale()
+		this.popularWidth = ScaleInventory.returnMostPopularArtboardSize()
+		this.scale = ScaleInventory.returnScale(this.popularWidth)
 }
 
 
@@ -19,12 +20,39 @@ ScaleInventory.prototype.returnScaleExport = function() {
 
 
 ScaleInventory.returnMostPopularArtboardSize = function() {
-		return FramerInventory.returnArtboardsScope().firstObject().frame().width()
+		var localArtboards = FramerInventory.returnArtboardsScope()
+		var widthArray = NSMutableArray.new()
+		for (var i = 0; i < localArtboards.count(); i++) {
+				var currentArtboard = [localArtboards objectAtIndex: i]
+				[widthArray addObject: currentArtboard.frame().width()]
+		}
+
+		var sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:true];
+		var widthSortedArray = [widthArray sortedArrayUsingDescriptors:[sortDescriptor]]
+
+		var previous = [widthSortedArray firstObject];
+	 	var popular = [widthSortedArray firstObject];
+	 	var count = 1;
+	 	var maxCount = 1;
+
+		for (var i = 1; i < widthSortedArray.count(); i++) {
+				if (previous == [widthSortedArray objectAtIndex: i]) { count++ }
+				else {
+						if (count > maxCount) {
+								popular = [widthSortedArray objectAtIndex: (i-1)];
+								maxCount = count;
+						}
+						previous = [widthSortedArray objectAtIndex: i];
+						count = 1;
+				}
+		}
+
+		return count > maxCount ? [widthSortedArray objectAtIndex:([widthSortedArray count] - 1)] : popular;
+		// return FramerInventory.returnArtboardsScope().firstObject().frame().width()
 }
 
-ScaleInventory.returnScale = function() {
+ScaleInventory.returnScale = function(originWidth) {
 		var selectedDevice = userDefaults.myDevice
-		var originWidth = ScaleInventory.returnMostPopularArtboardSize()
 
 		if (selectedDevice == 0) { return 1 }
 		else if (selectedDevice == 1) { return 2 }
