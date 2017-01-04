@@ -12,7 +12,12 @@ ScaleInventory.prototype.returnScaleCode = function() {
 }
 
 ScaleInventory.prototype.returnScaleExport = function() {
-		if (this.scale == -1) { return 2 }
+		if (this.scale == -1) {
+			if (userDefaults.myDevice == 2 || userDefaults.myDevice == 3) { return 2 }
+			else if (userDefaults.myDevice == 4 || userDefaults.myDevice == 5) { return 3 }
+			else if (userDefaults.myDevice == 6) { return 4 }
+			return 2
+		}
 		return this.scale
 }
 

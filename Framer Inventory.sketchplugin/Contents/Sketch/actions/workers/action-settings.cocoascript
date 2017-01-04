@@ -362,7 +362,7 @@ var createCheckViews = function() {
   [titleMinimalExport setStringValue:"Export Minimal States"];
   [titleMinimalExport sizeToFit];
 
-	var checkboxMinimalExport = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-1, measureSettingBlock, measureSettingBlock)];
+	var checkboxMinimalExport = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-1, measureSettingBlock*12, measureSettingBlock)];
 	[checkboxMinimalExport setButtonType:NSSwitchButton];
 	[checkboxMinimalExport setTitle:""];
 	[checkboxMinimalExport setState:userDefaults.myMinimalExport];
@@ -382,7 +382,7 @@ var createCheckViews = function() {
   [titleNotation setStringValue:"Detailed Notation"];
   [titleNotation sizeToFit];
 
-	var checkboxNotation = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-44-1, measureSettingBlock, measureSettingBlock)];
+	var checkboxNotation = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-44-1, measureSettingBlock*12, measureSettingBlock)];
 	[checkboxNotation setButtonType:NSSwitchButton];
 	[checkboxNotation setTitle:""];
 	[checkboxNotation setState:userDefaults.myDetailedNotation];
