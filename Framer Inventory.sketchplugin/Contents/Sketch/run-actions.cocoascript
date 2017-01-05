@@ -17,7 +17,7 @@ var runGenerateStatesIdentifier = 1
 var runSimulateKeynoteIdentifier = 2
 var runSettingsIdentifier = 3
 var runRemoveExportPageIdentifier = 4
-// no 5
+var runShowProjectFolderIdentifier = 5
 var runSelectProjectFolderIdentifier = 6
 var runRemoveProjectFolderIdentifier = 7
 var runShowBarIdentifier = 8
@@ -44,13 +44,13 @@ var decomposeContext = function(context) {
 }
 
 var onReplicateLayersRun = function(context) {
-	if (showLog) { log("Running Replace Layers") }
+	if (showLog) { log("Running Replicate Layers") }
 	decomposeContext(context)
 	chooseAction(currentDocument, currentSelection, runReplicateLayersIdentifier)
 }
 
 var onGenerateStatesRun = function(context) {
-	if (showLog) { log("Running Replicate States") }
+	if (showLog) { log("Running Generate States") }
 	decomposeContext(context)
 	chooseAction(currentDocument, currentSelection, runGenerateStatesIdentifier)
 }
@@ -91,11 +91,19 @@ var onRemoveProjectFolderRun = function(context) {
 	chooseAction(currentDocument, currentSelection, runRemoveProjectFolderIdentifier)
 }
 
+var onShowProjectFolderRun = function(context) {
+	if (showLog) { log("Running Show Project Folder...") }
+	decomposeContext(context)
+	chooseAction(currentDocument, currentSelection, runShowProjectFolderIdentifier)
+}
+
 var onCheckUpdatesRun = function(context) {
 		if (showLog) { log("Running Updates Checker") }
 		decomposeContext(context)
 		chooseAction(currentDocument, currentSelection, runCheckUpdatesIdentifier)
 }
+
+
 
 var onTestingRun = function(context) {
 	if (showLog) { log("Running Testing Environment") }

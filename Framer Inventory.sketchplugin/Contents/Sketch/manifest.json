@@ -12,21 +12,21 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onReplicateLayersRun",
       "shortcut" : "",
-      "name" : "◉   Replicate Layers",
+      "name" : "⊡   Replicate Layers",
       "identifier" : "choose-replicate-layers"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onGenerateStatesRun",
       "shortcut" : "",
-      "name" : "◉   Generate States",
+      "name" : "⧉   Generate States",
       "identifier" : "choose-generate-states"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onSimulateKeynoteRun",
       "shortcut" : "",
-      "name" : "◎   Simulate Keynote",
+      "name" : "❖   Simulate Scene",
       "identifier" : "choose-simulate-keynote"
     },
     {
@@ -40,7 +40,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onSettingRun",
       "shortcut" : "",
-      "name" : "Settings",
+      "name" : "      Settings",
       "identifier" : "choose-settings"
     },
     {
@@ -54,22 +54,29 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onShowBarRun",
       "shortcut" : "",
-      "name" : "    Show Toolbar",
+      "name" : "      Show Toolbar",
       "identifier" : "show-bar"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onSelectProjectFolderRun",
       "shortcut" : "",
-      "name" : "Select Export Path",
+      "name" : "Select Framer Folder",
       "identifier" : "choose-select-export-path"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onRemoveProjectFolderRun",
       "shortcut" : "",
-      "name" : "Remove Export Path",
+      "name" : "Remove Framer Folder",
       "identifier" : "choose-remove-export-path"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onShowProjectFolderRun",
+      "shortcut" : "",
+      "name" : "Show Framer Folder",
+      "identifier" : "choose-show-export-path"
     },
     {
       "script" : "run-actions.cocoascript",
@@ -82,28 +89,32 @@
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-      "show-bar",
-      "-",
-      "choose-simulate-keynote",
-		  "choose-generate-states",
-		  "choose-replicate-layers",
-      "-",
-		  {
-		         "title": "      Utils",
-		         "items": [
-				 	         "choose-settings",
-                   {
-                     "title": "Export Folder",
-                     "items": [
-                       "choose-select-export-path",
-                       "choose-remove-export-path"
-                     ],
-                   },
-					          "choose-remove-export-page",
-                    "choose-check-updates",
-                    "choose-testing-environment"
-		          ],
-		  }
+        "show-bar",
+        "-",
+  		  "choose-replicate-layers",
+        "choose-generate-states",
+        "choose-simulate-keynote",
+        "-",
+        {
+          "title": "      Export Folder",
+          "items": [
+            "choose-show-export-path",
+            "-",
+            "choose-select-export-path",
+            "choose-remove-export-path"
+          ]
+        },
+        "-",
+  		  {
+  		         "title": "      Utils",
+  		         "items": [
+  					          "choose-remove-export-page",
+                      "choose-check-updates",
+                      "choose-testing-environment"
+  		          ]
+  		  },
+        "-",
+        "choose-settings"
       ]
     }
 }
