@@ -16,6 +16,11 @@ var runReplicateLayers = function() {
 	FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanExportPage()
 
+	if (userDefaults.exportFramerFolder == "") {
+			selectFolder()
+			return
+	}
+
 	if (FramerInventory.isSmartGenerateAction(selection)) {
 			isSmartAction = true
 			runGenerateStates()
@@ -24,7 +29,7 @@ var runReplicateLayers = function() {
 
 	var sortedSelection = OrderInventory.removeDuplicatedLayers(selection)
 	if (sortedSelection == nil || sortedSelection.count() < 1) {
-		[doc showMessage:"Nothing to replicate. Please, select some layers"]
+		[doc showMessage:ViewInventory.smileWarning() + "Select layers"]
 		return
 	}
 

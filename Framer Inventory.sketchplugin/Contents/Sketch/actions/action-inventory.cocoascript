@@ -11,8 +11,11 @@
 
 @import 'actions/workers/action-testing-environment.cocoascript'
 @import 'actions/workers/action-settings.cocoascript'
+
 @import 'actions/workers/modals/action-check-updates.cocoascript'
-// @import 'actions/workers/action-select-device.cocoascript'
+@import 'actions/workers/modals/action-select-duplicated-artboards.cocoascript'
+@import 'actions/workers/modals/action-select-folder.cocoascript'
+
 
 @import 'inventory/classes/layer.cocoascript'
 @import 'inventory/libs/pluginDefaults.js'
@@ -329,46 +332,6 @@ FramerInventory.isUsed = function(artboardName) {
 
 
 
-
-FramerInventory.analyseMobile = function(artboardWidth) {
-	// FramerInventory.setRetinaValue(artboardWidth)
-	// FramerInventory.setPhoneValue(artboardWidth)
-}
-
-// FramerInventory.setPhoneValue = function(artboardWidth) {
-// 	if (userDefaults.myMobile == 0 || artboardWidth == nil) { phoneModel = 0 }
-// 	else if (artboardWidth == 320 || artboardWidth == 640) { phoneModel = 1 }
-// 	else if (artboardWidth == 375 || artboardWidth == 750) { phoneModel = 2 }
-// 	else if (artboardWidth == 414 || artboardWidth == 1242) { phoneModel = 3 }
-// 	else { phoneModel = 0 }
-// }
-
-// FramerInventory.getPhoneValue = function() {
-// 	return phoneModel
-// }
-
-// FramerInventory.setRetinaValue = function(artboardWidth) {
-// 	if (userDefaults.myMobile == 1) {
-// 		if (artboardWidth == 640 || artboardWidth == 750 || artboardWidth == 1242) { pixelDensity = 1 }
-// 		else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
-// 		else if (artboardWidth == 414) { pixelDensity = 3 }
-// 		else {
-// 			if (showLog) { log("Pixel density is undetermined") }
-// 			pixelDensity = pixelDensity = userDefaults.myRetinaValue
-// 		}
-// 	}
-// 	else { pixelDensity = userDefaults.myRetinaValue }
-// }
-
-// FramerInventory.getRetinaValue = function() {
-// 	return pixelDensity
-// }
-
-
-
-
-
-
 FramerInventory.requireExportPage = function() {
 	exportPageRequired = true
 }
@@ -378,19 +341,16 @@ FramerInventory.isExportPageRequired = function() {
 }
 
 FramerInventory.showDoneMessage = function() {
-	var message = "👍"
+	var message = ViewInventory.smileDone()
 
-	if (OrderInventory.getWarnings() != "") { message += ". Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
+	if (OrderInventory.getWarnings() != "") { message = ViewInventory.smileWarning() + "\"" + OrderInventory.getWarnings() + "\" has several types." }
 
 	if (FramerInventory.isExportPageRequired()) {
 			if (userDefaults.exportFramerFolder != "") {
 				FramerInventory.exportLayersFromExportPage(FramerInventory.getCurrentPage())
-				message = "👍"
 				FramerInventory.removePage(exportPageName)
 			}
-			else {
-				message = "Done. Export assets from \"" + exportPageName + "\" page"
-			}
+			else { message = ViewInventory.smileDone() + "Export assets from \"" + exportPageName + "\" page" }
 	}
 	else { FramerInventory.removePage(exportPageName) }
 
@@ -409,21 +369,22 @@ FramerInventory.runSelectProjectFolder = function() {
 		var isPathSelected = FramerInventory.getExportPath()
 
 		var message = userDefaults.exportFramerFolder
-		if (!isPathSelected && message) { message = "Canceled. Previous Export folder is selected" }
-		else if (!isPathSelected) { message = "Canceled. Export folder is not selected" }
-		else { message = "👍🏻 Selected folder: " + message }
+		if (!isPathSelected && message) { message = ViewInventory.smileWarning() + "Canceled. Previous Framer folder is selected" }
+		else if (!isPathSelected) { message = ViewInventory.smileWarning() + "Canceled. Framer folder is not selected" }
+		else { message = ViewInventory.smileDone() + "Selected folder: " + message }
 
 		[currentDocument showMessage:message]
 }
 
 FramerInventory.runRemoveProjectFolder = function() {
 		if (userDefaults.exportFramerFolder == "") {
-				[currentDocument showMessage:"🙈"]
+				[currentDocument showMessage:ViewInventory.smileForget()]
 				return
 		}
 		userDefaults.exportFramerFolder = ""
 		saveDefaults(userDefaults)
-		[currentDocument showMessage:"🙈"]
+
+		[currentDocument showMessage:ViewInventory.smileForget()]
 }
 
 

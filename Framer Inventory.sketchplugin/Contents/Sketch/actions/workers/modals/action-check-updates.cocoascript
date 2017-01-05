@@ -82,7 +82,7 @@ var runCheckUpdates = function() {
 			// NSWorkspace.sharedWorkspace().openURL(websiteURL);
 	}
 	else {
-			currentDocument.showMessage("👍🏻 Latest version");
+			currentDocument.showMessage(ViewInventory.smileDone() + "Latest version");
 	}
 
 }

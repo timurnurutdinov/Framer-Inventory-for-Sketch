@@ -74,7 +74,7 @@ var selectArtboardsWithName = function(artboardName) {
 		if ([currentArtboard name] == artboardName) { [currentArtboard select:true byExpandingSelection:true] }
 	}
 
-	[currentDocument showMessage:"Rename artboards and try again"]
+	[currentDocument showMessage:ViewInventory.smileWarning() + "Rename artboards and try again"]
 }
 
 

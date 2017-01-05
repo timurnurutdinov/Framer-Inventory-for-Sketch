@@ -4,11 +4,11 @@ var runGenerateStates = function() {
 	currentCommandIdentifier = runGenerateStatesIdentifier
 	StatisticsInventory.sendGenerateRequest()
 
-	var doc = currentDocument
 	var selection = currentSelection
 
 	[[NSPasteboard generalPasteboard] clearContents]
 
+	// for tests only
 	if (isTestingEnvironment) { selection = TestingEnvironment.getTestingSelection() }
 
 	var layers = []
@@ -18,6 +18,10 @@ var runGenerateStates = function() {
 	FramerInventory.addExportPageAndReturn(currentPage)
 	FramerInventory.cleanExportPage()
 
+	if (userDefaults.exportFramerFolder == "") {
+			selectFolder()
+			return
+	}
 
 	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(FramerInventory.returnArtboardsScope())
 	if (duplicatedArtboard != nil) {
@@ -28,7 +32,7 @@ var runGenerateStates = function() {
 
 	var sortedSelection = FramerInventory.organiseSelection(selection)
 	if (sortedSelection == nil) {
-		[doc showMessage:"Nothing to generate. Please, select some layers"]
+		[currentDocument showMessage:ViewInventory.smileWarning() + "Select layers"]
 		return
 	}
 
