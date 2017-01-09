@@ -68,10 +68,16 @@ DescribeInventory.generatePhoneModel = function() {
 	else if (model == 6) {
 		modelDescription += "Framer.Device.deviceType = \"google-nexus-6p\"" + ln()
 	}
-	return modelDescription
+	return modelDescription + getHelpers(model)
 }
 
 
+
+function getHelpers(model) {
+	var helpers = "Framer.Extras.Hints.disable()" + ln()
+	if (model == 0 || model == 1) { helpers += "document.body.style.cursor = \"auto\"" + ln() }
+	return helpers
+}
 
 function getButtonName() {
 	return "cycleButton"
@@ -100,7 +106,7 @@ DescribeInventory.generateCycleStates = function(states) {
 
 
 function getLayersArrayName() {
-	return "items"
+	return "sceneItems"
 }
 
 DescribeInventory.generateLayers = function(layers) {
@@ -131,29 +137,22 @@ function getFunctionName() {
 	return "runSimulation"
 }
 
+function getHandlerName() {
+	return "nextStateHandler"
+}
 
 DescribeInventory.generateHandler = function() {
 	var handlerDescription = ""
 
-	if (userDefaults.myAutoplay == 0) {
-		handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
-		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
-		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
-		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.animate(nextState)" + ln()
-		handlerDescription += tln() + tln() + "catch error" + dln()
-	}
-	else {
-		handlerDescription = getFunctionName() + " = () ->" + ln()
-		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
-		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
-		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.animate(nextState)" + ln()
-		handlerDescription += tln() + tln() + "catch error" + ln()
-		handlerDescription += tln() + "Utils.delay 2, ->" + ln()
-		handlerDescription += tln() + tln() + getFunctionName() + "()" + dln()
+	handlerDescription += getHandlerName() + " = () ->" + ln()
+	handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+	handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+	handlerDescription += tln() + tln() + "try" + ln()
+	handlerDescription += tln() + tln() + tln() + "item.animate(nextState)" + ln()
+	handlerDescription += tln() + tln() + "catch error" + dln()
 
-		handlerDescription += getFunctionName() + "()"
-	}
+	handlerDescription += getButtonName() + ".on Events.Click, ->" + ln()
+	handlerDescription += tln() + getHandlerName() + "()"
+
 	return handlerDescription
 }
