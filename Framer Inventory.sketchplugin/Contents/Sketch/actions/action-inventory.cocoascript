@@ -192,10 +192,12 @@ FramerInventory.findPageWithName = function(pageName) {
 FramerInventory.returnDuplicatedArtboards = function(artboards) {
 	for (var i = 0; i < artboards.count(); i++) {
 		var current = [artboards objectAtIndex:i]
+		var currentName = [current name]
 
 		for (var j = 0; j < i; j++) {
 			var comparableCurrent = [artboards objectAtIndex:j]
-			if ([current name] == [comparableCurrent name]) { return comparableCurrent }
+			var comparableName = [comparableCurrent name]
+			if ([currentName isEqualToString:comparableName]) { return comparableCurrent }
 		}
 	}
 

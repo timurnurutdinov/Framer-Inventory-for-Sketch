@@ -80,6 +80,7 @@ ToolbarInventory.getEmptyToolbarViews = function() {
 }
 
 ToolbarInventory.getGeneralToolbarViews = function() {
+    var measureIcons = 16
 
     pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 48, measureWindowWidth, 20)];
     [pathLabel setEditable:false];
@@ -103,8 +104,35 @@ ToolbarInventory.getGeneralToolbarViews = function() {
             ToolbarInventory.updatePathLabel()
     })
 
+    // var moreButton = ToolbarInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 2, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "more",
+    //     function(sender){
+    // })
+    var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 2, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2))
+    [[moreButton cell] setArrowPosition:false];
+    [moreButton setBordered:false];
+    [moreButton setImagePosition:NSImageOnly];
+    // [moreButton setImagePosition:NSImageOverlaps];
+    [[moreButton cell] setBackgroundColor:[NSColor redColor]];
+    moreButton.addItemsWithTitles(["one", "two"])
+    [[moreButton cell] setUsesItemFromMenu:false];
+
+    var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
+    var suffix = (isRetinaDisplay)? "@2x": "";
+    var imageURL = NSURL.fileURLWithPath(pluginPath + "/images/toolbar/more" + suffix + ".png");
+    var image = NSImage.alloc().initWithContentsOfURL(imageURL);
+
+    var item = [[NSMenuItem allocWithZone:nil] initWithTitle:"" action:nil keyEquivalent:""];
+    [item setImage:image];
+    [item setOnStateImage:nil];
+    [item setState:NSOffState]
+    [item setMixedStateImage:nil];
+    [[moreButton cell] setMenuItem:item];
+    // [item release];
+    [moreButton setPreferredEdge:NSMinXEdge];
+
+
+
     // Action Icons
-    var measureIcons = 16
 
     var layersButton = ToolbarInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "simulate",
         function(sender){
@@ -121,6 +149,7 @@ ToolbarInventory.getGeneralToolbarViews = function() {
             ToolbarInventory.updateContext();
             runReplicateLayers()
     })
+
 
 
     relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64-80, 16, 80, 28))
@@ -166,7 +195,7 @@ ToolbarInventory.getGeneralToolbarViews = function() {
 
     var textsView = ToolbarInventory.addImage(NSMakeRect(0, 0, measureWindowWidth, measureIcons), "texts")
 
-    return [pathLabel, addButton, removeButton, layersButton, statesButton, sceneButton, relativeAccessory, densityAccessory, deviceAccessory, textsView]
+    return [pathLabel, addButton, removeButton, moreButton, layersButton, statesButton, sceneButton, relativeAccessory, densityAccessory, deviceAccessory, textsView]
 }
 
 
