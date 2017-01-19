@@ -1,4 +1,5 @@
 var pathLabel = nil
+// var selectionLabel = nil
 var topBottomGuides = nil
 
 var relativeAccessory = nil
@@ -14,11 +15,53 @@ var measureRoundButtonsBottom = measureWindowHeight - measureRoundButtons * 3
 
 var defaultPathLabel = "Please, select Framer folder"
 
-var UIBar = nil
+// this is a class to store in threadDictionary
+var toolbar = nil
 var threadDictionary = nil
 var threadIdentifier = "com.tilllur.framer-inventory"
 
-function ToolbarInventory () {}
+
+
+
+function ToolbarInventory (panel) {
+  this.panel = panel
+  this.selectionLabel = nil
+  this.pathLabel = nil
+}
+
+ToolbarInventory.prototype.updateSelectionLabel = function(name) {
+    if (this.selectionLabel != nil) {
+      var localLabel = this.selectionLabel
+      [localLabel setStringValue:name]
+    }
+}
+
+ToolbarInventory.prototype.updatePathLabel = function(name) {
+    if (this.pathLabel != nil) {
+      // [this.pathLabel setStringValue:name]
+      var localLabel = this.pathLabel
+      [localLabel setStringValue:name]
+    }
+}
+
+
+ToolbarInventory.prototype.returnPanel = function() {
+    return this.panel
+}
+
+ToolbarInventory.prototype.setSelectionLabel = function(label) {
+    this.selectionLabel = label
+}
+
+ToolbarInventory.prototype.setPathLabel = function(label) {
+    this.pathLabel = label
+}
+
+
+
+
+
+
 
 
 ToolbarInventory.updateContext = function() {
@@ -31,33 +74,33 @@ ToolbarInventory.updateContext = function() {
 }
 
 
-ToolbarInventory.getImage = function(size, name) {
-    var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
-    var suffix = (isRetinaDisplay)? "@2x": "";
-    var imageURL = NSURL.fileURLWithPath(pluginPath + "/" + "/images" + "/toolbar/" + name + suffix + ".png");
-    var image = NSImage.alloc().initWithContentsOfURL(imageURL);
-    return image
-}
-
-ToolbarInventory.addButton = function(rect, name, callAction) {
-    var button = NSButton.alloc().initWithFrame(rect);
-    var image = ToolbarInventory.getImage(rect.size, name);
-
-    button.setImage(image);
-    button.setBordered(false);
-    button.sizeToFit();
-    button.setButtonType(NSMomentaryChangeButton);
-    button.setCOSJSTargetFunction(callAction);
-    button.setAction("callAction:");
-    return button;
-}
-
-ToolbarInventory.addImage = function(rect, name) {
-    var view = NSImageView.alloc().initWithFrame(rect)
-    var image = ToolbarInventory.getImage(rect.size, name);
-    view.setImage(image);
-    return view;
-}
+// ToolbarInventory.getImage = function(size, name) {
+//     var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
+//     var suffix = (isRetinaDisplay)? "@2x": "";
+//     var imageURL = NSURL.fileURLWithPath(pluginPath + "/" + "/images" + "/toolbar/" + name + suffix + ".png");
+//     var image = NSImage.alloc().initWithContentsOfURL(imageURL);
+//     return image
+// }
+//
+// ToolbarInventory.addButton = function(rect, name, callAction) {
+//     var button = NSButton.alloc().initWithFrame(rect);
+//     var image = ToolbarInventory.getImage(rect.size, name);
+//
+//     button.setImage(image);
+//     button.setBordered(false);
+//     button.sizeToFit();
+//     button.setButtonType(NSMomentaryChangeButton);
+//     button.setCOSJSTargetFunction(callAction);
+//     button.setAction("callAction:");
+//     return button;
+// }
+//
+// ToolbarInventory.addImage = function(rect, name) {
+//     var view = NSImageView.alloc().initWithFrame(rect)
+//     var image = ToolbarInventory.getImage(rect.size, name);
+//     view.setImage(image);
+//     return view;
+// }
 
 
 
@@ -74,10 +117,12 @@ ToolbarInventory.getEmptyToolbarViews = function() {
     }];
     [saveButton setAction:"callAction:"];
 
-    var emptyView = ToolbarInventory.addImage(NSMakeRect(0, 0, measureWindowWidth, measureWindowHeight), "empty")
+    var emptyView = ViewInventory.addImage(NSMakeRect(0, 0, measureWindowWidth, measureWindowHeight), "toolbar/empty")
 
     return [emptyView, saveButton]
 }
+
+
 
 ToolbarInventory.getGeneralToolbarViews = function() {
     var measureIcons = 16
@@ -91,22 +136,22 @@ ToolbarInventory.getGeneralToolbarViews = function() {
     [pathLabel setDrawsBackground:false];
     [pathLabel setStringValue:defaultPathLabel];
 
-    var addButton = ToolbarInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 5, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "add",
+    // globalLabel = selectionLabel
+
+    var addButton = ViewInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 5, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "toolbar/add",
         function(sender){
             ToolbarInventory.updateContext();
             FramerInventory.runSelectProjectFolder()
             ToolbarInventory.updatePathLabel()
     })
-    var removeButton = ToolbarInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 8, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "remove",
+    var removeButton = ViewInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 8, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "toolbar/remove",
         function(sender){
             ToolbarInventory.updateContext();
             FramerInventory.runRemoveProjectFolder()
             ToolbarInventory.updatePathLabel()
     })
 
-    // var moreButton = ToolbarInventory.addButton( NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 2, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "more",
-    //     function(sender){
-    // })
+
     var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(measureWindowWidth - measureRoundButtonsSide - measureRoundButtons * 2, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2))
     [[moreButton cell] setArrowPosition:false];
     [moreButton setBordered:false];
@@ -134,17 +179,17 @@ ToolbarInventory.getGeneralToolbarViews = function() {
 
     // Action Icons
 
-    var layersButton = ToolbarInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "simulate",
+    var sceneButton = ViewInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/simulate",
         function(sender){
             ToolbarInventory.updateContext();
             runSimulateKeynote()
     })
-    var statesButton = ToolbarInventory.addButton( NSMakeRect(measureIcons*4 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "generate",
+    var statesButton = ViewInventory.addButton( NSMakeRect(measureIcons*4 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/generate",
         function(sender){
             ToolbarInventory.updateContext();
             runGenerateStates()
     })
-    var sceneButton = ToolbarInventory.addButton( NSMakeRect(measureIcons - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "replicate",
+    var layersButton = ViewInventory.addButton( NSMakeRect(measureIcons - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/replicate",
         function(sender){
             ToolbarInventory.updateContext();
             runReplicateLayers()
@@ -193,22 +238,23 @@ ToolbarInventory.getGeneralToolbarViews = function() {
     })
 
 
-    var textsView = ToolbarInventory.addImage(NSMakeRect(0, 0, measureWindowWidth, measureIcons), "texts")
+    var textsView = ViewInventory.addImage(NSMakeRect(0, 0, measureWindowWidth, measureIcons), "toolbar/texts")
 
     return [pathLabel, addButton, removeButton, moreButton, layersButton, statesButton, sceneButton, relativeAccessory, densityAccessory, deviceAccessory, textsView]
 }
 
 
 ToolbarInventory.getCloseToolbarViews = function() {
-    var closeButton = ToolbarInventory.addButton(NSMakeRect(measureRoundButtonsSide, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "close",
+    var closeButton = ViewInventory.addButton(NSMakeRect(measureRoundButtonsSide, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "toolbar/close",
         function(sender){
-            coscript.setShouldKeepAround(false);
+            coscript.setShouldKeepAround(false)
+            toolbar.returnPanel().close();
+            toolbar = nil;
             threadDictionary.removeObjectForKey(threadIdentifier);
-            UIBar.close();
         }
     )
 
-    var settingsButton = ToolbarInventory.addButton( NSMakeRect(measureRoundButtonsSide + measureRoundButtons * 3, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "settings",
+    var settingsButton = ViewInventory.addButton( NSMakeRect(measureRoundButtonsSide + measureRoundButtons * 3, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "toolbar/settings",
         function(sender){
             ToolbarInventory.updateContext();
             runSettings()
@@ -251,11 +297,11 @@ ToolbarInventory.createUIBar = function() {
     coscript.setShouldKeepAround(true);
 
     threadDictionary = NSThread.mainThread().threadDictionary()
-    UIBar = threadDictionary[threadIdentifier]
+    toolbar = threadDictionary[threadIdentifier]
 
-    if(!UIBar){
+    if(!toolbar){
 
-        UIBar = NSPanel.alloc().init();
+        var UIBar = NSPanel.alloc().init();
         UIBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
         UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1));
         UIBar.setTitleVisibility(NSWindowTitleHidden);
@@ -265,16 +311,31 @@ ToolbarInventory.createUIBar = function() {
         UIBar.setHasShadow(true);
         UIBar.setLevel(NSFloatingWindowLevel);
 
+        toolbar = new ToolbarInventory(UIBar);
 
         if (userDefaults.exportFramerFolder == "") { UIBar.setContentView(ToolbarInventory.createEmptyContentView()) }
         else { UIBar.setContentView(ToolbarInventory.createGeneralContentView()) }
+        // if (userDefaults.exportFramerFolder == "") { ToolbarInventory.createEmptyContentView(toolbar) }
+        // else { ToolbarInventory.createGeneralContentView(toolbar) }
+
+        var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 40, measureWindowWidth, 20)];
+        [selectionLabel setEditable:false];
+        [selectionLabel setBordered:false];
+        [selectionLabel setAlignment:NSCenterTextAlignment]
+        [selectionLabel setFont:ViewInventory.fontCheckControls()];
+        [selectionLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
+        [selectionLabel setDrawsBackground:false];
+        [selectionLabel setStringValue:"Select Layers"];
+
+        toolbar.returnPanel().contentView().addSubview(selectionLabel)
+        toolbar.setSelectionLabel(selectionLabel)
 
 
-        threadDictionary[threadIdentifier] = UIBar;
+        threadDictionary[threadIdentifier] = toolbar
         UIBar.center();
         UIBar.makeKeyAndOrderFront(nil);
 
-        ToolbarInventory.updatePathLabel()
+        // ToolbarInventory.updatePathLabel()
     }
 }
 
@@ -338,32 +399,27 @@ ToolbarInventory.createUIBar = function() {
 
 
 ToolbarInventory.updateAccessoryControls = function() {
-    if (relativeAccessory != nil) {
-        relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
-    }
-    if (densityAccessory != nil) {
-        densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
-    }
-    if (deviceAccessory != nil) {
-        deviceAccessory.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
-    }
+    // if (relativeAccessory != nil) {
+    //     relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
+    // }
+    // if (densityAccessory != nil) {
+    //     densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
+    // }
+    // if (deviceAccessory != nil) {
+    //     deviceAccessory.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
+    // }
 }
 
 
 ToolbarInventory.updatePathLabel = function() {
-    if (UIBar != nil) {
+    if (toolbar != nil) {
       if (userDefaults.exportFramerFolder == "") {
-        UIBar.setContentView(ToolbarInventory.createEmptyContentView())
+        toolbar.returnPanel().setContentView(ToolbarInventory.createEmptyContentView())
       }
       else {
-        UIBar.setContentView(ToolbarInventory.createGeneralContentView())
-
-        if (pathLabel != nil) {
-          var pathComps = userDefaults.exportFramerFolder.split("/");
-          var localLabel = pathComps.pop()
-          [pathLabel setStringValue:localLabel];
-        }
-
+        toolbar.returnPanel().setContentView(ToolbarInventory.createGeneralContentView())
+        var pathLabelValue = userDefaults.exportFramerFolder.split("/").pop();
+        toolbar.updatePathLabel(pathLabelValue)
       }
     }
 }

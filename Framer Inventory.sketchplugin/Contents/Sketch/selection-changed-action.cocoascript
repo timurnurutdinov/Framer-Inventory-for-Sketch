@@ -1,0 +1,132 @@
+// var onSelectionChanged = function(context) {
+//
+//     action = context.actionContext;
+//
+//     document = action.document;
+//     selection = action.newSelection;
+//
+//     count = selection.count();
+//     if (count == 0) {
+//         document.hideMessage();
+//     } else {
+//         log("here")
+//         log(selectionLabel)
+//
+//         if (count == 1) {
+//             message = "1 layer selected."
+//         } else {
+//             message = count + " layers selected."
+//         }
+//         document.showMessage(message);
+//     }
+//
+// };
+
+@import 'actions/action-inventory.cocoascript'
+@import 'actions/view-inventory.cocoascript'
+
+// var testThreadIdentifier = "com.tilllur.framer-inventory.testing"
+// function TestObject (name) {
+//   this.name = name
+//   this.panel = NSPanel.alloc().init();
+// }
+
+var onSelectionChanged = function(context) {
+    // return
+    coscript.setShouldKeepAround(true); // Setting session as a long running.
+
+    // First argument is a delay in seconds.
+    coscript.scheduleWithInterval_jsFunction(0.4,function() {
+        var threadIdentifier = "com.tilllur.framer-inventory"
+        var threadDictionary = NSThread.mainThread().threadDictionary()
+        var testObject = threadDictionary[threadIdentifier]
+
+        if (testObject != nil) {
+            // var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
+            // var selection = context.actionContext.newSelection
+            // log(selection)
+
+            var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
+            // log(selectionCorrect)
+
+            if (selection.count() > 0) {
+                var currentName = "Artboards: "
+
+                var counterA = 0
+                var counterL = 0
+
+                for (var i = 0; i < selection.count(); i++) {
+                      if (TypeInventory.isArtboardType([[selection objectAtIndex:i] className])) { counterA++ }
+                    // currentName += selection[i].name() + ", "
+                }
+                testObject.updateSelectionLabel(currentName + counterA)
+            }
+            else {
+                testObject.updateSelectionLabel("Select Layers")
+            }
+
+        }
+
+        coscript.setShouldKeepAround(false); // Tearing down the session.
+    });
+
+
+
+    //
+    // var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
+    // var tempCount = [selection count]
+    // if (tempCount < 2) {
+    //     log("Handler")
+    //
+    //     var threadDictionary = NSThread.mainThread().threadDictionary()
+    //     log(threadDictionary)
+    //     testObject = threadDictionary[testThreadIdentifier]
+    //
+    //     if (testObject == nil) {
+    //       log("Object is NULL")
+    //
+    //       threadDictionary[testThreadIdentifier] = new TestObject("example");
+    //       log(threadDictionary)
+    //
+    //       threadDictionary = NSThread.mainThread().threadDictionary()
+    //
+    //       log("Object should be changed. Let's check it")
+    //       log(threadDictionary)
+    //       var changedObject = threadDictionary[testThreadIdentifier]
+    //       log(changedObject.panel)
+    //     }
+    //     else {
+    //       log(threadDictionary[testThreadIdentifier])
+    //       var changedObject = threadDictionary[testThreadIdentifier]
+    //       log(changedObject.panel)
+    //     }
+    // }
+    // else {
+    //   log("gonna Clean. Base is")
+    //
+    //   var threadDictionary = NSThread.mainThread().threadDictionary()
+    //   log(threadDictionary[testThreadIdentifier])
+    //   threadDictionary.removeObjectForKey(testThreadIdentifier);
+    //   log("works?")
+    //   log(NSThread.mainThread().threadDictionary())
+    //
+    // }
+
+
+
+
+
+    // log(NSThread.mainThread().threadDictionary())
+		// log(UIBar)
+		// if (UIBar == nil) {
+		// 	log("NO")
+    //
+    //
+    //
+    //
+    //   threadDictionary = NSThread.mainThread().threadDictionary()
+    //   UIBar = threadDictionary[testThreadIdentifier]
+    //
+    //   log(UIBar)
+		// }
+};
