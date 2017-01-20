@@ -96,7 +96,7 @@ ScaleInventory.returnScale = function(originWidth) {
 
 // Devices Magic
 ScaleInventory.returnDevices = function() {
-    return [["Canvas", "Canvas @2x"], ["iPhone 5S", "iPhone 7", "iPhone 7 Plus"], ["Nexus 5P", "Nexus 6X"]]
+    return [["Canvas", "Canvas @2x"], ["iPhone 5S", "iPhone 7", "iPhone 7 Plus"], ["Nexus 5X", "Nexus 6P"]]
 }
 
 ScaleInventory.selectedDeviceIndex = function(selectedItemIndex) {

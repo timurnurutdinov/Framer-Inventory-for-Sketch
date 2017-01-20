@@ -43,3 +43,8 @@ ViewInventory.addImage = function(rect, name) {
     view.setImage(image);
     return view;
 }
+
+
+ViewInventory.optimiseFramerPath = function() {
+    return userDefaults.exportFramerFolder.split("/").pop();
+}
