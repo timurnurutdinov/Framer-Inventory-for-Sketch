@@ -6,6 +6,7 @@ var runReplicateLayers = function() {
 
 	var doc = currentDocument
 	var selection = currentSelection
+	FramerInventory.setUserSelection(currentSelection)
 
 	[[NSPasteboard generalPasteboard] clearContents]
 
@@ -21,19 +22,17 @@ var runReplicateLayers = function() {
 			return
 	}
 
-	if (FramerInventory.isSmartGenerateAction(selection)) {
-			isSmartAction = true
-			runGenerateStates()
-			return
-	}
+	// if (FramerInventory.isSmartGenerateAction(selection)) {
+	// 		isSmartAction = true
+	// 		runGenerateStates()
+	// 		return
+	// }
 
 	var sortedSelection = OrderInventory.removeDuplicatedLayers(selection)
 	if (sortedSelection == nil || sortedSelection.count() < 1) {
 		[doc showMessage:ViewInventory.smileWarning() + "Select layers"]
 		return
 	}
-
-	FramerInventory.setUserSelection(sortedSelection)
 
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]

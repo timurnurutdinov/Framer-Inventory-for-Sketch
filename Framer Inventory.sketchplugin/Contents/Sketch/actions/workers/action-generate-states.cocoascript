@@ -5,6 +5,7 @@ var runGenerateStates = function() {
 	StatisticsInventory.sendGenerateRequest()
 
 	var selection = currentSelection
+	FramerInventory.setUserSelection(currentSelection)
 
 	[[NSPasteboard generalPasteboard] clearContents]
 
@@ -37,9 +38,7 @@ var runGenerateStates = function() {
 	}
 
 	var artboardsMaps = OrderInventory.getArtboardsLayers()
-	log(artboardsMaps)
 	var artboardsNames = OrderInventory.getArtboardsNames()
-	log(artboardsNames)
 
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]

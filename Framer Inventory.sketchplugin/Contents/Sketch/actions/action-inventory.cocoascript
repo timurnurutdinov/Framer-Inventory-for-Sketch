@@ -1,4 +1,5 @@
 @import 'lib.js'
+@import 'selection-changed-action.cocoascript'
 
 @import 'actions/order-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
@@ -96,15 +97,20 @@ FramerInventory.deselectLayers = function() {
 }
 
 FramerInventory.returnArtboardsScope = function() {
-		if (isSmartAction) {
-				var artboardsScope = NSMutableArray.new()
-				for(var i = 0; i < currentSelection.count(); i++) {
-						var currentLayer = [currentSelection objectAtIndex: i]
-						var currentArtboard = TypeInventory.findParentArtboard(currentLayer)
-						[artboardsScope addObject: currentArtboard]
-				}
-				return artboardsScope
-		}
+		// if (isSmartAction) {
+		// 		var artboardsScope = NSMutableArray.new()
+		// 		for(var i = 0; i < currentSelection.count(); i++) {
+		// 				var currentLayer = [currentSelection objectAtIndex: i]
+		// 				var currentArtboard = TypeInventory.findParentArtboard(currentLayer)
+		// 				[artboardsScope addObject: currentArtboard]
+		// 		}
+		// 		return artboardsScope
+		// }
+		log("in return artboards scope")
+		var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
+		log(selectionInventoryInstance)
+		var type = selectionInventoryInstance.type
+		if (type == 2 || type == 4) { return selectionInventoryInstance.artboards }
 		return FramerInventory.getCurrentPage().artboards()
 }
 
@@ -258,8 +264,7 @@ FramerInventory.getExportPath = function() {
 FramerInventory.organiseSelection = function(userSelection) {
 	userSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
 	if (userSelection.count() == 0) { return }
-
-	FramerInventory.setUserSelection(userSelection)
+	
 	OrderInventory.initSelection(userSelection)
 
 	var unorderedLayers = OrderInventory.returnUnorderedLayers()
@@ -398,12 +403,12 @@ FramerInventory.runRemoveProjectFolder = function() {
 }
 
 
-FramerInventory.isSmartGenerateAction = function(localSelection) {
-		if (localSelection.count() < 2) { return false }
-		var localName = localSelection.firstObject().name()
-		for (var i = 1; i < localSelection.count(); i++) {
-				var currentLayerName = [[localSelection objectAtIndex: i] name]
-				if (![localName isEqualToString: currentLayerName]) { return false }
-		}
-		return true
-}
+// FramerInventory.isSmartGenerateAction = function(localSelection) {
+// 		if (localSelection.count() < 2) { return false }
+// 		var localName = localSelection.firstObject().name()
+// 		for (var i = 1; i < localSelection.count(); i++) {
+// 				var currentLayerName = [[localSelection objectAtIndex: i] name]
+// 				if (![localName isEqualToString: currentLayerName]) { return false }
+// 		}
+// 		return true
+// }

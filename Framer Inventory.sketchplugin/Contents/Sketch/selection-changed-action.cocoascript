@@ -3,117 +3,42 @@
 @import 'lib.js'
 
 
+function SelectionInventory(type) {
+    this.type = type
+    this.artboards = NSMutableArray.new()
+}
+
+function SelectionInventory(type, artboards) {
+    this.type = type
+    this.artboards = NSMutableArray.new()
+    if (artboards != nil) { this.artboards = artboards}
+}
+
+
+
+
 var onSelectionChanged = function(context) {
+    coscript.setShouldKeepAround(true);
 
-    // coscript.setShouldKeepAround(true);
-    // coscript.scheduleWithInterval_jsFunction(0.2,function() {
-    //     var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
-    //     ToolbarInventory.updateSelectionLabelStringValue(selection.count() + "")
-    //     coscript.setShouldKeepAround(false); // Tearing down the session.
-    // }
-
-
-    coscript.setShouldKeepAround(true); // Setting session as a long running.
-
-    // First argument is a delay in seconds.
-    coscript.scheduleWithInterval_jsFunction(0.4,function() {
+    coscript.scheduleWithInterval_jsFunction(0.1,function() {
         var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
 
+        var currentSelectionType = SelectionInventory.analyseActionType(selection).type
+        var selectionTitle = ""
+        if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
+        else if (currentSelectionType == 1) { selectionTitle = "Layer / All States" }
+        else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
+        else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
+        else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
 
-        ToolbarInventory.updateSelectionLabelStringValue(analyseActionType(selection) + "")
+        ToolbarInventory.updateSelectionLabelStringValue(selectionTitle + "")
 
-        // if (testObject != nil) {
-        //     // var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
-        //     // var selection = context.actionContext.newSelection
-        //     // log(selection)
-        //
-        //     var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
-        //     // log(selectionCorrect)
-        //
-        //     if (selection.count() > 0) {
-        //         var currentName = "Artboards: "
-        //
-        //         var counterA = 0
-        //         var counterL = 0
-        //
-        //         for (var i = 0; i < selection.count(); i++) {
-        //               if (TypeInventory.isArtboardType([[selection objectAtIndex:i] className])) { counterA++ }
-        //             // currentName += selection[i].name() + ", "
-        //         }
-        //         testObject.updateSelectionLabel(currentName + counterA)
-        //     }
-        //     else {
-        //         testObject.updateSelectionLabel("Select Layers")
-        //     }
-        //
-        // }
-
-        coscript.setShouldKeepAround(false); // Tearing down the session.
+        coscript.setShouldKeepAround(false);
     });
 
-
-
-
-
-
-    //
-    // var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
-    // var tempCount = [selection count]
-    // if (tempCount < 2) {
-    //     log("Handler")
-    //
-    //     var threadDictionary = NSThread.mainThread().threadDictionary()
-    //     log(threadDictionary)
-    //     testObject = threadDictionary[testThreadIdentifier]
-    //
-    //     if (testObject == nil) {
-    //       log("Object is NULL")
-    //
-    //       threadDictionary[testThreadIdentifier] = new TestObject("example");
-    //       log(threadDictionary)
-    //
-    //       threadDictionary = NSThread.mainThread().threadDictionary()
-    //
-    //       log("Object should be changed. Let's check it")
-    //       log(threadDictionary)
-    //       var changedObject = threadDictionary[testThreadIdentifier]
-    //       log(changedObject.panel)
-    //     }
-    //     else {
-    //       log(threadDictionary[testThreadIdentifier])
-    //       var changedObject = threadDictionary[testThreadIdentifier]
-    //       log(changedObject.panel)
-    //     }
-    // }
-    // else {
-    //   log("gonna Clean. Base is")
-    //
-    //   var threadDictionary = NSThread.mainThread().threadDictionary()
-    //   log(threadDictionary[testThreadIdentifier])
-    //   threadDictionary.removeObjectForKey(testThreadIdentifier);
-    //   log("works?")
-    //   log(NSThread.mainThread().threadDictionary())
-    //
-    // }
-
-
-
-
-
-    // log(NSThread.mainThread().threadDictionary())
-		// log(UIBar)
-		// if (UIBar == nil) {
-		// 	log("NO")
-    //
-    //
-    //
-    //
-    //   threadDictionary = NSThread.mainThread().threadDictionary()
-    //   UIBar = threadDictionary[testThreadIdentifier]
-    //
-    //   log(UIBar)
-		// }
 };
+
+
 
 
 // 0 – Select layers
@@ -122,7 +47,12 @@ var onSelectionChanged = function(context) {
 // 3 – layers / all states for layers
 // 4 – selected states for layers
 
-var analyseActionType = function(selection) {
+SelectionInventory.analyseActionType = function(selection) {
+    if (selection == nil) {
+        if (showLog) { log("Warning. Selection is nil") }
+        return new SelectionInventory(0)
+    }
+
     var localLayers = NSMutableArray.new()
     var localArtboards = NSMutableArray.new()
 
@@ -132,7 +62,7 @@ var analyseActionType = function(selection) {
         else { localLayers.addObject([selection objectAtIndex:i]) }
     }
 
-    if (localLayers.count() < 1) { return 0 }
+    if (localLayers.count() < 1) { return new SelectionInventory(0) }
 
     var isSameName = true
     if (localLayers.count() > 0) {
@@ -171,9 +101,10 @@ var analyseActionType = function(selection) {
 
     log("L: " + localLayers.count() + ", on A:" + localArtboards.count() + ". Same?" + isSameName)
 
-    if (localArtboards.count() == 1) { return isSameName ? 1 : 3 }
-    else if (localArtboards.count() > 1) { return isSameName ? 2 : 4 }
-    else { return 0 }
+    var type = -1
+    if (localArtboards.count() == 1) { type = isSameName ? 1 : 3 }
+    else if (localArtboards.count() > 1) { type = isSameName ? 2 : 4 }
+    else { type = 0 }
 
-    return 0
+    return new SelectionInventory(type, localArtboards)
 }

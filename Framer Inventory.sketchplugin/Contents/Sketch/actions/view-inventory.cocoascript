@@ -119,22 +119,26 @@ ViewInventory.getGeneralToolbarViews = function() {
 
 
     // Action Icons
+    var layersButton = ViewInventory.addButton( NSMakeRect(measureIcons - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/replicate",
+        function(sender){
+            ToolbarInventory.updateContext();
+            // var type = SelectionInventory.analyseActionType(currentSelection).type
+            runReplicateLayers()
+    })
+
+    var statesButton = ViewInventory.addButton( NSMakeRect(measureIcons*4 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/generate",
+        function(sender){
+            ToolbarInventory.updateContext();
+            runGenerateStates()
+    })
 
     var sceneButton = ViewInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/simulate",
         function(sender){
             ToolbarInventory.updateContext();
             runSimulateKeynote()
     })
-    var statesButton = ViewInventory.addButton( NSMakeRect(measureIcons*4 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/generate",
-        function(sender){
-            ToolbarInventory.updateContext();
-            runGenerateStates()
-    })
-    var layersButton = ViewInventory.addButton( NSMakeRect(measureIcons - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/replicate",
-        function(sender){
-            ToolbarInventory.updateContext();
-            runReplicateLayers()
-    })
+
+
 
 
 
