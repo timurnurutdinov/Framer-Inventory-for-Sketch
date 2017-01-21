@@ -97,21 +97,35 @@ FramerInventory.deselectLayers = function() {
 }
 
 FramerInventory.returnArtboardsScope = function() {
-		// if (isSmartAction) {
-		// 		var artboardsScope = NSMutableArray.new()
-		// 		for(var i = 0; i < currentSelection.count(); i++) {
-		// 				var currentLayer = [currentSelection objectAtIndex: i]
-		// 				var currentArtboard = TypeInventory.findParentArtboard(currentLayer)
-		// 				[artboardsScope addObject: currentArtboard]
-		// 		}
-		// 		return artboardsScope
-		// }
-		log("in return artboards scope")
 		var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
-		log(selectionInventoryInstance)
 		var type = selectionInventoryInstance.type
-		if (type == 2 || type == 4) { return selectionInventoryInstance.artboards }
+		if (type == 2 || type == 4) { return FramerInventory.orderArtboardsScope(selectionInventoryInstance.artboards) }
 		return FramerInventory.getCurrentPage().artboards()
+}
+
+FramerInventory.orderArtboardsScope = function(artboardsScope) {
+		var artboards = FramerInventory.getCurrentPage().artboards()
+		var existanceMap = [,]
+		var orderedScope = NSMutableArray.new()
+
+		for (var i = 0; i < artboards.count(); i++) {
+				var currentArtboardName = [[artboards objectAtIndex:i] name]
+				existanceMap[currentArtboardName] = 0
+		}
+
+		for (var i = 0; i < artboardsScope.count(); i++) {
+				var currentArtboardName = [[artboardsScope objectAtIndex:i] name]
+				existanceMap[currentArtboardName] = 1
+		}
+
+		var index = 0
+		for (key in existanceMap) {
+			var value = existanceMap[key]
+			if (value > 0) { [orderedScope addObject:[artboards objectAtIndex:index]] }
+			index++
+		}
+
+		return orderedScope
 }
 
 FramerInventory.exportLayersFromExportPage = function(oldPage) {
@@ -264,7 +278,7 @@ FramerInventory.getExportPath = function() {
 FramerInventory.organiseSelection = function(userSelection) {
 	userSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
 	if (userSelection.count() == 0) { return }
-	
+
 	OrderInventory.initSelection(userSelection)
 
 	var unorderedLayers = OrderInventory.returnUnorderedLayers()
