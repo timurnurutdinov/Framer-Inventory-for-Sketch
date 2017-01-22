@@ -46,8 +46,11 @@ var onSelectionChanged = function(context) {
 // 2 – selected states
 // 3 – layers / all states for layers
 // 4 – selected states for layers
+// 5 – Scene
+// 6 – Scene for selected artboards
 
 SelectionInventory.analyseActionType = function(selection) {
+    log("type selction: " + selection)
     if (selection == nil) {
         if (showLog) { log("Warning. Selection is nil") }
         return new SelectionInventory(0)
@@ -60,6 +63,12 @@ SelectionInventory.analyseActionType = function(selection) {
         var currentLayerClassName = [[selection objectAtIndex:i] className]
         if (TypeInventory.isArtboardType(currentLayerClassName)) { localArtboards.addObject([selection objectAtIndex:i]) }
         else { localLayers.addObject([selection objectAtIndex:i]) }
+    }
+
+    // for Keynote only
+    if (currentCommandIdentifier == runSimulateKeynoteIdentifier) {
+        if (localArtboards == nil) { return new SelectionInventory(5, FramerInventory.getCurrentPage().artboards()) }
+        return new SelectionInventory(6, localArtboards)
     }
 
     if (localLayers.count() < 1) { return new SelectionInventory(0) }

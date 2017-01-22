@@ -4,9 +4,9 @@
 var runSimulateKeynote = function() {
 	currentCommandIdentifier = runSimulateKeynoteIdentifier
 	StatisticsInventory.sendSimulateRequest()
-
-	var doc = currentDocument
+	
 	var selection = currentSelection
+	FramerInventory.setUserSelection(currentSelection)
 
 	[[NSPasteboard generalPasteboard] clearContents]
 
@@ -31,13 +31,15 @@ var runSimulateKeynote = function() {
 
 	var sortedSelection = FramerInventory.organiseSelection([currentPage exportableLayers])
 	if (sortedSelection == nil) {
-		[doc showMessage:"Nothing to simulate. Please, make some layers exportable"]
+		[currentDocument showMessage:"Nothing to simulate. Please, make some layers exportable"]
 		return
 	}
 
 
 	var artboardsMaps = OrderInventory.getArtboardsLayers()
 	var artboardsNames = OrderInventory.getArtboardsNames()
+	log(artboardsMaps)
+	log(artboardsNames)
 
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]

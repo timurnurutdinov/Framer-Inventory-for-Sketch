@@ -100,6 +100,7 @@ FramerInventory.returnArtboardsScope = function() {
 		var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
 		var type = selectionInventoryInstance.type
 		if (type == 2 || type == 4) { return FramerInventory.orderArtboardsScope(selectionInventoryInstance.artboards) }
+		else if (type == 6) { return selectionInventoryInstance.artboards }
 		return FramerInventory.getCurrentPage().artboards()
 }
 
