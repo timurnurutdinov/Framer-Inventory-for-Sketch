@@ -105,7 +105,7 @@ ToolbarInventory.updateContext = function() {
     methodStartTime = [NSDate date]
     if (NSDocumentController.sharedDocumentController() != nil && NSDocumentController.sharedDocumentController().currentDocument() != nil) {
       currentDocument = NSDocumentController.sharedDocumentController().currentDocument();
-      currentSelection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
+      currentSelection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers().layers();
       scaleInstance = new ScaleInventory()
     }
 }

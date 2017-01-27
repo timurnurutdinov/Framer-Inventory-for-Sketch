@@ -21,7 +21,7 @@ var onSelectionChanged = function(context) {
     coscript.setShouldKeepAround(true);
 
     coscript.scheduleWithInterval_jsFunction(0.1,function() {
-        var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers();
+        var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers().layers();
 
         var currentSelectionType = SelectionInventory.analyseActionType(selection).type
         var selectionTitle = ""
@@ -66,7 +66,7 @@ SelectionInventory.analyseActionType = function(selection) {
     }
 
     // for Keynote only
-    if (currentCommandIdentifier == runSimulateKeynoteIdentifier) {
+    if (currentCommandIdentifier && currentCommandIdentifier == runSimulateKeynoteIdentifier) {
         if (localArtboards == nil) { return new SelectionInventory(5, FramerInventory.getCurrentPage().artboards()) }
         return new SelectionInventory(6, localArtboards)
     }

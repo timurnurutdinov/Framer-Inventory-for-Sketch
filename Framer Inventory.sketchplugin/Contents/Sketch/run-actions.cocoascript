@@ -36,11 +36,15 @@ var sendLog = true
 var isSmartAction = false
 
 var decomposeContext = function(context) {
+		// log("inside decomposition")
 		pluginVersion = context.plugin.version()
 		pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
 
 		currentDocument = context.document
-		currentSelection = context.document.selectedLayers()
+		currentSelection = context.document.selectedLayers().layers()
+		// log("currentSelection: " + currentSelection.className())
+		// log(currentSelection)
+		// log("outside decomposition")
 }
 
 var onReplicateLayersRun = function(context) {
