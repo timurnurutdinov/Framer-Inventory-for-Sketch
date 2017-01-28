@@ -20,17 +20,20 @@ var measureRoundButtonsBottom = measureWindowHeight - 6 * 3
 
 function ToolbarInventory (panel) {
     this.panel = panel
-
+    this.images = ViewInventory.returnButtonsImages()
     // content views to help
-    var views = ViewInventory.createContentViewForToolbal()
+    var views = ViewInventory.createImportPanel()
     this.contentViewImport = views[0]
     this.pathLabel = views[1]
     this.selectionLabel = views[2]
+    this.layersButton = views[3]
+    this.statesButton = views[4]
+    this.relativeDropdown = views[5]
 
 
-    this.contentViewEmpty = ViewInventory.createEmptyContentViewForToolbal()
+    this.contentViewEmpty = ViewInventory.createEmptyPanel()
 
-    this.contentViewScene = ViewInventory.createSceneContentView()[0]
+    this.contentViewScene = ViewInventory.createScenePanel()[0]
 
 }
 
@@ -121,6 +124,30 @@ ToolbarInventory.updatePathLabelStringValue = function() {
   }
 }
 
+ToolbarInventory.updateImportButtons = function(adoptID) {
+  var toolbar = ToolbarInventory.returnInstance()
+  if (toolbar != nil) {
+      if (adoptID == 0) { ViewInventory.adaptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
+      else if (adoptID == 1) { ViewInventory.adaptButtonsBase(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
+      else if (adoptID == 3) { ViewInventory.adaptButtonsSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
+      else if (adoptID == 2) { ViewInventory.adaptButtonsSelected(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
+      else if (adoptID == 4) { ViewInventory.adaptButtonsSelectedSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
+      else {
+        log("WTF?")
+      }
+      // ViewInventory.adaptButtonsSelected(toolbar.layersButton, toolbar.statesButton, toolbar.images)
+      // var layerButton = toolbar.layersButton
+      // layerButton.frame = ViewInventory.layersButtonNone()
+      // log(layerButton.frame())
+      // log(layerButton.frame())
+
+      // var frame = layerButton.frame()
+      // frame.size = CGSizeMake(55, 18)
+      // layerButton.frame = frame
+
+      // log(layerButton.frame())
+  }
+}
 
 
 ToolbarInventory.updateContext = function() {

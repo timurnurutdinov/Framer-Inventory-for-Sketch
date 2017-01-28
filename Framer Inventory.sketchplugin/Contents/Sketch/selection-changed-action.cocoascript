@@ -33,6 +33,7 @@ var onSelectionChanged = function(context) {
         else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
         else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
 
+        ToolbarInventory.updateImportButtons(currentSelectionType)
         ToolbarInventory.updateSelectionLabelStringValue(selectionTitle + "")
 
         // StatisticsInventory.setStatus(2)
