@@ -1,18 +1,5 @@
 @import 'inventory/libs/pluginDefaults.js'
 
-var statisticsPresets = {
-    currentStatus: 0,
-    prevStatus: 0,
-    toolbar: false,
-    testing: false,
-    debug: false
-}
-
-var statisticsDomain = "com.addleimb.framer-inventory.statistics"
-var userStats = initDefaults(statisticsDomain, statisticsPresets)
-
-
-
 var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-58418174-3"
 var simulateRequest = ["actions", "action_run", "simulate_keynote", "1"]
 var generateRequest = ["actions", "action_run", "generate_states", "1"]
@@ -24,36 +11,41 @@ function StatisticsInventory () {}
 
 
 StatisticsInventory.setStatus = function(status) {
-    userStats.currentStatus = status
-    log(userStats)
+    statsDefauls.currentStatus = status
+    statsDefauls.actionSummary++
+    saveDefaults(Status.statsDomain(), statsDefauls)
+    log(statsDefauls)
 }
 
 StatisticsInventory.getStatus = function() {
-    return userStats.currentStatus
+    return statsDefauls.currentStatus
 }
 
 
 
 StatisticsInventory.setToolbar = function(toolbarOpened) {
-   if (toolbarOpened) { userStats.toolbar = true }
-   else { userStats.toolbar = false }
+   if (toolbarOpened) { statsDefauls.toolbar = true }
+   else { statsDefauls.toolbar = false }
+   saveDefaults(Status.statsDomain(), statsDefauls)
 }
 
 StatisticsInventory.getToolbar = function() {
-  return userStats.toolbar
+  return statsDefauls.toolbar
 }
 
 StatisticsInventory.startTesting = function() {
     var username = NSUserName()
-    if([username isEqualToString:"tilllur"]) { userStats.testing = true }
+    if([username isEqualToString:"tilllur"]) { statsDefauls.testing = true }
+    saveDefaults(Status.statsDomain(), statsDefauls)
 }
 
 StatisticsInventory.stopTesting = function() {
-    userStats.testing = false
+    statsDefauls.testing = false
+    saveDefaults(Status.statsDomain(), statsDefauls)
 }
 
 StatisticsInventory.isTesting = function() {
-  return userStats.testing
+  return statsDefauls.testing
 }
 
 

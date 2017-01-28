@@ -10,7 +10,7 @@ var currentDocument = nil
 var currentSelection = nil
 
 
-var presets = {
+var userPresets = {
 	myRetinaEnabled: 0,
   myRetinaString: "retina",
 	myMinimalExport: 1,
@@ -25,6 +25,17 @@ var presets = {
 
 	myUserID:  [[NSUUID UUID] UUIDString] + ""
 }
+
+var statisticsPresets = {
+    currentStatus: 0,
+    prevStatus: 0,
+    toolbar: false,
+    testing: false,
+    debug: false,
+
+		actionSummary: 0
+}
+
 
 
 function Status () {}
@@ -42,14 +53,13 @@ Status.updateID = function() { return 9 }
 
 
 Status.userDomain = function() { return "com.addleimb.framer-inventory.userTest" }
-// Status.statsDomain = function() { return "com.addleimb.framer-inventory.user" }
+Status.statsDomain = function() { return "com.addleimb.framer-inventory.statistics" }
 
-var userDefaults = initDefaults(Status.userDomain(), presets)
-
-
-// Status.runTestingEnvironmentIdentifier = function() { return -2 }
-// var isTestingEnvironment = false
 var preTestingDefaults = {}
+var userDefaults = initDefaults(Status.userDomain(), userPresets)
+var statsDefauls = initDefaults(Status.statsDomain(), statisticsPresets)
+
+
 
 
 
