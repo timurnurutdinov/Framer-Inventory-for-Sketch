@@ -116,6 +116,9 @@ ViewInventory.getGeneralToolbarViews = function() {
     // [item release];
     [moreButton setPreferredEdge:NSMinXEdge];
 
+    moreButton.setCOSJSTargetFunction(function(sender){
+        ToolbarInventory.changeContentView()
+    })
 
 
     // Action Icons
@@ -220,6 +223,42 @@ ViewInventory.createContentViewForToolbal = function() {
 
   return [view, pathLabel, selectionLabel]
 }
+
+
+ViewInventory.createSceneContentView = function() {
+  var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight())];
+
+  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 48, ViewInventory.sizeWindowWidth(), 20)];
+  [pathLabel setEditable:false];
+  [pathLabel setBordered:false];
+  [pathLabel setAlignment:NSCenterTextAlignment]
+  [pathLabel setFont:ViewInventory.fontCheckControls()];
+  [pathLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
+  [pathLabel setDrawsBackground:false];
+  [pathLabel setStringValue:defaultPathLabel];
+  view.addSubview(pathLabel)
+
+  var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 40, ViewInventory.sizeWindowWidth(), 20)];
+  [selectionLabel setEditable:false];
+  [selectionLabel setBordered:false];
+  [selectionLabel setAlignment:NSCenterTextAlignment]
+  [selectionLabel setFont:ViewInventory.fontCheckControls()];
+  [selectionLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
+  [selectionLabel setDrawsBackground:false];
+  [selectionLabel setStringValue:"Working with Exportable Layers"];
+  view.addSubview(selectionLabel)
+
+  var views = ViewInventory.getGeneralToolbarViews()
+  for (var i = 0; i < views.length; i++) { view.addSubview(views[i]) }
+
+  var closeViews = ViewInventory.getCloseToolbarViews()
+  for (var i = 0; i < closeViews.length; i++) { view.addSubview(closeViews[i]) }
+
+  return [view, pathLabel, selectionLabel]
+}
+
+
+
 
 ViewInventory.createEmptyContentViewForToolbal = function() {
   var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight())];

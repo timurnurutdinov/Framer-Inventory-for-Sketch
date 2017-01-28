@@ -54,7 +54,6 @@ var onSelectionChanged = function(context) {
 // 6 – Scene for selected artboards
 
 SelectionInventory.analyseActionType = function(selection) {
-    // log("type selction: " + selection)
     if (selection == nil) {
         if (showLog) { log("Warning. Selection is nil") }
         return new SelectionInventory(0)

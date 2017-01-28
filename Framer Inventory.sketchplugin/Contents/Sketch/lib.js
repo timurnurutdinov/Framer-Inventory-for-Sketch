@@ -23,12 +23,15 @@ function ToolbarInventory (panel) {
 
     // content views to help
     var views = ViewInventory.createContentViewForToolbal()
-    this.contentViewMain = views[0]
+    this.contentViewImport = views[0]
     this.pathLabel = views[1]
     this.selectionLabel = views[2]
 
-    // empty views
+
     this.contentViewEmpty = ViewInventory.createEmptyContentViewForToolbal()
+
+    this.contentViewScene = ViewInventory.createSceneContentView()[0]
+
 }
 
 
@@ -48,10 +51,27 @@ ToolbarInventory.setContentView = function() {
         [panel setContentView:view]
       }
       else {
-        var view = toolbar.contentViewMain
+        var view = toolbar.contentViewImport
         [panel setContentView:view]
       }
       ToolbarInventory.updatePathLabelStringValue()
+    }
+}
+
+ToolbarInventory.changeContentView = function() {
+    if (userDefaults.exportFramerFolder == "") { return }
+
+    var toolbar = ToolbarInventory.returnInstance()
+    if (toolbar != nil) {
+      var panel = toolbar.panel
+      if (panel.contentView() == toolbar.contentViewScene) {
+        var view = toolbar.contentViewImport
+        [panel setContentView:view]
+      }
+      else {
+        var view = toolbar.contentViewScene
+        [panel setContentView:view]
+      }
     }
 }
 
