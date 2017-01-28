@@ -1,10 +1,30 @@
 @import 'actions/view-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
 @import 'run-actions.cocoascript'
+// @import 'actions/action-inventory.cocoascript'
 
-var relativeAccessory = nil
-var densityAccessory = nil
-var deviceAccessory = nil
+// var presets = {
+// 	myRetinaEnabled: 0,
+//   myRetinaString: "retina",
+// 	myMinimalExport: 1,
+// 	myRelativeGroup: 0,
+// 	myDetailedNotation: 1,
+// 	exportFramerFolder: "",
+// 	myDevice: 0,
+//
+// 	myRetinaValue: 1,
+// 	myMobile: 1,
+// 	myAutoplay: 0,
+//
+// 	myUserID:  [[NSUUID UUID] UUIDString] + ""
+// }
+//
+// var pluginDomain = "com.addleimb.framer-inventory.retina"
+// var userDefaults = initDefaults(pluginDomain, presets)
+
+// var relativeAccessory = nil
+// var densityAccessory = nil
+// var deviceAccessory = nil
 
 var measureWindowHeight = ViewInventory.sizeWindowHeight();
 var measureWindowWidth = ViewInventory.sizeWindowWidth();
@@ -31,11 +51,14 @@ function ToolbarInventory (panel) {
     this.layersButton = importViews[3]
     this.statesButton = importViews[4]
     this.relativeAccessory = importViews[5]
+    this.deviceAccessory = importViews[6]
 
 
     var sceneView = ViewInventory.createScenePanel()
     this.contentViewScene = sceneView[0]
     this.pathLabelScene = sceneView[1]
+    this.selectionLabelScene = sceneView[2]
+    this.deviceAccessoryScene = sceneView[3]
 
 }
 
@@ -69,6 +92,7 @@ ToolbarInventory.changeContentView = function() {
     var toolbar = ToolbarInventory.returnInstance()
     if (toolbar != nil) {
       var panel = toolbar.panel
+
       if (panel.contentView() == toolbar.contentViewScene) {
         var view = toolbar.contentViewImport
         [panel setContentView:view]
@@ -136,6 +160,13 @@ ToolbarInventory.updateAccessoryControls = function() {
   if (toolbar != nil) {
       var localRelativeDropdown = toolbar.relativeAccessory
       localRelativeDropdown.selectItemAtIndex(userDefaults.myRelativeGroup)
+
+      var localDeviceDropdown = toolbar.deviceAccessory
+      localDeviceDropdown.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
+
+      var localDeviceSceneDropdown = toolbar.deviceAccessoryScene
+      localDeviceSceneDropdown.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
+
   }
 }
 

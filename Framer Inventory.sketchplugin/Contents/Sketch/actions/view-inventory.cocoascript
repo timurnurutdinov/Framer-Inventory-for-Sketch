@@ -167,7 +167,7 @@ ViewInventory.getImportViews = function() {
 
     relativeAccessory.setCOSJSTargetFunction(function(sender){
         userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
-        saveDefaults(userDefaults)
+        saveDefaults(Status.userDomain(), userDefaults)
     })
 
     return [layersButton, statesButton, relativeAccessory, changeModeButton]
@@ -238,7 +238,7 @@ ViewInventory.getGeneralToolbarViews = function() {
     // })
 
 
-    deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(66, 54, 85, 22))
+    var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(66, 54, 85, 22))
     [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
     var devices = ScaleInventory.returnDevices()
     for (var i = 0; i < devices.length; i++) {
@@ -250,7 +250,8 @@ ViewInventory.getGeneralToolbarViews = function() {
 
     deviceAccessory.setCOSJSTargetFunction(function(sender){
         userDefaults.myDevice = ScaleInventory.selectedDeviceIndex(deviceAccessory.indexOfSelectedItem())
-        saveDefaults(userDefaults)
+        saveDefaults(Status.userDomain(), userDefaults)
+        ToolbarInventory.updateAccessoryControls()
     })
 
     return [backgroundView, optionsView, addButton, removeButton, moreButton, deviceAccessory]
@@ -272,7 +273,7 @@ ViewInventory.createImportPanel = function() {
   var labels = ViewInventory.getLabels("Select Layers")
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2]]
+  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[5]]
 }
 
 
@@ -291,7 +292,7 @@ ViewInventory.createScenePanel = function() {
   var labels = ViewInventory.getLabels("Working with Exportable Layers")
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1]]
+  return [view, labels[0], labels[1], views[5]]
 }
 
 

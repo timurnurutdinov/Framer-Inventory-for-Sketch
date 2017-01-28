@@ -10,6 +10,23 @@ var currentDocument = nil
 var currentSelection = nil
 
 
+var presets = {
+	myRetinaEnabled: 0,
+  myRetinaString: "retina",
+	myMinimalExport: 1,
+	myRelativeGroup: 0,
+	myDetailedNotation: 1,
+	exportFramerFolder: "",
+	myDevice: 0,
+
+	myRetinaValue: 1,
+	myMobile: 1,
+	myAutoplay: 0,
+
+	myUserID:  [[NSUUID UUID] UUIDString] + ""
+}
+
+
 function Status () {}
 
 Status.replicateID = function() { return 0 }
@@ -22,6 +39,12 @@ Status.selectFolderID = function() { return 6 }
 Status.removeFolderID = function() { return 7 }
 Status.toolbarID = function() { return 8 }
 Status.updateID = function() { return 9 }
+
+
+Status.userDomain = function() { return "com.addleimb.framer-inventory.userTest" }
+// Status.statsDomain = function() { return "com.addleimb.framer-inventory.user" }
+
+var userDefaults = initDefaults(Status.userDomain(), presets)
 
 
 // Status.runTestingEnvironmentIdentifier = function() { return -2 }

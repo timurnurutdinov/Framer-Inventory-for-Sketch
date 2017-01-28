@@ -248,10 +248,10 @@ var duplicateCurrentDefaults = function() {
 			testingDefaults.myDetailedNotation = 0
 			testingDefaults.myDevice = 0
 			testingDefaults.myMinimalExport = 0
-			saveDefaults(testingDefaults)
+			saveDefaults(Status.userDomain(), testingDefaults)
 		}
 }
 
 var restoreCurrentDefaults = function() {
-	 if (StatisticsInventory.isTesting()) { saveDefaults(preTestingDefaults) }
+	 if (StatisticsInventory.isTesting()) { saveDefaults(Status.userDomain(), preTestingDefaults) }
 }

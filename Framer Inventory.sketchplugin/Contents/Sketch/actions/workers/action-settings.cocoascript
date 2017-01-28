@@ -66,7 +66,7 @@ var runSettings = function() {
 		if (trimmedRetinaValue == "") { [currentDocument showMessage:"Scale variable can't be empty. Back to \"" + userDefaults.myRetinaString + "\""] }
 		else if (/^[a-zA-Z]+$/.test(trimmedRetinaValue)) {
 			userDefaults.myRetinaString = trimmedRetinaValue
-			saveDefaults(userDefaults)
+			saveDefaults(Status.userDomain(), userDefaults)
 			[currentDocument showMessage:"💾"]
 		}
 		else { [currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""] }
@@ -103,7 +103,7 @@ var createFirstLine = function() {
 
 	densityAccessory.setCOSJSTargetFunction(function(sender){
 			userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
-			saveDefaults(userDefaults)
+			saveDefaults(Status.userDomain(), userDefaults)
 	})
 
 
@@ -119,7 +119,8 @@ var createFirstLine = function() {
 
 	deviceAccessory.setCOSJSTargetFunction(function(sender) {
 			userDefaults.myDevice = ScaleInventory.selectedDeviceIndex(deviceAccessory.indexOfSelectedItem())
-			saveDefaults(userDefaults)
+			saveDefaults(Status.userDomain(), userDefaults)
+			ToolbarInventory.updateAccessoryControls()
 	})
 
 
@@ -138,8 +139,7 @@ var createSecondLine = function() {
 
 	relativeAccessory.setCOSJSTargetFunction(function(sender){
 			userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
-			saveDefaults(userDefaults)
-			log(userDefaults.myRelativeGroup)
+			saveDefaults(Status.userDomain(), userDefaults)
 	})
 
 	return [relativeAccessory]
@@ -163,7 +163,7 @@ var createCheckViews = function() {
 	[checkboxMinimalExport setState:userDefaults.myMinimalExport];
 	checkboxMinimalExport.setCOSJSTargetFunction(function(sender){
 		userDefaults.myMinimalExport = userDefaults.myMinimalExport == 0 ? 1 : 0
-		saveDefaults(userDefaults)
+		saveDefaults(Status.userDomain(), userDefaults)
 	})
 
 
@@ -183,7 +183,7 @@ var createCheckViews = function() {
 	[checkboxNotation setState:userDefaults.myDetailedNotation];
 	checkboxNotation.setCOSJSTargetFunction(function(sender){
 		userDefaults.myDetailedNotation = userDefaults.myDetailedNotation == 0 ? 1 : 0
-		saveDefaults(userDefaults)
+		saveDefaults(Status.userDomain(), userDefaults)
 	})
 
 	return [titleMinimalExport, checkboxMinimalExport, titleNotation, checkboxNotation]
