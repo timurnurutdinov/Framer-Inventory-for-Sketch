@@ -1,5 +1,6 @@
 @import 'actions/action-inventory.cocoascript'
 @import 'actions/view-inventory.cocoascript'
+@import 'actions/statistics-inventory.cocoascript'
 
 var methodStartTime = nil
 
@@ -9,21 +10,21 @@ var currentDocument = nil
 var currentSelection = nil
 
 
+function Status () {}
 
-var currentCommandIdentifier = -1
+Status.replicateID = function() { return 0 }
+Status.generateID = function() { return 1 }
+Status.simulateID = function() { return 2 }
+Status.settingsID = function() { return 3 }
+Status.removePageID = function() { return 4 }
+Status.showFolderID = function() { return 5 }
+Status.selectFolderID = function() { return 6 }
+Status.removeFolderID = function() { return 7 }
+Status.toolbarID = function() { return 8 }
+Status.updateID = function() { return 9 }
 
-var runReplicateLayersIdentifier = 0
-var runGenerateStatesIdentifier = 1
-var runSimulateKeynoteIdentifier = 2
-var runSettingsIdentifier = 3
-var runRemoveExportPageIdentifier = 4
-var runShowProjectFolderIdentifier = 5
-var runSelectProjectFolderIdentifier = 6
-var runRemoveProjectFolderIdentifier = 7
-var runShowBarIdentifier = 8
-var runCheckUpdatesIdentifier = 9
 
-var runTestingEnvironmentIdentifier = -2
+Status.runTestingEnvironmentIdentifier = function() { return -2 }
 var isTestingEnvironment = false
 var preTestingDefaults = {}
 
@@ -36,83 +37,80 @@ var sendLog = true
 var isSmartAction = false
 
 var decomposeContext = function(context) {
-		// log("inside decomposition")
 		pluginVersion = context.plugin.version()
 		pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
-
 		currentDocument = context.document
 		currentSelection = context.document.selectedLayers().layers()
-		// log("currentSelection: " + currentSelection.className())
-		// log(currentSelection)
-		// log("outside decomposition")
+
+		methodStartTime = [NSDate date]
 }
 
 var onReplicateLayersRun = function(context) {
 	if (showLog) { log("Running Replicate Layers") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runReplicateLayersIdentifier)
+	runReplicateLayers()
 }
 
 var onGenerateStatesRun = function(context) {
 	if (showLog) { log("Running Generate States") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runGenerateStatesIdentifier)
+	runGenerateStates()
 }
 
 var onSimulateKeynoteRun = function(context) {
 	if (showLog) { log("Running Simulate Keynote") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runSimulateKeynoteIdentifier)
+	runSimulateKeynote()
 }
 
 var onSettingRun = function(context) {
 	if (showLog) { log("Running Settings") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runSettingsIdentifier)
+	runSettings()
 }
 
 var onRemoveExportPageRun = function(context) {
 	if (showLog) { log("Running Remove Export Page...") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runRemoveExportPageIdentifier)
+	FramerInventory.showDoneMessage()
 }
 
 var onShowBarRun = function(context) {
 	if (showLog) { log("Showing Bar") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runShowBarIdentifier)
+	ToolbarInventory.createUIBar()
 }
 
 var onSelectProjectFolderRun = function(context) {
 	if (showLog) { log("Running Select Project Folder...") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runSelectProjectFolderIdentifier)
+	FramerInventory.runSelectProjectFolder()
 }
 
 var onRemoveProjectFolderRun = function(context) {
 	if (showLog) { log("Running Remove Project Folder...") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runRemoveProjectFolderIdentifier)
+	FramerInventory.runRemoveProjectFolder()
 }
 
 var onShowProjectFolderRun = function(context) {
 	if (showLog) { log("Running Show Project Folder...") }
 	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runShowProjectFolderIdentifier)
+	FramerInventory.runShowProjectFolder()
 }
 
 var onCheckUpdatesRun = function(context) {
-		if (showLog) { log("Running Updates Checker") }
-		decomposeContext(context)
-		chooseAction(currentDocument, currentSelection, runCheckUpdatesIdentifier)
+	if (showLog) { log("Running Updates Checker") }
+	decomposeContext(context)
+	runCheckUpdates()
 }
 
 
 
 var onTestingRun = function(context) {
-	if (showLog) { log("Running Testing Environment") }
-	isTestingEnvironment = true
-	sendLog = false
-	decomposeContext(context)
-	chooseAction(currentDocument, currentSelection, runTestingEnvironmentIdentifier)
+	// if (showLog) { log("Running Testing Environment") }
+	// isTestingEnvironment = true
+	// sendLog = false
+	// decomposeContext(context)
+	// chooseAction(currentDocument, currentSelection, runTestingEnvironmentIdentifier)
 }

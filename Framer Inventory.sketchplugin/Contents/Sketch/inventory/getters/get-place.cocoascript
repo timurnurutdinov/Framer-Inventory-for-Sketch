@@ -55,28 +55,6 @@ var getAbsolutePlaceImage = function(layer) {
 }
 
 
-
-
-// var normaliseRect = function(layer) {
-// 	var currentPage = currentDocument.currentPage()
-//
-// 	var layer_copy = [layer duplicate]
-// 	[layer_copy removeFromParent]
-// 	[currentPage addLayers: [layer_copy]]
-//
-// 	var frame = [layer_copy frame]
-// 	[frame setX: [[layer absoluteRect] x]]
-// 	[frame setY: [[layer absoluteRect] y]]
-//
-// 	[layer_copy setRotation: 0]
-// 	if (![layer_copy isVisible]) {
-// 		[layer_copy setIsVisible:true]
-// 		[[[layer_copy style] contextSettings] setOpacity:(1.0)]
-// 	}
-//
-// 	return layer_copy
-// }
-
 var getAbsolutePlaceRect = function(layer) {
 	if (layer == nil) { return nil }
 	if (TypeInventory.isPageType([layer className])) { return [0,0,0,0] }
@@ -106,7 +84,7 @@ var getPlace = function(layer, isImage) {
 	var currentPage = currentDocument.currentPage()
 	var parentValues = nil
 
-	if (userDefaults.myRelativeGroup == 1 && (currentCommandIdentifier == runGenerateStatesIdentifier || currentCommandIdentifier == runReplicateLayersIdentifier)) {
+	if (userDefaults.myRelativeGroup == 1 && (StatisticsInventory.getStatus() == Status.generateID() || StatisticsInventory.getStatus() == Status.replicateID())) {
 		parentValues = getAbsolutePlaceImage([layer parentGroup])
 	}
 	else { parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer)) }
@@ -117,52 +95,3 @@ var getPlace = function(layer, isImage) {
 
 	return resultValues
 }
-
-
-
-
-
-
-
-//
-// var getPlaceRect = function(layer) {
-// 	if (layer == nil) { return [100, 100, 0, 0] }
-//
-// 	var currentPage = currentDocument.currentPage()
-// 	var parentValues = nil
-//
-// 	if (userDefaults.myRelativeGroup == 1 && (currentCommandIdentifier == runGenerateStatesIdentifier || currentCommandIdentifier == runReplicateLayersIdentifier)) {
-// 		parentValues = getAbsolutePlaceImage([layer parentGroup])
-// 	}
-// 	else { parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer)) }
-//
-// 	var layerValues = getAbsolutePlaceRect(layer)
-// 	var resultValues = [layerValues[0], layerValues[1], layerValues[2] - parentValues[2], layerValues[3] - parentValues[3]]
-//
-// 	return resultValues
-// }
-
-
-
-
-// support
-//
-// var getY = function(layer, parentLayer) {
-// 	var parentY = [[parentLayer absoluteRect] y]
-// 	var layerY = [[layer absoluteRect] y]
-// 	return -(parentY - layerY)
-// }
-//
-// var getX = function(layer, parentLayer) {
-// 	var parentX = [[parentLayer absoluteRect] x]
-// 	var layerX = [[layer absoluteRect] x]
-// 	return -(parentX - layerX)
-// }
-//
-// var getHeight = function(layer) {
-// 	return [[layer frame] height]
-// }
-//
-// var getWidth = function(layer) {
-// 	return [[layer frame] width]
-// }

@@ -119,7 +119,7 @@ ToolbarInventory.updateContext = function() {
 
 
 ToolbarInventory.createUIBar = function() {
-
+    // StatisticsInventory.setStatus(Status.toolbarID())
     coscript.setShouldKeepAround(true);
     var toolbar = ToolbarInventory.returnInstance()
 

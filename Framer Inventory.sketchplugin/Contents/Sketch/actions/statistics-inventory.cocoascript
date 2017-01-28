@@ -1,10 +1,59 @@
+@import 'inventory/libs/pluginDefaults.js'
 
-function StatisticsInventory () {}
+var statisticsPresets = {
+    currentStatus: 0,
+    prevStatus: 0,
+    toolbar: false,
+    testing: false,
+    debug: false
+}
+
+var statisticsDomain = "com.addleimb.framer-inventory.statistics"
+var userStats = initDefaults(statisticsDomain, statisticsPresets)
+
+
 
 var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-58418174-3"
 var simulateRequest = ["actions", "action_run", "simulate_keynote", "1"]
 var generateRequest = ["actions", "action_run", "generate_states", "1"]
 var replicateRequest = ["actions", "action_run", "replicate_layers", "1"]
+
+
+
+function StatisticsInventory () {}
+
+
+StatisticsInventory.setStatus = function(status) {
+    userStats.currentStatus = status
+    log(userStats)
+}
+
+StatisticsInventory.getStatus = function() {
+    return userStats.currentStatus
+}
+
+
+
+StatisticsInventory.setToolbar = function(toolbarOpened) {
+   if (toolbarOpened) { userStats.toolbar = true }
+   else { userStats.toolbar = false }
+}
+
+StatisticsInventory.getToolbar = function() {
+  return userStats.toolbar
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 StatisticsInventory.sendSimulateRequest = function() {
     StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(simulateRequest))

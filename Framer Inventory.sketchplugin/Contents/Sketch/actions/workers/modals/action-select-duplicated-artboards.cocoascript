@@ -36,9 +36,9 @@ var selectDuplicatedArtboards = function(artboardName) {
 		fixArtboardsNames()
 		ToolbarInventory.updateContext()
 
-		if (currentCommandIdentifier == runSimulateKeynoteIdentifier) { runSimulateKeynote() }
-		else if (currentCommandIdentifier == runReplicateLayersIdentifier) { runReplicateLayers() }
-		else if (currentCommandIdentifier == runGenerateStates) { runGenerateStates() }
+		if (StatisticsInventory.getStatus() == Status.simulateID()) { runSimulateKeynote() }
+		else if (StatisticsInventory.getStatus() == Status.replicateID()) { runReplicateLayers() }
+		else if (StatisticsInventory.getStatus() == Status.generateID()) { runGenerateStates() }
 	}];
 	[showDuplicatesButton setAction:"callAction:"];
 	[[artboardsWindow contentView] addSubview:showDuplicatesButton];

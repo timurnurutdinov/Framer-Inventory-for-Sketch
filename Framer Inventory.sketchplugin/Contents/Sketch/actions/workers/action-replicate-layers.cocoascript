@@ -1,11 +1,7 @@
 
 // generate code for layers
 var runReplicateLayers = function() {
-	currentCommandIdentifier = runReplicateLayersIdentifier
-	StatisticsInventory.sendReplicateRequest()
-
-	var doc = currentDocument
-	var selection = currentSelection
+	StatisticsInventory.setStatus(Status.replicateID())
 	FramerInventory.setUserSelection(currentSelection)
 
 	[[NSPasteboard generalPasteboard] clearContents]
@@ -22,15 +18,15 @@ var runReplicateLayers = function() {
 			return
 	}
 
-	// if (FramerInventory.isSmartGenerateAction(selection)) {
+	// if (FramerInventory.isSmartGenerateAction()) {
 	// 		isSmartAction = true
 	// 		runGenerateStates()
 	// 		return
 	// }
 
-	var sortedSelection = OrderInventory.removeDuplicatedLayers(selection)
+	var sortedSelection = OrderInventory.removeDuplicatedLayers(currentSelection)
 	if (sortedSelection == nil || sortedSelection.count() < 1) {
-		[doc showMessage:ViewInventory.smileWarning() + "Select layers"]
+		[currentDocument showMessage:ViewInventory.smileWarning() + "Select layers"]
 		return
 	}
 

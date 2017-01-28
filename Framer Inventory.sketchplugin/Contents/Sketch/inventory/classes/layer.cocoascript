@@ -294,7 +294,7 @@ Layer.prototype.generateFramerStates = function() {
 	var titleState = this.generateFramerTitle(imageRequired)
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
 
-	if ((currentCommandIdentifier == 2 || currentCommandIdentifier == 1) && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
+	if ((StatisticsInventory.getStatus() == 2 || StatisticsInventory.getStatus() == 1) && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
 
 	for (var i = 0; i < this.states.length; i++) {
 		var currentState = this.states[i]

@@ -1,16 +1,13 @@
 
 // gererate code for layers and their states
 var runGenerateStates = function() {
-	currentCommandIdentifier = runGenerateStatesIdentifier
-	StatisticsInventory.sendGenerateRequest()
-
-	var selection = currentSelection
+	StatisticsInventory.setStatus(Status.generateID())
 	FramerInventory.setUserSelection(currentSelection)
 
 	[[NSPasteboard generalPasteboard] clearContents]
 
 	// for tests only
-	if (isTestingEnvironment) { selection = TestingEnvironment.getTestingSelection() }
+	if (isTestingEnvironment) { currentSelection = TestingEnvironment.getTestingSelection() }
 
 	var layers = []
 	var pasteboardContent = ""
@@ -31,7 +28,7 @@ var runGenerateStates = function() {
 		return
 	}
 
-	var sortedSelection = FramerInventory.organiseSelection(selection)
+	var sortedSelection = FramerInventory.organiseSelection(currentSelection)
 	if (sortedSelection == nil) {
 		[currentDocument showMessage:ViewInventory.smileWarning() + "Select layers"]
 		return
