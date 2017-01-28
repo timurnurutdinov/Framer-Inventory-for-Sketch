@@ -8,6 +8,7 @@ var runTests = true
 var testingSelection = NSMutableArray.array()
 
 var runTestingEnvironment = function() {
+	StatisticsInventory.startTesting()
 	duplicateCurrentDefaults()
 
 	var doc = currentDocument
@@ -87,6 +88,7 @@ var runTestingEnvironment = function() {
 
 	doc.setCurrentPage(runningPage)
 	writeTestingLog(resultingString)
+	StatisticsInventory.stopTesting()
 	restoreCurrentDefaults()
 }
 
@@ -235,7 +237,7 @@ var generatePairs = function() {
 
 
 var duplicateCurrentDefaults = function() {
-		if (isTestingEnvironment) {
+		if (StatisticsInventory.isTesting()) {
 			writeUserDefaults(userDefaults)
 			preTestingDefaults = userDefaults
 
@@ -251,5 +253,5 @@ var duplicateCurrentDefaults = function() {
 }
 
 var restoreCurrentDefaults = function() {
-	 if (isTestingEnvironment) { saveDefaults(preTestingDefaults) }
+	 if (StatisticsInventory.isTesting()) { saveDefaults(preTestingDefaults) }
 }

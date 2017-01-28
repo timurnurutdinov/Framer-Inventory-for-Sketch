@@ -24,8 +24,8 @@ Status.toolbarID = function() { return 8 }
 Status.updateID = function() { return 9 }
 
 
-Status.runTestingEnvironmentIdentifier = function() { return -2 }
-var isTestingEnvironment = false
+// Status.runTestingEnvironmentIdentifier = function() { return -2 }
+// var isTestingEnvironment = false
 var preTestingDefaults = {}
 
 
@@ -108,9 +108,10 @@ var onCheckUpdatesRun = function(context) {
 
 
 var onTestingRun = function(context) {
-	// if (showLog) { log("Running Testing Environment") }
+	if (showLog) { log("Running Testing Environment") }
 	// isTestingEnvironment = true
 	// sendLog = false
-	// decomposeContext(context)
+	decomposeContext(context)
+	runTestingEnvironment()
 	// chooseAction(currentDocument, currentSelection, runTestingEnvironmentIdentifier)
 }

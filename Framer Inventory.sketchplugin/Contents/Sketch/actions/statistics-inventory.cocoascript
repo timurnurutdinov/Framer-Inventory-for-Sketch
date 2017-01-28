@@ -43,6 +43,19 @@ StatisticsInventory.getToolbar = function() {
   return userStats.toolbar
 }
 
+StatisticsInventory.startTesting = function() {
+    var username = NSUserName()
+    if([username isEqualToString:"tilllur"]) { userStats.testing = true }
+}
+
+StatisticsInventory.stopTesting = function() {
+    userStats.testing = false
+}
+
+StatisticsInventory.isTesting = function() {
+  return userStats.testing
+}
+
 
 
 

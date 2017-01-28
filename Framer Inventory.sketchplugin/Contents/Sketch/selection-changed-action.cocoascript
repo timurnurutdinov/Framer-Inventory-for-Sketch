@@ -1,6 +1,7 @@
 @import 'actions/action-inventory.cocoascript'
 @import 'actions/view-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
+@import 'run-actions.cocoascript'
 @import 'lib.js'
 
 
@@ -69,10 +70,10 @@ SelectionInventory.analyseActionType = function(selection) {
     }
 
     // for Keynote only
-    // if (StatisticsInventory.getStatus() == Status.simulateID()) {
-    //     if (localArtboards == nil) { return new SelectionInventory(5, FramerInventory.getCurrentPage().artboards()) }
-    //     return new SelectionInventory(6, localArtboards)
-    // }
+    if (StatisticsInventory.getStatus() == Status.simulateID()) {
+        if (localArtboards.count() < 1) { return new SelectionInventory(5, FramerInventory.getCurrentPage().artboards()) }
+        return new SelectionInventory(6, localArtboards)
+    }
 
     if (localLayers.count() < 1) { return new SelectionInventory(0) }
 

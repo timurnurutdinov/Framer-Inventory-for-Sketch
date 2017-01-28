@@ -7,7 +7,7 @@ var runGenerateStates = function() {
 	[[NSPasteboard generalPasteboard] clearContents]
 
 	// for tests only
-	if (isTestingEnvironment) { currentSelection = TestingEnvironment.getTestingSelection() }
+	if (StatisticsInventory.isTesting()) { currentSelection = TestingEnvironment.getTestingSelection() }
 
 	var layers = []
 	var pasteboardContent = ""
@@ -57,7 +57,7 @@ var runGenerateStates = function() {
 	}
 
 
-	if (!isTestingEnvironment) {
+	if (!StatisticsInventory.isTesting()) {
 		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType]
 		FramerInventory.showDoneMessage()
 	}

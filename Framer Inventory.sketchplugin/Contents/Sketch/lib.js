@@ -1,4 +1,6 @@
 @import 'actions/view-inventory.cocoascript'
+@import 'actions/statistics-inventory.cocoascript'
+@import 'run-actions.cocoascript'
 
 var relativeAccessory = nil
 var densityAccessory = nil

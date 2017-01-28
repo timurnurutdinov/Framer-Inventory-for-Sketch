@@ -2,7 +2,7 @@
 
 // generate code for layers
 var runSimulateKeynote = function() {
-	StatisticsInventory.setStatus(Status.generateID())
+	StatisticsInventory.setStatus(Status.simulateID())
 	FramerInventory.setUserSelection(currentSelection)
 	[[NSPasteboard generalPasteboard] clearContents]
 

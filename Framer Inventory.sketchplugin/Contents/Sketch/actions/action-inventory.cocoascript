@@ -53,22 +53,22 @@ var contextUserSelection = NSArray.new()
 var scaleInstance = nil
 
 
-var chooseAction = function(localDocument, localSelection, actionIdentifier) {
-	methodStartTime = [NSDate date]
-
-	if (actionIdentifier == 0) { runReplicateLayers() }
-	else if (actionIdentifier == 1) { runGenerateStates() }
-	else if (actionIdentifier == 2) { runSimulateKeynote() }
-	else if (actionIdentifier == 3) { runSettings() }
-	else if (actionIdentifier == 4) { FramerInventory.showDoneMessage() }
-	else if (actionIdentifier == runShowProjectFolderIdentifier) { FramerInventory.runShowProjectFolder() }
-	else if (actionIdentifier == 6) { FramerInventory.runSelectProjectFolder() }
-	else if (actionIdentifier == 7) { FramerInventory.runRemoveProjectFolder() }
-	else if (actionIdentifier == 8) { ToolbarInventory.createUIBar() }
-	else if (actionIdentifier == runCheckUpdatesIdentifier) { runCheckUpdates()	}
-	else if (actionIdentifier == runTestingEnvironmentIdentifier) { runTestingEnvironment() }
-	else if (showLog) { log("ERROR: Action is undetermined") }
-}
+// var chooseAction = function(localDocument, localSelection, actionIdentifier) {
+// 	methodStartTime = [NSDate date]
+//
+// 	if (actionIdentifier == 0) { runReplicateLayers() }
+// 	else if (actionIdentifier == 1) { runGenerateStates() }
+// 	else if (actionIdentifier == 2) { runSimulateKeynote() }
+// 	else if (actionIdentifier == 3) { runSettings() }
+// 	else if (actionIdentifier == 4) { FramerInventory.showDoneMessage() }
+// 	else if (actionIdentifier == runShowProjectFolderIdentifier) { FramerInventory.runShowProjectFolder() }
+// 	else if (actionIdentifier == 6) { FramerInventory.runSelectProjectFolder() }
+// 	else if (actionIdentifier == 7) { FramerInventory.runRemoveProjectFolder() }
+// 	else if (actionIdentifier == 8) { ToolbarInventory.createUIBar() }
+// 	else if (actionIdentifier == runCheckUpdatesIdentifier) { runCheckUpdates()	}
+// 	else if (actionIdentifier == runTestingEnvironmentIdentifier) { runTestingEnvironment() }
+// 	else if (showLog) { log("ERROR: Action is undetermined") }
+// }
 
 
 
