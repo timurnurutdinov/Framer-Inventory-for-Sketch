@@ -21,19 +21,21 @@ var measureRoundButtonsBottom = measureWindowHeight - 6 * 3
 function ToolbarInventory (panel) {
     this.panel = panel
     this.images = ViewInventory.returnButtonsImages()
-    // content views to help
-    var views = ViewInventory.createImportPanel()
-    this.contentViewImport = views[0]
-    this.pathLabel = views[1]
-    this.selectionLabel = views[2]
-    this.layersButton = views[3]
-    this.statesButton = views[4]
-    this.relativeDropdown = views[5]
-
-
     this.contentViewEmpty = ViewInventory.createEmptyPanel()
 
-    this.contentViewScene = ViewInventory.createScenePanel()[0]
+
+    var importViews = ViewInventory.createImportPanel()
+    this.contentViewImport = importViews[0]
+    this.pathLabel = importViews[1]
+    this.selectionLabel = importViews[2]
+    this.layersButton = importViews[3]
+    this.statesButton = importViews[4]
+    this.relativeAccessory = importViews[5]
+
+
+    var sceneView = ViewInventory.createScenePanel()
+    this.contentViewScene = sceneView[0]
+    this.pathLabelScene = sceneView[1]
 
 }
 
@@ -118,11 +120,25 @@ ToolbarInventory.updateSelectionLabelStringValue = function(value) {
 ToolbarInventory.updatePathLabelStringValue = function() {
   var toolbar = ToolbarInventory.returnInstance()
   if (toolbar != nil) {
-    var localLabel = toolbar.pathLabel
     var localValue = ViewInventory.optimiseFramerPath()
+
+    var localLabel = toolbar.pathLabel
     [localLabel setStringValue:localValue]
+
+    var localLabelScene = toolbar.pathLabelScene
+    [localLabelScene setStringValue:localValue]
   }
 }
+
+
+ToolbarInventory.updateAccessoryControls = function() {
+  var toolbar = ToolbarInventory.returnInstance()
+  if (toolbar != nil) {
+      var localRelativeDropdown = toolbar.relativeAccessory
+      localRelativeDropdown.selectItemAtIndex(userDefaults.myRelativeGroup)
+  }
+}
+
 
 ToolbarInventory.updateImportButtons = function(adoptID) {
   var toolbar = ToolbarInventory.returnInstance()
@@ -179,18 +195,4 @@ ToolbarInventory.createUIBar = function() {
         UIBar.center()
         UIBar.makeKeyAndOrderFront(nil)
     }
-}
-
-
-
-ToolbarInventory.updateAccessoryControls = function() {
-    // if (relativeAccessory != nil) {
-    //     relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
-    // }
-    // if (densityAccessory != nil) {
-    //     densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
-    // }
-    // if (deviceAccessory != nil) {
-    //     deviceAccessory.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
-    // }
 }
