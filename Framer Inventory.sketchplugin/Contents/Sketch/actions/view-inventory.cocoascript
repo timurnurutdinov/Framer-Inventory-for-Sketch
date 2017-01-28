@@ -14,12 +14,13 @@ ViewInventory.fontCheckControls = function() { return [NSFont systemFontOfSize:1
 ViewInventory.fontInputControls = function() { return [NSFont systemFontOfSize:12 weight:NSFontWeightMedium] }
 ViewInventory.fontAccessory = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightBold] }
 ViewInventory.fontActionButton = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightMedium] }
+ViewInventory.fontSelection = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightMedium] }
 
 var measureRoundButtonsSide = 10
 var measureRoundButtons = 6
 var defaultPathLabel = "Please, select Framer folder"
-ViewInventory.sizeWindowHeight = function() { return 70 }
-ViewInventory.sizeWindowWidth = function() { return 440 }
+ViewInventory.sizeWindowHeight = function() { return 108 }
+ViewInventory.sizeWindowWidth = function() { return 244 }
 
 
 ViewInventory.getImage = function(size, name) {
@@ -76,16 +77,21 @@ ViewInventory.getEmptyToolbarViews = function() {
     return [emptyView, saveButton]
 }
 
+
+
+
+
+
 ViewInventory.getGeneralToolbarViews = function() {
     var measureIcons = 16
 
-    var addButton = ViewInventory.addButton( NSMakeRect(ViewInventory.sizeWindowWidth() - measureRoundButtonsSide - measureRoundButtons * 5, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "toolbar/add",
+    var addButton = ViewInventory.addButton( NSMakeRect(21, 87, 14, 15), "toolbar/add",
         function(sender){
             ToolbarInventory.updateContext();
             FramerInventory.runSelectProjectFolder()
             ToolbarInventory.setContentView()
     })
-    var removeButton = ViewInventory.addButton( NSMakeRect(ViewInventory.sizeWindowWidth() - measureRoundButtonsSide - measureRoundButtons * 8, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2), "toolbar/remove",
+    var removeButton = ViewInventory.addButton( NSMakeRect(7, 87, 15, 15), "toolbar/remove",
         function(sender){
             ToolbarInventory.updateContext();
             FramerInventory.runRemoveProjectFolder()
@@ -93,7 +99,7 @@ ViewInventory.getGeneralToolbarViews = function() {
     })
 
 
-    var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(ViewInventory.sizeWindowWidth() - measureRoundButtonsSide - measureRoundButtons * 2, measureRoundButtonsBottom,measureRoundButtons*2,measureRoundButtons*2))
+    var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(216, 9, 21, 18))
     [[moreButton cell] setArrowPosition:false];
     [moreButton setBordered:false];
     [moreButton setImagePosition:NSImageOnly];
@@ -122,30 +128,33 @@ ViewInventory.getGeneralToolbarViews = function() {
 
 
     // Action Icons
-    var layersButton = ViewInventory.addButton( NSMakeRect(measureIcons - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/replicate",
+    var layersButton = ViewInventory.addButton( NSMakeRect(8, 9, 50, 18), "toolbar/layer",
         function(sender){
             ToolbarInventory.updateContext();
             // var type = SelectionInventory.analyseActionType(currentSelection).type
             runReplicateLayers()
     })
 
-    var statesButton = ViewInventory.addButton( NSMakeRect(measureIcons*4 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/generate",
+    var statesButton = ViewInventory.addButton( NSMakeRect(64, 9, 70, 18), "toolbar/all states",
         function(sender){
             ToolbarInventory.updateContext();
             runGenerateStates()
     })
 
-    var sceneButton = ViewInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/simulate",
+    // var sceneButton = ViewInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/simulate",
+    //     function(sender){
+    //         ToolbarInventory.updateContext();
+    //         runSimulateKeynote()
+    // })
+    var backgroundView = ViewInventory.addImage(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight()), "toolbar/background")
+    var optionsView = ViewInventory.addImage(NSMakeRect(0, 50, ViewInventory.sizeWindowWidth(), 30), "toolbar/options")
+
+    var changeModeButton = ViewInventory.addButton( NSMakeRect(8, 55, 52, 21), "toolbar/mode",
         function(sender){
-            ToolbarInventory.updateContext();
-            runSimulateKeynote()
+            ToolbarInventory.changeContentView();
     })
 
-
-
-
-
-    relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64-80, 16, 80, 28))
+    relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(156, 54, 80, 22))
     [[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
     var densityValues = ["Artboard", "Group"];
     relativeAccessory.addItemsWithTitles(densityValues)
@@ -157,20 +166,20 @@ ViewInventory.getGeneralToolbarViews = function() {
         saveDefaults(userDefaults)
     })
 
-    densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64, 16, 64, 28))
-    [[densityAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-    var densityValues = ["Pixels", "Points"];
-    densityAccessory.addItemsWithTitles(densityValues)
-    densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
-    [densityAccessory setFont:ViewInventory.fontAccessory()];
+    // densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340-64, 16, 64, 28))
+    // [[densityAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
+    // var densityValues = ["Pixels", "Points"];
+    // densityAccessory.addItemsWithTitles(densityValues)
+    // densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
+    // [densityAccessory setFont:ViewInventory.fontAccessory()];
+    //
+    // densityAccessory.setCOSJSTargetFunction(function(sender){
+    //     userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
+    //     saveDefaults(userDefaults)
+    // })
 
-    densityAccessory.setCOSJSTargetFunction(function(sender){
-        userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
-        saveDefaults(userDefaults)
-    })
 
-
-    deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(340, 16, 90, 28))
+    deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(66, 54, 85, 22))
     [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
     var devices = ScaleInventory.returnDevices()
     for (var i = 0; i < devices.length; i++) {
@@ -186,75 +195,41 @@ ViewInventory.getGeneralToolbarViews = function() {
     })
 
 
-    var textsView = ViewInventory.addImage(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), measureIcons), "toolbar/texts")
+    // var textsView = ViewInventory.addImage(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), measureIcons), "toolbar/texts")
 
-    return [addButton, removeButton, moreButton, layersButton, statesButton, sceneButton, relativeAccessory, densityAccessory, deviceAccessory, textsView]
+    return [backgroundView, addButton, removeButton, moreButton, layersButton, statesButton, optionsView, changeModeButton, relativeAccessory, deviceAccessory]
 }
 
 
 ViewInventory.createContentViewForToolbal = function() {
   var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight())];
 
-  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 48, ViewInventory.sizeWindowWidth(), 20)];
-  [pathLabel setEditable:false];
-  [pathLabel setBordered:false];
-  [pathLabel setAlignment:NSCenterTextAlignment]
-  [pathLabel setFont:ViewInventory.fontCheckControls()];
-  [pathLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
-  [pathLabel setDrawsBackground:false];
-  [pathLabel setStringValue:defaultPathLabel];
-  view.addSubview(pathLabel)
-
-  var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 40, ViewInventory.sizeWindowWidth(), 20)];
-  [selectionLabel setEditable:false];
-  [selectionLabel setBordered:false];
-  [selectionLabel setAlignment:NSCenterTextAlignment]
-  [selectionLabel setFont:ViewInventory.fontCheckControls()];
-  [selectionLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
-  [selectionLabel setDrawsBackground:false];
-  [selectionLabel setStringValue:"Select Layers"];
-  view.addSubview(selectionLabel)
-
   var views = ViewInventory.getGeneralToolbarViews()
   for (var i = 0; i < views.length; i++) { view.addSubview(views[i]) }
 
   var closeViews = ViewInventory.getCloseToolbarViews()
   for (var i = 0; i < closeViews.length; i++) { view.addSubview(closeViews[i]) }
 
-  return [view, pathLabel, selectionLabel]
+  var labels = ViewInventory.getLabels("Select Layers")
+  for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
+
+  return [view, labels[0], labels[1]]
 }
 
 
 ViewInventory.createSceneContentView = function() {
   var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight())];
 
-  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 48, ViewInventory.sizeWindowWidth(), 20)];
-  [pathLabel setEditable:false];
-  [pathLabel setBordered:false];
-  [pathLabel setAlignment:NSCenterTextAlignment]
-  [pathLabel setFont:ViewInventory.fontCheckControls()];
-  [pathLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
-  [pathLabel setDrawsBackground:false];
-  [pathLabel setStringValue:defaultPathLabel];
-  view.addSubview(pathLabel)
-
-  var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 40, ViewInventory.sizeWindowWidth(), 20)];
-  [selectionLabel setEditable:false];
-  [selectionLabel setBordered:false];
-  [selectionLabel setAlignment:NSCenterTextAlignment]
-  [selectionLabel setFont:ViewInventory.fontCheckControls()];
-  [selectionLabel setTextColor:[NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]];
-  [selectionLabel setDrawsBackground:false];
-  [selectionLabel setStringValue:"Working with Exportable Layers"];
-  view.addSubview(selectionLabel)
-
   var views = ViewInventory.getGeneralToolbarViews()
   for (var i = 0; i < views.length; i++) { view.addSubview(views[i]) }
 
   var closeViews = ViewInventory.getCloseToolbarViews()
   for (var i = 0; i < closeViews.length; i++) { view.addSubview(closeViews[i]) }
 
-  return [view, pathLabel, selectionLabel]
+  var labels = ViewInventory.getLabels("Working with Exportable Layers")
+  for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
+
+  return [view, labels[0], labels[1]]
 }
 
 
@@ -274,7 +249,7 @@ ViewInventory.createEmptyContentViewForToolbal = function() {
 
 
 ViewInventory.getCloseToolbarViews = function() {
-    var closeButton = ViewInventory.addButton(NSMakeRect(measureRoundButtonsSide, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "toolbar/close",
+    var closeButton = ViewInventory.addButton(NSMakeRect(222, 87, 15, 15), "toolbar/close",
         function(sender){
             coscript.setShouldKeepAround(false)
             ToolbarInventory.returnInstance().returnPanel().close();
@@ -283,10 +258,30 @@ ViewInventory.getCloseToolbarViews = function() {
         }
     )
 
-    var settingsButton = ViewInventory.addButton( NSMakeRect(measureRoundButtonsSide + measureRoundButtons * 3, measureRoundButtonsBottom, measureRoundButtons*2, measureRoundButtons*2), "toolbar/settings",
+    var settingsButton = ViewInventory.addButton( NSMakeRect(205, 87, 15, 15), "toolbar/settings",
         function(sender){
             ToolbarInventory.updateContext();
             runSettings()
     })
     return [closeButton, settingsButton]
+}
+
+ViewInventory.getLabels = function(placeHolderText) {
+  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(41, 84, 160, 20)];
+  [pathLabel setEditable:false];
+  [pathLabel setBordered:false];
+  [pathLabel setFont:ViewInventory.fontCheckControls()];
+  [pathLabel setTextColor:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
+  [pathLabel setDrawsBackground:false];
+  [pathLabel setStringValue:defaultPathLabel];
+
+  var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(8, 30, 228, 16)];
+  [selectionLabel setEditable:false];
+  [selectionLabel setBordered:false];
+  [selectionLabel setFont:ViewInventory.fontSelection()];
+  [selectionLabel setTextColor:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
+  [selectionLabel setDrawsBackground:false];
+  [selectionLabel setStringValue:placeHolderText];
+
+  return [pathLabel, selectionLabel]
 }

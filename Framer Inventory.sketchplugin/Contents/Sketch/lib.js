@@ -149,7 +149,7 @@ ToolbarInventory.createUIBar = function() {
 
         var UIBar = NSPanel.alloc().init();
         UIBar.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
-        UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1));
+        UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0, 0, 0, 1));
         UIBar.setTitleVisibility(NSWindowTitleHidden);
         UIBar.setTitlebarAppearsTransparent(true);
         UIBar.setFrame_display(NSMakeRect(0, 0, measureWindowWidth, measureWindowHeight), false);
