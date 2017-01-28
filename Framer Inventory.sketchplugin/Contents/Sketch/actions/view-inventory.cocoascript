@@ -120,7 +120,7 @@ ViewInventory.optimiseFramerPath = function() {
 
 
 ViewInventory.getEmptyToolbarViews = function() {
-    var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(140, 2, 160, 32)];
+    var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(42, 16, 160, 32)];
     [saveButton setTitle:"Select Framer Folder"];
     [saveButton setBezelStyle:NSRoundedBezelStyle];
     [saveButton setKeyEquivalent:"\r"];

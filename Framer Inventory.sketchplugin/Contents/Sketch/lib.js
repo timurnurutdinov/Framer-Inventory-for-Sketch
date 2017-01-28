@@ -132,20 +132,6 @@ ToolbarInventory.updateImportButtons = function(adoptID) {
       else if (adoptID == 3) { ViewInventory.adaptButtonsSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 2) { ViewInventory.adaptButtonsSelected(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 4) { ViewInventory.adaptButtonsSelectedSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
-      else {
-        log("WTF?")
-      }
-      // ViewInventory.adaptButtonsSelected(toolbar.layersButton, toolbar.statesButton, toolbar.images)
-      // var layerButton = toolbar.layersButton
-      // layerButton.frame = ViewInventory.layersButtonNone()
-      // log(layerButton.frame())
-      // log(layerButton.frame())
-
-      // var frame = layerButton.frame()
-      // frame.size = CGSizeMake(55, 18)
-      // layerButton.frame = frame
-
-      // log(layerButton.frame())
   }
 }
 

@@ -8,13 +8,26 @@
 function SelectionInventory(type) {
     this.type = type
     this.artboards = NSMutableArray.new()
+    this.layers = NSMutableArray.new()
 }
 
 function SelectionInventory(type, artboards) {
     this.type = type
     this.artboards = NSMutableArray.new()
+    this.layers = NSMutableArray.new()
+
     if (artboards != nil) { this.artboards = artboards}
 }
+
+function SelectionInventory(type, artboards, layers) {
+    this.type = type
+    this.artboards = NSMutableArray.new()
+    this.layers = NSMutableArray.new()
+
+    if (artboards != nil) { this.artboards = artboards}
+    if (layers != nil) { this.layers = layers}
+}
+
 
 
 
@@ -23,21 +36,36 @@ var onSelectionChanged = function(context) {
     coscript.setShouldKeepAround(true);
 
     coscript.scheduleWithInterval_jsFunction(0.1,function() {
+        var localTime = [NSDate date]
         var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers().layers();
 
-        var currentSelectionType = SelectionInventory.analyseActionType(selection).type
-        var selectionTitle = ""
-        if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
-        else if (currentSelectionType == 1) { selectionTitle = "Layer / All States" }
-        else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
-        else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
-        else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
+        var selectionInventoryInstance = SelectionInventory.analyseActionType(selection)
+        // var currentSelectionType = selectionInventoryInstance.type
+        // var selectionTitle = ""
+        // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
+        // else if (currentSelectionType == 1) { selectionTitle = "Layer / All States" }
+        // else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
+        // else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
+        // else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
+        log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
+        ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
 
-        ToolbarInventory.updateImportButtons(currentSelectionType)
-        ToolbarInventory.updateSelectionLabelStringValue(selectionTitle + "")
+        var localLayers = selectionInventoryInstance.layers
+        if (selectionInventoryInstance.type == 2) {
+          ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name())
+        }
+        else if (localLayers.count() == 2) {
+            ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name())
+        }
+        else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
+        else if (localLayers.count() > 0) {
+          ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more")
+          // ToolbarInventory.updateSelectionLabelStringValue(localLayers.count() + " layers")
+        }
+        else { ToolbarInventory.updateSelectionLabelStringValue("Select layers...") }
 
         // StatisticsInventory.setStatus(2)
-
+        log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
         coscript.setShouldKeepAround(false);
     });
 
@@ -119,5 +147,5 @@ SelectionInventory.analyseActionType = function(selection) {
     else if (localArtboards.count() > 1) { type = isSameName ? 2 : 4 }
     else { type = 0 }
 
-    return new SelectionInventory(type, localArtboards)
+    return new SelectionInventory(type, localArtboards, localLayers)
 }
