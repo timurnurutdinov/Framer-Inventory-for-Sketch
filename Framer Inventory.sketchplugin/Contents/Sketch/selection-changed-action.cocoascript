@@ -37,9 +37,10 @@ var onSelectionChanged = function(context) {
 
     coscript.scheduleWithInterval_jsFunction(0.1,function() {
         var localTime = [NSDate date]
-        var selection = NSDocumentController.sharedDocumentController().currentDocument().selectedLayers().layers();
+        currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
+        var localSelection = currentDocument.selectedLayers().layers();
 
-        var selectionInventoryInstance = SelectionInventory.analyseActionType(selection)
+        var selectionInventoryInstance = SelectionInventory.analyseActionType(localSelection)
         // var currentSelectionType = selectionInventoryInstance.type
         // var selectionTitle = ""
         // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
@@ -48,21 +49,24 @@ var onSelectionChanged = function(context) {
         // else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
         // else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
         log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
-        ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
 
-        var localLayers = selectionInventoryInstance.layers
-        if (selectionInventoryInstance.type == 2) {
-          ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name())
+        var localMode = ToolbarInventory.toolbarMode()
+        log("localMode: " + localMode)
+        if (localMode == Status.toolbarModeImport()) {
+          ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
+
+          var localLayers = selectionInventoryInstance.layers
+          if (selectionInventoryInstance.type == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
+          else if (localLayers.count() == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name()) }
+          else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
+          else if (localLayers.count() > 0) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more") }
+          else { ToolbarInventory.updateSelectionLabelStringValue(ViewInventory.placeHolderImport()) }
         }
-        else if (localLayers.count() == 2) {
-            ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name())
+        else if (localMode == Status.toolbarModeScene()) {
+            // log("Found correct action: " + selectionInventoryInstance.type)
+            ToolbarInventory.updateSceneButtons(selectionInventoryInstance.type)
         }
-        else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
-        else if (localLayers.count() > 0) {
-          ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more")
-          // ToolbarInventory.updateSelectionLabelStringValue(localLayers.count() + " layers")
-        }
-        else { ToolbarInventory.updateSelectionLabelStringValue("Select layers...") }
+
 
         // StatisticsInventory.setStatus(2)
         log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
@@ -98,8 +102,8 @@ SelectionInventory.analyseActionType = function(selection) {
     }
 
     // for Keynote only
-    if (StatisticsInventory.getStatus() == Status.simulateID()) {
-        if (localArtboards.count() < 1) { return new SelectionInventory(5, FramerInventory.getCurrentPage().artboards()) }
+    if (StatisticsInventory.getStatus() == Status.simulateID() || (ToolbarInventory.toolbarMode() == Status.toolbarModeScene() && (StatisticsInventory.getStatus() != Status.generateID() || StatisticsInventory.getStatus() != Status.replicateID()))) {
+        if (localArtboards.count() < 1) { return new SelectionInventory(5, currentDocument.currentPage().artboards()) }
         return new SelectionInventory(6, localArtboards)
     }
 

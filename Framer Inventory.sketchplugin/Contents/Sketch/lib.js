@@ -59,6 +59,7 @@ function ToolbarInventory (panel) {
     this.pathLabelScene = sceneView[1]
     this.selectionLabelScene = sceneView[2]
     this.deviceAccessoryScene = sceneView[3]
+    this.sceneButton = sceneView[4]
 
 }
 
@@ -103,6 +104,18 @@ ToolbarInventory.changeContentView = function() {
       }
     }
 }
+
+
+ToolbarInventory.toolbarMode = function() {
+      var toolbar = ToolbarInventory.returnInstance()
+      if (toolbar != nil) {
+          var panel = toolbar.panel
+          if (panel.contentView() == toolbar.contentViewScene) { return Status.toolbarModeScene() }
+          else if (panel.contentView() == toolbar.contentViewImport) { return Status.toolbarModeImport() }
+          else { return Status.toolbarModeEmpty() }
+      }
+}
+
 
 ToolbarInventory.removeInstance = function() {
     var threadIdentifier = "com.tilllur.framer-inventory"
@@ -182,6 +195,14 @@ ToolbarInventory.updateImportButtons = function(adoptID) {
   }
 }
 
+ToolbarInventory.updateSceneButtons = function(adoptID) {
+    var toolbar = ToolbarInventory.returnInstance()
+    if (toolbar != nil) {
+        if (adoptID == 5) { ViewInventory.adaptSceneButtons(toolbar.sceneButton, toolbar.images) }
+        else if (adoptID == 6) { ViewInventory.adaptSceneButtonsSelected(toolbar.sceneButton, toolbar.images) }
+    }
+}
+
 
 ToolbarInventory.updateContext = function() {
     methodStartTime = [NSDate date]
@@ -222,8 +243,9 @@ ToolbarInventory.createUIBar = function() {
         ToolbarInventory.updateClassInstance(toolbar)
         ToolbarInventory.setContentView()
 
-
         UIBar.center()
         UIBar.makeKeyAndOrderFront(nil)
+
+        ViewInventory.adaptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images)
     }
 }

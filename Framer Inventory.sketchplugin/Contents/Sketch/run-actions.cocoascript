@@ -40,6 +40,7 @@ var statisticsPresets = {
 
 function Status () {}
 
+Status.waitingID = function() { return -1 }
 Status.replicateID = function() { return 0 }
 Status.generateID = function() { return 1 }
 Status.simulateID = function() { return 2 }
@@ -60,6 +61,9 @@ var userDefaults = initDefaults(Status.userDomain(), userPresets)
 var statsDefauls = initDefaults(Status.statsDomain(), statisticsPresets)
 
 
+Status.toolbarModeEmpty = function() { return 0 }
+Status.toolbarModeImport = function() { return 1 }
+Status.toolbarModeScene = function() { return 2 }
 
 
 

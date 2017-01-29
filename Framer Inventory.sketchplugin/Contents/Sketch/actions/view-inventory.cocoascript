@@ -5,6 +5,10 @@ ViewInventory.smileWarning = function() { return "⚠️ " }
 ViewInventory.smileDone = function() { return "👍🏻 " }
 ViewInventory.smileForget = function() { return "🙈" }
 
+ViewInventory.placeHolderImport = function() { return "Select Layers on Artboards" }
+ViewInventory.placeHolderScene = function() { return "Exportable Layers on Artboards" }
+ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer folder" }
+
 ViewInventory.colorBlack = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1] }
 ViewInventory.colorWhite = function() { return [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1] }
 ViewInventory.colorVersion = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5] }
@@ -16,6 +20,8 @@ ViewInventory.fontAccessory = function() { return [NSFont systemFontOfSize:10 we
 ViewInventory.fontActionButton = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightMedium] }
 ViewInventory.fontSelection = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightMedium] }
 
+
+// Buttons
 ViewInventory.layersButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
 ViewInventory.layersButton = function() { return NSMakeRect(8, 9, 50, 18) }
 ViewInventory.layersButtonSeveral = function() { return NSMakeRect(8, 9, 55, 18) }
@@ -25,6 +31,10 @@ ViewInventory.statesButton = function() { return NSMakeRect(64, 9, 70, 18) }
 ViewInventory.statesButtonSeveral = function() { return NSMakeRect(69, 9, 124, 18) }
 ViewInventory.statesButtonSelected = function() { return NSMakeRect(8, 9, 102, 18) }
 ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(8, 9, 155, 18) }
+
+// ViewInventory.sceneButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.sceneButton = function() { return NSMakeRect(8, 9, 100, 18) }
+ViewInventory.sceneButtonSelected = function() { return NSMakeRect(8, 9, 186, 18) }
 
 ViewInventory.adaptButtonsNone = function(layersButton, statesButton, images) {
     layersButton.frame = ViewInventory.layersButtonNone()
@@ -49,8 +59,8 @@ ViewInventory.adaptButtonsSelected = function(layersButton, statesButton, images
     layersButton.frame = ViewInventory.layersButtonNone()
     statesButton.frame = ViewInventory.statesButtonSelected()
     statesButton.setImage(images[4])
-    log(layersButton.frame())
-    log(statesButton.frame())
+    // log(layersButton.frame())
+    // log(statesButton.frame())
 }
 
 ViewInventory.adaptButtonsSelectedSeveral = function(layersButton, statesButton, images) {
@@ -58,6 +68,17 @@ ViewInventory.adaptButtonsSelectedSeveral = function(layersButton, statesButton,
     statesButton.frame = ViewInventory.statesButtonSelectedSelected()
     statesButton.setImage(images[5])
 }
+
+ViewInventory.adaptSceneButtons = function(sceneButton, images) {
+    sceneButton.frame = ViewInventory.sceneButton()
+    sceneButton.setImage(images[6])
+}
+
+ViewInventory.adaptSceneButtonsSelected = function(sceneButton, images) {
+  sceneButton.frame = ViewInventory.sceneButtonSelected()
+  sceneButton.setImage(images[7])
+}
+
 
 ViewInventory.returnButtonsImages = function() {
     var image0 = ViewInventory.getImage(ViewInventory.layersButton(), "toolbar/layers")
@@ -68,13 +89,15 @@ ViewInventory.returnButtonsImages = function() {
     var image4 = ViewInventory.getImage(ViewInventory.statesButtonSelected(), "toolbar/states selected")
     var image5 = ViewInventory.getImage(ViewInventory.statesButtonSelectedSelected(), "toolbar/states selected several")
 
-    return [image0, image1, image2, image3, image4, image5]
+    var image6 = ViewInventory.getImage(ViewInventory.sceneButton(), "toolbar/simulate")
+    var image7 = ViewInventory.getImage(ViewInventory.sceneButtonSelected(), "toolbar/simulate selected")
+
+    return [image0, image1, image2, image3, image4, image5, image6, image7]
 }
 
 
-var measureRoundButtonsSide = 10
-var measureRoundButtons = 6
-var defaultPathLabel = "Please, select Framer folder"
+
+
 ViewInventory.sizeWindowHeight = function() { return 108 }
 ViewInventory.sizeWindowWidth = function() { return 244 }
 
@@ -180,7 +203,14 @@ ViewInventory.getSceneViews = function() {
             ToolbarInventory.changeContentView();
     })
 
-    return [changeModeButton]
+
+    var sceneButton = ViewInventory.addButton(ViewInventory.sceneButton(), "toolbar/simulate",
+        function(sender){
+            ToolbarInventory.updateContext();
+            runSimulateKeynote()
+    })
+
+    return [changeModeButton, sceneButton]
 }
 
 
@@ -229,13 +259,8 @@ ViewInventory.getGeneralToolbarViews = function() {
 
     moreButton.setCOSJSTargetFunction(function(sender){
         // ToolbarInventory.updateImportButtons()
+        log(ToolbarInventory.toolbarMode())
     })
-
-    // var sceneButton = ViewInventory.addButton( NSMakeRect(measureIcons*7 - measureIcons/4, measureIcons, measureIcons*2, measureIcons*2), "toolbar/simulate",
-    //     function(sender){
-    //         ToolbarInventory.updateContext();
-    //         runSimulateKeynote()
-    // })
 
 
     var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(66, 54, 85, 22))
@@ -270,7 +295,7 @@ ViewInventory.createImportPanel = function() {
   var importViews = ViewInventory.getImportViews()
   for (var i = 0; i < importViews.length; i++) { view.addSubview(importViews[i]) }
 
-  var labels = ViewInventory.getLabels("Select Layers")
+  var labels = ViewInventory.getLabels(ViewInventory.placeHolderImport())
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
   return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[5]]
@@ -289,10 +314,10 @@ ViewInventory.createScenePanel = function() {
   var sceneViews = ViewInventory.getSceneViews()
   for (var i = 0; i < sceneViews.length; i++) { view.addSubview(sceneViews[i]) }
 
-  var labels = ViewInventory.getLabels("Working with Exportable Layers")
+  var labels = ViewInventory.getLabels(ViewInventory.placeHolderScene())
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1], views[5]]
+  return [view, labels[0], labels[1], views[5], sceneViews[1]]
 }
 
 
@@ -336,7 +361,7 @@ ViewInventory.getLabels = function(placeHolderText) {
   [pathLabel setFont:ViewInventory.fontCheckControls()];
   [pathLabel setTextColor:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
   [pathLabel setDrawsBackground:false];
-  [pathLabel setStringValue:defaultPathLabel];
+  [pathLabel setStringValue:ViewInventory.placeHolderSelectPath()];
 
   var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(8, 30, 228, 16)];
   [selectionLabel setEditable:false];
