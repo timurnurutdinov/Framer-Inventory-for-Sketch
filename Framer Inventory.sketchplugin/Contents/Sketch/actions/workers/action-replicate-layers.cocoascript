@@ -45,5 +45,6 @@ var runReplicateLayers = function() {
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
 	FramerInventory.showDoneMessage()
 
+	StatisticsInventory.setStatus(Status.waitingID())
 	return pasteboardContent
 }

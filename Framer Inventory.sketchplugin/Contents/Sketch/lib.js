@@ -222,7 +222,9 @@ ToolbarInventory.updateContext = function() {
 
 
 ToolbarInventory.createUIBar = function() {
-    // StatisticsInventory.setStatus(Status.toolbarID())
+
+    StatisticsInventory.setStatus(Status.waitingID())
+    
     coscript.setShouldKeepAround(true);
     var toolbar = ToolbarInventory.returnInstance()
 

@@ -62,5 +62,6 @@ var runGenerateStates = function() {
 		FramerInventory.showDoneMessage()
 	}
 
+	StatisticsInventory.setStatus(Status.waitingID())
 	return pasteboardContent
 }

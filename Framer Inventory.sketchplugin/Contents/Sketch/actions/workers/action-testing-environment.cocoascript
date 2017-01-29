@@ -88,8 +88,10 @@ var runTestingEnvironment = function() {
 
 	doc.setCurrentPage(runningPage)
 	writeTestingLog(resultingString)
+
 	StatisticsInventory.stopTesting()
 	restoreCurrentDefaults()
+	StatisticsInventory.setStatus(Status.waitingID())
 }
 
 
