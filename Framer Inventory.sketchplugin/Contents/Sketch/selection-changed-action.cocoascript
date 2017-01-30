@@ -41,6 +41,7 @@ var onSelectionChanged = function(context) {
         var localSelection = currentDocument.selectedLayers().layers();
 
         var selectionInventoryInstance = SelectionInventory.analyseActionType(localSelection)
+        log(selectionInventoryInstance)
         // var currentSelectionType = selectionInventoryInstance.type
         // var selectionTitle = ""
         // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }

@@ -14,6 +14,10 @@ StatisticsInventory.setStatus = function(status) {
     statsDefauls.currentStatus = status
     statsDefauls.actionSummary++
     saveDefaults(Status.statsDomain(), statsDefauls)
+
+    if (status == Status.replicateID()) { StatisticsInventory.sendReplicateRequest() }
+    else if (status == Status.generateID()) { StatisticsInventory.sendGenerateRequest() }
+    else if (status == Status.simulateID()) { StatisticsInventory.sendSimulateRequest() }
 }
 
 StatisticsInventory.getStatus = function() {
@@ -44,7 +48,8 @@ StatisticsInventory.stopTesting = function() {
 }
 
 StatisticsInventory.isTesting = function() {
-  return statsDefauls.testing
+  // log(statsDefauls.testing)
+  return false
 }
 
 

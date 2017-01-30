@@ -166,7 +166,6 @@ ViewInventory.getImportViews = function() {
     var layersButton = ViewInventory.addButton( NSMakeRect(8, 9, 50, 18), "toolbar/layer",
         function(sender){
             ToolbarInventory.updateContext();
-            // var type = SelectionInventory.analyseActionType(currentSelection).type
             runReplicateLayers()
     })
 

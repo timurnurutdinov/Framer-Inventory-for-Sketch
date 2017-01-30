@@ -80,8 +80,15 @@ ToolbarInventory.setContentView = function() {
         [panel setContentView:view]
       }
       else {
-        var view = toolbar.contentViewImport
-        [panel setContentView:view]
+        if (panel.contentView() == toolbar.contentViewScene) {
+          var view = toolbar.contentViewScene
+          [panel setContentView:view]
+        }
+        else {
+          var view = toolbar.contentViewImport
+          [panel setContentView:view]
+        }
+
       }
       ToolbarInventory.updatePathLabelStringValue()
     }
@@ -224,7 +231,7 @@ ToolbarInventory.updateContext = function() {
 ToolbarInventory.createUIBar = function() {
 
     StatisticsInventory.setStatus(Status.waitingID())
-    
+
     coscript.setShouldKeepAround(true);
     var toolbar = ToolbarInventory.returnInstance()
 
