@@ -29,9 +29,9 @@ var userPresets = {
 var statisticsPresets = {
     currentStatus: 0,
     prevStatus: 0,
-    toolbar: false,
-    testing: false,
-    debug: false,
+    toolbar: 0,
+    testing: 0,
+    debug: 0,
 
 		actionSummary: 0
 }

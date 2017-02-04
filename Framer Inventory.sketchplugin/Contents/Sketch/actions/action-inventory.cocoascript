@@ -85,18 +85,28 @@ FramerInventory.returnArtboardsScope = function() {
 		return FramerInventory.getCurrentPage().artboards()
 }
 
+FramerInventory.sameArtboards = function(artboard1, artboard2) {
+		if (![[artboard1 className] isEqualToString:[artboard2 className]]) { return false }
+		if (![[artboard1 name] isEqualToString:[artboard2 name]]) { return false }
+		if ([artboard1 hash] != [artboard2 hash]) { return false }
+		return true
+}
+
 FramerInventory.orderArtboardsScope = function(artboardsScope) {
+		// return artboardsScope
+		// TODO: IMPROVE TO CHECK BOTH: HASH & NAME
+
 		var artboards = FramerInventory.getCurrentPage().artboards()
 		var existanceMap = [,]
 		var orderedScope = NSMutableArray.new()
 
 		for (var i = 0; i < artboards.count(); i++) {
-				var currentArtboardName = [[artboards objectAtIndex:i] name]
+				var currentArtboardName = [[artboards objectAtIndex:i] hash]
 				existanceMap[currentArtboardName] = 0
 		}
 
 		for (var i = 0; i < artboardsScope.count(); i++) {
-				var currentArtboardName = [[artboardsScope objectAtIndex:i] name]
+				var currentArtboardName = [[artboardsScope objectAtIndex:i] hash]
 				existanceMap[currentArtboardName] = 1
 		}
 

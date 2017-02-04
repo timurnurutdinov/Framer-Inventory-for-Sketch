@@ -27,28 +27,29 @@ StatisticsInventory.getStatus = function() {
 
 
 StatisticsInventory.setToolbar = function(toolbarOpened) {
-   if (toolbarOpened) { statsDefauls.toolbar = true }
-   else { statsDefauls.toolbar = false }
+   if (toolbarOpened) { statsDefauls.toolbar = 1 }
+   else { statsDefauls.toolbar = 0 }
    saveDefaults(Status.statsDomain(), statsDefauls)
 }
 
 StatisticsInventory.getToolbar = function() {
-  return statsDefauls.toolbar
+  if (statsDefauls.toolbar == 1) { return true }
+  return false
 }
 
 StatisticsInventory.startTesting = function() {
     var username = NSUserName()
-    if([username isEqualToString:"tilllur"]) { statsDefauls.testing = true }
+    if([username isEqualToString:"tilllur"]) { statsDefauls.testing = 1 }
     saveDefaults(Status.statsDomain(), statsDefauls)
 }
 
 StatisticsInventory.stopTesting = function() {
-    statsDefauls.testing = false
+    statsDefauls.testing = 0
     saveDefaults(Status.statsDomain(), statsDefauls)
 }
 
 StatisticsInventory.isTesting = function() {
-  // log(statsDefauls.testing)
+  if (statsDefauls.testing == 1) { return true }
   return false
 }
 
