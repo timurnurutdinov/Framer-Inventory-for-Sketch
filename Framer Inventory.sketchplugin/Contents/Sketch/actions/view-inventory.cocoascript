@@ -232,6 +232,7 @@ ViewInventory.getGeneralToolbarViews = function() {
             ToolbarInventory.setContentView()
     })
 
+    var moreButtonUnderImage = ViewInventory.addImage(NSMakeRect(216, 9, 21, 18), "toolbar/more")
 
     var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(216, 9, 21, 18))
     [[moreButton cell] setArrowPosition:false];
@@ -239,16 +240,16 @@ ViewInventory.getGeneralToolbarViews = function() {
     [moreButton setImagePosition:NSImageOnly];
     // [moreButton setImagePosition:NSImageOverlaps];
     [[moreButton cell] setBackgroundColor:[NSColor redColor]];
-    moreButton.addItemsWithTitles(["one", "two"])
+    moreButton.addItemsWithTitles(["Add Selection to Pasteboard", "Copy Selection to Pasteboard"])
     [[moreButton cell] setUsesItemFromMenu:false];
 
-    var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
-    var suffix = (isRetinaDisplay)? "@2x": "";
-    var imageURL = NSURL.fileURLWithPath(pluginPath + "/images/toolbar/more" + suffix + ".png");
-    var image = NSImage.alloc().initWithContentsOfURL(imageURL);
+    // var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
+    // var suffix = (isRetinaDisplay)? "@2x": "";
+    // var imageURL = NSURL.fileURLWithPath(pluginPath + "/images/toolbar/more" + suffix + ".png");
+    // var image = NSImage.alloc().initWithContentsOfURL(imageURL);
 
     var item = [[NSMenuItem allocWithZone:nil] initWithTitle:"" action:nil keyEquivalent:""];
-    [item setImage:image];
+    [item setImage:nil];
     [item setOnStateImage:nil];
     [item setState:NSOffState]
     [item setMixedStateImage:nil];
@@ -257,8 +258,23 @@ ViewInventory.getGeneralToolbarViews = function() {
     [moreButton setPreferredEdge:NSMinXEdge];
 
     moreButton.setCOSJSTargetFunction(function(sender){
-        // ToolbarInventory.updateImportButtons()
-        log(ToolbarInventory.toolbarMode())
+        ToolbarInventory.updateContext();
+
+        if (moreButton.indexOfSelectedItem() == 0) {
+            var selectionArray = FramerInventory.arrayDescribeSelection()
+
+            var myPasteboard  = [NSPasteboard generalPasteboard];
+            var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
+
+            if (myString == null) { myString = "" }
+            var pasteboardContent = myString + selectionArray
+            [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+        }
+        else if (moreButton.indexOfSelectedItem() == 1) {
+            var selectionArray = FramerInventory.arrayDescribeSelection()
+            [[NSPasteboard generalPasteboard] setString:selectionArray forType:NSStringPboardType];
+        }
+        // log(ToolbarInventory.toolbarMode())
     })
 
 
@@ -278,7 +294,7 @@ ViewInventory.getGeneralToolbarViews = function() {
         ToolbarInventory.updateAccessoryControls()
     })
 
-    return [backgroundView, optionsView, addButton, removeButton, moreButton, deviceAccessory]
+    return [backgroundView, optionsView, moreButtonUnderImage, addButton, removeButton, moreButton, deviceAccessory]
 }
 
 
@@ -297,7 +313,7 @@ ViewInventory.createImportPanel = function() {
   var labels = ViewInventory.getLabels(ViewInventory.placeHolderImport())
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[5]]
+  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[6]]
 }
 
 
@@ -316,7 +332,7 @@ ViewInventory.createScenePanel = function() {
   var labels = ViewInventory.getLabels(ViewInventory.placeHolderScene())
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1], views[5], sceneViews[1]]
+  return [view, labels[0], labels[1], views[6], sceneViews[1]]
 }
 
 

@@ -303,7 +303,22 @@ FramerInventory.createExportSelection = function() {
 	}
 }
 
+FramerInventory.arrayDescribeSelection = function() {
+	var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
+	var selectedLayers = selectionInventoryInstance.layers
+	if (selectedLayers == nil || selectedLayers.count() == 0) { return "" }
 
+	var result = "array = ["
+	for (var i = 0; i < selectedLayers.count(); i++) {
+			var currentLayer = [selectedLayers objectAtIndex:i]
+			result += GenerateInventory.clearName([currentLayer name])
+			if (i != selectedLayers.count() - 1) { result += ", " }
+	}
+	result += "]"
+	result += ln()
+
+	return result
+}
 
 
 
