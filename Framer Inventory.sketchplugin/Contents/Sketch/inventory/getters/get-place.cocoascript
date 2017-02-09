@@ -85,9 +85,12 @@ var getPlace = function(layer, isImage) {
 	var parentValues = nil
 
 	if (userDefaults.myRelativeGroup == 1 && (StatisticsInventory.getStatus() == Status.generateID() || StatisticsInventory.getStatus() == Status.replicateID())) {
+		// TODO: Check if the parent can be... hard to say here. It can be rect with shadow and this rect is exportable but group is image
 		parentValues = getAbsolutePlaceImage([layer parentGroup])
 	}
-	else { parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer)) }
+	else {
+		parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer))
+	}
 
 
 	var layerValues = (isImage) ? getAbsolutePlaceImage(layer) : getAbsolutePlaceRect(layer)

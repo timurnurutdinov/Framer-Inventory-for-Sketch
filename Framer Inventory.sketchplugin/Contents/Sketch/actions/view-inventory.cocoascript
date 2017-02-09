@@ -216,7 +216,8 @@ ViewInventory.getSceneViews = function() {
 
 
 ViewInventory.getGeneralToolbarViews = function() {
-    var backgroundView = ViewInventory.addImage(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight()), "toolbar/background")
+    // var backgroundView = ViewInventory.addImage(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight()), "toolbar/background")
+    var backgroundView = ViewInventory.addImage(NSMakeRect(0, 0, 0, 0), "toolbar/background")
     var optionsView = ViewInventory.addImage(NSMakeRect(0, 50, ViewInventory.sizeWindowWidth(), 30), "toolbar/options")
 
     var addButton = ViewInventory.addButton( NSMakeRect(21, 87, 14, 15), "toolbar/add",
@@ -240,7 +241,13 @@ ViewInventory.getGeneralToolbarViews = function() {
     [moreButton setImagePosition:NSImageOnly];
     // [moreButton setImagePosition:NSImageOverlaps];
     [[moreButton cell] setBackgroundColor:[NSColor redColor]];
-    moreButton.addItemsWithTitles(["Add Selection to Pasteboard", "Copy Selection to Pasteboard"])
+
+    var additionalActions = [["Add Selection to Pasteboard", "Copy Selection to Pasteboard"],["Rename Automatically"], ["Shown/hidden state"]]
+    for (var i = 0; i < additionalActions.length; i++) {
+        moreButton.addItemsWithTitles(additionalActions[i])
+        if (i != additionalActions.length - 1) { [[moreButton menu] addItem:[NSMenuItem separatorItem]] }
+    }
+    // moreButton.addItemsWithTitles(["Add Selection to Pasteboard", "Copy Selection to Pasteboard"])
     [[moreButton cell] setUsesItemFromMenu:false];
 
     // var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
@@ -256,6 +263,7 @@ ViewInventory.getGeneralToolbarViews = function() {
     [[moreButton cell] setMenuItem:item];
     // [item release];
     [moreButton setPreferredEdge:NSMinXEdge];
+    moreButton.selectItemAtIndex(-1)
 
     moreButton.setCOSJSTargetFunction(function(sender){
         ToolbarInventory.updateContext();
@@ -269,11 +277,44 @@ ViewInventory.getGeneralToolbarViews = function() {
             if (myString == null) { myString = "" }
             var pasteboardContent = myString + selectionArray
             [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+            [currentDocument showMessage:"Added"]
         }
         else if (moreButton.indexOfSelectedItem() == 1) {
             var selectionArray = FramerInventory.arrayDescribeSelection()
             [[NSPasteboard generalPasteboard] setString:selectionArray forType:NSStringPboardType];
+            [currentDocument showMessage:"Replaced Pasteboard!"]
         }
+        else if (moreButton.indexOfSelectedItem() == 3) {
+            [currentDocument showMessage:"Rename?"]
+        }
+        else if (moreButton.indexOfSelectedItem() == 5) {
+            log("gonna try states")
+            ToolbarInventory.updateContext();
+            runReplicateLayers()
+
+            var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
+          	var selectedLayers = selectionInventoryInstance.layers
+          	if (selectedLayers == nil || selectedLayers.count() == 0) { return "" }
+
+            var layerBase = [selectedLayers firstObject]
+            var stateString = ""
+            stateString += GenerateInventory.clearName([layerBase name])
+            stateString += ".states =" + ln()
+            stateString += tln() + "\"shown\": { opacity: 1 }" + ln()
+            stateString+= tln() + "\"hidden\": { opacity: 0 }" + ln() + ln()
+            stateString += GenerateInventory.clearName([layerBase name])
+            stateString += ".stateSwitch(\"shown\")" + dln()
+
+            var myPasteboard  = [NSPasteboard generalPasteboard];
+            var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
+
+            if (myString == null) { myString = "" }
+            var pasteboardContent = myString + stateString
+            [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+            [currentDocument showMessage:"Added"]
+        }
+
+        moreButton.selectItemAtIndex(-1)
         // log(ToolbarInventory.toolbarMode())
     })
 
