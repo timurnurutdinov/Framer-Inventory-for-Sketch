@@ -422,14 +422,3 @@ FramerInventory.runRemoveProjectFolder = function() {
 		ToolbarInventory.setContentView()
 		[currentDocument showMessage:ViewInventory.smileForget()]
 }
-
-
-// FramerInventory.isSmartGenerateAction = function(localSelection) {
-// 		if (localSelection.count() < 2) { return false }
-// 		var localName = localSelection.firstObject().name()
-// 		for (var i = 1; i < localSelection.count(); i++) {
-// 				var currentLayerName = [[localSelection objectAtIndex: i] name]
-// 				if (![localName isEqualToString: currentLayerName]) { return false }
-// 		}
-// 		return true
-// }

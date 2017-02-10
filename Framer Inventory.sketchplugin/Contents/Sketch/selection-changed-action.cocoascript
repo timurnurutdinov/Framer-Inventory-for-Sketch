@@ -38,10 +38,15 @@ var onSelectionChanged = function(context) {
     coscript.scheduleWithInterval_jsFunction(0.1,function() {
         var localTime = [NSDate date]
         currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
-        var localSelection = currentDocument.selectedLayers().layers();
 
+        if (currentDocument == nil) {
+          coscript.setShouldKeepAround(false);
+          return
+        }
+
+        var localSelection = currentDocument.selectedLayers().layers();
         var selectionInventoryInstance = SelectionInventory.analyseActionType(localSelection)
-        log(selectionInventoryInstance)
+        // log(selectionInventoryInstance)
         // var currentSelectionType = selectionInventoryInstance.type
         // var selectionTitle = ""
         // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
@@ -52,7 +57,7 @@ var onSelectionChanged = function(context) {
         log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
 
         var localMode = ToolbarInventory.toolbarMode()
-        log("localMode: " + localMode)
+        // log("localMode: " + localMode)
         if (localMode == Status.toolbarModeImport()) {
           ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
 
@@ -145,7 +150,7 @@ SelectionInventory.analyseActionType = function(selection) {
         if (shouldAddCurrentArtboard) { localArtboards.addObject(currentArtboard) }
     }
 
-    log("L: " + localLayers.count() + ", on A:" + localArtboards.count() + ". Same?" + isSameName)
+    // log("L: " + localLayers.count() + ", on A:" + localArtboards.count() + ". Same?" + isSameName)
 
     var type = -1
     if (localArtboards.count() == 1) { type = isSameName ? 1 : 3 }

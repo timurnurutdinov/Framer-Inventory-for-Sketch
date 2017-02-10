@@ -2,8 +2,11 @@
 function DescribeInventory () {}
 
 
+DescribeInventory.sectionView = function() { return "# View" + ln() }
+DescribeInventory.sectionModel = function() { return "# Model" + ln() }
+DescribeInventory.sectionCustom = function() { return "# Custom" + ln() }
 
-// states related
+
 
 DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 	if (generatedStates == nil || generatedStates.length == 0) { return "" }

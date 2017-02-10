@@ -83,22 +83,29 @@ var runSimulateKeynote = function() {
 
 	pasteboardContent += DescribeInventory.generateRetinaVariable() + ln()
 	pasteboardContent += DescribeInventory.generatePhoneModel() + dln()
-	pasteboardContent += "# view" + ln()
+	pasteboardContent += DescribeInventory.sectionView()
 
-	for (var i = 0; i < layers.length; i++) {
-		pasteboardContent += layers[i].printLayer()
-	}
+	for (var i = 0; i < layers.length; i++) { pasteboardContent += layers[i].printLayer() }
 
 	pasteboardContent += ln()
-	pasteboardContent += "# model" + ln()
+	pasteboardContent += DescribeInventory.sectionModel()
 	pasteboardContent += DescribeInventory.generateCycleButton()
 
 	var cycleStates = FramerInventory.getUsedStatesNames())
 	pasteboardContent += DescribeInventory.generateCycleStates(cycleStates)
 
 	pasteboardContent += DescribeInventory.generateLayers(sortedSelection)
-	pasteboardContent += DescribeInventory.generateCycler()
-	pasteboardContent += DescribeInventory.generateHandler()
+	pasteboardContent += DescribeInventory.generateCycler() + ln()
+	pasteboardContent += DescribeInventory.sectionCustom()
+
+	if (userDefaults.exportFramerFolder != "" && [[NSFileManager defaultManager] fileExistsAtPath:userDefaults.exportFramerFolder + "/app.coffee"]) {
+			var currentString = [NSString stringWithContentsOfFile:userDefaults.exportFramerFolder + "/app.coffee" encoding:NSUTF8StringEncoding error:nil]
+			var currentPrototypeParts = currentString.split(DescribeInventory.sectionCustom())
+
+			if (currentPrototypeParts.length > 1) { pasteboardContent += currentPrototypeParts[1] }
+			else { pasteboardContent += DescribeInventory.generateHandler() }
+	}
+	else { pasteboardContent += DescribeInventory.generateHandler() }
 
 
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
