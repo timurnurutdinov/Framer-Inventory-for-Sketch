@@ -91,7 +91,7 @@
       "script" : "selection-changed-action.cocoascript",
       "handlers" : {
         "actions" : {
-           "SelectionChanged.finish" : "onSelectionChanged",
+           "SelectionChanged.finish" : "onSelectionChanged"
            }
           },
     }

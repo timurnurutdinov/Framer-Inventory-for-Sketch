@@ -33,58 +33,59 @@ function SelectionInventory(type, artboards, layers) {
 
 
 var onSelectionChanged = function(context) {
-    SelectionInventory.selectionChangedHandler()
+  var asyncing = true
+  coscript.setShouldKeepAround(true);
+  coscript.scheduleWithInterval_jsFunction(0.05, SelectionInventory.asyncSelectionHandler(asyncing));
 };
 
 
+SelectionInventory.asyncSelectionHandler = function(asyncing) {
+    var localTime = [NSDate date]
+    currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
 
-SelectionInventory.selectionChangedHandler = function() {
-  coscript.setShouldKeepAround(true);
+    if (currentDocument == nil) {
+      if (asyncing) { coscript.setShouldKeepAround(false); }
+      return
+    }
 
-  coscript.scheduleWithInterval_jsFunction(0.05,function() {
-      var localTime = [NSDate date]
-      currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
+    var localSelection = currentDocument.selectedLayers().layers();
+    var selectionInventoryInstance = SelectionInventory.analyseActionType(localSelection)
+    // log(selectionInventoryInstance)
+    // var currentSelectionType = selectionInventoryInstance.type
+    // var selectionTitle = ""
+    // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
+    // else if (currentSelectionType == 1) { selectionTitle = "Layer / All States" }
+    // else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
+    // else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
+    // else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
+    log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
 
-      if (currentDocument == nil) {
-        coscript.setShouldKeepAround(false);
-        return
-      }
+    var localMode = ToolbarInventory.toolbarMode()
+    // log("localMode: " + localMode)
+    if (localMode == Status.toolbarModeImport()) {
+      ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
 
-      var localSelection = currentDocument.selectedLayers().layers();
-      var selectionInventoryInstance = SelectionInventory.analyseActionType(localSelection)
-      // log(selectionInventoryInstance)
-      // var currentSelectionType = selectionInventoryInstance.type
-      // var selectionTitle = ""
-      // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
-      // else if (currentSelectionType == 1) { selectionTitle = "Layer / All States" }
-      // else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
-      // else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
-      // else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
-      log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
-
-      var localMode = ToolbarInventory.toolbarMode()
-      // log("localMode: " + localMode)
-      if (localMode == Status.toolbarModeImport()) {
-        ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
-
-        var localLayers = selectionInventoryInstance.layers
-        if (selectionInventoryInstance.type == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
-        else if (localLayers.count() == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name()) }
-        else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
-        else if (localLayers.count() > 0) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more") }
-        else { ToolbarInventory.updateSelectionLabelStringValue(ViewInventory.placeHolderImport()) }
-      }
-      else if (localMode == Status.toolbarModeScene()) {
-          // log("Found correct action: " + selectionInventoryInstance.type)
-          ToolbarInventory.updateSceneButtons(selectionInventoryInstance.type)
-      }
+      var localLayers = selectionInventoryInstance.layers
+      if (selectionInventoryInstance.type == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
+      else if (localLayers.count() == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name()) }
+      else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
+      else if (localLayers.count() > 0) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more") }
+      else { ToolbarInventory.updateSelectionLabelStringValue(ViewInventory.placeHolderImport()) }
+    }
+    else if (localMode == Status.toolbarModeScene()) {
+        // log("Found correct action: " + selectionInventoryInstance.type)
+        ToolbarInventory.updateSceneButtons(selectionInventoryInstance.type)
+    }
 
 
-      // StatisticsInventory.setStatus(2)
-      log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
-      coscript.setShouldKeepAround(false);
-  });
+    // StatisticsInventory.setStatus(2)
+    log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
+    if (asyncing) { coscript.setShouldKeepAround(false); }
 }
+
+// SelectionInventory.selectionChangedHandler = function() {
+//
+// }
 
 
 // 0 – Select layers
@@ -103,20 +104,26 @@ SelectionInventory.analyseActionType = function(selection) {
 
     var localLayers = NSMutableArray.new()
     var localArtboards = NSMutableArray.new()
+    var hasParentArtboard = false
 
     for (var i = 0; i < selection.count(); i++) {
         var currentLayerClassName = [[selection objectAtIndex:i] className]
         if (TypeInventory.isArtboardType(currentLayerClassName)) { localArtboards.addObject([selection objectAtIndex:i]) }
-        else { localLayers.addObject([selection objectAtIndex:i]) }
+        else {
+            localLayers.addObject([selection objectAtIndex:i])
+            if (!hasParentArtboard) {
+                var localParent = TypeInventory.findParentArtboard([selection objectAtIndex:i])
+                if (localParent != nil && TypeInventory.isArtboardType(localParent.className())) { hasParentArtboard = true }
+            }
+        }
     }
-
     // for Keynote only
     if (StatisticsInventory.getStatus() == Status.simulateID() || (ToolbarInventory.toolbarMode() == Status.toolbarModeScene() && (StatisticsInventory.getStatus() != Status.generateID() || StatisticsInventory.getStatus() != Status.replicateID()))) {
         if (localArtboards.count() < 1) { return new SelectionInventory(5, currentDocument.currentPage().artboards()) }
         return new SelectionInventory(6, localArtboards)
     }
 
-    if (localLayers.count() < 1) { return new SelectionInventory(0) }
+    if (localLayers.count() < 1 || !hasParentArtboard) { return new SelectionInventory(0) }
 
     var isSameName = true
     if (localLayers.count() > 0) {
