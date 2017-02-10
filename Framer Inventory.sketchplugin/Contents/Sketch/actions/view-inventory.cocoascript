@@ -23,18 +23,18 @@ ViewInventory.fontSelection = function() { return [NSFont systemFontOfSize:10 we
 
 // Buttons
 ViewInventory.layersButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
-ViewInventory.layersButton = function() { return NSMakeRect(8, 9, 50, 18) }
-ViewInventory.layersButtonSeveral = function() { return NSMakeRect(8, 9, 55, 18) }
+ViewInventory.layersButton = function() { return NSMakeRect(6, 5, 38, 18) }
+ViewInventory.layersButtonSeveral = function() { return NSMakeRect(6, 5, 43, 18) }
 
 ViewInventory.statesButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
-ViewInventory.statesButton = function() { return NSMakeRect(64, 9, 70, 18) }
-ViewInventory.statesButtonSeveral = function() { return NSMakeRect(69, 9, 124, 18) }
-ViewInventory.statesButtonSelected = function() { return NSMakeRect(8, 9, 102, 18) }
-ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(8, 9, 155, 18) }
+ViewInventory.statesButton = function() { return NSMakeRect(47, 5, 58, 18) }
+ViewInventory.statesButtonSeveral = function() { return NSMakeRect(52, 5, 112, 18) }
+ViewInventory.statesButtonSelected = function() { return NSMakeRect(6, 5, 90, 18) }
+ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(6, 5, 143, 18) }
 
 // ViewInventory.sceneButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
-ViewInventory.sceneButton = function() { return NSMakeRect(8, 9, 100, 18) }
-ViewInventory.sceneButtonSelected = function() { return NSMakeRect(8, 9, 186, 18) }
+ViewInventory.sceneButton = function() { return NSMakeRect(6, 5, 41, 18) }
+ViewInventory.sceneButtonSelected = function() { return NSMakeRect(6, 5, 159, 18) }
 
 ViewInventory.adaptButtonsNone = function(layersButton, statesButton, images) {
     layersButton.frame = ViewInventory.layersButtonNone()
@@ -98,8 +98,8 @@ ViewInventory.returnButtonsImages = function() {
 
 
 
-ViewInventory.sizeWindowHeight = function() { return 108 }
-ViewInventory.sizeWindowWidth = function() { return 244 }
+ViewInventory.sizeWindowHeight = function() { return 94 }
+ViewInventory.sizeWindowWidth = function() { return 196 }
 
 
 ViewInventory.getImage = function(size, name) {
@@ -175,12 +175,12 @@ ViewInventory.getImportViews = function() {
             runGenerateStates()
     })
 
-    var changeModeButton = ViewInventory.addButton( NSMakeRect(8, 55, 52, 21), "toolbar/import",
+    var changeModeButton = ViewInventory.addButton( NSMakeRect(5, 46, 37, 20), "toolbar/import",
         function(sender){
             ToolbarInventory.changeContentView();
     })
 
-    var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(156, 54, 80, 22))
+    var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(110, 45, 80, 22))
     [[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
     var densityValues = ["Artboard", "Group"];
     relativeAccessory.addItemsWithTitles(densityValues)
@@ -197,7 +197,7 @@ ViewInventory.getImportViews = function() {
 
 ViewInventory.getSceneViews = function() {
 
-    var changeModeButton = ViewInventory.addButton( NSMakeRect(8, 55, 52, 21), "toolbar/scene",
+    var changeModeButton = ViewInventory.addButton( NSMakeRect(5, 46, 37, 20), "toolbar/scene",
         function(sender){
             ToolbarInventory.changeContentView();
     })
@@ -218,24 +218,29 @@ ViewInventory.getSceneViews = function() {
 ViewInventory.getGeneralToolbarViews = function() {
     // var backgroundView = ViewInventory.addImage(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight()), "toolbar/background")
     var backgroundView = ViewInventory.addImage(NSMakeRect(0, 0, 0, 0), "toolbar/background")
-    var optionsView = ViewInventory.addImage(NSMakeRect(0, 50, ViewInventory.sizeWindowWidth(), 30), "toolbar/options")
+    var optionsView = ViewInventory.addImage(NSMakeRect(0, 42, ViewInventory.sizeWindowWidth(), 28), "toolbar/options")
+    // var optionsView = NSView.alloc().initWithFrame(NSMakeRect(0, 42, 196, 28))
+    // [optionsView setWantsLayer:true];
+    // var optionsViewLayer = optionsView.layer
+    // [optionsViewLayer setBackgroundColor:[[NSColor redColor] CGColor]]];
+    // optionsView.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.8, 0.8, 0.8, 1));
 
-    var addButton = ViewInventory.addButton( NSMakeRect(21, 87, 14, 15), "toolbar/add",
+    var addButton = ViewInventory.addButton( NSMakeRect(19, 74, 14, 15), "toolbar/add",
         function(sender){
             ToolbarInventory.updateContext();
             FramerInventory.runSelectProjectFolder()
             ToolbarInventory.setContentView()
     })
-    var removeButton = ViewInventory.addButton( NSMakeRect(7, 87, 15, 15), "toolbar/remove",
+    var removeButton = ViewInventory.addButton( NSMakeRect(5, 74, 15, 15), "toolbar/remove",
         function(sender){
             ToolbarInventory.updateContext();
             FramerInventory.runRemoveProjectFolder()
             ToolbarInventory.setContentView()
     })
 
-    var moreButtonUnderImage = ViewInventory.addImage(NSMakeRect(216, 9, 21, 18), "toolbar/more")
+    var moreButtonUnderImage = ViewInventory.addImage(NSMakeRect(169, 5, 21, 18), "toolbar/more")
 
-    var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(216, 9, 21, 18))
+    var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(169, 5, 21, 18))
     [[moreButton cell] setArrowPosition:false];
     [moreButton setBordered:false];
     [moreButton setImagePosition:NSImageOnly];
@@ -319,7 +324,7 @@ ViewInventory.getGeneralToolbarViews = function() {
     })
 
 
-    var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(66, 54, 85, 22))
+    var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(46, 46, 60, 20))
     [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
     var devices = ScaleInventory.returnDevices()
     for (var i = 0; i < devices.length; i++) {
@@ -393,7 +398,7 @@ ViewInventory.createEmptyPanel = function() {
 
 
 ViewInventory.getCloseToolbarViews = function() {
-    var closeButton = ViewInventory.addButton(NSMakeRect(222, 87, 15, 15), "toolbar/close",
+    var closeButton = ViewInventory.addButton(NSMakeRect(175, 74, 15, 15), "toolbar/close",
         function(sender){
             coscript.setShouldKeepAround(false)
             ToolbarInventory.returnInstance().returnPanel().close();
@@ -402,7 +407,7 @@ ViewInventory.getCloseToolbarViews = function() {
         }
     )
 
-    var settingsButton = ViewInventory.addButton( NSMakeRect(205, 87, 15, 15), "toolbar/settings",
+    var settingsButton = ViewInventory.addButton( NSMakeRect(158, 74, 15, 15), "toolbar/settings",
         function(sender){
             ToolbarInventory.updateContext();
             runSettings()
@@ -411,7 +416,7 @@ ViewInventory.getCloseToolbarViews = function() {
 }
 
 ViewInventory.getLabels = function(placeHolderText) {
-  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(41, 84, 160, 20)];
+  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(38, 71, 120, 20)];
   [pathLabel setEditable:false];
   [pathLabel setBordered:false];
   [pathLabel setFont:ViewInventory.fontCheckControls()];
@@ -419,7 +424,7 @@ ViewInventory.getLabels = function(placeHolderText) {
   [pathLabel setDrawsBackground:false];
   [pathLabel setStringValue:ViewInventory.placeHolderSelectPath()];
 
-  var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(8, 30, 228, 16)];
+  var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(5, 23, 184, 16)];
   [selectionLabel setEditable:false];
   [selectionLabel setBordered:false];
   [selectionLabel setFont:ViewInventory.fontSelection()];
