@@ -33,55 +33,58 @@ function SelectionInventory(type, artboards, layers) {
 
 
 var onSelectionChanged = function(context) {
-    coscript.setShouldKeepAround(true);
-
-    coscript.scheduleWithInterval_jsFunction(0.1,function() {
-        var localTime = [NSDate date]
-        currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
-
-        if (currentDocument == nil) {
-          coscript.setShouldKeepAround(false);
-          return
-        }
-
-        var localSelection = currentDocument.selectedLayers().layers();
-        var selectionInventoryInstance = SelectionInventory.analyseActionType(localSelection)
-        // log(selectionInventoryInstance)
-        // var currentSelectionType = selectionInventoryInstance.type
-        // var selectionTitle = ""
-        // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
-        // else if (currentSelectionType == 1) { selectionTitle = "Layer / All States" }
-        // else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
-        // else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
-        // else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
-        log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
-
-        var localMode = ToolbarInventory.toolbarMode()
-        // log("localMode: " + localMode)
-        if (localMode == Status.toolbarModeImport()) {
-          ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
-
-          var localLayers = selectionInventoryInstance.layers
-          if (selectionInventoryInstance.type == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
-          else if (localLayers.count() == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name()) }
-          else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
-          else if (localLayers.count() > 0) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more") }
-          else { ToolbarInventory.updateSelectionLabelStringValue(ViewInventory.placeHolderImport()) }
-        }
-        else if (localMode == Status.toolbarModeScene()) {
-            // log("Found correct action: " + selectionInventoryInstance.type)
-            ToolbarInventory.updateSceneButtons(selectionInventoryInstance.type)
-        }
-
-
-        // StatisticsInventory.setStatus(2)
-        log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
-        coscript.setShouldKeepAround(false);
-    });
-
+    SelectionInventory.selectionChangedHandler()
 };
 
 
+
+SelectionInventory.selectionChangedHandler = function() {
+  coscript.setShouldKeepAround(true);
+
+  coscript.scheduleWithInterval_jsFunction(0.05,function() {
+      var localTime = [NSDate date]
+      currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
+
+      if (currentDocument == nil) {
+        coscript.setShouldKeepAround(false);
+        return
+      }
+
+      var localSelection = currentDocument.selectedLayers().layers();
+      var selectionInventoryInstance = SelectionInventory.analyseActionType(localSelection)
+      // log(selectionInventoryInstance)
+      // var currentSelectionType = selectionInventoryInstance.type
+      // var selectionTitle = ""
+      // if (currentSelectionType == 0) { selectionTitle = "Select Layers" }
+      // else if (currentSelectionType == 1) { selectionTitle = "Layer / All States" }
+      // else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
+      // else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
+      // else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
+      log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
+
+      var localMode = ToolbarInventory.toolbarMode()
+      // log("localMode: " + localMode)
+      if (localMode == Status.toolbarModeImport()) {
+        ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
+
+        var localLayers = selectionInventoryInstance.layers
+        if (selectionInventoryInstance.type == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
+        else if (localLayers.count() == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name()) }
+        else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
+        else if (localLayers.count() > 0) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more") }
+        else { ToolbarInventory.updateSelectionLabelStringValue(ViewInventory.placeHolderImport()) }
+      }
+      else if (localMode == Status.toolbarModeScene()) {
+          // log("Found correct action: " + selectionInventoryInstance.type)
+          ToolbarInventory.updateSceneButtons(selectionInventoryInstance.type)
+      }
+
+
+      // StatisticsInventory.setStatus(2)
+      log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
+      coscript.setShouldKeepAround(false);
+  });
+}
 
 
 // 0 – Select layers

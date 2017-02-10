@@ -257,5 +257,6 @@ ToolbarInventory.createUIBar = function() {
         UIBar.makeKeyAndOrderFront(nil)
 
         ViewInventory.adaptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images)
+        SelectionInventory.selectionChangedHandler()
     }
 }

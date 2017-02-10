@@ -2,7 +2,7 @@
 function TypeInventory () {}
 
 
-TypeInventory.isArtboardType = function(type) { return (type == "MSArtboardGroup") ? true : false }
+TypeInventory.isArtboardType = function(type) { return (type == "MSArtboardGroup" || type == "MSSymbolMaster") ? true : false }
 TypeInventory.isPageType = function(type) { return (type == "MSPage") ? true : false }
 
 TypeInventory.isSliceType = function(type) { return (type == "MSSliceLayer") ? true : false }
