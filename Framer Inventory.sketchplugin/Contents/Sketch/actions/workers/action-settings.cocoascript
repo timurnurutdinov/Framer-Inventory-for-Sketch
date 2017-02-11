@@ -74,6 +74,25 @@ var runSettings = function() {
 	[saveButton setAction:"callAction:"];
 	[[exportWindow contentView] addSubview:saveButton];
 
+
+
+	// var prototype = [[NSButtonCell alloc] init];
+  // [prototype setTitle:"Watermelons"];
+  // [prototype setButtonType:NSRadioButton];
+  // var matrixRect = NSMakeRect(20.0, 20.0, 125.0, 125.0);
+  // var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
+  //                                                   mode:NSRadioModeMatrix
+  //                                              prototype:prototype
+  //                                           numberOfRows:3
+  //                                        numberOfColumns:1];
+  //   [[exportWindow contentView] addSubview:myMatrix];
+  //   var cellArray = [myMatrix cells];
+  //   [[cellArray objectAtIndex:0] setTitle:"Apples"];
+  //   [[cellArray objectAtIndex:1] setTitle:"Oranges"];
+  //   [[cellArray objectAtIndex:2] setTitle:"Pears"];
+
+
+
 	[NSApp runModalForWindow:exportWindow];
 }
 
