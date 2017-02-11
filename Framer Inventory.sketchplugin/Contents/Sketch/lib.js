@@ -1,41 +1,6 @@
 @import 'actions/view-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
 @import 'run-actions.cocoascript'
-// @import 'actions/action-inventory.cocoascript'
-
-// var presets = {
-// 	myRetinaEnabled: 0,
-//   myRetinaString: "retina",
-// 	myMinimalExport: 1,
-// 	myRelativeGroup: 0,
-// 	myDetailedNotation: 1,
-// 	exportFramerFolder: "",
-// 	myDevice: 0,
-//
-// 	myRetinaValue: 1,
-// 	myMobile: 1,
-// 	myAutoplay: 0,
-//
-// 	myUserID:  [[NSUUID UUID] UUIDString] + ""
-// }
-//
-// var pluginDomain = "com.addleimb.framer-inventory.retina"
-// var userDefaults = initDefaults(pluginDomain, presets)
-
-// var relativeAccessory = nil
-// var densityAccessory = nil
-// var deviceAccessory = nil
-
-var measureWindowHeight = ViewInventory.sizeWindowHeight();
-var measureWindowWidth = ViewInventory.sizeWindowWidth();
-
-var measureRoundButtonsBottom = measureWindowHeight - 6 * 3
-
-// this is a class to store in threadDictionary
-// var toolbar = nil
-// var threadDictionary = nil
-
-
 
 
 function ToolbarInventory (panel) {
@@ -52,6 +17,8 @@ function ToolbarInventory (panel) {
     this.statesButton = importViews[4]
     this.relativeButton = importViews[5]
     this.deviceAccessory = importViews[6]
+    this.moreButtonImage = importViews[7]
+    this.moreButton = importViews[8]
 
 
     var sceneView = ViewInventory.createScenePanel()
@@ -179,8 +146,6 @@ ToolbarInventory.updateAccessoryControls = function() {
   var toolbar = ToolbarInventory.returnInstance()
   if (toolbar != nil) {
       ViewInventory.updateRelativeButton(toolbar.relativeButton, toolbar.images)
-      // var localRelativeDropdown = toolbar.relativeAccessory
-      // localRelativeDropdown.selectItemAtIndex(userDefaults.myRelativeGroup)
 
       var localDeviceDropdown = toolbar.deviceAccessory
       localDeviceDropdown.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
@@ -200,6 +165,9 @@ ToolbarInventory.updateImportButtons = function(adoptID) {
       else if (adoptID == 3) { ViewInventory.adaptButtonsSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 2) { ViewInventory.adaptButtonsSelected(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 4) { ViewInventory.adaptButtonsSelectedSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
+
+      if (adoptID == 0) { ViewInventory.adoptMoreNone(toolbar.moreButtonImage, toolbar.moreButton, toolbar.images) }
+      else { ViewInventory.adoptMore(toolbar.moreButtonImage, toolbar.moreButton, toolbar.images) }
   }
 }
 
@@ -243,7 +211,7 @@ ToolbarInventory.createUIBar = function() {
         UIBar.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.92, 0.92, 0.92, 1));
         UIBar.setTitleVisibility(NSWindowTitleHidden);
         UIBar.setTitlebarAppearsTransparent(true);
-        UIBar.setFrame_display(NSMakeRect(0, 0, measureWindowWidth, measureWindowHeight), false);
+        UIBar.setFrame_display(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight()), false);
         UIBar.setMovableByWindowBackground(true);
         // UIBar.userInteractionEnabled(true);
         UIBar.setHasShadow(true);

@@ -5,7 +5,7 @@ ViewInventory.smileWarning = function() { return "⚠️ " }
 ViewInventory.smileDone = function() { return "👍🏻 " }
 ViewInventory.smileForget = function() { return "🙈" }
 
-ViewInventory.placeHolderImport = function() { return "Select Layers on Artboards" }
+ViewInventory.placeHolderImport = function() { return "" }
 ViewInventory.placeHolderScene = function() { return "Exportable Layers on Artboards" }
 ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer folder" }
 
@@ -35,9 +35,15 @@ ViewInventory.statesButtonSeveral = function() { return NSMakeRect(53, 5, 112, 1
 ViewInventory.statesButtonSelected = function() { return NSMakeRect(6, 5, 90, 18) }
 ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(6, 5, 143, 18) }
 
-// ViewInventory.sceneButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
 ViewInventory.sceneButton = function() { return NSMakeRect(6, 5, 41, 18) }
 ViewInventory.sceneButtonSelected = function() { return NSMakeRect(6, 5, 159, 18) }
+
+ViewInventory.moreButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.moreButton = function() { return NSMakeRect(169, 5, 21, 18) }
+
+
+
+
 
 ViewInventory.adaptButtonsNone = function(layersButton, statesButton, images) {
     layersButton.frame = ViewInventory.layersButtonNone()
@@ -62,8 +68,6 @@ ViewInventory.adaptButtonsSelected = function(layersButton, statesButton, images
     layersButton.frame = ViewInventory.layersButtonNone()
     statesButton.frame = ViewInventory.statesButtonSelected()
     statesButton.setImage(images[4])
-    // log(layersButton.frame())
-    // log(statesButton.frame())
 }
 
 ViewInventory.adaptButtonsSelectedSeveral = function(layersButton, statesButton, images) {
@@ -106,7 +110,15 @@ ViewInventory.updateRelativeButton = function(relativeButton, images) {
     else { relativeButton.setImage(images[9]) }
 }
 
+ViewInventory.adoptMoreNone = function(moreImage, moreAccessory, images) {
+    moreImage.frame = ViewInventory.moreButtonNone()
+    moreAccessory.frame = ViewInventory.moreButtonNone()
+}
 
+ViewInventory.adoptMore = function(moreImage, moreAccessory, images) {
+    moreImage.frame = ViewInventory.moreButton()
+    moreAccessory.frame = ViewInventory.moreButton()
+}
 
 
 
@@ -210,19 +222,9 @@ ViewInventory.getImportViews = function() {
 
     ToolbarInventory.updateAccessoryControls();
 
-    // var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(110, 45, 80, 22))
-    // [[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-    // var densityValues = ["Artboard", "Group"];
-    // relativeAccessory.addItemsWithTitles(densityValues)
-    // relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
-    // [relativeAccessory setFont:ViewInventory.fontAccessory()];
-    //
-    // relativeAccessory.setCOSJSTargetFunction(function(sender){
-    //     userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
-    //     saveDefaults(Status.userDomain(), userDefaults)
-    // })
+    var moreButtons = ViewInventory.getMoreButtons()
 
-    return [layersButton, statesButton, relativeButton, changeModeButton]
+    return [layersButton, statesButton, relativeButton, moreButtons[0], moreButtons[1], changeModeButton]
 }
 
 ViewInventory.getSceneViews = function() {
@@ -268,91 +270,6 @@ ViewInventory.getGeneralToolbarViews = function() {
             ToolbarInventory.setContentView()
     })
 
-    var moreButtonUnderImage = ViewInventory.addImage(NSMakeRect(169, 5, 21, 18), "toolbar/more")
-
-    var moreButton = NSPopUpButton.alloc().initWithFrame(NSMakeRect(169, 5, 21, 18))
-    [[moreButton cell] setArrowPosition:false];
-    [moreButton setBordered:false];
-    [moreButton setImagePosition:NSImageOnly];
-    // [moreButton setImagePosition:NSImageOverlaps];
-    [[moreButton cell] setBackgroundColor:[NSColor redColor]];
-
-    var additionalActions = [["Add Selection to Pasteboard", "Copy Selection to Pasteboard"],["Rename Automatically"], ["Shown/hidden state"]]
-    for (var i = 0; i < additionalActions.length; i++) {
-        moreButton.addItemsWithTitles(additionalActions[i])
-        if (i != additionalActions.length - 1) { [[moreButton menu] addItem:[NSMenuItem separatorItem]] }
-    }
-    // moreButton.addItemsWithTitles(["Add Selection to Pasteboard", "Copy Selection to Pasteboard"])
-    [[moreButton cell] setUsesItemFromMenu:false];
-
-    // var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
-    // var suffix = (isRetinaDisplay)? "@2x": "";
-    // var imageURL = NSURL.fileURLWithPath(pluginPath + "/images/toolbar/more" + suffix + ".png");
-    // var image = NSImage.alloc().initWithContentsOfURL(imageURL);
-
-    var item = [[NSMenuItem allocWithZone:nil] initWithTitle:"" action:nil keyEquivalent:""];
-    [item setImage:nil];
-    [item setOnStateImage:nil];
-    [item setState:NSOffState]
-    [item setMixedStateImage:nil];
-    [[moreButton cell] setMenuItem:item];
-    // [item release];
-    [moreButton setPreferredEdge:NSMinXEdge];
-    moreButton.selectItemAtIndex(-1)
-
-    moreButton.setCOSJSTargetFunction(function(sender){
-        ToolbarInventory.updateContext();
-
-        if (moreButton.indexOfSelectedItem() == 0) {
-            var selectionArray = FramerInventory.arrayDescribeSelection()
-
-            var myPasteboard  = [NSPasteboard generalPasteboard];
-            var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
-
-            if (myString == null) { myString = "" }
-            var pasteboardContent = myString + selectionArray
-            [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
-            [currentDocument showMessage:"Added"]
-        }
-        else if (moreButton.indexOfSelectedItem() == 1) {
-            var selectionArray = FramerInventory.arrayDescribeSelection()
-            [[NSPasteboard generalPasteboard] setString:selectionArray forType:NSStringPboardType];
-            [currentDocument showMessage:"Replaced Pasteboard!"]
-        }
-        else if (moreButton.indexOfSelectedItem() == 3) {
-            [currentDocument showMessage:"Rename?"]
-        }
-        else if (moreButton.indexOfSelectedItem() == 5) {
-            log("gonna try states")
-            ToolbarInventory.updateContext();
-            runReplicateLayers()
-
-            var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
-          	var selectedLayers = selectionInventoryInstance.layers
-          	if (selectedLayers == nil || selectedLayers.count() == 0) { return "" }
-
-            var layerBase = [selectedLayers firstObject]
-            var stateString = ""
-            stateString += GenerateInventory.clearName([layerBase name])
-            stateString += ".states =" + ln()
-            stateString += tln() + "\"shown\": { opacity: 1 }" + ln()
-            stateString+= tln() + "\"hidden\": { opacity: 0 }" + ln() + ln()
-            stateString += GenerateInventory.clearName([layerBase name])
-            stateString += ".stateSwitch(\"shown\")" + dln()
-
-            var myPasteboard  = [NSPasteboard generalPasteboard];
-            var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
-
-            if (myString == null) { myString = "" }
-            var pasteboardContent = myString + stateString
-            [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
-            [currentDocument showMessage:"Added"]
-        }
-
-        moreButton.selectItemAtIndex(-1)
-        // log(ToolbarInventory.toolbarMode())
-    })
-
 
     var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(46, 46, 119, 20))
     [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
@@ -370,7 +287,8 @@ ViewInventory.getGeneralToolbarViews = function() {
         ToolbarInventory.updateAccessoryControls()
     })
 
-    return [backgroundView, optionsView, moreButtonUnderImage, addButton, removeButton, moreButton, deviceAccessory]
+    // return [backgroundView, optionsView, moreButtonUnderImage, addButton, removeButton, moreButton, deviceAccessory]
+    return [backgroundView, optionsView, addButton, removeButton, deviceAccessory]
 }
 
 
@@ -389,7 +307,7 @@ ViewInventory.createImportPanel = function() {
   var labels = ViewInventory.getLabels(ViewInventory.placeHolderImport())
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[6]]
+  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[4], importViews[3], importViews[4]]
 }
 
 
@@ -408,7 +326,7 @@ ViewInventory.createScenePanel = function() {
   var labels = ViewInventory.getLabels(ViewInventory.placeHolderScene())
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1], views[6], sceneViews[1]]
+  return [view, labels[0], labels[1], views[4], sceneViews[1]]
 }
 
 
@@ -463,4 +381,88 @@ ViewInventory.getLabels = function(placeHolderText) {
   [selectionLabel setStringValue:placeHolderText];
 
   return [pathLabel, selectionLabel]
+}
+
+
+ViewInventory.getMoreButtons = function() {
+  var moreButtonUnderImage = ViewInventory.addImage(ViewInventory.moreButton(), "toolbar/more")
+
+  var moreButton = NSPopUpButton.alloc().initWithFrame(ViewInventory.moreButton())
+  [[moreButton cell] setArrowPosition:false];
+  [moreButton setBordered:false];
+  [moreButton setImagePosition:NSImageOnly];
+  // [moreButton setImagePosition:NSImageOverlaps];
+  [[moreButton cell] setBackgroundColor:[NSColor redColor]];
+
+  var additionalActions = [["Add Selection to Pasteboard", "Copy Selection to Pasteboard"],["Rename Automatically"], ["Shown/hidden state"]]
+  for (var i = 0; i < additionalActions.length; i++) {
+      moreButton.addItemsWithTitles(additionalActions[i])
+      if (i != additionalActions.length - 1) { [[moreButton menu] addItem:[NSMenuItem separatorItem]] }
+  }
+
+  [[moreButton cell] setUsesItemFromMenu:false];
+
+  var item = [[NSMenuItem allocWithZone:nil] initWithTitle:"" action:nil keyEquivalent:""];
+  [item setImage:nil];
+  [item setOnStateImage:nil];
+  [item setState:NSOffState]
+  [item setMixedStateImage:nil];
+  [[moreButton cell] setMenuItem:item];
+  [moreButton setPreferredEdge:NSMinXEdge];
+  moreButton.selectItemAtIndex(-1)
+
+  moreButton.setCOSJSTargetFunction(function(sender){
+      ToolbarInventory.updateContext();
+
+      if (moreButton.indexOfSelectedItem() == 0) {
+          var selectionArray = FramerInventory.arrayDescribeSelection()
+
+          var myPasteboard  = [NSPasteboard generalPasteboard];
+          var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
+
+          if (myString == null) { myString = "" }
+          var pasteboardContent = myString + selectionArray
+          [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+          [currentDocument showMessage:"Added"]
+      }
+      else if (moreButton.indexOfSelectedItem() == 1) {
+          var selectionArray = FramerInventory.arrayDescribeSelection()
+          [[NSPasteboard generalPasteboard] setString:selectionArray forType:NSStringPboardType];
+          [currentDocument showMessage:"Replaced Pasteboard!"]
+      }
+      else if (moreButton.indexOfSelectedItem() == 3) {
+          [currentDocument showMessage:"Rename?"]
+      }
+      else if (moreButton.indexOfSelectedItem() == 5) {
+          log("gonna try states")
+          ToolbarInventory.updateContext();
+          runReplicateLayers()
+
+          var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
+          var selectedLayers = selectionInventoryInstance.layers
+          if (selectedLayers == nil || selectedLayers.count() == 0) { return "" }
+
+          var layerBase = [selectedLayers firstObject]
+          var stateString = ""
+          stateString += GenerateInventory.clearName([layerBase name])
+          stateString += ".states =" + ln()
+          stateString += tln() + "\"shown\": { opacity: 1 }" + ln()
+          stateString+= tln() + "\"hidden\": { opacity: 0 }" + ln() + ln()
+          stateString += GenerateInventory.clearName([layerBase name])
+          stateString += ".stateSwitch(\"shown\")" + dln()
+
+          var myPasteboard  = [NSPasteboard generalPasteboard];
+          var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
+
+          if (myString == null) { myString = "" }
+          var pasteboardContent = myString + stateString
+          [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+          [currentDocument showMessage:"Added"]
+      }
+
+      moreButton.selectItemAtIndex(-1)
+      // log(ToolbarInventory.toolbarMode())
+  })
+
+  return [moreButtonUnderImage, moreButton]
 }
