@@ -50,7 +50,7 @@ function ToolbarInventory (panel) {
     this.selectionLabel = importViews[2]
     this.layersButton = importViews[3]
     this.statesButton = importViews[4]
-    this.relativeAccessory = importViews[5]
+    this.relativeButton = importViews[5]
     this.deviceAccessory = importViews[6]
 
 
@@ -178,8 +178,9 @@ ToolbarInventory.updatePathLabelStringValue = function() {
 ToolbarInventory.updateAccessoryControls = function() {
   var toolbar = ToolbarInventory.returnInstance()
   if (toolbar != nil) {
-      var localRelativeDropdown = toolbar.relativeAccessory
-      localRelativeDropdown.selectItemAtIndex(userDefaults.myRelativeGroup)
+      ViewInventory.updateRelativeButton(toolbar.relativeButton, toolbar.images)
+      // var localRelativeDropdown = toolbar.relativeAccessory
+      // localRelativeDropdown.selectItemAtIndex(userDefaults.myRelativeGroup)
 
       var localDeviceDropdown = toolbar.deviceAccessory
       localDeviceDropdown.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))

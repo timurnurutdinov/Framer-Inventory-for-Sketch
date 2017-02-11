@@ -9,6 +9,9 @@ ViewInventory.placeHolderImport = function() { return "Select Layers on Artboard
 ViewInventory.placeHolderScene = function() { return "Exportable Layers on Artboards" }
 ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer folder" }
 
+ViewInventory.toolbarMessageParentGroup = function() { return "Relative to parent Group" }
+ViewInventory.toolbarMessageParentArtboard = function() { return "Relative to parent Artboard" }
+
 ViewInventory.colorBlack = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1] }
 ViewInventory.colorWhite = function() { return [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1] }
 ViewInventory.colorVersion = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5] }
@@ -27,8 +30,8 @@ ViewInventory.layersButton = function() { return NSMakeRect(6, 5, 38, 18) }
 ViewInventory.layersButtonSeveral = function() { return NSMakeRect(6, 5, 43, 18) }
 
 ViewInventory.statesButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
-ViewInventory.statesButton = function() { return NSMakeRect(47, 5, 58, 18) }
-ViewInventory.statesButtonSeveral = function() { return NSMakeRect(52, 5, 112, 18) }
+ViewInventory.statesButton = function() { return NSMakeRect(48, 5, 58, 18) }
+ViewInventory.statesButtonSeveral = function() { return NSMakeRect(53, 5, 112, 18) }
 ViewInventory.statesButtonSelected = function() { return NSMakeRect(6, 5, 90, 18) }
 ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(6, 5, 143, 18) }
 
@@ -92,8 +95,18 @@ ViewInventory.returnButtonsImages = function() {
     var image6 = ViewInventory.getImage(ViewInventory.sceneButton(), "toolbar/simulate")
     var image7 = ViewInventory.getImage(ViewInventory.sceneButtonSelected(), "toolbar/simulate selected")
 
-    return [image0, image1, image2, image3, image4, image5, image6, image7]
+    var image8 = ViewInventory.getImage(ViewInventory.sceneButton(), "toolbar/parent artboard")
+    var image9 = ViewInventory.getImage(ViewInventory.sceneButton(), "toolbar/parent group")
+
+    return [image0, image1, image2, image3, image4, image5, image6, image7, image8, image9]
 }
+
+ViewInventory.updateRelativeButton = function(relativeButton, images) {
+    if (userDefaults.myRelativeGroup == 0) { relativeButton.setImage(images[8]) }
+    else { relativeButton.setImage(images[9]) }
+}
+
+
 
 
 
@@ -180,19 +193,36 @@ ViewInventory.getImportViews = function() {
             ToolbarInventory.changeContentView();
     })
 
-    var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(110, 45, 80, 22))
-    [[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-    var densityValues = ["Artboard", "Group"];
-    relativeAccessory.addItemsWithTitles(densityValues)
-    relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
-    [relativeAccessory setFont:ViewInventory.fontAccessory()];
 
-    relativeAccessory.setCOSJSTargetFunction(function(sender){
-        userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
-        saveDefaults(Status.userDomain(), userDefaults)
+    var relativeButton = ViewInventory.addButton( NSMakeRect(168, 46, 23, 20), "toolbar/parent artboard",
+        function(sender) {
+          if (userDefaults.myRelativeGroup == 0) { userDefaults.myRelativeGroup = 1 }
+          else { userDefaults.myRelativeGroup = 0 }
+
+          saveDefaults(Status.userDomain(), userDefaults)
+          ToolbarInventory.updateAccessoryControls();
+
+          if (currentDocument != nil) {
+            if (userDefaults.myRelativeGroup == 0) { [currentDocument showMessage:ViewInventory.toolbarMessageParentArtboard()] }
+            else { [currentDocument showMessage:ViewInventory.toolbarMessageParentGroup()] }
+          }
     })
 
-    return [layersButton, statesButton, relativeAccessory, changeModeButton]
+    ToolbarInventory.updateAccessoryControls();
+
+    // var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(110, 45, 80, 22))
+    // [[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
+    // var densityValues = ["Artboard", "Group"];
+    // relativeAccessory.addItemsWithTitles(densityValues)
+    // relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
+    // [relativeAccessory setFont:ViewInventory.fontAccessory()];
+    //
+    // relativeAccessory.setCOSJSTargetFunction(function(sender){
+    //     userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
+    //     saveDefaults(Status.userDomain(), userDefaults)
+    // })
+
+    return [layersButton, statesButton, relativeButton, changeModeButton]
 }
 
 ViewInventory.getSceneViews = function() {
@@ -324,7 +354,7 @@ ViewInventory.getGeneralToolbarViews = function() {
     })
 
 
-    var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(46, 46, 60, 20))
+    var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(46, 46, 119, 20))
     [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
     var devices = ScaleInventory.returnDevices()
     for (var i = 0; i < devices.length; i++) {
