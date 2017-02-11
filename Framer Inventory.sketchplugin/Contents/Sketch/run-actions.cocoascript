@@ -53,7 +53,7 @@ Status.toolbarID = function() { return 8 }
 Status.updateID = function() { return 9 }
 
 
-Status.userDomain = function() { return "com.addleimb.framer-inventory.userTest" }
+Status.userDomain = function() { return "com.addleimb.framer-inventory.userTest2" }
 Status.statsDomain = function() { return "com.addleimb.framer-inventory.statistics" }
 
 var preTestingDefaults = {}

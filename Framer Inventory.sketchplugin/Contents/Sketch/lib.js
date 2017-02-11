@@ -19,6 +19,7 @@ function ToolbarInventory (panel) {
     this.deviceAccessory = importViews[6]
     this.moreButtonImage = importViews[7]
     this.moreButton = importViews[8]
+    this.emptySelectionView = importViews[9]
 
 
     var sceneView = ViewInventory.createScenePanel()
@@ -54,8 +55,9 @@ ToolbarInventory.setContentView = function() {
         else {
           var view = toolbar.contentViewImport
           [panel setContentView:view]
+          SelectionInventory.asyncSelectionHandler(false)
         }
-
+        ToolbarInventory.updateAccessoryControls();
       }
       ToolbarInventory.updatePathLabelStringValue()
     }
@@ -166,8 +168,14 @@ ToolbarInventory.updateImportButtons = function(adoptID) {
       else if (adoptID == 2) { ViewInventory.adaptButtonsSelected(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 4) { ViewInventory.adaptButtonsSelectedSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
 
-      if (adoptID == 0) { ViewInventory.adoptMoreNone(toolbar.moreButtonImage, toolbar.moreButton, toolbar.images) }
-      else { ViewInventory.adoptMore(toolbar.moreButtonImage, toolbar.moreButton, toolbar.images) }
+      if (adoptID == 0) {
+        ViewInventory.adoptMoreNone(toolbar.moreButtonImage, toolbar.moreButton)
+        ViewInventory.adoptEmptySelection(toolbar.emptySelectionView)
+      }
+      else {
+        ViewInventory.adoptMore(toolbar.moreButtonImage, toolbar.moreButton)
+        ViewInventory.adoptEmptySelectionNone(toolbar.emptySelectionView)
+      }
   }
 }
 
