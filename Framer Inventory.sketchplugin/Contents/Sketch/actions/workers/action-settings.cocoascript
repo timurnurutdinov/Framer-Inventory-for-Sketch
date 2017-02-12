@@ -10,7 +10,7 @@ var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1];
 var fieldColor = [NSColor colorWithSRGBRed:0.97 green:0.97 blue:0.97 alpha:1]
 var backgroundColor = [NSColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1]
 
-var measureSettingsHeight = 480
+var measureSettingsHeight = 440
 var measureSettingsWidth = 300
 var measureSettingBlock = 16
 
@@ -20,27 +20,38 @@ var runSettings = function() {
 
 	var exportWindow = [[NSWindow alloc] init]
 	exportWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
-	exportWindow.setTitlebarAppearsTransparent(true);
+	exportWindow.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.92, 0.92, 0.92, 1));
 	exportWindow.setTitleVisibility(NSWindowTitleHidden);
 	exportWindow.setTitlebarAppearsTransparent(true);
+	exportWindow.setFrame_display(NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight), false);
 	exportWindow.setMovableByWindowBackground(true);
 	exportWindow.setHasShadow(true);
 	exportWindow.setLevel(NSFloatingWindowLevel);
-	[exportWindow setFrame:NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight) display:true];
+	// [exportWindow setFrame:NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight) display:true];
 
 
-	var bgImage = ViewInventory.addImage(NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight), "settings/bg")
-	[[exportWindow contentView] addSubview:bgImage]
 
-	var topImage = ViewInventory.addImage(NSMakeRect(0, 312, measureSettingsWidth, measureSettingsHeight-312), "settings/top")
+	// var bgImage = ViewInventory.addImage(NSMakeRect(68, 336, 164, 83), "settings/bg")
+	// [[exportWindow contentView] addSubview:bgImage]
+
+	var topImage = ViewInventory.addImage(NSMakeRect(68, 336, 164, 83), "settings/top")
 	[[exportWindow contentView] addSubview:topImage]
+
+	var groupsImage = ViewInventory.addImage(NSMakeRect(41, 134, 15, 39), "settings/groups")
+	[[exportWindow contentView] addSubview:groupsImage]
+
+	var menuImage = ViewInventory.addImage(NSMakeRect(0, 274, 300, 28), "settings/menu")
+	[[exportWindow contentView] addSubview:menuImage]
+
+	// var topImage = ViewInventory.addImage(NSMakeRect(0, 312, measureSettingsWidth, measureSettingsHeight-312), "settings/top")
+	// [[exportWindow contentView] addSubview:topImage]
 
 	var firstLineViews = createFirstLine()
 	for (var i = 0; i < firstLineViews.length; i++) { [[exportWindow contentView] addSubview:firstLineViews[i]] }
 	var retinaInput = firstLineViews[0]
 
-	var secondLineViews = createSecondLine()
-	for (var i = 0; i < secondLineViews.length; i++) { [[exportWindow contentView] addSubview:secondLineViews[i]] }
+	// var secondLineViews = createSecondLine()
+	// for (var i = 0; i < secondLineViews.length; i++) { [[exportWindow contentView] addSubview:secondLineViews[i]] }
 
 	var checkViews = createCheckViews()
 	for (var i = 0; i < checkViews.length; i++) { [[exportWindow contentView] addSubview:checkViews[i]] }
@@ -50,48 +61,86 @@ var runSettings = function() {
 
 
 
+	var saveButton = ViewInventory.addButton(NSMakeRect(16, 16, 58, 20), "settings/done",
+			function(sender){
+				[exportWindow orderOut:nil]
+				[NSApp stopModal]
+				ToolbarInventory.updateAccessoryControls()
 
-	var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock-4, 20, 72, 32)];
-	[saveButton setTitle:"Done"];
-	[saveButton setBezelStyle:NSRoundedBezelStyle];
-	[saveButton setKeyEquivalent:"\r"];
-	[saveButton setCOSJSTargetFunction:function(sender) {
-		[exportWindow orderOut:nil]
-		[NSApp stopModal]
-		ToolbarInventory.updateAccessoryControls()
+				var newRetinaValue = retinaInput.stringValue() + ""
+				var trimmedRetinaValue = newRetinaValue.trim()
+				if (trimmedRetinaValue == "") { [currentDocument showMessage:"Scale variable can't be empty. Back to \"" + userDefaults.myRetinaString + "\""] }
+				else if (/^[a-zA-Z]+$/.test(trimmedRetinaValue)) {
+					userDefaults.myRetinaString = trimmedRetinaValue
+					saveDefaults(Status.userDomain(), userDefaults)
+					[currentDocument showMessage:"💾"]
+				}
+				else { [currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""] }
+	})
 
-		var newRetinaValue = retinaInput.stringValue() + ""
-		var trimmedRetinaValue = newRetinaValue.trim()
-		if (trimmedRetinaValue == "") { [currentDocument showMessage:"Scale variable can't be empty. Back to \"" + userDefaults.myRetinaString + "\""] }
-		else if (/^[a-zA-Z]+$/.test(trimmedRetinaValue)) {
-			userDefaults.myRetinaString = trimmedRetinaValue
-			saveDefaults(Status.userDomain(), userDefaults)
-			[currentDocument showMessage:"💾"]
-		}
-		else { [currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""] }
-
-	}];
-	[saveButton setAction:"callAction:"];
+	// var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock-4, 20, 72, 32)];
+	// [saveButton setTitle:"Done"];
+	// [saveButton setBezelStyle:NSRoundedBezelStyle];
+	// [saveButton setKeyEquivalent:"\r"];
+	// [saveButton setCOSJSTargetFunction:function(sender) {
+	// 	[exportWindow orderOut:nil]
+	// 	[NSApp stopModal]
+	// 	ToolbarInventory.updateAccessoryControls()
+	//
+	// 	var newRetinaValue = retinaInput.stringValue() + ""
+	// 	var trimmedRetinaValue = newRetinaValue.trim()
+	// 	if (trimmedRetinaValue == "") { [currentDocument showMessage:"Scale variable can't be empty. Back to \"" + userDefaults.myRetinaString + "\""] }
+	// 	else if (/^[a-zA-Z]+$/.test(trimmedRetinaValue)) {
+	// 		userDefaults.myRetinaString = trimmedRetinaValue
+	// 		saveDefaults(Status.userDomain(), userDefaults)
+	// 		[currentDocument showMessage:"💾"]
+	// 	}
+	// 	else { [currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""] }
+	//
+	// }];
+	// [saveButton setAction:"callAction:"];
 	[[exportWindow contentView] addSubview:saveButton];
 
 
 
-	// var prototype = [[NSButtonCell alloc] init];
-  // [prototype setTitle:"Watermelons"];
-  // [prototype setButtonType:NSRadioButton];
-  // var matrixRect = NSMakeRect(20.0, 20.0, 125.0, 125.0);
-  // var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
-  //                                                   mode:NSRadioModeMatrix
-  //                                              prototype:prototype
-  //                                           numberOfRows:3
-  //                                        numberOfColumns:1];
-  //   [[exportWindow contentView] addSubview:myMatrix];
-  //   var cellArray = [myMatrix cells];
-  //   [[cellArray objectAtIndex:0] setTitle:"Apples"];
-  //   [[cellArray objectAtIndex:1] setTitle:"Oranges"];
-  //   [[cellArray objectAtIndex:2] setTitle:"Pears"];
 
 
+	[[exportWindow contentView] addSubview:createRadioGroupRelative()];
+	[[exportWindow contentView] addSubview:createRadioGroupStyle()];
+
+
+	var textTitles = []
+
+	var scaleTypeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 244, 64, 12)];
+	[scaleTypeText setStringValue:"Scale type"];
+	textTitles.push(scaleTypeText)
+
+	var pointsVariableText = [[NSTextField alloc] initWithFrame:NSMakeRect(88, 244, 64, 12)];
+	[pointsVariableText setStringValue:"Points Variable"];
+	textTitles.push(pointsVariableText)
+
+	var deviceText = [[NSTextField alloc] initWithFrame:NSMakeRect(176, 244, 64, 12)];
+	[deviceText setStringValue:"Device"];
+	textTitles.push(deviceText)
+
+	var relativeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 183, 64, 12)];
+	[relativeText setStringValue:"Position relative to parent"];
+	textTitles.push(relativeText)
+
+	var styleText = [[NSTextField alloc] initWithFrame:NSMakeRect(176, 183, 64, 12)];
+	[styleText setStringValue:"Code style"];
+	textTitles.push(styleText)
+
+	for (var i = 0; i < textTitles.length; i++) {
+		var currentTextView = textTitles[i]
+		[currentTextView setEditable:false];
+	  [currentTextView setBordered:false];
+		[currentTextView setFont:ViewInventory.fontSelection()];
+	  [currentTextView setTextColor:ViewInventory.colorTitle()];
+	  [currentTextView setDrawsBackground:false];
+	  [currentTextView sizeToFit];
+		[[exportWindow contentView] addSubview:currentTextView];
+	}
 
 	[NSApp runModalForWindow:exportWindow];
 }
@@ -99,10 +148,79 @@ var runSettings = function() {
 
 
 
+var createRadioGroupRelative = function() {
+
+	var prototype = [[NSButtonCell alloc] init];
+	[prototype setTitle:"Artboard Type"];
+	[prototype setButtonType:NSRadioButton];
+	[prototype setFont:ViewInventory.fontRadioButton()];
+
+	var matrixRect = NSMakeRect(16, 130, 120, 48);
+	var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
+																										mode:NSRadioModeMatrix
+																							 prototype:prototype
+																						numberOfRows:2
+																				 numberOfColumns:1];
+
+	var cellArray = [myMatrix cells];
+	var cellTitle1 = "       Artboard"
+	var cellTitle2 = "       Group"
+	[[cellArray objectAtIndex:0] setTitle:cellTitle1];
+	[[cellArray objectAtIndex:1] setTitle:cellTitle2];
+	[myMatrix setCellSize:NSMakeSize(120, 24)]
+	if (userDefaults.myRelativeGroup == 1) { [myMatrix selectCellAtRow:1 column:0] }
+	else { [myMatrix selectCellAtRow:0 column:0] }
+
+	[myMatrix setCOSJSTargetFunction:function(sender) {
+		var currentCellTitle = [[myMatrix selectedCell] title]
+		if ([currentCellTitle isEqualToString:cellTitle2]) { userDefaults.myRelativeGroup = 1 }
+		else { userDefaults.myRelativeGroup = 0 }
+		saveDefaults(Status.userDomain(), userDefaults)
+	}];
+
+	return myMatrix
+}
+
+
+
+
+var createRadioGroupStyle = function() {
+
+		var prototype = [[NSButtonCell alloc] init];
+		[prototype setTitle:"Style Type"];
+		[prototype setButtonType:NSRadioButton];
+		[prototype setFont:ViewInventory.fontRadioButton()];
+
+		var matrixRect = NSMakeRect(174, 130, 120, 48);
+		var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
+																											mode:NSRadioModeMatrix
+																								 prototype:prototype
+																							numberOfRows:2
+																					 numberOfColumns:1];
+
+		var cellArray = [myMatrix cells];
+		var cellTitle1 = " Tabs"
+		var cellTitle2 = " Commas"
+		[[cellArray objectAtIndex:0] setTitle:cellTitle1];
+		[[cellArray objectAtIndex:1] setTitle:cellTitle2];
+		[myMatrix setCellSize:NSMakeSize(120, 24)]
+		if (userDefaults.myDetailedNotation == 0) { [myMatrix selectCellAtRow:1 column:0] }
+		else { [myMatrix selectCellAtRow:0 column:0] }
+
+		[myMatrix setCOSJSTargetFunction:function(sender) {
+			var currentCellTitle = [[myMatrix selectedCell] title]
+			if ([currentCellTitle isEqualToString:cellTitle2]) { userDefaults.myDetailedNotation = 0 }
+			else { userDefaults.myDetailedNotation = 1 }
+			saveDefaults(Status.userDomain(), userDefaults)
+		}];
+
+		return myMatrix
+	}
+
 
 var createFirstLine = function() {
 
-	var retinaInput = [[NSTextField alloc] initWithFrame:NSMakeRect(88, 264-4, 90, 20)];
+	var retinaInput = [[NSTextField alloc] initWithFrame:NSMakeRect(88, 224-4, 78, 20)];
   [[retinaInput cell] setPlaceholderString:"Ex: \"retina\""];
 	[retinaInput setFocusRingType:NSFocusRingTypeNone];
 	[retinaInput becomeFirstResponder];
@@ -112,7 +230,7 @@ var createFirstLine = function() {
 	[retinaInput setFont:ViewInventory.fontInputControls()];
 
 
-	var densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(measureSettingBlock, 260-4, 64, 28))
+	var densityAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(measureSettingBlock, 220-4, 64, 28))
 	[[densityAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
 	var densityValues = ["Pixels", "Points"];
 	densityAccessory.addItemsWithTitles(densityValues)
@@ -125,7 +243,7 @@ var createFirstLine = function() {
 	})
 
 
-	var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(186, 260-4, 90, 28))
+	var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(174, 220-4, 110, 28))
 	[[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
 	var devices = ScaleInventory.returnDevices()
 	for (var i = 0; i < devices.length; i++) {
@@ -147,35 +265,18 @@ var createFirstLine = function() {
 
 
 
-var createSecondLine = function() {
-
-	var relativeAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(measureSettingBlock, 206-4, 80, 28))
-	[[relativeAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
-	relativeAccessory.addItemsWithTitles(["Artboard", "Group"])
-	relativeAccessory.selectItemAtIndex(userDefaults.myRelativeGroup)
-	[relativeAccessory setFont:ViewInventory.fontAccessory()];
-
-	relativeAccessory.setCOSJSTargetFunction(function(sender){
-			userDefaults.myRelativeGroup = relativeAccessory.indexOfSelectedItem()
-			saveDefaults(Status.userDomain(), userDefaults)
-	})
-
-	return [relativeAccessory]
-}
-
-
 var createCheckViews = function() {
 
-	var titleMinimalExport = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock*2+2, 136, measureSettingsWidth - measureSettingBlock*3, measureSettingBlock)];
+	var titleMinimalExport = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock*2+2, 88, measureSettingsWidth - measureSettingBlock*3, measureSettingBlock)];
   [titleMinimalExport setEditable:false];
   [titleMinimalExport setBordered:false];
 	[titleMinimalExport setFont:ViewInventory.fontCheckControls()];
   [titleMinimalExport setTextColor:ViewInventory.colorBlack()];
   [titleMinimalExport setDrawsBackground:false];
-  [titleMinimalExport setStringValue:"Export Minimal States"];
+  [titleMinimalExport setStringValue:" Generate minimazed states for Scene"];
   [titleMinimalExport sizeToFit];
 
-	var checkboxMinimalExport = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-1, measureSettingBlock*12, measureSettingBlock)];
+	var checkboxMinimalExport = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 88-1, measureSettingBlock*12, measureSettingBlock)];
 	[checkboxMinimalExport setButtonType:NSSwitchButton];
 	[checkboxMinimalExport setTitle:""];
 	[checkboxMinimalExport setState:userDefaults.myMinimalExport];
@@ -184,34 +285,14 @@ var createCheckViews = function() {
 		saveDefaults(Status.userDomain(), userDefaults)
 	})
 
-
-
-	var titleNotation = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock*2+2, 136-44, measureSettingsWidth - measureSettingBlock*3, measureSettingBlock)];
-  [titleNotation setEditable:false];
-  [titleNotation setBordered:false];
-	[titleNotation setFont:ViewInventory.fontCheckControls()];
-  [titleNotation setTextColor:ViewInventory.colorBlack()];
-  [titleNotation setDrawsBackground:false];
-  [titleNotation setStringValue:"Detailed Notation"];
-  [titleNotation sizeToFit];
-
-	var checkboxNotation = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 136-44-1, measureSettingBlock*12, measureSettingBlock)];
-	[checkboxNotation setButtonType:NSSwitchButton];
-	[checkboxNotation setTitle:""];
-	[checkboxNotation setState:userDefaults.myDetailedNotation];
-	checkboxNotation.setCOSJSTargetFunction(function(sender){
-		userDefaults.myDetailedNotation = userDefaults.myDetailedNotation == 0 ? 1 : 0
-		saveDefaults(Status.userDomain(), userDefaults)
-	})
-
-	return [titleMinimalExport, checkboxMinimalExport, titleNotation, checkboxNotation]
+	return [titleMinimalExport, checkboxMinimalExport]
 }
 
 
 
 
 var createVersionView = function() {
-	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 325, measureSettingsWidth, measureSettingBlock)];
+	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 315, measureSettingsWidth, measureSettingBlock)];
 	[titleVersion setEditable:false];
 	[titleVersion setBordered:false];
 	[titleVersion setFont:ViewInventory.fontCheckControls()];
@@ -225,7 +306,7 @@ var createVersionView = function() {
 
 
 var createHelpButton = function() {
-  var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingsWidth-32-20+2, 22, 32, 32)];
+  var helpButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingsWidth-32-20+2, 12, 32, 32)];
 	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
 	[helpButton setTitle:nil];
 	[helpButton setCOSJSTargetFunction:function(sender) {

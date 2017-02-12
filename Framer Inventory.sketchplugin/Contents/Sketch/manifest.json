@@ -12,14 +12,14 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onReplicateLayersRun",
       "shortcut" : "",
-      "name" : "⊡   Replicate Layers",
+      "name" : "⊡   Import Layers",
       "identifier" : "choose-replicate-layers"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onGenerateStatesRun",
       "shortcut" : "",
-      "name" : "⧉   Generate States",
+      "name" : "⧉   Import States",
       "identifier" : "choose-generate-states"
     },
     {
@@ -103,10 +103,11 @@
         "-",
   		  "choose-replicate-layers",
         "choose-generate-states",
+        "-",
         "choose-simulate-keynote",
         "-",
         {
-          "title": "      Export Folder",
+          "title": "      Framer Folder",
           "items": [
             "choose-show-export-path",
             "-",
@@ -114,7 +115,6 @@
             "choose-remove-export-path"
           ]
         },
-        "-",
   		  {
   		         "title": "      Utils",
   		         "items": [
