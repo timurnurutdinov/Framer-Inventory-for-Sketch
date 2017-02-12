@@ -46,6 +46,9 @@ var runSettings = function() {
 	// var topImage = ViewInventory.addImage(NSMakeRect(0, 312, measureSettingsWidth, measureSettingsHeight-312), "settings/top")
 	// [[exportWindow contentView] addSubview:topImage]
 
+	var headerViews = createHeader()
+	for (var i = 0; i < headerViews.length; i++) { [[exportWindow contentView] addSubview:headerViews[i]] }
+
 	var firstLineViews = createFirstLine()
 	for (var i = 0; i < firstLineViews.length; i++) { [[exportWindow contentView] addSubview:firstLineViews[i]] }
 	var retinaInput = firstLineViews[0]
@@ -78,33 +81,16 @@ var runSettings = function() {
 				else { [currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""] }
 	})
 
-	// var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock-4, 20, 72, 32)];
-	// [saveButton setTitle:"Done"];
-	// [saveButton setBezelStyle:NSRoundedBezelStyle];
-	// [saveButton setKeyEquivalent:"\r"];
-	// [saveButton setCOSJSTargetFunction:function(sender) {
-	// 	[exportWindow orderOut:nil]
-	// 	[NSApp stopModal]
-	// 	ToolbarInventory.updateAccessoryControls()
-	//
-	// 	var newRetinaValue = retinaInput.stringValue() + ""
-	// 	var trimmedRetinaValue = newRetinaValue.trim()
-	// 	if (trimmedRetinaValue == "") { [currentDocument showMessage:"Scale variable can't be empty. Back to \"" + userDefaults.myRetinaString + "\""] }
-	// 	else if (/^[a-zA-Z]+$/.test(trimmedRetinaValue)) {
-	// 		userDefaults.myRetinaString = trimmedRetinaValue
-	// 		saveDefaults(Status.userDomain(), userDefaults)
-	// 		[currentDocument showMessage:"💾"]
-	// 	}
-	// 	else { [currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""] }
-	//
-	// }];
-	// [saveButton setAction:"callAction:"];
 	[[exportWindow contentView] addSubview:saveButton];
 
+	var learnButton = ViewInventory.addButton( NSMakeRect(82, 17, 78, 22), "settings/learn",
+			function(sender){
+				var url = [NSURL URLWithString:StatisticsInventory.getLearnLink()];
+				[[NSWorkspace sharedWorkspace] openURL:url]
+	})
 
 
-
-
+	[[exportWindow contentView] addSubview:learnButton];
 	[[exportWindow contentView] addSubview:createRadioGroupRelative()];
 	[[exportWindow contentView] addSubview:createRadioGroupStyle()];
 
@@ -145,6 +131,31 @@ var runSettings = function() {
 	[NSApp runModalForWindow:exportWindow];
 }
 
+
+
+
+var createHeader  = function() {
+
+	var supportButton = ViewInventory.addButton( NSMakeRect(12, 274, 104, 28), "settings/support",
+			function(sender){
+				var url = [NSURL URLWithString:StatisticsInventory.getSupportLink()];
+				[[NSWorkspace sharedWorkspace] openURL:url]
+
+	})
+
+	var updatesButton = ViewInventory.addButton( NSMakeRect(116, 274, 113, 28), "settings/updates",
+			function(sender){
+				runCheckUpdates()
+	})
+
+	var donateButton = ViewInventory.addButton( NSMakeRect(228, 274, 69, 28), "settings/donate",
+			function(sender){
+				var url = [NSURL URLWithString:StatisticsInventory.getDonateLink()];
+				[[NSWorkspace sharedWorkspace] openURL:url]
+	})
+
+	return [supportButton, updatesButton, donateButton]
+}
 
 
 

@@ -1,10 +1,14 @@
 @import 'inventory/libs/pluginDefaults.js'
 
 var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-58418174-3"
+
 var simulateRequest = ["actions", "action_run", "simulate_keynote", "1"]
 var generateRequest = ["actions", "action_run", "generate_states", "1"]
 var replicateRequest = ["actions", "action_run", "replicate_layers", "1"]
 
+StatisticsInventory.getSupportLink = function() { return "https://twitter.com/tilllur" }
+StatisticsInventory.getDonateLink = function() { return "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E9XQYGEE5X4U2" }
+StatisticsInventory.getLearnLink = function() { return "https://bit.ly/deep-framer-inventory" }
 
 
 function StatisticsInventory () {}
