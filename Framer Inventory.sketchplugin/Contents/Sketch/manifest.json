@@ -13,21 +13,27 @@
       "handler" : "onReplicateLayersRun",
       "shortcut" : "",
       "name" : "⊡   Import Layers",
-      "identifier" : "choose-replicate-layers"
+      "identifier" : "choose-replicate-layers",
+      "description" : "Generate Framer layers",
+      "icon" : "layers.png"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onGenerateStatesRun",
       "shortcut" : "",
       "name" : "⧉   Import States",
-      "identifier" : "choose-generate-states"
+      "identifier" : "choose-generate-states",
+      "description" : "Generate Framer layers & states",
+      "icon" : "states.png"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onSimulateKeynoteRun",
       "shortcut" : "",
       "name" : "❖   Simulate Scene",
-      "identifier" : "choose-simulate-keynote"
+      "identifier" : "choose-simulate-keynote",
+      "description" : "Generate Framer scene for exportable layers",
+      "icon" : "scene.png"
     },
     {
       "script" : "run-actions.cocoascript",
