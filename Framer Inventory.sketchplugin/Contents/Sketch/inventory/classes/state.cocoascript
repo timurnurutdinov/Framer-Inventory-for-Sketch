@@ -48,6 +48,7 @@ function State (layer) {
 	this.backgrounds = nil
 	this.backgroundOpacity = nil
 	this.backgroundHex = nil
+	this.blur = false
 
 
 	// active conditions
@@ -93,6 +94,7 @@ State.prototype.prepareState = function(layer) {
 	this.inners = getInners(layer)
 	this.borders = getBorders(layer)
 	this.backgrounds = getBackgroundColors(layer)
+	if ([[[layer style] blur] isEnabled] == 1) { this.blur = true }
 
 }
 
@@ -204,6 +206,7 @@ State.prototype.isBordersExportale = function() {
 
 State.prototype.isBackgroundsExportale = function() {
 	if (this.backgrounds == nil) { return true }
+	else if (this.blur) { return false }
 	else if (this.backgrounds.length == 1) {
 		if (this.backgrounds[0][0] == 0) {
 			return true
