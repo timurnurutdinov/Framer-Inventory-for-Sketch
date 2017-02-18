@@ -1,0 +1,67 @@
+
+function DemoInventory () {}
+
+
+DemoInventory.datesKey = function() { return "inventory-dates" }
+DemoInventory.maxActionNumber = function() { return 10 }
+
+DemoInventory.isRegistered = function() {
+  return false
+}
+
+DemoInventory.returnTodayKey = function() {
+  var dateString = [NSDateFormatter localizedStringFromDate:[NSDate date] dateStyle:NSDateFormatterShortStyle timeStyle:NSDateFormatterFullStyle];
+  var today = [[dateString componentsSeparatedByString:","] firstObject]
+  return today
+}
+
+DemoInventory.returnDemoDates = function() {
+  var datesKey = DemoInventory.datesKey()
+  var maxActionNumber = DemoInventory.maxActionNumber()
+
+  var defaults = [NSUserDefaults standardUserDefaults];
+  var dates = [defaults dictionaryForKey:datesKey];
+
+  if (dates == nil) {
+    // first use
+    var actionDates = NSMutableDictionary.new()
+    [defaults setObject:actionDates forKey:datesKey]
+  }
+
+  var today = DemoInventory.returnTodayKey()
+  if ([dates objectForKey:today] == nil) {
+    var updatedDates = [dates mutableCopy]
+    [updatedDates addObject:maxActionNumber forKey:today]
+    [defaults setObject:updatedDates forKey:datesKey]
+  }
+
+  return [defaults dictionaryForKey:datesKey];
+}
+
+
+DemoInventory.actionUsed = function() {
+  var datesKey = DemoInventory.datesKey()
+  var maxActionNumber = DemoInventory.maxActionNumber()
+
+  var dates = DemoInventory.returnDemoDates()
+  var today = DemoInventory.returnTodayKey()
+
+  var currentValue = [[dates objectForKey:today] firstObject]
+  if (currentValue > 0) { currentValue-- }
+
+  var updatedDates = [dates mutableCopy]
+  [updatedDates removeObjectForKey:today]
+  [updatedDates addObject:currentValue forKey:today]
+  [[NSUserDefaults standardUserDefaults] setObject:updatedDates forKey:datesKey]
+
+}
+
+DemoInventory.actionsLeft = function() {
+  var datesKey = DemoInventory.datesKey()
+  var maxActionNumber = DemoInventory.maxActionNumber()
+
+  var dates = DemoInventory.returnDemoDates()
+  var today = DemoInventory.returnTodayKey()
+
+  return [dates objectForKey:today]
+}
