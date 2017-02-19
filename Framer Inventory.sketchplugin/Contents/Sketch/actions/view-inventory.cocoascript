@@ -47,6 +47,9 @@ ViewInventory.moreButton = function() { return NSMakeRect(169, 5, 21, 18) }
 ViewInventory.emptyPlaceholderNone = function() { return NSMakeRect(0, 0, 0, 0) }
 ViewInventory.emptyPlaceholder = function() { return NSMakeRect(6, 5, 184, 32) }
 
+ViewInventory.expiredPlaceholderNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.expiredPlaceholder = function() { return NSMakeRect(6, 5, 184, 32) }
+
 
 
 
@@ -132,6 +135,14 @@ ViewInventory.adoptEmptySelectionNone = function(emptyView) {
 
 ViewInventory.adoptEmptySelection = function(emptyView) {
     emptyView.frame = ViewInventory.emptyPlaceholder()
+}
+
+ViewInventory.adoptExpiredSelectionNone = function(expiredView) {
+    expiredView.frame = ViewInventory.expiredPlaceholderNone()
+}
+
+ViewInventory.adoptExpiredSelection = function(expiredView) {
+    expiredView.frame = ViewInventory.expiredPlaceholder()
 }
 
 
@@ -254,9 +265,13 @@ ViewInventory.getImportViews = function() {
     [[relativeButton cell] setHighlightsBy:NSNoCellMask]
 
     var moreButtons = ViewInventory.getMoreButtons()
-    var emptyPlaceholderView = ViewInventory.addImage(ViewInventory.moreButton(), "toolbar/empty selection")
+    var emptyPlaceholderView = ViewInventory.addImage(ViewInventory.emptyPlaceholder(), "toolbar/empty selection")
+    var expiredPlaceholderView = ViewInventory.addButton(ViewInventory.expiredPlaceholderNone(), "toolbar/expired selection",
+        function(sender){
+          showExpiredModal()
+    })
 
-    return [layersButton, statesButton, relativeButton, moreButtons[0], moreButtons[1], changeModeButton, emptyPlaceholderView]
+    return [layersButton, statesButton, relativeButton, moreButtons[0], moreButtons[1], changeModeButton, emptyPlaceholderView, expiredPlaceholderView]
 }
 
 ViewInventory.getSceneViews = function() {
@@ -336,7 +351,7 @@ ViewInventory.createImportPanel = function() {
   var labels = ViewInventory.getLabels(ViewInventory.placeHolderImport())
   for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
 
-  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[4], importViews[3], importViews[4], importViews[6]]
+  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[4], importViews[3], importViews[4], importViews[6], importViews[7]]
 }
 
 

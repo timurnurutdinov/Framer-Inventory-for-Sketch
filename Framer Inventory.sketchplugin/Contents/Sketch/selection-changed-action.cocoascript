@@ -61,7 +61,7 @@ SelectionInventory.asyncSelectionHandler = function(asyncing) {
     log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
 
     var localMode = ToolbarInventory.toolbarMode()
-    // log("localMode: " + localMode)
+
     if (localMode == Status.toolbarModeImport()) {
       ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
 
@@ -95,8 +95,11 @@ SelectionInventory.asyncSelectionHandler = function(asyncing) {
 // 4 – selected states for layers
 // 5 – Scene
 // 6 – Scene for selected artboards
+// 7 – Expired
 
 SelectionInventory.analyseActionType = function(selection) {
+    if (!DemoInventory.isRegistered() && DemoInventory.actionsLeft() <= 0) { return new SelectionInventory(7) }
+
     if (selection == nil) {
         if (showLog) { log("Warning. Selection is nil") }
         return new SelectionInventory(0)

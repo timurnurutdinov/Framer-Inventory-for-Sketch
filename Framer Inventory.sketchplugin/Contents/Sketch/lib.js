@@ -21,6 +21,7 @@ function ToolbarInventory (panel) {
     this.moreButtonImage = importViews[7]
     this.moreButton = importViews[8]
     this.emptySelectionView = importViews[9]
+    this.expiredSelectionView = importViews[10]
 
 
     var sceneView = ViewInventory.createScenePanel()
@@ -176,6 +177,16 @@ ToolbarInventory.updateImportButtons = function(adoptID) {
       else {
         ViewInventory.adoptMore(toolbar.moreButtonImage, toolbar.moreButton)
         ViewInventory.adoptEmptySelectionNone(toolbar.emptySelectionView)
+      }
+
+      if (adoptID == 7) {
+        ViewInventory.adoptMoreNone(toolbar.moreButtonImage, toolbar.moreButton)
+        ViewInventory.adoptEmptySelectionNone(toolbar.emptySelectionView)
+        ViewInventory.adoptExpiredSelection(toolbar.expiredSelectionView)
+        ViewInventory.adaptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images)
+      }
+      else {
+        ViewInventory.adoptExpiredSelectionNone(toolbar.expiredSelectionView)
       }
   }
 }
