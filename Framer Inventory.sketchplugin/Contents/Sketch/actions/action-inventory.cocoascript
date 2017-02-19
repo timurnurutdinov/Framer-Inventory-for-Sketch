@@ -16,6 +16,7 @@
 @import 'actions/workers/modals/action-check-updates.cocoascript'
 @import 'actions/workers/modals/action-select-duplicated-artboards.cocoascript'
 @import 'actions/workers/modals/action-select-folder.cocoascript'
+@import 'actions/workers/modals/action-demo-expired.cocoascript'
 
 
 @import 'inventory/classes/layer.cocoascript'

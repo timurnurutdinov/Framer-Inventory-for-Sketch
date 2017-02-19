@@ -26,7 +26,7 @@ var runReplicateLayers = function() {
 	}
 
 	if (!DemoInventory.isRegistered() && DemoInventory.actionsLeft() <= 0) {
-		[currentDocument showMessage:"Nothing left"]
+		showExpiredModal()
 		return
 	}
 

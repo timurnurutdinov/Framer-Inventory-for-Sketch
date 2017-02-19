@@ -2,12 +2,6 @@ var measureArtboardsPaddingLeft = 16
 var measureArtboardsWindowHeight = 252;
 var measureArtboardsWindowWidth = 240;
 
-var whiteColor = [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1]
-var blackColor = [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1]
-var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]
-var fieldColor = [NSColor colorWithSRGBRed:0.97 green:0.97 blue:0.97 alpha:1]
-var backgroundColor = [NSColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1]
-
 
 
 var selectDuplicatedArtboards = function(artboardName) {

@@ -35,8 +35,7 @@ var runGenerateStates = function() {
 	}
 
 	if (!DemoInventory.isRegistered() && DemoInventory.actionsLeft() <= 0) {
-		[currentDocument showMessage:"Nothing left"]
-		if (showLog) { log("No actions left for today") }
+		showExpiredModal()
 		return
 	}
 
