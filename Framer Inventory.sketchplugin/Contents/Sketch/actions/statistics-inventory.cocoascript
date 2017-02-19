@@ -1,4 +1,5 @@
 @import 'inventory/libs/pluginDefaults.js'
+// @import 'actions/demo-inventory.cocoascript'
 
 var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-58418174-3"
 

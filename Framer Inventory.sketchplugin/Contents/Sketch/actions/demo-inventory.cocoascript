@@ -5,9 +5,6 @@ function DemoInventory () {}
 DemoInventory.datesKey = function() { return "inventory-dates" }
 DemoInventory.maxActionNumber = function() { return 10 }
 
-DemoInventory.isRegistered = function() {
-  return false
-}
 
 DemoInventory.returnTodayKey = function() {
   var dateString = [NSDateFormatter localizedStringFromDate:[NSDate date] dateStyle:NSDateFormatterShortStyle timeStyle:NSDateFormatterFullStyle];
@@ -39,6 +36,13 @@ DemoInventory.returnDemoDates = function() {
 }
 
 
+
+
+DemoInventory.isRegistered = function() {
+  return false
+}
+
+
 DemoInventory.actionUsed = function() {
   var datesKey = DemoInventory.datesKey()
   var maxActionNumber = DemoInventory.maxActionNumber()
@@ -63,5 +67,8 @@ DemoInventory.actionsLeft = function() {
   var dates = DemoInventory.returnDemoDates()
   var today = DemoInventory.returnTodayKey()
 
-  return [dates objectForKey:today]
+  var array = [dates objectForKey:today]
+  if (array != nil && array.count() > 0) { return [array firstObject] }
+
+  return 0
 }

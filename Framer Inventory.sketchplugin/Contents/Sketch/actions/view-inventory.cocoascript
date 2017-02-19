@@ -110,11 +110,7 @@ ViewInventory.returnButtonsImages = function() {
 }
 
 ViewInventory.updateRelativeButton = function(relativeButton, images) {
-    log("U1")
-    log(userDefaults)
     var userDefaults2 = initDefaults(Status.userDomain(), userPresets)
-    log("U2")
-    log(userDefaults2)
     if (userDefaults2.myRelativeGroup == 0) { relativeButton.setImage(images[8]) }
     else { relativeButton.setImage(images[9]) }
 }

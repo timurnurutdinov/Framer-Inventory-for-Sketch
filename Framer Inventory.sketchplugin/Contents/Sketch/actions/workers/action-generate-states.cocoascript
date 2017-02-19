@@ -34,6 +34,12 @@ var runGenerateStates = function() {
 		return
 	}
 
+	if (!DemoInventory.isRegistered() && DemoInventory.actionsLeft() <= 0) {
+		[currentDocument showMessage:"Nothing left"]
+		if (showLog) { log("No actions left for today") }
+		return
+	}
+
 	var artboardsMaps = OrderInventory.getArtboardsLayers()
 	var artboardsNames = OrderInventory.getArtboardsNames()
 
@@ -59,6 +65,7 @@ var runGenerateStates = function() {
 
 	if (!StatisticsInventory.isTesting()) {
 		[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType]
+		DemoInventory.actionUsed()
 		FramerInventory.showDoneMessage()
 	}
 

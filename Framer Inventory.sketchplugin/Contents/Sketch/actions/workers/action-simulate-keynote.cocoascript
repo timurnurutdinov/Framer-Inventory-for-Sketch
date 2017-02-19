@@ -32,10 +32,14 @@ var runSimulateKeynote = function() {
 	}
 
 
+	if (!DemoInventory.isRegistered() && DemoInventory.actionsLeft() <= 0) {
+		[currentDocument showMessage:"Nothing left"]
+		if (showLog) { log("No actions left for today") }
+		return
+	}
+
 	var artboardsMaps = OrderInventory.getArtboardsLayers()
 	var artboardsNames = OrderInventory.getArtboardsNames()
-	log(artboardsMaps)
-	log(artboardsNames)
 
 	for (var i = 0; i < [sortedSelection count]; i++) {
 		var currentLayer = [sortedSelection objectAtIndex: i]
@@ -109,6 +113,7 @@ var runSimulateKeynote = function() {
 
 
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+	DemoInventory.actionUsed()
 	FramerInventory.showDoneMessage()
 
 	StatisticsInventory.setStatus(Status.waitingID())

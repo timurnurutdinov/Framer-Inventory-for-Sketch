@@ -1,3 +1,4 @@
+// @import 'actions/demo-inventory.cocoascript'
 
 // generate code for layers
 var runReplicateLayers = function() {
@@ -18,15 +19,14 @@ var runReplicateLayers = function() {
 			return
 	}
 
-	// if (FramerInventory.isSmartGenerateAction()) {
-	// 		isSmartAction = true
-	// 		runGenerateStates()
-	// 		return
-	// }
-
 	var sortedSelection = OrderInventory.removeDuplicatedLayers(currentSelection)
 	if (sortedSelection == nil || sortedSelection.count() < 1) {
 		[currentDocument showMessage:ViewInventory.smileWarning() + "Select layers"]
+		return
+	}
+
+	if (!DemoInventory.isRegistered() && DemoInventory.actionsLeft() <= 0) {
+		[currentDocument showMessage:"Nothing left"]
 		return
 	}
 
@@ -43,6 +43,7 @@ var runReplicateLayers = function() {
 	}
 
 	[[NSPasteboard generalPasteboard] setString:pasteboardContent  forType:NSStringPboardType];
+	DemoInventory.actionUsed()
 	FramerInventory.showDoneMessage()
 
 	StatisticsInventory.setStatus(Status.waitingID())

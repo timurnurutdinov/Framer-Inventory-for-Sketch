@@ -1,5 +1,6 @@
 @import 'actions/view-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
+@import 'actions/demo-inventory.cocoascript'
 @import 'run-actions.cocoascript'
 
 
@@ -221,7 +222,6 @@ ToolbarInventory.createUIBar = function() {
         UIBar.setTitlebarAppearsTransparent(true);
         UIBar.setFrame_display(NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight()), false);
         UIBar.setMovableByWindowBackground(true);
-        // UIBar.userInteractionEnabled(true);
         UIBar.setHasShadow(true);
         UIBar.setLevel(NSFloatingWindowLevel);
 
