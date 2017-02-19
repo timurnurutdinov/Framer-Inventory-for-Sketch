@@ -64,6 +64,7 @@ SelectionInventory.asyncSelectionHandler = function(asyncing) {
 
     if (localMode == Status.toolbarModeImport()) {
       ToolbarInventory.updateImportButtons(selectionInventoryInstance.type)
+      if (selectionInventoryInstance.type == 7) { ToolbarInventory.updateSceneButtons(selectionInventoryInstance.type) }
 
       var localLayers = selectionInventoryInstance.layers
       if (selectionInventoryInstance.type == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }

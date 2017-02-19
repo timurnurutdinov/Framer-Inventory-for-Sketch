@@ -30,6 +30,7 @@ function ToolbarInventory (panel) {
     this.selectionLabelScene = sceneView[2]
     this.deviceAccessoryScene = sceneView[3]
     this.sceneButton = sceneView[4]
+    this.expiredSceneView = sceneView[5]
 
 }
 
@@ -80,6 +81,7 @@ ToolbarInventory.changeContentView = function() {
         var view = toolbar.contentViewScene
         [panel setContentView:view]
       }
+      SelectionInventory.asyncSelectionHandler(false)
     }
 }
 
@@ -114,20 +116,29 @@ ToolbarInventory.updateClassInstance = function(toolbar) {
     threadDictionary[threadIdentifier] = toolbar
 }
 
-ToolbarInventory.setPathLabel = function(label) {
-  var toolbar = ToolbarInventory.returnInstance()
-  if (toolbar != nil) { toolbar.pathLabel = label }
-}
+// ToolbarInventory.setPathLabel = function(label) {
+//   var toolbar = ToolbarInventory.returnInstance()
+//   if (toolbar != nil) { toolbar.pathLabel = label }
+// }
 
-ToolbarInventory.setSelectionLabel = function(label) {
-  var toolbar = ToolbarInventory.returnInstance()
-  if (toolbar != nil) { toolbar.selectionLabel = label }
-}
+// ToolbarInventory.setSelectionLabel = function(label) {
+//   var toolbar = ToolbarInventory.returnInstance()
+//   if (toolbar != nil) { toolbar.selectionLabel = label }
+// }
 
 ToolbarInventory.updateSelectionLabelStringValue = function(value) {
   var toolbar = ToolbarInventory.returnInstance()
   if (toolbar != nil) {
     var localLabel = toolbar.selectionLabel
+    [localLabel setStringValue:value]
+  }
+}
+
+ToolbarInventory.updateSceneLabelStringValue = function(value) {
+  log("Gonna Update to: " + value)
+  var toolbar = ToolbarInventory.returnInstance()
+  if (toolbar != nil) {
+    var localLabel = toolbar.selectionLabelScene
     [localLabel setStringValue:value]
   }
 }
@@ -164,7 +175,7 @@ ToolbarInventory.updateAccessoryControls = function() {
 ToolbarInventory.updateImportButtons = function(adoptID) {
   var toolbar = ToolbarInventory.returnInstance()
   if (toolbar != nil) {
-      if (adoptID == 0) { ViewInventory.adaptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
+      if (adoptID == 0) { ViewInventory.adoptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 1) { ViewInventory.adaptButtonsBase(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 3) { ViewInventory.adaptButtonsSeveral(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
       else if (adoptID == 2) { ViewInventory.adaptButtonsSelected(toolbar.layersButton, toolbar.statesButton, toolbar.images) }
@@ -183,7 +194,7 @@ ToolbarInventory.updateImportButtons = function(adoptID) {
         ViewInventory.adoptMoreNone(toolbar.moreButtonImage, toolbar.moreButton)
         ViewInventory.adoptEmptySelectionNone(toolbar.emptySelectionView)
         ViewInventory.adoptExpiredSelection(toolbar.expiredSelectionView)
-        ViewInventory.adaptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images)
+        ViewInventory.adoptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images)
       }
       else {
         ViewInventory.adoptExpiredSelectionNone(toolbar.expiredSelectionView)
@@ -194,8 +205,18 @@ ToolbarInventory.updateImportButtons = function(adoptID) {
 ToolbarInventory.updateSceneButtons = function(adoptID) {
     var toolbar = ToolbarInventory.returnInstance()
     if (toolbar != nil) {
-        if (adoptID == 5) { ViewInventory.adaptSceneButtons(toolbar.sceneButton, toolbar.images) }
-        else if (adoptID == 6) { ViewInventory.adaptSceneButtonsSelected(toolbar.sceneButton, toolbar.images) }
+        if (adoptID == 5) { ViewInventory.adoptSceneButtons(toolbar.sceneButton, toolbar.images) }
+        else if (adoptID == 6) { ViewInventory.adoptSceneButtonsSelected(toolbar.sceneButton, toolbar.images) }
+
+        if (adoptID == 7) {
+          log("adoptation")
+          ViewInventory.adoptExpiredScene(toolbar.expiredSceneView)
+          ToolbarInventory.updateSceneLabelStringValue("")
+        }
+        else {
+          ViewInventory.adoptExpiredSceneNone(toolbar.expiredSceneView)
+          ToolbarInventory.updateSceneLabelStringValue(ViewInventory.placeHolderScene())
+        }
     }
 }
 
@@ -244,7 +265,7 @@ ToolbarInventory.createUIBar = function() {
         UIBar.center()
         UIBar.makeKeyAndOrderFront(nil)
 
-        ViewInventory.adaptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images)
+        ViewInventory.adoptButtonsNone(toolbar.layersButton, toolbar.statesButton, toolbar.images)
         SelectionInventory.asyncSelectionHandler(false)
     }
 }
