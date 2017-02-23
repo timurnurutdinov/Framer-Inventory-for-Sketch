@@ -10,7 +10,7 @@ var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1];
 var fieldColor = [NSColor colorWithSRGBRed:0.97 green:0.97 blue:0.97 alpha:1]
 var backgroundColor = [NSColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1]
 
-var measureSettingsHeight = 440
+var measureSettingsHeight = 470
 var measureSettingsWidth = 300
 var measureSettingBlock = 16
 
@@ -27,14 +27,17 @@ var runSettings = function() {
 	exportWindow.setMovableByWindowBackground(true);
 	exportWindow.setHasShadow(true);
 	exportWindow.setLevel(NSFloatingWindowLevel);
-	// [exportWindow setFrame:NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight) display:true];
+
+	var topBreaker = ViewInventory.addImage(NSMakeRect(0, 440, measureSettingsWidth, 1), "settings/breaker")
+	[[exportWindow contentView] addSubview:topBreaker]
+
+	var bottomBreaker = ViewInventory.addImage(NSMakeRect(0, 53, measureSettingsWidth, 1), "settings/breaker")
+	[[exportWindow contentView] addSubview:bottomBreaker]
 
 
 
-	// var bgImage = ViewInventory.addImage(NSMakeRect(68, 336, 164, 83), "settings/bg")
-	// [[exportWindow contentView] addSubview:bgImage]
 
-	var topImage = ViewInventory.addImage(NSMakeRect(68, 336, 164, 83), "settings/top")
+	var topImage = ViewInventory.addImage(NSMakeRect(68, 340, 164, 83), "settings/top")
 	[[exportWindow contentView] addSubview:topImage]
 
 	var groupsImage = ViewInventory.addImage(NSMakeRect(41, 134, 15, 39), "settings/groups")
@@ -43,8 +46,8 @@ var runSettings = function() {
 	var menuImage = ViewInventory.addImage(NSMakeRect(0, 274, 300, 28), "settings/menu")
 	[[exportWindow contentView] addSubview:menuImage]
 
-	// var topImage = ViewInventory.addImage(NSMakeRect(0, 312, measureSettingsWidth, measureSettingsHeight-312), "settings/top")
-	// [[exportWindow contentView] addSubview:topImage]
+
+
 
 	var headerViews = createHeader()
 	for (var i = 0; i < headerViews.length; i++) { [[exportWindow contentView] addSubview:headerViews[i]] }
@@ -53,14 +56,15 @@ var runSettings = function() {
 	for (var i = 0; i < firstLineViews.length; i++) { [[exportWindow contentView] addSubview:firstLineViews[i]] }
 	var retinaInput = firstLineViews[0]
 
-	// var secondLineViews = createSecondLine()
-	// for (var i = 0; i < secondLineViews.length; i++) { [[exportWindow contentView] addSubview:secondLineViews[i]] }
+
+
 
 	var checkViews = createCheckViews()
 	for (var i = 0; i < checkViews.length; i++) { [[exportWindow contentView] addSubview:checkViews[i]] }
 
 	[[exportWindow contentView] addSubview:createVersionView()]
 	[[exportWindow contentView] addSubview:createHelpButton()]
+
 
 
 
@@ -83,16 +87,47 @@ var runSettings = function() {
 
 	[[exportWindow contentView] addSubview:saveButton];
 
+
+
+
 	var learnButton = ViewInventory.addButton( NSMakeRect(82, 17, 78, 22), "settings/learn",
 			function(sender){
 				var url = [NSURL URLWithString:StatisticsInventory.getLearnLink()];
 				[[NSWorkspace sharedWorkspace] openURL:url]
 	})
 
-
 	[[exportWindow contentView] addSubview:learnButton];
 	[[exportWindow contentView] addSubview:createRadioGroupRelative()];
 	[[exportWindow contentView] addSubview:createRadioGroupStyle()];
+
+
+
+
+	var registeredStatusText = [[NSTextField alloc] initWithFrame:NSMakeRect(6, 446, 240, 17)];
+	[registeredStatusText setEditable:false];
+	[registeredStatusText setBordered:false];
+	[registeredStatusText setFont:ViewInventory.fontInputControls()];
+	[registeredStatusText setTextColor:ViewInventory.colorVersion()];
+	[registeredStatusText setDrawsBackground:false];
+	[[exportWindow contentView] addSubview:registeredStatusText];
+
+	if (DemoInventory.isRegistered()) {
+		[registeredStatusText setStringValue:ViewInventory.registeredStatusDone()]
+	}
+	else {
+		[registeredStatusText setStringValue:ViewInventory.registeredStatusLeft()]
+
+		var getProButton = ViewInventory.addButton(NSMakeRect(235, 444, 58, 18), "settings/get pro",
+				function(sender){
+					showExpiredModal()
+
+					if (DemoInventory.isRegistered()) {
+						[exportWindow orderOut:nil]
+						[NSApp stopModal]
+					}
+				});
+		[[exportWindow contentView] addSubview:getProButton];
+	}
 
 
 	var textTitles = []
@@ -134,7 +169,7 @@ var runSettings = function() {
 
 
 
-var createHeader  = function() {
+var createHeader = function() {
 
 	var supportButton = ViewInventory.addButton( NSMakeRect(12, 274, 104, 28), "settings/support",
 			function(sender){
@@ -303,7 +338,7 @@ var createCheckViews = function() {
 
 
 var createVersionView = function() {
-	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 315, measureSettingsWidth, measureSettingBlock)];
+	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 319, measureSettingsWidth, measureSettingBlock)];
 	[titleVersion setEditable:false];
 	[titleVersion setBordered:false];
 	[titleVersion setFont:ViewInventory.fontCheckControls()];

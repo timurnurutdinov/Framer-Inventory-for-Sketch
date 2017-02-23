@@ -1,5 +1,6 @@
 @import 'actions/view-inventory.cocoascript'
 
+
 var measureArtboardsPaddingLeft = 16
 var measureArtboardsWindowHeight = 252;
 var measureArtboardsWindowWidth = 240;
@@ -43,6 +44,8 @@ var showExpiredModal = function(artboardName) {
 	[licenseButton setCOSJSTargetFunction:function(sender) {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
+
+		showEnterLicense()
 
 	}];
 	[licenseButton setAction:"callAction:"]

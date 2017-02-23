@@ -41,6 +41,9 @@ DemoInventory.returnDemoDates = function() {
 
 
 DemoInventory.isRegistered = function() {
+  var licenseChecker = FILicenseChecker.alloc().init();
+  if (licenseChecker.isRegisteredWithEmail_andLicense(userDefaults.myEmail, userDefaults.myLicense)) { return true }
+
   return false
 }
 

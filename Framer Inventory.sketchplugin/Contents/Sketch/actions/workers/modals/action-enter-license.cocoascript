@@ -1,0 +1,88 @@
+@import 'actions/view-inventory.cocoascript'
+
+var measureArtboardsPaddingLeft = 16
+var measureArtboardsWindowHeight = 252;
+var measureArtboardsWindowWidth = 240;
+
+
+var showEnterLicense = function(artboardName) {
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setBackgroundColor(ViewInventory.colorWindow())
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
+
+
+	var emailInput = [[NSTextField alloc] initWithFrame:NSMakeRect(16, 154, measureArtboardsWindowWidth-32, 20)];
+  [[emailInput cell] setPlaceholderString:"Email"];
+	[emailInput setFocusRingType:NSFocusRingTypeNone];
+	[emailInput becomeFirstResponder];
+  [emailInput setBordered:false];
+  // [retinaInput setBackgroundColor:fieldColor];
+	[emailInput setFont:ViewInventory.fontInputControls()];
+	[[artboardsWindow contentView] addSubview:emailInput];
+
+	var licenseInput = [[NSTextField alloc] initWithFrame:NSMakeRect(16, 120, measureArtboardsWindowWidth-32, 20)];
+  [[licenseInput cell] setPlaceholderString:"License"];
+	[licenseInput setFocusRingType:NSFocusRingTypeNone];
+	[licenseInput becomeFirstResponder];
+  [licenseInput setBordered:false];
+  // [retinaInput setBackgroundColor:fieldColor];
+	[licenseInput setFont:ViewInventory.fontInputControls()];
+	[[artboardsWindow contentView] addSubview:licenseInput];
+
+
+
+
+	var registerButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 32, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[registerButton setTitle:"Register License"];
+	[registerButton setBezelStyle:NSRoundedBezelStyle];
+	[registerButton setFont:ViewInventory.fontActionButton()];
+	[registerButton setKeyEquivalent:"\r"];
+	[registerButton setCOSJSTargetFunction:function(sender) {
+
+		var emailValue = emailInput.stringValue() + ""
+		var licenseValue = licenseInput.stringValue() + ""
+		var licenseChecker = FILicenseChecker.alloc().init();
+
+		if (licenseChecker.isRegisteredWithEmail_andLicense(emailValue, licenseValue)) {
+			userDefaults.myEmail = emailValue
+			userDefaults.myLicense = licenseValue
+			saveDefaults(Status.userDomain(), userDefaults)
+
+			[artboardsWindow orderOut:nil]
+			[NSApp stopModal]
+
+			[currentDocument showMessage:ViewInventory.registerActionMessageDone()]
+		}
+		else {
+			log("inside click")
+			[currentDocument showMessage:ViewInventory.registerActionMessageWrong()]
+		}
+
+	}];
+	[registerButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:registerButton];
+
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 6, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[cancelButton setTitle:"Close"];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}
