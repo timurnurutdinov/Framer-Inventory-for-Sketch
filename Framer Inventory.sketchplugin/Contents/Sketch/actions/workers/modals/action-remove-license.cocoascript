@@ -30,6 +30,7 @@ var showRemoveLicense = function(artboardName) {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
 
+		SelectionInventory.asyncSelectionHandler(false)
 		[currentDocument showMessage:ViewInventory.registerActionMessageRemovedLicense()]
 
 	}];

@@ -6,6 +6,11 @@ ViewInventory.smileDone = function() { return "👍🏻 " }
 ViewInventory.smileForget = function() { return "🙈" }
 
 ViewInventory.selectFramerFolderMessage = function() { return ViewInventory.smileWarning() + "Select Framer folder to continue" }
+ViewInventory.actionsLeftMessage = function() {
+  if (DemoInventory.isRegistered()) { return "" }
+  if (DemoInventory.actionsLeft() == 0) { return " No runs left today!" }
+  return " Runs left today: " + DemoInventory.actionsLeft()
+}
 
 ViewInventory.placeHolderImport = function() { return "" }
 ViewInventory.placeHolderScene = function() { return "Exportable Layers on Artboards" }
@@ -19,10 +24,10 @@ ViewInventory.registerActionMessageWrong = function() { return "Wrong Email or L
 ViewInventory.registerActionMessageRemovedLicense = function() { return "License removed " + ViewInventory.smileForget() }
 
 ViewInventory.registeredStatusDone = function() { return "Registered to " + userDefaults.myEmail }
-ViewInventory.registeredStatusNone = function() { return "Unregistered. No actions left today  –>" }
+ViewInventory.registeredStatusNone = function() { return "Unregistered. No runs left for today –>" }
 ViewInventory.registeredStatusLeft = function() {
     if (DemoInventory.actionsLeft() == 0) { return ViewInventory.registeredStatusNone() }
-    return "Unregistered. Action left today: " + DemoInventory.actionsLeft()
+    return "Unregistered. Runs left today: " + DemoInventory.actionsLeft()
 }
 
 ViewInventory.colorBlack = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1] }

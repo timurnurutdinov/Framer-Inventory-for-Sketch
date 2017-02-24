@@ -386,6 +386,7 @@ FramerInventory.showDoneMessage = function() {
 	}
 	else { FramerInventory.removePage(exportPageName) }
 
+	message += ViewInventory.actionsLeftMessage()
 	[currentDocument showMessage:message]
 
 	FramerInventory.createExportSelection()

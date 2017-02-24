@@ -2,8 +2,9 @@
 function DemoInventory () {}
 
 
-DemoInventory.datesKey = function() { return "inventory-dates-key6" }
-DemoInventory.maxActionNumber = function() { return 10 }
+// DemoInventory.datesKey = function() { return Status.datesDomain() }
+DemoInventory.maxActionNumber = function() { return 7 }
+DemoInventory.firstUseActionNumber = function() { return 20 }
 
 
 DemoInventory.returnTodayKey = function() {
@@ -13,15 +14,17 @@ DemoInventory.returnTodayKey = function() {
 }
 
 DemoInventory.returnDemoDates = function() {
-  var datesKey = DemoInventory.datesKey()
+  var datesKey = Status.datesDomain()
   var maxActionNumber = DemoInventory.maxActionNumber()
 
   var defaults = [NSUserDefaults standardUserDefaults];
   var dates = [defaults dictionaryForKey:datesKey];
+  var freshInstall = false
 
   if (dates == nil) {
     // first use
     var actionDates = NSMutableDictionary.new()
+    freshInstall = true
     [defaults setObject:actionDates forKey:datesKey]
     dates = [defaults dictionaryForKey:datesKey];
   }
@@ -30,7 +33,8 @@ DemoInventory.returnDemoDates = function() {
   if ([dates objectForKey:today] == nil) {
     // first use today
     var updatedDates = [dates mutableCopy]
-    [updatedDates addObject:maxActionNumber forKey:today]
+    if (freshInstall) { [updatedDates addObject:DemoInventory.firstUseActionNumber() forKey:today] }
+    else { [updatedDates addObject:maxActionNumber forKey:today] }
     [defaults setObject:updatedDates forKey:datesKey]
   }
 
@@ -49,7 +53,7 @@ DemoInventory.isRegistered = function() {
 
 
 DemoInventory.actionUsed = function() {
-  var datesKey = DemoInventory.datesKey()
+  var datesKey = Status.datesDomain()
   var maxActionNumber = DemoInventory.maxActionNumber()
 
   var dates = DemoInventory.returnDemoDates()
@@ -66,7 +70,7 @@ DemoInventory.actionUsed = function() {
 }
 
 DemoInventory.actionsLeft = function() {
-  var datesKey = DemoInventory.datesKey()
+  var datesKey = Status.datesDomain()
   var maxActionNumber = DemoInventory.maxActionNumber()
 
   var dates = DemoInventory.returnDemoDates()
