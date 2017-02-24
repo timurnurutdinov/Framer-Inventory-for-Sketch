@@ -9,6 +9,8 @@ var replicateRequest = ["actions", "action_run", "replicate_layers", "1"]
 
 StatisticsInventory.getSupportLink = function() { return "https://twitter.com/tilllur" }
 StatisticsInventory.getDonateLink = function() { return "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E9XQYGEE5X4U2" }
+StatisticsInventory.buyLicenseLink = function() { return "https://bit.ly/deep-framer-inventory" }
+StatisticsInventory.getUpdateDetailsLink = function() { return "https://bit.ly/deep-framer-inventory" }
 StatisticsInventory.getLearnLink = function() { return "https://bit.ly/deep-framer-inventory" }
 
 

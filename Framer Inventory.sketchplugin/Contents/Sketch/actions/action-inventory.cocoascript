@@ -18,6 +18,7 @@
 @import 'actions/workers/modals/action-select-folder.cocoascript'
 @import 'actions/workers/modals/action-demo-expired.cocoascript'
 @import 'actions/workers/modals/action-enter-license.cocoascript'
+@import 'actions/workers/modals/action-remove-license.cocoascript'
 
 
 @import 'inventory/classes/layer.cocoascript'

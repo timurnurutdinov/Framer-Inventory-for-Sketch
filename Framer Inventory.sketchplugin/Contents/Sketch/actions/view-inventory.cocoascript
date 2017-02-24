@@ -5,6 +5,8 @@ ViewInventory.smileWarning = function() { return "⚠️ " }
 ViewInventory.smileDone = function() { return "👍🏻 " }
 ViewInventory.smileForget = function() { return "🙈" }
 
+ViewInventory.selectFramerFolderMessage = function() { return ViewInventory.smileWarning() + "Select Framer folder to continue" }
+
 ViewInventory.placeHolderImport = function() { return "" }
 ViewInventory.placeHolderScene = function() { return "Exportable Layers on Artboards" }
 ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer folder" }
@@ -12,8 +14,9 @@ ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer
 ViewInventory.toolbarMessageParentGroup = function() { return "Relative to parent Group" }
 ViewInventory.toolbarMessageParentArtboard = function() { return "Relative to parent Artboard" }
 
-ViewInventory.registerActionMessageDone = function() { return "Succesfully registered to " + userDefaults.myEmail }
-ViewInventory.registerActionMessageWrong = function() { return "Wrong Email or License. Please, try again" }
+ViewInventory.registerActionMessageDone = function() { return "Succesfully registered to " + userDefaults.myEmail + " " + ViewInventory.smileDone() }
+ViewInventory.registerActionMessageWrong = function() { return "Wrong Email or License. Please, try again " + ViewInventory.smileWarning() }
+ViewInventory.registerActionMessageRemovedLicense = function() { return "License removed " + ViewInventory.smileForget() }
 
 ViewInventory.registeredStatusDone = function() { return "Registered to " + userDefaults.myEmail }
 ViewInventory.registeredStatusNone = function() { return "Unregistered. No actions left today  –>" }
@@ -172,6 +175,10 @@ ViewInventory.adoptExpiredScene = function(expiredView) {
 
 ViewInventory.sizeWindowHeight = function() { return 94 }
 ViewInventory.sizeWindowWidth = function() { return 196 }
+
+ViewInventory.sizeModalWidth = function() { return 240 }
+ViewInventory.sizeModalSmall = function() { return 212 }
+ViewInventory.sizeModalLicense = function() { return 268 }
 
 
 ViewInventory.getImage = function(size, name) {

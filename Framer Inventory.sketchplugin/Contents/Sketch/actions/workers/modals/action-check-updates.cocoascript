@@ -1,8 +1,5 @@
-var measureArtboardsPaddingLeft = 16
-var measureArtboardsWindowHeight = 320;
-var measureArtboardsWindowWidth = 240;
 
-var showUpdateWindow = function(json) {
+var showUpdateWindow = function(newVersionString) {
 
 	var artboardsWindow = [[NSWindow alloc] init]
 	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
@@ -10,29 +7,44 @@ var showUpdateWindow = function(json) {
 	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
 	artboardsWindow.setTitlebarAppearsTransparent(true);
 	artboardsWindow.setMovableByWindowBackground(true);
-	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
-	[artboardsWindow setBackgroundColor:NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1)];
+	[artboardsWindow setFrame:NSMakeRect(0, 0, ViewInventory.sizeModalSmall(), 234) display:false];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
 
-	var imageView = ViewInventory.addImage(NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight), "modals/update");
+	var imageView = ViewInventory.addImage(NSMakeRect(16, 133, 180, 84), "modals/update");
 	[[artboardsWindow contentView] addSubview:imageView];
 
-	var updateText = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock, measureSettingBlock*4, (measureSettingsWidth - measureSettingBlock*5), measureSettingBlock*7)];
-	[updateText setPreferredMaxLayoutWidth:measureSettingsWidth - measureSettingBlock*2]
-  [updateText setEditable:false];
-  [updateText setBordered:false];
-	[updateText setFont:ViewInventory.fontCheckControls()];
-  [updateText setTextColor:ViewInventory.colorBlack()];
-  [updateText setDrawsBackground:false];
+	// var updateText = [[NSTextField alloc] initWithFrame:NSMakeRect(measureSettingBlock, measureSettingBlock*4, (measureSettingsWidth - measureSettingBlock*5), measureSettingBlock*7)];
+	// [updateText setPreferredMaxLayoutWidth:measureSettingsWidth - measureSettingBlock*2]
+  // [updateText setEditable:false];
+  // [updateText setBordered:false];
+	// [updateText setFont:ViewInventory.fontCheckControls()];
+  // [updateText setTextColor:ViewInventory.colorBlack()];
+  // [updateText setDrawsBackground:false];
+	//
+	// var updateTextValue = json.valueForKey("description");
+	// if (updateTextValue == nil) { updateTextValue = "Bug fixes and perfomance optimisations" }
+  // [updateText setStringValue:updateTextValue];
+	// [[artboardsWindow contentView] addSubview:updateText];
 
-	var updateTextValue = json.valueForKey("description");
-	if (updateTextValue == nil) { updateTextValue = "Bug fixes and perfomance optimisations" }
-  [updateText setStringValue:updateTextValue];
-	[[artboardsWindow contentView] addSubview:updateText];
+	var updateDetailsButton = ViewInventory.addButton( NSMakeRect(62, 83, 88, 24), "modals/update link",
+			function(sender){
+				var url = [NSURL URLWithString:StatisticsInventory.getUpdateDetailsLink()];
+				[[NSWorkspace sharedWorkspace] openURL:url]
+	})
 
+	[[artboardsWindow contentView] addSubview:updateDetailsButton];
 
+	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 114, ViewInventory.sizeModalSmall(), 16)];
+	[titleVersion setEditable:false];
+	[titleVersion setBordered:false];
+	[titleVersion setFont:ViewInventory.fontCheckControls()];
+	[titleVersion setTextColor:ViewInventory.colorVersion()];
+	[titleVersion setDrawsBackground:false];
+	[titleVersion setStringValue:"v" + newVersionString + " available"];
+	[titleVersion setAlignment:NSCenterTextAlignment];
+	[[artboardsWindow contentView] addSubview:titleVersion];
 
-
-	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 32, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, ViewInventory.sizeModalSmall() - 32, 32)];
 	[showDuplicatesButton setTitle:"Download Update"];
 	[showDuplicatesButton setBezelStyle:NSRoundedBezelStyle];
 	[showDuplicatesButton setFont:ViewInventory.fontActionButton()];
@@ -48,7 +60,7 @@ var showUpdateWindow = function(json) {
 	[[artboardsWindow contentView] addSubview:showDuplicatesButton];
 
 
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 6, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, ViewInventory.sizeModalSmall() - 32, 32)];
 	[cancelButton setTitle:"Remind Later"];
 	[cancelButton setFont:ViewInventory.fontActionButton()];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];
@@ -76,8 +88,8 @@ var runCheckUpdates = function() {
 	var currentVersionAsInt = getVersionNumberFromString(json.valueForKey("currentVersion"))
 	var installedVersionAsInt = getVersionNumberFromString(pluginVersion)
 	if (currentVersionAsInt > installedVersionAsInt) {
-			log(json.valueForKey("description"))
-			showUpdateWindow(json)
+			// log(json.valueForKey("description"))
+			showUpdateWindow(json.valueForKey("currentVersion"))
 			// var websiteURL = NSURL.URLWithString(json.valueForKey("websiteURL"));
 			// NSWorkspace.sharedWorkspace().openURL(websiteURL);
 	}

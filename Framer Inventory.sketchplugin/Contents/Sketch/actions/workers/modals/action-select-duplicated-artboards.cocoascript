@@ -1,7 +1,3 @@
-var measureArtboardsPaddingLeft = 16
-var measureArtboardsWindowHeight = 252;
-var measureArtboardsWindowWidth = 240;
-
 
 
 var selectDuplicatedArtboards = function(artboardName) {
@@ -12,13 +8,13 @@ var selectDuplicatedArtboards = function(artboardName) {
 	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
 	artboardsWindow.setTitlebarAppearsTransparent(true);
 	artboardsWindow.setMovableByWindowBackground(true);
-	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
-	[artboardsWindow setBackgroundColor:NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1)];
+	[artboardsWindow setFrame:NSMakeRect(0, 0, ViewInventory.sizeModalWidth(), 252) display:false];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
 
-	var imageView = ViewInventory.addImage(NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight), "modals/artboards");
+	var imageView = ViewInventory.addImage(NSMakeRect(10, 98, 220, 132), "modals/artboards");
 	[[artboardsWindow contentView] addSubview:imageView];
 
-	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 32, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 208, 32)];
 	[showDuplicatesButton setTitle:"Rename Automatically"];
 	[showDuplicatesButton setBezelStyle:NSRoundedBezelStyle];
 	[showDuplicatesButton setFont:ViewInventory.fontActionButton()];
@@ -38,7 +34,7 @@ var selectDuplicatedArtboards = function(artboardName) {
 	[[artboardsWindow contentView] addSubview:showDuplicatesButton];
 
 
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 6, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 208, 32)];
 	[cancelButton setTitle:"Show Duplicated Artboards"];
 	[cancelButton setFont:ViewInventory.fontActionButton()];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];

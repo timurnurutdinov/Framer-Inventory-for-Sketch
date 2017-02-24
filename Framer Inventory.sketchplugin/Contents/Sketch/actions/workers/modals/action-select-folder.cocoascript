@@ -1,13 +1,3 @@
-var measureArtboardsPaddingLeft = 16
-var measureArtboardsWindowHeight = 240;
-var measureArtboardsWindowWidth = 240;
-
-var whiteColor = [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1]
-var blackColor = [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1]
-var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]
-var fieldColor = [NSColor colorWithSRGBRed:0.97 green:0.97 blue:0.97 alpha:1]
-var backgroundColor = [NSColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1]
-
 
 
 var selectFolder = function() {
@@ -18,18 +8,18 @@ var selectFolder = function() {
 	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
 	artboardsWindow.setTitlebarAppearsTransparent(true);
 	artboardsWindow.setMovableByWindowBackground(true);
-	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
-	[artboardsWindow setBackgroundColor:NSColor.colorWithRed_green_blue_alpha(0.84, 0.84, 0.84, 1)];
+	[artboardsWindow setFrame:NSMakeRect(0, 0, ViewInventory.sizeModalSmall(), 240) display:false];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
 
-	var imageView = ViewInventory.addImage(NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight), "modals/folder");
+	var imageView = ViewInventory.addImage(NSMakeRect(16, 103, 180, 123), "modals/folder");
 	[[artboardsWindow contentView] addSubview:imageView];
 
-	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft-4, 6, measureArtboardsPaddingLeft*7, measureArtboardsPaddingLeft*2)];
-	[showDuplicatesButton setTitle:"Select Folder"];
-	[showDuplicatesButton setBezelStyle:NSRoundedBezelStyle];
-	[showDuplicatesButton setFont:ViewInventory.fontActionButton()];
-	[showDuplicatesButton setKeyEquivalent:"\r"];
-	[showDuplicatesButton setCOSJSTargetFunction:function(sender) {
+	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 180, 32)];
+	[selectFolderButton setTitle:"Select Folder"];
+	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
+	[selectFolderButton setFont:ViewInventory.fontActionButton()];
+	[selectFolderButton setKeyEquivalent:"\r"];
+	[selectFolderButton setCOSJSTargetFunction:function(sender) {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
 
@@ -42,11 +32,11 @@ var selectFolder = function() {
 		}
 
 	}];
-	[showDuplicatesButton setAction:"callAction:"];
-	[[artboardsWindow contentView] addSubview:showDuplicatesButton];
+	[selectFolderButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:selectFolderButton];
 
 
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft*8-8, 6, measureArtboardsPaddingLeft*5, measureArtboardsPaddingLeft*2)];
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 180, 32)];
 	[cancelButton setTitle:"Cancel"];
 	[cancelButton setFont:ViewInventory.fontActionButton()];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];
@@ -55,7 +45,7 @@ var selectFolder = function() {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
 
-		[currentDocument showMessage:ViewInventory.smileWarning() + "Select Framer folder to continue"]
+		[currentDocument showMessage:ViewInventory.selectFramerFolderMessage()]
 
 	}];
 	[cancelButton setAction:"callAction:"]

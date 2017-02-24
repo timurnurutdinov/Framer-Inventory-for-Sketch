@@ -52,6 +52,23 @@ var runSettings = function() {
 	var headerViews = createHeader()
 	for (var i = 0; i < headerViews.length; i++) { [[exportWindow contentView] addSubview:headerViews[i]] }
 
+	var licenseButton = ViewInventory.addButton( NSMakeRect(228, 274, 69, 28), "settings/donate",
+			function(sender){
+					var registeredState = DemoInventory.isRegistered()
+
+					if (DemoInventory.isRegistered()) { showRemoveLicense() }
+					else { showEnterLicense() }
+
+					if (registeredState != DemoInventory.isRegistered()) {
+						[exportWindow orderOut:nil]
+						[NSApp stopModal]
+					}
+
+	})
+	[[exportWindow contentView] addSubview:licenseButton]
+
+
+
 	var firstLineViews = createFirstLine()
 	for (var i = 0; i < firstLineViews.length; i++) { [[exportWindow contentView] addSubview:firstLineViews[i]] }
 	var retinaInput = firstLineViews[0]
@@ -85,6 +102,7 @@ var runSettings = function() {
 				else { [currentDocument showMessage:"Scale variable should contain only letters. Back to \"" + userDefaults.myRetinaString + "\""] }
 	})
 
+	[saveButton setKeyEquivalent:"\033"]
 	[[exportWindow contentView] addSubview:saveButton];
 
 
@@ -183,13 +201,7 @@ var createHeader = function() {
 				runCheckUpdates()
 	})
 
-	var donateButton = ViewInventory.addButton( NSMakeRect(228, 274, 69, 28), "settings/donate",
-			function(sender){
-				var url = [NSURL URLWithString:StatisticsInventory.getDonateLink()];
-				[[NSWorkspace sharedWorkspace] openURL:url]
-	})
-
-	return [supportButton, updatesButton, donateButton]
+	return [supportButton, updatesButton]
 }
 
 

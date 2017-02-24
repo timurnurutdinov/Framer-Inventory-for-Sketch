@@ -1,9 +1,5 @@
 @import 'actions/view-inventory.cocoascript'
 
-var measureArtboardsPaddingLeft = 16
-var measureArtboardsWindowHeight = 252;
-var measureArtboardsWindowWidth = 240;
-
 
 var showEnterLicense = function(artboardName) {
 
@@ -14,10 +10,14 @@ var showEnterLicense = function(artboardName) {
 	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
 	artboardsWindow.setTitlebarAppearsTransparent(true);
 	artboardsWindow.setMovableByWindowBackground(true);
-	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
+	[artboardsWindow setFrame:NSMakeRect(0, 0, ViewInventory.sizeModalLicense(), 366) display:false];
 
 
-	var emailInput = [[NSTextField alloc] initWithFrame:NSMakeRect(16, 154, measureArtboardsWindowWidth-32, 20)];
+	var imageView = ViewInventory.addImage(NSMakeRect(50, 229, 168, 116), "modals/register license");
+	[[artboardsWindow contentView] addSubview:imageView];
+
+
+	var emailInput = [[NSTextField alloc] initWithFrame:NSMakeRect(16, 154-16, ViewInventory.sizeModalLicense()-32, 20)];
   [[emailInput cell] setPlaceholderString:"Email"];
 	[emailInput setFocusRingType:NSFocusRingTypeNone];
 	[emailInput becomeFirstResponder];
@@ -26,7 +26,7 @@ var showEnterLicense = function(artboardName) {
 	[emailInput setFont:ViewInventory.fontInputControls()];
 	[[artboardsWindow contentView] addSubview:emailInput];
 
-	var licenseInput = [[NSTextField alloc] initWithFrame:NSMakeRect(16, 120, measureArtboardsWindowWidth-32, 20)];
+	var licenseInput = [[NSTextField alloc] initWithFrame:NSMakeRect(16, 120-16, ViewInventory.sizeModalLicense()-32, 20)];
   [[licenseInput cell] setPlaceholderString:"License"];
 	[licenseInput setFocusRingType:NSFocusRingTypeNone];
 	[licenseInput becomeFirstResponder];
@@ -37,8 +37,17 @@ var showEnterLicense = function(artboardName) {
 
 
 
+	var getLicenseButton = ViewInventory.addButton( NSMakeRect(90, 192, 88, 24), "modals/get license link",
+			function(sender){
+				var url = [NSURL URLWithString:StatisticsInventory.buyLicenseLink()];
+				[[NSWorkspace sharedWorkspace] openURL:url]
+	})
 
-	var registerButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 32, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[[artboardsWindow contentView] addSubview:getLicenseButton];
+
+
+
+	var registerButton = [[NSButton alloc] initWithFrame:NSMakeRect(12, 34, ViewInventory.sizeModalLicense() - 24, 32)];
 	[registerButton setTitle:"Register License"];
 	[registerButton setBezelStyle:NSRoundedBezelStyle];
 	[registerButton setFont:ViewInventory.fontActionButton()];
@@ -70,7 +79,7 @@ var showEnterLicense = function(artboardName) {
 
 
 
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 6, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(12, 8, ViewInventory.sizeModalLicense() - 24, 32)];
 	[cancelButton setTitle:"Close"];
 	[cancelButton setFont:ViewInventory.fontActionButton()];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];
