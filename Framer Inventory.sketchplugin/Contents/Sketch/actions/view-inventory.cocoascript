@@ -179,6 +179,7 @@ ViewInventory.sizeWindowWidth = function() { return 196 }
 ViewInventory.sizeModalWidth = function() { return 240 }
 ViewInventory.sizeModalSmall = function() { return 212 }
 ViewInventory.sizeModalLicense = function() { return 268 }
+ViewInventory.sizeModalSettings = function() { return 300 }
 
 
 ViewInventory.getImage = function(size, name) {

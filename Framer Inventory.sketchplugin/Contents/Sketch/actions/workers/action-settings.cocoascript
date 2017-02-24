@@ -5,11 +5,6 @@ var configureMobile = nil
 var configureMinimalExport = nil
 var configureAutoplay = nil
 
-
-var lightColor = [NSColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1];
-var fieldColor = [NSColor colorWithSRGBRed:0.97 green:0.97 blue:0.97 alpha:1]
-var backgroundColor = [NSColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1]
-
 var measureSettingsHeight = 470
 var measureSettingsWidth = 300
 var measureSettingBlock = 16
@@ -20,18 +15,18 @@ var runSettings = function() {
 
 	var exportWindow = [[NSWindow alloc] init]
 	exportWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
-	exportWindow.setBackgroundColor(NSColor.colorWithRed_green_blue_alpha(0.92, 0.92, 0.92, 1));
+	exportWindow.setBackgroundColor(ViewInventory.colorWindow());
 	exportWindow.setTitleVisibility(NSWindowTitleHidden);
 	exportWindow.setTitlebarAppearsTransparent(true);
-	exportWindow.setFrame_display(NSMakeRect(0, 0, measureSettingsWidth, measureSettingsHeight), false);
+	exportWindow.setFrame_display(NSMakeRect(0, 0, ViewInventory.sizeModalSettings(), measureSettingsHeight), false);
 	exportWindow.setMovableByWindowBackground(true);
 	exportWindow.setHasShadow(true);
 	exportWindow.setLevel(NSFloatingWindowLevel);
 
-	var topBreaker = ViewInventory.addImage(NSMakeRect(0, 440, measureSettingsWidth, 1), "settings/breaker")
+	var topBreaker = ViewInventory.addImage(NSMakeRect(0, 440, ViewInventory.sizeModalSettings(), 1), "settings/breaker")
 	[[exportWindow contentView] addSubview:topBreaker]
 
-	var bottomBreaker = ViewInventory.addImage(NSMakeRect(0, 53, measureSettingsWidth, 1), "settings/breaker")
+	var bottomBreaker = ViewInventory.addImage(NSMakeRect(0, 53, ViewInventory.sizeModalSettings(), 1), "settings/breaker")
 	[[exportWindow contentView] addSubview:bottomBreaker]
 
 
@@ -121,7 +116,7 @@ var runSettings = function() {
 
 
 
-	var registeredStatusText = [[NSTextField alloc] initWithFrame:NSMakeRect(6, 446, 240, 17)];
+	var registeredStatusText = [[NSTextField alloc] initWithFrame:NSMakeRect(6, 446, ViewInventory.sizeModalSettings() - 12, 17)];
 	[registeredStatusText setEditable:false];
 	[registeredStatusText setBordered:false];
 	[registeredStatusText setFont:ViewInventory.fontInputControls()];
@@ -131,6 +126,7 @@ var runSettings = function() {
 
 	if (DemoInventory.isRegistered()) {
 		[registeredStatusText setStringValue:ViewInventory.registeredStatusDone()]
+		[registeredStatusText setAlignment:NSCenterTextAlignment];
 	}
 	else {
 		[registeredStatusText setStringValue:ViewInventory.registeredStatusLeft()]
@@ -283,7 +279,7 @@ var createFirstLine = function() {
 	[retinaInput setFocusRingType:NSFocusRingTypeNone];
 	[retinaInput becomeFirstResponder];
   [retinaInput setBordered:false];
-  [retinaInput setBackgroundColor:fieldColor];
+  [retinaInput setBackgroundColor:[NSColor colorWithSRGBRed:0.97 green:0.97 blue:0.97 alpha:1]];
   [retinaInput setStringValue:userDefaults.myRetinaString];
 	[retinaInput setFont:ViewInventory.fontInputControls()];
 
