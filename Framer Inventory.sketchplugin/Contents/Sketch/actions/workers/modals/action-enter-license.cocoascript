@@ -63,13 +63,14 @@ var showEnterLicense = function(artboardName) {
 			userDefaults.myLicense = licenseValue
 			saveDefaults(Status.userDomain(), userDefaults)
 
+			StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(needLicenseRequest))
+
 			[artboardsWindow orderOut:nil]
 			[NSApp stopModal]
 
 			[currentDocument showMessage:ViewInventory.registerActionMessageDone()]
 		}
 		else {
-			log("inside click")
 			[currentDocument showMessage:ViewInventory.registerActionMessageWrong()]
 		}
 

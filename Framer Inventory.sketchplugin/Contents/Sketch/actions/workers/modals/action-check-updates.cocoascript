@@ -80,8 +80,7 @@ var showUpdateWindow = function(newVersionString) {
 
 // generate code for layers
 var runCheckUpdates = function() {
-
-	// currentDocument.showMessage("Checking for updates...");
+	StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(checkUpdatesRequest))
 
 	var json = NSJSONSerialization.JSONObjectWithData_options_error(NSData.dataWithContentsOfURL(NSURL.URLWithString("https://timurnurutdinov.github.io/framerinventory/version.json")), 0, nil)
 

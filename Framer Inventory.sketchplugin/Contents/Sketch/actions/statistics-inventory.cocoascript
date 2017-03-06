@@ -1,11 +1,19 @@
 @import 'inventory/libs/pluginDefaults.js'
 // @import 'actions/demo-inventory.cocoascript'
 
-var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-58418174-3"
+var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-93026859-1"
 
-var simulateRequest = ["actions", "action_run", "simulate_keynote", "1"]
-var generateRequest = ["actions", "action_run", "generate_states", "1"]
-var replicateRequest = ["actions", "action_run", "replicate_layers", "1"]
+var simulateRequest = ["actions", "run", "simulate_scene", "1"]
+var generateRequest = ["actions", "run", "generate_states", "1"]
+var replicateRequest = ["actions", "run", "replicate_layers", "1"]
+
+var settingsOpenedRequest = ["settings", "open", "show_settings", "1"]
+var checkUpdatesRequest = ["settings", "open", "check_updates", "1"]
+
+var needLicenseRequest = ["license", "open", "ask_to_buy_pro", "1"]
+var trialStartedRequest = ["license", "start", "trial_started", "1"]
+var registeredUserRequest = ["license", "register", "registered_user", "1"]
+
 
 StatisticsInventory.getSupportLink = function() { return "https://twitter.com/tilllur" }
 StatisticsInventory.getDonateLink = function() { return "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E9XQYGEE5X4U2" }

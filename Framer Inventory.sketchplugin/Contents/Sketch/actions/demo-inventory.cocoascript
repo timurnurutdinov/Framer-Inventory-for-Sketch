@@ -23,6 +23,8 @@ DemoInventory.returnDemoDates = function() {
 
   if (dates == nil) {
     // first use
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(registeredUserRequest))
+
     var actionDates = NSMutableDictionary.new()
     freshInstall = true
     [defaults setObject:actionDates forKey:datesKey]

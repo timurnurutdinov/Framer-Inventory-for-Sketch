@@ -12,6 +12,7 @@ var measureSettingBlock = 16
 
 
 var runSettings = function() {
+	StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(settingsOpenedRequest))
 
 	var exportWindow = [[NSWindow alloc] init]
 	exportWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
