@@ -9,8 +9,7 @@ var runSimulateKeynote = function() {
 	var layers = []
 	var pasteboardContent = ""
 
-	var currentPage = FramerInventory.getCurrentPage()
-	FramerInventory.addExportPageAndReturn(currentPage)
+	FramerInventory.addExportPageAndReturn(FramerInventory.getCurrentPage())
 	FramerInventory.cleanExportPage()
 
 	if (userDefaults.exportFramerFolder == "") {
@@ -18,14 +17,15 @@ var runSimulateKeynote = function() {
 			return
 	}
 
-	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(FramerInventory.returnArtboardsScope())
+	var artboardsScope = FramerInventory.returnArtboardsScope()
+	var duplicatedArtboard = FramerInventory.returnDuplicatedArtboards(artboardsScope)
 	if (duplicatedArtboard != nil) {
 		if (showLog) { log("Warning: duplicated artboards names are found") }
 		selectDuplicatedArtboards([duplicatedArtboard name])
 		return
 	}
 
-	var sortedSelection = FramerInventory.organiseSelection([currentPage exportableLayers])
+	var sortedSelection = FramerInventory.organiseSelection(returnExportableLayersForSelectedScope(artboardsScope))
 	if (sortedSelection == nil) {
 		[currentDocument showMessage:"Nothing to simulate. Please, make some layers exportable"]
 		return
@@ -117,4 +117,49 @@ var runSimulateKeynote = function() {
 
 	StatisticsInventory.setStatus(Status.waitingID())
 	return pasteboardContent
+}
+
+
+
+
+
+
+var returnExportableLayersForSelectedScope = function(selectedScope) {
+	var currentPage = FramerInventory.getCurrentPage()
+	var pageExportables = [currentPage exportableLayers]
+
+	var scopeExportables = NSMutableArray.new()
+
+	for (var i = 0; i < pageExportables.count(); i++) {
+			var currentLayer = [pageExportables objectAtIndex: i]
+
+			if (exportableInScope(currentLayer, selectedScope)) {
+				scopeExportables.addObject(currentLayer)
+				// log("+1 exportable")
+				// log(currentLayer)
+				// log("---")
+			}
+
+	}
+
+	// log("ALL: ")
+	// log([[currentPage exportableLayers] count])
+	//
+	// log("SEL: ")
+	// log([scopeExportables count])
+
+	// return [currentPage exportableLayers]
+	return scopeExportables
+}
+
+
+var exportableInScope = function(layer, artboardsScope) {
+	var currentParentArtboard = TypeInventory.findParentArtboard(layer)
+
+	for (var i = 0; i < artboardsScope.count(); i++) {
+		var currentScopeArtboard = [artboardsScope objectAtIndex:i]
+		if (FramerInventory.sameArtboards(currentParentArtboard, currentScopeArtboard)) { return true }
+	}
+
+	return false
 }
