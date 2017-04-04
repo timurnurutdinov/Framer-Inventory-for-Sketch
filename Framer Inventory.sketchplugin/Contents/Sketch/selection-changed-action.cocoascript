@@ -68,9 +68,9 @@ SelectionInventory.asyncSelectionHandler = function(asyncing) {
 
       var localLayers = selectionInventoryInstance.layers
       if (selectionInventoryInstance.type == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
-      else if (localLayers.count() == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name()) }
+      // else if (localLayers.count() == 2) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name()) }
       else if (localLayers.count() == 1) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name()) }
-      else if (localLayers.count() > 0) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.firstObject().name() + ", " + localLayers.objectAtIndex(1).name() + " and " + (localLayers.count()-2) + " more") }
+      else if (localLayers.count() > 0) { ToolbarInventory.updateSelectionLabelStringValue(localLayers.count() + " layers") }
       else { ToolbarInventory.updateSelectionLabelStringValue(ViewInventory.placeHolderImport()) }
     }
     else if (localMode == Status.toolbarModeScene()) {
