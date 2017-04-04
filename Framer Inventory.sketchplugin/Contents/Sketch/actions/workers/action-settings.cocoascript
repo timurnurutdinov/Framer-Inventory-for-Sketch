@@ -328,7 +328,7 @@ var createCheckViews = function() {
 	[titleMinimalExport setFont:ViewInventory.fontCheckControls()];
   [titleMinimalExport setTextColor:ViewInventory.colorBlack()];
   [titleMinimalExport setDrawsBackground:false];
-  [titleMinimalExport setStringValue:" Generate minimazed states for Scene"];
+  [titleMinimalExport setStringValue:" Use minimazed states in Prototypes"];
   [titleMinimalExport sizeToFit];
 
 	var checkboxMinimalExport = [[NSButton alloc] initWithFrame:NSMakeRect(measureSettingBlock, 88-1, measureSettingBlock*12, measureSettingBlock)];

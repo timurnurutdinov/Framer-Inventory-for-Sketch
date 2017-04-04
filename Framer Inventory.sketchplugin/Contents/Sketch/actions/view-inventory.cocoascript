@@ -13,7 +13,7 @@ ViewInventory.actionsLeftMessage = function() {
 }
 
 ViewInventory.placeHolderImport = function() { return "" }
-ViewInventory.placeHolderScene = function() { return "Exportable Layers on Artboards" }
+ViewInventory.placeHolderScene = function() { return "Select Artboards with Exportables" }
 ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer folder" }
 
 ViewInventory.toolbarMessageParentGroup = function() { return "Relative to parent Group" }

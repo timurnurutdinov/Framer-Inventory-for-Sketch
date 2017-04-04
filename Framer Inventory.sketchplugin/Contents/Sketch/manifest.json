@@ -30,7 +30,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onSimulateKeynoteRun",
       "shortcut" : "",
-      "name" : "❖   Simulate Scene",
+      "name" : "❖   Export Prototype",
       "identifier" : "choose-simulate-keynote",
       "description" : "Generate Framer scene for exportable layers",
       "icon" : "scene.png"
@@ -99,7 +99,7 @@
         "actions" : {
            "SelectionChanged.finish" : "onSelectionChanged"
            }
-          },
+          }
     }
   ],
   "menu": {
