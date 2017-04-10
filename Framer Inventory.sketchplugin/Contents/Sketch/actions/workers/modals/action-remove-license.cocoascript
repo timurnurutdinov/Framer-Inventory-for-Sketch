@@ -13,7 +13,7 @@ var showRemoveLicense = function(artboardName) {
 	[artboardsWindow setFrame:NSMakeRect(0, 0, ViewInventory.sizeModalSmall(), 206) display:false];
 
 
-	var imageView = ViewInventory.addImage(NSMakeRect(47, 86, 118, 99), "modals/registered");
+	var imageView = ViewInventory.addImage(NSMakeRect(48, 103, 116, 82), "modals/registered");
 	[[artboardsWindow contentView] addSubview:imageView];
 
 

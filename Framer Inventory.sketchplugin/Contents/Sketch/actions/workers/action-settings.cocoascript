@@ -104,7 +104,7 @@ var runSettings = function() {
 
 
 
-	var learnButton = ViewInventory.addButton( NSMakeRect(82, 17, 78, 22), "settings/learn",
+	var learnButton = ViewInventory.addButton( NSMakeRect(86, 17, 78, 22), "settings/learn",
 			function(sender){
 				var url = [NSURL URLWithString:StatisticsInventory.getLearnLink()];
 				[[NSWorkspace sharedWorkspace] openURL:url]
@@ -365,7 +365,7 @@ var createHelpButton = function() {
 	[helpButton setBezelStyle:NSHelpButtonBezelStyle];
 	[helpButton setTitle:nil];
 	[helpButton setCOSJSTargetFunction:function(sender) {
-			var url = [NSURL URLWithString:@"http://bit.ly/deep-framer-inventory"];
+			var url = NSURL.URLWithString(StatisticsInventory.getHelpLink());
 			[[NSWorkspace sharedWorkspace] openURL:url]
 	}];
 	[helpButton setAction:"callAction:"]

@@ -5,8 +5,8 @@
   "description": "Generate FramerJS prototypes from Sketch",
   "homepage": "https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch",
   "identifier": "com.tilllur.framer-inventory",
-  "version": "2.5.0",
-  "compatibleVersion": 4.1,
+  "version": "2.1.0",
+  "compatibleVersion": 4.2,
   "commands" : [
     {
       "script" : "run-actions.cocoascript",

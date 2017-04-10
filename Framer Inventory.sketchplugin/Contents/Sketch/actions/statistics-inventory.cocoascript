@@ -15,12 +15,14 @@ var trialStartedRequest = ["license", "start", "trial_started", "1"]
 var registeredUserRequest = ["license", "register", "registered_user", "1"]
 
 
-StatisticsInventory.getSupportLink = function() { return "https://twitter.com/tilllur" }
+StatisticsInventory.getSupportLink = function() { return "https://twitter.com/framerinventory" }
 StatisticsInventory.getDonateLink = function() { return "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E9XQYGEE5X4U2" }
 StatisticsInventory.buyLicenseLink = function() { return "https://bit.ly/deep-framer-inventory" }
 StatisticsInventory.getUpdateDetailsLink = function() { return "https://bit.ly/deep-framer-inventory" }
-StatisticsInventory.getLearnLink = function() { return "https://bit.ly/deep-framer-inventory" }
-
+StatisticsInventory.getLearnLink = function() { return "https://medium.com/framer-inventory" }
+StatisticsInventory.getHelpLink = function() { return "https://bit.ly/deep-framer-inventory" }
+StatisticsInventory.getVersionLink = function() { return "https://raw.githubusercontent.com/timurnurutdinov/Framer-Inventory-for-Sketch/master/Framer%20Inventory.sketchplugin/Contents/Sketch/manifest.json"}
+// "https://timurnurutdinov.github.io/framerinventory/version.json"
 
 function StatisticsInventory () {}
 
