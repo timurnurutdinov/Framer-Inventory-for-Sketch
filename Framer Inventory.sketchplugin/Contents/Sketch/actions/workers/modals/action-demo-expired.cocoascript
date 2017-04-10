@@ -30,8 +30,12 @@ var showExpiredModal = function(artboardName) {
 	[showDuplicatesButton setFont:ViewInventory.fontActionButton()];
 	[showDuplicatesButton setKeyEquivalent:"\r"];
 	[showDuplicatesButton setCOSJSTargetFunction:function(sender) {
-		[artboardsWindow orderOut:nil]
-		[NSApp stopModal]
+		// [artboardsWindow orderOut:nil]
+		// [NSApp stopModal]
+
+		var url = NSURL.URLWithString(StatisticsInventory.buyLicenseLink());
+		[[NSWorkspace sharedWorkspace] openURL:url]
+
 	}];
 	[showDuplicatesButton setAction:"callAction:"];
 	[[artboardsWindow contentView] addSubview:showDuplicatesButton];
@@ -54,7 +58,7 @@ var showExpiredModal = function(artboardName) {
 
 
 	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 6, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
-	[cancelButton setTitle:"Cancel"];
+	[cancelButton setTitle:"Close"];
 	[cancelButton setFont:ViewInventory.fontActionButton()];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];
 	[cancelButton setKeyEquivalent:"\033"]

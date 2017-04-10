@@ -519,7 +519,7 @@ ViewInventory.getMoreButtons = function() {
           [currentDocument showMessage:"Rename?"]
       }
       else if (moreButton.indexOfSelectedItem() == 5) {
-          log("gonna try states")
+          // log("gonna try states")
           ToolbarInventory.updateContext();
           runReplicateLayers()
 

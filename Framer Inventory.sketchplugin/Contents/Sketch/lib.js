@@ -135,7 +135,7 @@ ToolbarInventory.updateSelectionLabelStringValue = function(value) {
 }
 
 ToolbarInventory.updateSceneLabelStringValue = function(value) {
-  log("Gonna Update to: " + value)
+  // log("Gonna Update to: " + value)
   var toolbar = ToolbarInventory.returnInstance()
   if (toolbar != nil) {
     var localLabel = toolbar.selectionLabelScene
@@ -209,7 +209,7 @@ ToolbarInventory.updateSceneButtons = function(adoptID) {
         else if (adoptID == 6) { ViewInventory.adoptSceneButtonsSelected(toolbar.sceneButton, toolbar.images) }
 
         if (adoptID == 7) {
-          log("adoptation")
+          // log("adoptation")
           ViewInventory.adoptExpiredScene(toolbar.expiredSceneView)
           ToolbarInventory.updateSceneLabelStringValue("")
         }
