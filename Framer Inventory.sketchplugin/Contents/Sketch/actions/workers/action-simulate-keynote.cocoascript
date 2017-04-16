@@ -27,7 +27,8 @@ var runSimulateKeynote = function() {
 
 	var sortedSelection = FramerInventory.organiseSelection(returnExportableLayersForSelectedScope(artboardsScope))
 	if (sortedSelection == nil) {
-		[currentDocument showMessage:"Nothing to simulate. Please, make some layers exportable"]
+		[currentDocument showMessage:ViewInventory.exportPrototypesSelectionError()]
+
 		return
 	}
 

@@ -30,6 +30,10 @@ ViewInventory.registeredStatusLeft = function() {
     return "Unregistered. Runs left today: " + DemoInventory.actionsLeft()
 }
 
+ViewInventory.exportPrototypesSelectionError = function() { return ViewInventory.smileWarning() + " Please, \"Make Exportable\" some layers on artboards" }
+
+
+
 ViewInventory.colorBlack = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1] }
 ViewInventory.colorWhite = function() { return [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1] }
 ViewInventory.colorVersion = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.3] }
