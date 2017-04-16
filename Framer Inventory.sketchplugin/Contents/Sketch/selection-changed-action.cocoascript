@@ -58,7 +58,7 @@ SelectionInventory.asyncSelectionHandler = function(asyncing) {
     // else if (currentSelectionType == 2) { selectionTitle = "Selected States" }
     // else if (currentSelectionType == 3) { selectionTitle = "Layers / All States for Layers" }
     // else if (currentSelectionType == 4) { selectionTitle = "Selected States for Layers" }
-    log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
+    // log("a: " + [[NSDate date] timeIntervalSinceDate:localTime])
 
     var localMode = ToolbarInventory.toolbarMode()
 
@@ -80,7 +80,7 @@ SelectionInventory.asyncSelectionHandler = function(asyncing) {
 
 
     // StatisticsInventory.setStatus(2)
-    log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
+    // log("b: " + [[NSDate date] timeIntervalSinceDate:localTime])
     if (asyncing) { coscript.setShouldKeepAround(false); }
 }
 
