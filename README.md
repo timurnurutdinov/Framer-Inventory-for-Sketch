@@ -2,8 +2,8 @@
 ### Semantic Export from Sketch into Framer
 <a href="https://timurnurutdinov.github.io/framerinventory/?utm_source=web&utm_medium=github">Watch Promo and Learn More</a>
 
-## 1. Import States
 ![Import States](/../images-third-version/readme/import-states@2x.png?raw=true "Import States")
+## 1. Import States
 Import layers from Sketch to Framer with states.
 <a href="https://medium.com/@tilllur/import-states-with-framer-inventory-plugin-for-sketch-e9ad6ebfeae7?utm_source=web&utm_medium=github">Read More</a>
 
@@ -16,8 +16,8 @@ Choose layers & run to import layers, selected states or all states. Paste gener
 * Devices support: ready for Desktop/iOS/Android prototyping
 
 
-## 2. Simulate Scene
 ![Export Prototypes](/../images-third-version/readme/export-prototypes@2x.png?raw=true "Export Prototypes")
+## 2. Simulate Scene
 Have you used a Keynote for prototyping? It’s quite the same but like you organize scene of slides in Sketch and create motion in Framer with a any logic you need.
 <a href="https://medium.com/@tilllur/export-prototypes-with-framer-inventory-plugin-for-sketch-2f10f9397193?utm_source=web&utm_medium=github">Read More</a>
 
