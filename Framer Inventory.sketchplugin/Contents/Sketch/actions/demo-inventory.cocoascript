@@ -3,8 +3,8 @@ function DemoInventory () {}
 
 
 // DemoInventory.datesKey = function() { return Status.datesDomain() }
-DemoInventory.maxActionNumber = function() { return 7 }
-DemoInventory.firstUseActionNumber = function() { return 20 }
+DemoInventory.maxActionNumber = function() { return 10 }
+DemoInventory.firstUseActionNumber = function() { return 50 }
 
 
 DemoInventory.returnTodayKey = function() {
@@ -26,16 +26,23 @@ DemoInventory.returnDemoDates = function() {
     StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(registeredUserRequest))
 
     var actionDates = NSMutableDictionary.new()
-    freshInstall = true
     [defaults setObject:actionDates forKey:datesKey]
     dates = [defaults dictionaryForKey:datesKey];
+
+    freshInstall = true
   }
 
   var today = DemoInventory.returnTodayKey()
   if ([dates objectForKey:today] == nil) {
     // first use today
     var updatedDates = [dates mutableCopy]
-    if (freshInstall) { [updatedDates addObject:DemoInventory.firstUseActionNumber() forKey:today] }
+
+    if (freshInstall) {
+      [updatedDates addObject:DemoInventory.firstUseActionNumber() forKey:today]
+
+      userDefaults.myRegisterDate = today
+  		saveDefaults(Status.userDomain(), userDefaults)
+    }
     else { [updatedDates addObject:maxActionNumber forKey:today] }
     [defaults setObject:updatedDates forKey:datesKey]
   }

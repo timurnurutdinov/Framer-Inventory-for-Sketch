@@ -28,9 +28,12 @@ var userPresets = {
 
 	myEmail: "",
 	myLicense: "",
+	myRegisterDate: "",
 
 	myUserID:  [[NSUUID UUID] UUIDString] + ""
 }
+
+
 
 var statisticsPresets = {
     currentStatus: 0,
@@ -61,7 +64,7 @@ Status.updateID = function() { return 9 }
 
 Status.userDomain = function() { return "com.addleimb.framer-inventory.user-demo4" }
 Status.statsDomain = function() { return "com.addleimb.framer-inventory.statistics-demo2" }
-Status.datesDomain = function() { return "inventory-dates-key8" }
+Status.datesDomain = function() { return "inventory-dates-key10-ac" }
 
 var preTestingDefaults = {}
 var userDefaults = initDefaults(Status.userDomain(), userPresets)
