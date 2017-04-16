@@ -33,7 +33,7 @@ var showExpiredModal = function(artboardName) {
 		// [artboardsWindow orderOut:nil]
 		// [NSApp stopModal]
 
-		var url = NSURL.URLWithString(StatisticsInventory.buyLicenseLink());
+		var url = NSURL.URLWithString(StatisticsInventory.buyLicenseLinkDemo());
 		[[NSWorkspace sharedWorkspace] openURL:url]
 
 	}];

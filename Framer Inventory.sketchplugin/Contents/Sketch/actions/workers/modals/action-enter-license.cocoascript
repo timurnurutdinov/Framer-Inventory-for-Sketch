@@ -39,7 +39,7 @@ var showEnterLicense = function(artboardName) {
 
 	var getLicenseButton = ViewInventory.addButton( NSMakeRect(90, 192, 88, 24), "modals/get license link",
 			function(sender){
-				var url = [NSURL URLWithString:StatisticsInventory.buyLicenseLink()];
+				var url = [NSURL URLWithString:StatisticsInventory.buyLicenseLinkLicense()];
 				[[NSWorkspace sharedWorkspace] openURL:url]
 	})
 

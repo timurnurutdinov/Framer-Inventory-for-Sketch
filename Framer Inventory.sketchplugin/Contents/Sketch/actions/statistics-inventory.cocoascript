@@ -16,11 +16,12 @@ var registeredUserRequest = ["license", "register", "registered_user", "1"]
 
 
 StatisticsInventory.getSupportLink = function() { return "https://twitter.com/framerinventory" }
-StatisticsInventory.getDonateLink = function() { return "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E9XQYGEE5X4U2" }
-StatisticsInventory.buyLicenseLink = function() { return "https://bit.ly/deep-framer-inventory" }
-StatisticsInventory.getUpdateDetailsLink = function() { return "https://bit.ly/deep-framer-inventory" }
-StatisticsInventory.getLearnLink = function() { return "https://medium.com/framer-inventory" }
-StatisticsInventory.getHelpLink = function() { return "https://bit.ly/deep-framer-inventory" }
+// StatisticsInventory.getDonateLink = function() { return "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E9XQYGEE5X4U2" }
+StatisticsInventory.buyLicenseLinkDemo = function() { return "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=demo_expired" }
+StatisticsInventory.buyLicenseLinkLicense = function() { return "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=buy_license" }
+StatisticsInventory.getUpdateDetailsLink = function() { return "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=download_update" }
+StatisticsInventory.getLearnLink = function() { return "https://medium.com/framer-inventory?utm_source=plugin&utm_medium=learn_more" }
+StatisticsInventory.getHelpLink = function() { return "https://medium.com/@tilllur/import-states-with-framer-inventory-plugin-for-sketch-e9ad6ebfeae7?utm_source=plugin&utm_medium=help" }
 StatisticsInventory.getVersionLink = function() { return "https://raw.githubusercontent.com/timurnurutdinov/Framer-Inventory-for-Sketch/master/Framer%20Inventory.sketchplugin/Contents/Sketch/manifest.json"}
 // "https://timurnurutdinov.github.io/framerinventory/version.json"
 

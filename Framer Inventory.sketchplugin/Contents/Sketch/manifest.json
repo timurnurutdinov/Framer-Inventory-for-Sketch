@@ -1,12 +1,12 @@
 {
   "name" : "Framer Inventory",
   "author" : "Timur Nurutdinov",
-  "authorEmail" : "addleimb@gmail.com",
-  "description": "Generate FramerJS prototypes from Sketch",
-  "homepage": "https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch",
-  "identifier": "com.tilllur.framer-inventory",
-  "version": "2.1.0",
-  "compatibleVersion": 4.2,
+  "authorEmail" : "framerinventory@gmail.com",
+  "description": "Import States & Export Prototypes from Sketch to Framer",
+  "homepage": "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=manifest",
+  "identifier": "com.addleimb.framer-inventory",
+  "version": "3.0.0",
+  "compatibleVersion": 4.3,
   "commands" : [
     {
       "script" : "run-actions.cocoascript",
