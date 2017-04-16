@@ -125,8 +125,7 @@
   		         "title": "      Utils",
   		         "items": [
   					          "choose-remove-export-page",
-                      "choose-check-updates",
-                      "choose-testing-environment"
+                      "choose-check-updates"
   		          ]
   		  },
         "-",

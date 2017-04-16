@@ -67,6 +67,14 @@ var getAbsolutePlaceRect = function(layer) {
 }
 
 
+var getAbsolutePlaceArtboard = function(artboard) {
+		// log("?inside " + [artboard className] + " " + [artboard name])
+		// log(TypeInventory.isArtboardType(artboard))
+		if (artboard == nil) { return nil }
+		log("inside")
+
+		return [[[artboard frame] width], [[artboard frame] height], artboard.rulerBase().x.integerValue(), artboard.rulerBase().y.integerValue()]
+}
 
 
 
@@ -89,7 +97,9 @@ var getPlace = function(layer, isImage) {
 		parentValues = getAbsolutePlaceImage([layer parentGroup])
 	}
 	else {
-		parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer))
+		log("re?")
+		parentValues = getAbsolutePlaceArtboard(TypeInventory.findParentArtboard(layer))
+		// parentValues = getAbsolutePlaceRect(TypeInventory.findParentArtboard(layer))
 	}
 
 
