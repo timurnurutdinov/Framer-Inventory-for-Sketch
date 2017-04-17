@@ -18,7 +18,7 @@ Choose layers & run to import layers, selected states or all states. Paste gener
 
 ![](/../images-third-version/readme/whiter@2x.png?raw=true "")
 ![Export Prototypes](/../images-third-version/readme/export-prototypes@2x.png?raw=true "Export Prototypes")
-## 2. Simulate Scene
+## 2. Export Prototype
 Have you used a Keynote for prototyping? It’s quite the same but like you organize scene of slides in Sketch and create motion in Framer with a any logic you need.
 <a href="https://medium.com/@tilllur/export-prototypes-with-framer-inventory-plugin-for-sketch-2f10f9397193?utm_source=web&utm_medium=github">Read More</a>
 
@@ -39,6 +39,6 @@ Have you used a Keynote for prototyping? It’s quite the same but like you orga
 * Select *the same device type* on panel and you are ready!
 
 
-
+![](/../images-third-version/readme/whiter@2x.png?raw=true "")
 ## Contact
 You are welcome to suggest ideas and report bugs (ideally with sketch files included). For better communication I suggest using Github issues but you can ping @framerinventory on Twitter as well.
