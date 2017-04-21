@@ -55,13 +55,13 @@ ViewInventory.layersButton = function() { return NSMakeRect(6, 5, 38, 18) }
 ViewInventory.layersButtonSeveral = function() { return NSMakeRect(6, 5, 43, 18) }
 
 ViewInventory.statesButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
-ViewInventory.statesButton = function() { return NSMakeRect(48, 5, 58, 18) }
-ViewInventory.statesButtonSeveral = function() { return NSMakeRect(53, 5, 112, 18) }
+ViewInventory.statesButton = function() { return NSMakeRect(48, 5, 86, 18) }
+ViewInventory.statesButtonSeveral = function() { return NSMakeRect(53, 5, 86, 18) }
 ViewInventory.statesButtonSelected = function() { return NSMakeRect(6, 5, 90, 18) }
-ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(6, 5, 143, 18) }
+ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(6, 5, 139, 18) }
 
-ViewInventory.sceneButton = function() { return NSMakeRect(6, 5, 41, 18) }
-ViewInventory.sceneButtonSelected = function() { return NSMakeRect(6, 5, 159, 18) }
+ViewInventory.sceneButton = function() { return NSMakeRect(6, 5, 105, 18) }
+ViewInventory.sceneButtonSelected = function() { return NSMakeRect(6, 5, 130, 18) }
 
 ViewInventory.moreButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
 ViewInventory.moreButton = function() { return NSMakeRect(169, 5, 21, 18) }
