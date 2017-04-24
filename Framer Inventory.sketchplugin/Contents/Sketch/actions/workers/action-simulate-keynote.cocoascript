@@ -28,7 +28,6 @@ var runSimulateKeynote = function() {
 	var sortedSelection = FramerInventory.organiseSelection(returnExportableLayersForSelectedScope(artboardsScope))
 	if (sortedSelection == nil) {
 		[currentDocument showMessage:ViewInventory.exportPrototypesSelectionError()]
-
 		return
 	}
 
@@ -50,13 +49,13 @@ var runSimulateKeynote = function() {
 		var hasCurrentState = false
 
 
-		for (var j = 0; j < artboardsMaps.length; j++) {
-			var currentMap = artboardsMaps[j]
+		for (var j = 0; j < artboardsMaps.count(); j++) {
+			var currentMap = [artboardsMaps objectAtIndex:j]
 
 			var hasPrevState = hasCurrentState
 			var prevMapLayer = mapStateLayer
 
-			var mapStateLayer = currentMap[layerName]
+			var mapStateLayer = [currentMap objectForKey:layerName]
 
 			if (mapStateLayer != nil) {
 				hasCurrentState = true
@@ -64,7 +63,7 @@ var runSimulateKeynote = function() {
 				if (j == 0) { hasInitialState = true }
 				else if (!hasInitialState) {
 					var fakeFirstState = new State(mapStateLayer)
-					fakeFirstState.createHiddenState(artboardsNames[0])
+					fakeFirstState.createHiddenState([artboardsNames firstObject])
 					layer.addState(fakeFirstState)
 					hasInitialState = true
 				}
@@ -76,7 +75,7 @@ var runSimulateKeynote = function() {
 
 				if (hasPrevState) {
 					var fakeCloseState = new State(prevMapLayer)
-					fakeCloseState.createHiddenState(artboardsNames[j])
+					fakeCloseState.createHiddenState([artboardsNames objectAtIndex:j])
 					layer.addState(fakeCloseState)
 				}
 			}

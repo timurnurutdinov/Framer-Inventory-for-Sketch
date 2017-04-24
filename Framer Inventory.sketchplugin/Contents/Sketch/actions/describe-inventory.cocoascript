@@ -151,7 +151,7 @@ DescribeInventory.generateHandler = function() {
 	handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
 	handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
 	handlerDescription += tln() + tln() + "try" + ln()
-	handlerDescription += tln() + tln() + tln() + "item.animate(nextState)" + ln()
+	handlerDescription += tln() + tln() + tln() + "item.animate(nextState, curve: Spring(damping: 0.9), time: 0.5)" + ln()
 	handlerDescription += tln() + tln() + "catch error" + dln()
 
 	handlerDescription += getButtonName() + ".on Events.Click, ->" + ln()

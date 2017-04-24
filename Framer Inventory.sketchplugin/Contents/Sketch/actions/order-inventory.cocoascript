@@ -1,11 +1,11 @@
 
 
 var userSelection = nil
-var selectionMap = [,]
+var selectionMap = nil
 
-var artboardsIndexesArray = []
-var artboardsNamesArray = []
-var artboardsLayersArray = []
+var artboardsIndexesArray = nil
+var artboardsNamesArray = nil
+var artboardsLayersArray = nil
 
 
 var typeWarning = ""
@@ -14,11 +14,11 @@ function OrderInventory () {}
 
 OrderInventory.initSelection = function(selection) {
 	userSelection = selection
-	selectionMap = [,]
+	selectionMap = NSMutableDictionary.new()
 
-	artboardsIndexesArray = []
-	artboardsNamesArray = []
-	artboardsLayersArray = []
+	artboardsIndexesArray = NSMutableArray.new()
+	artboardsNamesArray = NSMutableArray.new()
+	artboardsLayersArray = NSMutableArray.new()
 
 	OrderInventory.composeSelectionMap()
 }
@@ -27,10 +27,7 @@ OrderInventory.removeArtboardsFromSelection = function(selection) {
 	var cleanSelection = NSMutableArray.new()
 	for (var i = 0; i < selection.count(); i++) {
 		var currentLayer = [selection objectAtIndex:i]
-		if (TypeInventory.isArtboardType([currentLayer className])) {
-			// skipped
-		}
-		else { [cleanSelection addObject:currentLayer] }
+		if (!TypeInventory.isArtboardType([currentLayer className])) { [cleanSelection addObject:currentLayer] }
 	}
 	return cleanSelection
 }
@@ -43,9 +40,11 @@ OrderInventory.getArtboardsNames = function() {
 	return artboardsNamesArray
 }
 
-OrderInventory.mapSize = function(map) {
-	return Object.keys(map).length
-}
+// OrderInventory.mapSize = function(map) {
+//
+// 	return map.count()
+// 	// return Object.keys(map).length
+// }
 
 OrderInventory.presentOrder = function(array) {
 	if (array == nil) { return }
@@ -65,16 +64,21 @@ OrderInventory.composeSelectionMap = function() {
 		if (TypeInventory.isSliceType(type)) { continue }
 		if (TypeInventory.isArtboardType(type)) { continue }
 
-		if (selectionMap[layerName] == nil || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) {
-			if (layerName != nil && type != nil) { selectionMap[layerName] = type }
+		// [defaults setObject:actionDates forKey:datesKey]
+		// dates = [selectionMap dictionaryForKey:layerName];
+
+		if ([selectionMap objectForKey:layerName] == nil || (TypeInventory.isGroupType([selectionMap objectForKey:layerName]) && TypeInventory.isGroupType(type))) {
+			if (layerName != nil && type != nil) { [selectionMap setObject:type forKey:layerName] }
 			else { if(showLog) { log("ERROR: Nil key or value for " + layer) } }
 		}
 		else {
-			var currentvalue = selectionMap[layerName]
-			if (![currentvalue isEqualToString:type]) {
+			var currentvalue = [selectionMap objectForKey:layerName]
+
+			if (currentvalue != nil && ![currentvalue isEqualToString:type]) {
 				typeWarning = layerName
 				if (showLog) { log("WARNING: Several types of " + layerName) }
 			}
+
 		}
 	}
 }
@@ -127,7 +131,7 @@ OrderInventory.isFound = function(layer) {
 	var layerName = [layer name]
 
 	if (TypeInventory.isSliceType(type)) { return false }
-	if ([type isEqualToString:selectionMap[layerName]] || (TypeInventory.isGroupType(selectionMap[layerName]) && TypeInventory.isGroupType(type))) { return true }
+	if ([type isEqualToString:[selectionMap objectForKey:layerName]] || (TypeInventory.isGroupType([selectionMap objectForKey:layerName]) && TypeInventory.isGroupType(type))) { return true }
 	return false
 }
 
@@ -172,27 +176,23 @@ OrderInventory.returnArtboardOrder = function(artboard) {
 
 
 OrderInventory.returnLayerMapFromArray = function(array) {
-	var map = [,]
+	var map = NSMutableDictionary.new()
 	if (array == nil) { return map }
 
 	for (var i = 0; i < array.count(); i++) {
 		var layerName = [[array objectAtIndex:i] name]
-		if (layerName != nil) {
-			map[layerName] = [array objectAtIndex:i]
-		}
+		if (layerName != nil) { [map setObject:[array objectAtIndex:i] forKey:layerName] }
 	}
 	return map
 }
 
 OrderInventory.returnIndexMapFromArray = function(array) {
-	var map = [,]
+	var map = NSMutableDictionary.new()
 	if (array == nil) { return map }
 
 	for (var i = 0; i < array.count(); i++) {
 		var layerName = [[array objectAtIndex:i] name]
-		if (layerName != nil) {
-			map[layerName] = i
-		}
+		if (layerName != nil) { [map setObject:i forKey:layerName] }
 	}
 	return map
 }
@@ -209,9 +209,9 @@ OrderInventory.returnUnorderedLayers = function() {
 		var localIndexMap = OrderInventory.returnIndexMapFromArray(localOrder)
 		var localLayerMap = OrderInventory.returnLayerMapFromArray(localOrder)
 
-		artboardsIndexesArray.push(localIndexMap)
-		artboardsLayersArray.push(localLayerMap)
-		artboardsNamesArray.push([artboard name])
+		[artboardsIndexesArray addObject:localIndexMap]
+		[artboardsLayersArray addObject:localLayerMap]
+		[artboardsNamesArray addObject:[artboard name]]
 
 		[globalOrder addObjectsFromArray:localOrder]
 	}
@@ -229,11 +229,12 @@ OrderInventory.currentPosition = function(a, b) {
 OrderInventory.analyseAveragePosition = function(baseLayer, currentLayer) {
 	var localScore = 0
 
-	for (var i = 0; i < artboardsIndexesArray.length; i++) {
-		var currentMap = artboardsIndexesArray[i]
+	for (var i = 0; i < artboardsIndexesArray.count(); i++) {
+		var currentMap = [artboardsIndexesArray objectAtIndex: i]
 
-		var baseLayerPosition = currentMap[[baseLayer name]]
-		var currentLayerPosition = currentMap[[currentLayer name]]
+
+		var baseLayerPosition = [currentMap objectForKey:[baseLayer name]]
+		var currentLayerPosition = [currentMap objectForKey:[currentLayer name]]
 		localScore += OrderInventory.currentPosition(baseLayerPosition, currentLayerPosition)
 	}
 

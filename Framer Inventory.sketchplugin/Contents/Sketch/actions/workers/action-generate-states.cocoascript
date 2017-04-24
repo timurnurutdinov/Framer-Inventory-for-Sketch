@@ -47,9 +47,9 @@ var runGenerateStates = function() {
 		var layerName = [currentLayer name]
 		var layer = new Layer(layerName)
 
-		for (var j = 0; j < artboardsMaps.length; j++) {
-				var currentMap = artboardsMaps[j]
-				var mapStateLayer = currentMap[layerName]
+		for (var j = 0; j < [artboardsMaps count]; j++) {
+				var currentMap = [artboardsMaps objectAtIndex:j]
+				var mapStateLayer = [currentMap objectForKey:layerName]
 				if (mapStateLayer != nil) { layer.composeState(mapStateLayer) }
 		}
 
