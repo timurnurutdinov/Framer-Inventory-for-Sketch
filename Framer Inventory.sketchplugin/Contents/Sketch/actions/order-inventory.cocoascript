@@ -1,7 +1,7 @@
 
 
 var userSelection = nil
-var selectionMap = nil
+var selectionDictionary = nil
 
 var artboardsIndexesArray = nil
 var artboardsNamesArray = nil
@@ -14,7 +14,7 @@ function OrderInventory () {}
 
 OrderInventory.initSelection = function(selection) {
 	userSelection = selection
-	selectionMap = NSMutableDictionary.new()
+	selectionDictionary = NSMutableDictionary.new()
 
 	artboardsIndexesArray = NSMutableArray.new()
 	artboardsNamesArray = NSMutableArray.new()
@@ -40,12 +40,6 @@ OrderInventory.getArtboardsNames = function() {
 	return artboardsNamesArray
 }
 
-// OrderInventory.mapSize = function(map) {
-//
-// 	return map.count()
-// 	// return Object.keys(map).length
-// }
-
 OrderInventory.presentOrder = function(array) {
 	if (array == nil) { return }
 	for (var i = 0; i < array.count(); i++) { log(i + ": " + [[array objectAtIndex:i] name]) } log("")
@@ -65,16 +59,16 @@ OrderInventory.composeSelectionMap = function() {
 		if (TypeInventory.isArtboardType(type)) { continue }
 
 		// [defaults setObject:actionDates forKey:datesKey]
-		// dates = [selectionMap dictionaryForKey:layerName];
+		// dates = [selectionDictionary dictionaryForKey:layerName];
 
-		if ([selectionMap objectForKey:layerName] == nil || (TypeInventory.isGroupType([selectionMap objectForKey:layerName]) && TypeInventory.isGroupType(type))) {
-			if (layerName != nil && type != nil) { [selectionMap setObject:type forKey:layerName] }
+		if ([selectionDictionary objectForKey:layerName] == nil || (TypeInventory.isGroupType([selectionDictionary objectForKey:layerName]) && TypeInventory.isGroupType(type))) {
+			if (layerName != nil && type != nil) { [selectionDictionary setObject:type forKey:layerName] }
 			else { if(showLog) { log("ERROR: Nil key or value for " + layer) } }
 		}
-		else {
-			var currentvalue = [selectionMap objectForKey:layerName]
+		else if (selectionDictionary.count() > 0) {
+			var currentType = [selectionDictionary objectForKey:layerName]
 
-			if (currentvalue != nil && ![currentvalue isEqualToString:type]) {
+			if (currentType != nil && ![currentType isEqualToString:type]) {
 				typeWarning = layerName
 				if (showLog) { log("WARNING: Several types of " + layerName) }
 			}
@@ -131,7 +125,7 @@ OrderInventory.isFound = function(layer) {
 	var layerName = [layer name]
 
 	if (TypeInventory.isSliceType(type)) { return false }
-	if ([type isEqualToString:[selectionMap objectForKey:layerName]] || (TypeInventory.isGroupType([selectionMap objectForKey:layerName]) && TypeInventory.isGroupType(type))) { return true }
+	if ([type isEqualToString:[selectionDictionary objectForKey:layerName]] || (TypeInventory.isGroupType([selectionDictionary objectForKey:layerName]) && TypeInventory.isGroupType(type))) { return true }
 	return false
 }
 
