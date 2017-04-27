@@ -1,7 +1,7 @@
 nice = new Layer width: 200*retina, height: 200*retina, x: 88*retina, backgroundColor: "rgba(80,227,194,1)"
 
-nice.states.add {
-	1: { y: 134*retina}
-	2: { y: 234*retina}
-}
-nice.states.switchInstant "1"
+nice.states =
+	"1": { y: 134*retina }
+	"2": { y: 234*retina }
+
+nice.stateSwitch("1")

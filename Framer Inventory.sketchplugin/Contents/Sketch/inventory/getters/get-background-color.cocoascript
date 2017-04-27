@@ -1,15 +1,16 @@
 var getBackgroundColors = function(layer) {
 	if (layer == nil) { return nil }
-	
+
 	var enabledFills = []
-	
+
 	var fillCollection = [[layer style] enabledFills]
 	for (var f = fillCollection.count() - 1; f >= 0; f--) {
 		var localFill = [fillCollection objectAtIndex:f]
-		var fill = [[localFill fillType], [[localFill color] alpha], [[localFill color] hexValue]]
+		var localHexValue = createHexString([[localFill color] red], [[localFill color] green], [[localFill color] blue])
+		var fill = [[localFill fillType], [[localFill color] alpha], localHexValue]
 		enabledFills.push(fill)
 	}
-	
+
 	if (enabledFills == '') { return nil }
 	return enabledFills
 }

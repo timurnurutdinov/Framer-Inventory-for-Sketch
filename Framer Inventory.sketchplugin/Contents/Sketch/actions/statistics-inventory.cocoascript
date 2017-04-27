@@ -1,0 +1,112 @@
+@import 'inventory/libs/pluginDefaults.js'
+// @import 'actions/demo-inventory.cocoascript'
+
+var analyticsLink = "https://www.google-analytics.com/collect?v=1&t=event&tid=UA-93026859-1"
+
+var simulateRequest = ["actions", "run", "simulate_scene", "1"]
+var generateRequest = ["actions", "run", "generate_states", "1"]
+var replicateRequest = ["actions", "run", "replicate_layers", "1"]
+
+var settingsOpenedRequest = ["settings", "open", "show_settings", "1"]
+var checkUpdatesRequest = ["settings", "open", "check_updates", "1"]
+
+var needLicenseRequest = ["license", "open", "ask_to_buy_pro", "1"]
+var trialStartedRequest = ["license", "start", "trial_started", "1"]
+var registeredUserRequest = ["license", "register", "registered_user", "1"]
+
+
+StatisticsInventory.getSupportLink = function() { return "https://twitter.com/framerinventory" }
+// StatisticsInventory.getDonateLink = function() { return "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E9XQYGEE5X4U2" }
+StatisticsInventory.buyLicenseLinkDemo = function() { return "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=demo_expired" }
+StatisticsInventory.buyLicenseLinkLicense = function() { return "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=buy_license" }
+StatisticsInventory.getUpdateDetailsLink = function() { return "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=download_update" }
+StatisticsInventory.getLearnLink = function() { return "https://medium.com/framer-inventory?utm_source=plugin&utm_medium=learn_more" }
+StatisticsInventory.getHelpLink = function() { return "https://medium.com/@tilllur/import-states-with-framer-inventory-plugin-for-sketch-e9ad6ebfeae7?utm_source=plugin&utm_medium=help" }
+StatisticsInventory.getVersionLink = function() { return "https://raw.githubusercontent.com/timurnurutdinov/Framer-Inventory-for-Sketch/master/Framer%20Inventory.sketchplugin/Contents/Sketch/manifest.json"}
+// "https://timurnurutdinov.github.io/framerinventory/version.json"
+
+function StatisticsInventory () {}
+
+
+StatisticsInventory.setStatus = function(status) {
+    statsDefauls.currentStatus = status
+    statsDefauls.actionSummary++
+    saveDefaults(Status.statsDomain(), statsDefauls)
+
+    if (status == Status.replicateID()) { StatisticsInventory.sendReplicateRequest() }
+    else if (status == Status.generateID()) { StatisticsInventory.sendGenerateRequest() }
+    else if (status == Status.simulateID()) { StatisticsInventory.sendSimulateRequest() }
+}
+
+StatisticsInventory.getStatus = function() {
+    return statsDefauls.currentStatus
+}
+
+
+
+StatisticsInventory.setToolbar = function(toolbarOpened) {
+   if (toolbarOpened) { statsDefauls.toolbar = 1 }
+   else { statsDefauls.toolbar = 0 }
+   saveDefaults(Status.statsDomain(), statsDefauls)
+}
+
+StatisticsInventory.getToolbar = function() {
+  if (statsDefauls.toolbar == 1) { return true }
+  return false
+}
+
+StatisticsInventory.startTesting = function() {
+    var username = NSUserName()
+    if([username isEqualToString:"tilllur"]) { statsDefauls.testing = 1 }
+    saveDefaults(Status.statsDomain(), statsDefauls)
+}
+
+StatisticsInventory.stopTesting = function() {
+    statsDefauls.testing = 0
+    saveDefaults(Status.statsDomain(), statsDefauls)
+}
+
+StatisticsInventory.isTesting = function() {
+  if (statsDefauls.testing == 1) { return true }
+  return false
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+StatisticsInventory.sendSimulateRequest = function() {
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(simulateRequest))
+}
+
+StatisticsInventory.sendGenerateRequest = function() {
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(generateRequest))
+}
+
+StatisticsInventory.sendReplicateRequest = function() {
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(replicateRequest))
+}
+
+
+
+
+StatisticsInventory.returnRequestURL = function(request) {
+    if (request == nil || request.length != 4) { return "" }
+    return analyticsLink + "&cid=" + userDefaults.myUserID + "&ec=" + request[0] + "&ea=" + request[1] + "&el=" + request[2] + "&ev=" + request[3]
+}
+
+StatisticsInventory.sendRequest = function(urlString) {
+  if (urlString == nil || urlString == "") { return }
+
+  var url = [NSURL URLWithString:urlString]
+  var analyticsTask = [[NSURLSession sharedSession] downloadTaskWithURL:url completionHandler:nil];
+  [analyticsTask resume];
+}

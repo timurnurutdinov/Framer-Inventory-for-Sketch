@@ -1,0 +1,557 @@
+
+function ViewInventory () {}
+
+ViewInventory.smileWarning = function() { return "⚠️ " }
+ViewInventory.smileDone = function() { return "👍🏻 " }
+ViewInventory.smileForget = function() { return "🙈" }
+
+ViewInventory.selectFramerFolderMessage = function() { return ViewInventory.smileWarning() + "Select Framer folder to continue" }
+ViewInventory.actionsLeftMessage = function() {
+  if (DemoInventory.isRegistered()) { return "" }
+  if (DemoInventory.actionsLeft() == 0) { return " No runs left today!" }
+  return " Runs left today: " + DemoInventory.actionsLeft()
+}
+
+ViewInventory.placeHolderImport = function() { return "" }
+ViewInventory.placeHolderScene = function() { return "Select Artboards with Exportables" }
+ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer folder" }
+
+ViewInventory.toolbarMessageParentGroup = function() { return "Relative to parent Group" }
+ViewInventory.toolbarMessageParentArtboard = function() { return "Relative to parent Artboard" }
+
+ViewInventory.registerActionMessageDone = function() { return "Succesfully registered to " + userDefaults.myEmail + " " + ViewInventory.smileDone() }
+ViewInventory.registerActionMessageWrong = function() { return "Wrong Email or License. Please, try again " + ViewInventory.smileWarning() }
+ViewInventory.registerActionMessageRemovedLicense = function() { return "License removed " + ViewInventory.smileForget() }
+
+ViewInventory.registeredStatusDone = function() { return "Registered to " + userDefaults.myEmail }
+ViewInventory.registeredStatusNone = function() { return "Unregistered. No runs left for today –>" }
+ViewInventory.registeredStatusLeft = function() {
+    if (DemoInventory.actionsLeft() == 0) { return ViewInventory.registeredStatusNone() }
+    return "Unregistered. Runs left today: " + DemoInventory.actionsLeft()
+}
+
+ViewInventory.exportPrototypesSelectionError = function() { return ViewInventory.smileWarning() + " Please, \"Make Exportable\" some layers on artboards" }
+
+
+
+ViewInventory.colorBlack = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1] }
+ViewInventory.colorWhite = function() { return [NSColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1] }
+ViewInventory.colorVersion = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.3] }
+ViewInventory.colorBackground = function() { return [NSColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1] }
+ViewInventory.colorTitle = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5] }
+ViewInventory.colorWindow = function() { return [NSColor colorWithRed:0.92 green:0.92 blue:0.92 alpha:1] }
+
+ViewInventory.fontCheckControls = function() { return [NSFont systemFontOfSize:12 weight:NSFontWeightRegular] }
+ViewInventory.fontInputControls = function() { return [NSFont systemFontOfSize:12 weight:NSFontWeightMedium] }
+ViewInventory.fontAccessory = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightBold] }
+ViewInventory.fontActionButton = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightMedium] }
+ViewInventory.fontRadioButton = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightRegular] }
+ViewInventory.fontSelection = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightMedium] }
+
+
+// Buttons
+ViewInventory.layersButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.layersButton = function() { return NSMakeRect(6, 5, 38, 18) }
+ViewInventory.layersButtonSeveral = function() { return NSMakeRect(6, 5, 43, 18) }
+
+ViewInventory.statesButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.statesButton = function() { return NSMakeRect(48, 5, 86, 18) }
+ViewInventory.statesButtonSeveral = function() { return NSMakeRect(53, 5, 86, 18) }
+ViewInventory.statesButtonSelected = function() { return NSMakeRect(6, 5, 90, 18) }
+ViewInventory.statesButtonSelectedSelected = function() { return NSMakeRect(6, 5, 139, 18) }
+
+ViewInventory.sceneButton = function() { return NSMakeRect(6, 5, 105, 18) }
+ViewInventory.sceneButtonSelected = function() { return NSMakeRect(6, 5, 130, 18) }
+
+ViewInventory.moreButtonNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.moreButton = function() { return NSMakeRect(169, 5, 21, 18) }
+
+ViewInventory.emptyPlaceholderNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.emptyPlaceholder = function() { return NSMakeRect(6, 5, 184, 32) }
+
+ViewInventory.expiredPlaceholderNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.expiredPlaceholder = function() { return NSMakeRect(6, 5, 184, 32) }
+
+ViewInventory.expiredScenePlaceholderNone = function() { return NSMakeRect(0, 0, 0, 0) }
+ViewInventory.expiredScenePlaceholder = function() { return NSMakeRect(6, 5, 184, 32) }
+
+
+
+
+ViewInventory.adoptButtonsNone = function(layersButton, statesButton, images) {
+    layersButton.frame = ViewInventory.layersButtonNone()
+    statesButton.frame = ViewInventory.statesButtonNone()
+}
+
+ViewInventory.adaptButtonsBase = function(layersButton, statesButton, images) {
+    layersButton.frame = ViewInventory.layersButton()
+    statesButton.frame = ViewInventory.statesButton()
+    layersButton.setImage(images[0])
+    statesButton.setImage(images[2])
+}
+
+ViewInventory.adaptButtonsSeveral = function(layersButton, statesButton, images) {
+    layersButton.frame = ViewInventory.layersButtonSeveral()
+    statesButton.frame = ViewInventory.statesButtonSeveral()
+    layersButton.setImage(images[1])
+    statesButton.setImage(images[3])
+}
+
+ViewInventory.adaptButtonsSelected = function(layersButton, statesButton, images) {
+    layersButton.frame = ViewInventory.layersButtonNone()
+    statesButton.frame = ViewInventory.statesButtonSelected()
+    statesButton.setImage(images[4])
+}
+
+ViewInventory.adaptButtonsSelectedSeveral = function(layersButton, statesButton, images) {
+    layersButton.frame = ViewInventory.layersButtonNone()
+    statesButton.frame = ViewInventory.statesButtonSelectedSelected()
+    statesButton.setImage(images[5])
+}
+
+ViewInventory.adoptSceneButtons = function(sceneButton, images) {
+    sceneButton.frame = ViewInventory.sceneButton()
+    sceneButton.setImage(images[6])
+}
+
+ViewInventory.adoptSceneButtonsSelected = function(sceneButton, images) {
+  sceneButton.frame = ViewInventory.sceneButtonSelected()
+  sceneButton.setImage(images[7])
+}
+
+
+ViewInventory.returnButtonsImages = function() {
+    var image0 = ViewInventory.getImage(ViewInventory.layersButton(), "toolbar/layers")
+    var image1 = ViewInventory.getImage(ViewInventory.layersButtonSeveral(), "toolbar/layers several")
+
+    var image2 = ViewInventory.getImage(ViewInventory.statesButton(), "toolbar/states")
+    var image3 = ViewInventory.getImage(ViewInventory.statesButtonSeveral(), "toolbar/states several")
+    var image4 = ViewInventory.getImage(ViewInventory.statesButtonSelected(), "toolbar/states selected")
+    var image5 = ViewInventory.getImage(ViewInventory.statesButtonSelectedSelected(), "toolbar/states selected several")
+
+    var image6 = ViewInventory.getImage(ViewInventory.sceneButton(), "toolbar/simulate")
+    var image7 = ViewInventory.getImage(ViewInventory.sceneButtonSelected(), "toolbar/simulate selected")
+
+    var image8 = ViewInventory.getImage(ViewInventory.sceneButton(), "toolbar/parent artboard")
+    var image9 = ViewInventory.getImage(ViewInventory.sceneButton(), "toolbar/parent group")
+
+    return [image0, image1, image2, image3, image4, image5, image6, image7, image8, image9]
+}
+
+ViewInventory.updateRelativeButton = function(relativeButton, images) {
+    var userDefaults2 = initDefaults(Status.userDomain(), userPresets)
+    if (userDefaults2.myRelativeGroup == 0) { relativeButton.setImage(images[8]) }
+    else { relativeButton.setImage(images[9]) }
+}
+
+ViewInventory.adoptMoreNone = function(moreImage, moreAccessory) {
+    moreImage.frame = ViewInventory.moreButtonNone()
+    moreAccessory.frame = ViewInventory.moreButtonNone()
+}
+
+ViewInventory.adoptMore = function(moreImage, moreAccessory) {
+    moreImage.frame = ViewInventory.moreButton()
+    moreAccessory.frame = ViewInventory.moreButton()
+}
+
+ViewInventory.adoptEmptySelectionNone = function(emptyView) {
+    emptyView.frame = ViewInventory.emptyPlaceholderNone()
+}
+
+ViewInventory.adoptEmptySelection = function(emptyView) {
+    emptyView.frame = ViewInventory.emptyPlaceholder()
+}
+
+ViewInventory.adoptExpiredSelectionNone = function(expiredView) {
+    expiredView.frame = ViewInventory.expiredPlaceholderNone()
+}
+
+ViewInventory.adoptExpiredSelection = function(expiredView) {
+    expiredView.frame = ViewInventory.expiredPlaceholder()
+}
+
+ViewInventory.adoptExpiredSceneNone = function(expiredView) {
+    expiredView.frame = ViewInventory.expiredScenePlaceholderNone()
+    log(ViewInventory.expiredScenePlaceholderNone())
+}
+
+ViewInventory.adoptExpiredScene = function(expiredView) {
+    expiredView.frame = ViewInventory.expiredScenePlaceholder()
+    log(ViewInventory.expiredScenePlaceholder())
+}
+
+
+
+ViewInventory.sizeWindowHeight = function() { return 94 }
+ViewInventory.sizeWindowWidth = function() { return 196 }
+
+ViewInventory.sizeModalWidth = function() { return 240 }
+ViewInventory.sizeModalSmall = function() { return 212 }
+ViewInventory.sizeModalLicense = function() { return 268 }
+ViewInventory.sizeModalSettings = function() { return 300 }
+
+
+ViewInventory.getImage = function(size, name) {
+    var isRetinaDisplay = (NSScreen.mainScreen().backingScaleFactor() > 1)? true: false;
+    var suffix = (isRetinaDisplay)? "@2x": "";
+    var imageURL = NSURL.fileURLWithPath(pluginPath + "/images/" + name + suffix + ".png");
+    var image = NSImage.alloc().initWithContentsOfURL(imageURL);
+    return image
+}
+
+ViewInventory.addButton = function(rect, name, callAction) {
+    var button = NSButton.alloc().initWithFrame(rect);
+    var image = ViewInventory.getImage(rect.size, name);
+
+    button.setImage(image);
+    button.setBordered(false);
+    button.sizeToFit();
+    button.setButtonType(NSMomentaryChangeButton);
+    button.setCOSJSTargetFunction(callAction);
+    button.setAction("callAction:");
+    return button;
+}
+
+ViewInventory.addImage = function(rect, name) {
+    var view = NSImageView.alloc().initWithFrame(rect)
+    var image = ViewInventory.getImage(rect.size, name);
+    view.setImage(image);
+    return view;
+}
+
+
+ViewInventory.optimiseFramerPath = function() {
+    return userDefaults.exportFramerFolder.split("/").pop().split(".framer")[0]
+}
+
+
+
+
+
+
+
+
+ViewInventory.getEmptyToolbarViews = function() {
+    // var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(42, 16, 160, 32)];
+    // [saveButton setTitle:"Select Framer Folder"];
+    // [saveButton setBezelStyle:NSRoundedBezelStyle];
+    // [saveButton setKeyEquivalent:"\r"];
+    // [saveButton setCOSJSTargetFunction:function(sender) {
+    //     ToolbarInventory.updateContext();
+    //     FramerInventory.runSelectProjectFolder()
+    //     ToolbarInventory.setContentView()
+    // }];
+    // [saveButton setAction:"callAction:"];
+
+
+    var saveButton = ViewInventory.addButton( NSMakeRect(28, 12, 140, 20), "toolbar/empty select",
+        function(sender){
+          ToolbarInventory.updateContext();
+          FramerInventory.runSelectProjectFolder()
+          ToolbarInventory.setContentView()
+    })
+
+    [[saveButton cell] setShowsStateBy:NSNoCellMask]
+    [[saveButton cell] setHighlightsBy:NSNoCellMask]
+
+    var emptyText = ViewInventory.addImage(NSMakeRect(22, 40, 152, 27), "toolbar/empty text")
+    var emptyLogo = ViewInventory.addImage(NSMakeRect(6, 72, 13, 17), "toolbar/empty logo")
+
+    return [emptyText, emptyLogo, saveButton]
+}
+
+
+
+
+ViewInventory.getImportViews = function() {
+    var layersButton = ViewInventory.addButton( NSMakeRect(8, 9, 50, 18), "toolbar/layer",
+        function(sender){
+            ToolbarInventory.updateContext();
+            runReplicateLayers()
+    })
+
+    var statesButton = ViewInventory.addButton( NSMakeRect(64, 9, 70, 18), "toolbar/all states",
+        function(sender){
+            ToolbarInventory.updateContext();
+            runGenerateStates()
+    })
+
+
+    var changeModeButton = ViewInventory.addButton( NSMakeRect(5, 46, 37, 20), "toolbar/import",
+        function(sender){
+            ToolbarInventory.changeContentView();
+    })
+
+    [[changeModeButton cell] setShowsStateBy:NSNoCellMask]
+    [[changeModeButton cell] setHighlightsBy:NSNoCellMask]
+
+
+
+    var relativeButton = ViewInventory.addButton( NSMakeRect(168, 46, 23, 20), "toolbar/parent artboard",
+        function(sender) {
+          if (userDefaults.myRelativeGroup == 0) { userDefaults.myRelativeGroup = 1 }
+          else { userDefaults.myRelativeGroup = 0 }
+
+          saveDefaults(Status.userDomain(), userDefaults)
+          ToolbarInventory.updateAccessoryControls();
+
+          // if (currentDocument != nil) {
+          //   if (userDefaults.myRelativeGroup == 0) { [currentDocument showMessage:ViewInventory.toolbarMessageParentArtboard()] }
+          //   else { [currentDocument showMessage:ViewInventory.toolbarMessageParentGroup()] }
+          // }
+    })
+
+    [[relativeButton cell] setShowsStateBy:NSNoCellMask]
+    [[relativeButton cell] setHighlightsBy:NSNoCellMask]
+
+    var moreButtons = ViewInventory.getMoreButtons()
+    var emptyPlaceholderView = ViewInventory.addImage(ViewInventory.emptyPlaceholder(), "toolbar/empty selection")
+    var expiredPlaceholderView = ViewInventory.addButton(ViewInventory.expiredPlaceholderNone(), "toolbar/expired selection",
+        function(sender){
+          showExpiredModal()
+    })
+
+    return [layersButton, statesButton, relativeButton, moreButtons[0], moreButtons[1], changeModeButton, emptyPlaceholderView, expiredPlaceholderView]
+}
+
+ViewInventory.getSceneViews = function() {
+
+    var changeModeButton = ViewInventory.addButton( NSMakeRect(5, 46, 37, 20), "toolbar/scene",
+        function(sender){
+            ToolbarInventory.changeContentView();
+    })
+
+    [[changeModeButton cell] setShowsStateBy:NSNoCellMask]
+    [[changeModeButton cell] setHighlightsBy:NSNoCellMask]
+
+
+    var sceneButton = ViewInventory.addButton(ViewInventory.sceneButton(), "toolbar/simulate",
+        function(sender){
+            ToolbarInventory.updateContext();
+            runSimulateKeynote()
+    })
+
+    var expiredPlaceholderView = ViewInventory.addButton(ViewInventory.expiredScenePlaceholderNone(), "toolbar/expired scene",
+        function(sender){
+          showExpiredModal()
+    })
+
+    return [changeModeButton, sceneButton, expiredPlaceholderView]
+}
+
+
+
+
+ViewInventory.getGeneralToolbarViews = function() {
+    var backgroundView = ViewInventory.addImage(NSMakeRect(0, 0, 0, 0), "toolbar/background")
+    var optionsView = ViewInventory.addImage(NSMakeRect(0, 42, ViewInventory.sizeWindowWidth(), 28), "toolbar/options")
+
+    var addButton = ViewInventory.addButton( NSMakeRect(19, 74, 14, 15), "toolbar/add",
+        function(sender){
+            ToolbarInventory.updateContext();
+            FramerInventory.runSelectProjectFolder()
+            ToolbarInventory.setContentView()
+    })
+    var removeButton = ViewInventory.addButton( NSMakeRect(5, 74, 15, 15), "toolbar/remove",
+        function(sender){
+            ToolbarInventory.updateContext();
+            FramerInventory.runRemoveProjectFolder()
+            ToolbarInventory.setContentView()
+    })
+
+
+    var deviceAccessory = NSPopUpButton.alloc().initWithFrame(NSMakeRect(46, 46, 119, 20))
+    [[deviceAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
+    var devices = ScaleInventory.returnDevices()
+    for (var i = 0; i < devices.length; i++) {
+        deviceAccessory.addItemsWithTitles(devices[i])
+        if (i != devices.length - 1) { [[deviceAccessory menu] addItem:[NSMenuItem separatorItem]] }
+    }
+    deviceAccessory.selectItemAtIndex(ScaleInventory.deviceToSelect(userDefaults.myDevice))
+    [deviceAccessory setFont:ViewInventory.fontAccessory()];
+
+    deviceAccessory.setCOSJSTargetFunction(function(sender){
+        userDefaults.myDevice = ScaleInventory.selectedDeviceIndex(deviceAccessory.indexOfSelectedItem())
+        saveDefaults(Status.userDomain(), userDefaults)
+        ToolbarInventory.updateAccessoryControls()
+    })
+
+    // return [backgroundView, optionsView, moreButtonUnderImage, addButton, removeButton, moreButton, deviceAccessory]
+    return [backgroundView, optionsView, addButton, removeButton, deviceAccessory]
+}
+
+
+ViewInventory.createImportPanel = function() {
+  var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight())];
+
+  var views = ViewInventory.getGeneralToolbarViews()
+  for (var i = 0; i < views.length; i++) { view.addSubview(views[i]) }
+
+  var closeViews = ViewInventory.getCloseToolbarViews()
+  for (var i = 0; i < closeViews.length; i++) { view.addSubview(closeViews[i]) }
+
+  var importViews = ViewInventory.getImportViews()
+  for (var i = 0; i < importViews.length; i++) { view.addSubview(importViews[i]) }
+
+  var labels = ViewInventory.getLabels(ViewInventory.placeHolderImport())
+  for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
+
+  return [view, labels[0], labels[1], importViews[0], importViews[1], importViews[2], views[4], importViews[3], importViews[4], importViews[6], importViews[7]]
+}
+
+
+ViewInventory.createScenePanel = function() {
+  var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight())];
+
+  var views = ViewInventory.getGeneralToolbarViews()
+  for (var i = 0; i < views.length; i++) { view.addSubview(views[i]) }
+
+  var closeViews = ViewInventory.getCloseToolbarViews()
+  for (var i = 0; i < closeViews.length; i++) { view.addSubview(closeViews[i]) }
+
+  var sceneViews = ViewInventory.getSceneViews()
+  for (var i = 0; i < sceneViews.length; i++) { view.addSubview(sceneViews[i]) }
+
+  var labels = ViewInventory.getLabels(ViewInventory.placeHolderScene())
+  for (var i = 0; i < labels.length; i++) { view.addSubview(labels[i]) }
+
+  return [view, labels[0], labels[1], views[4], sceneViews[1], sceneViews[2]]
+}
+
+
+
+
+ViewInventory.createEmptyPanel = function() {
+  var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, ViewInventory.sizeWindowWidth(), ViewInventory.sizeWindowHeight())];
+
+  var views = ViewInventory.getEmptyToolbarViews()
+  for (var i = 0; i < views.length; i++) { view.addSubview(views[i]) }
+
+  var closeViews = ViewInventory.getCloseToolbarViews()
+  for (var i = 0; i < closeViews.length; i++) { view.addSubview(closeViews[i]) }
+
+  return view
+}
+
+
+ViewInventory.getCloseToolbarViews = function() {
+    var closeButton = ViewInventory.addButton(NSMakeRect(175, 74, 15, 15), "toolbar/close",
+        function(sender){
+            coscript.setShouldKeepAround(false)
+            ToolbarInventory.returnInstance().returnPanel().close();
+            ToolbarInventory.updateClassInstance(nil)
+            ToolbarInventory.removeInstance()
+        }
+    )
+
+    var settingsButton = ViewInventory.addButton( NSMakeRect(158, 74, 15, 15), "toolbar/settings",
+        function(sender){
+            ToolbarInventory.updateContext();
+            runSettings()
+    })
+    return [closeButton, settingsButton]
+}
+
+ViewInventory.getLabels = function(placeHolderText) {
+  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(38, 70, 120, 20)];
+  [pathLabel setEditable:false];
+  [pathLabel setBordered:false];
+  [pathLabel setFont:ViewInventory.fontCheckControls()];
+  [pathLabel setTextColor:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
+  [pathLabel setDrawsBackground:false];
+  [pathLabel setStringValue:ViewInventory.placeHolderSelectPath()];
+
+  var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(5, 23, 184, 16)];
+  [selectionLabel setEditable:false];
+  [selectionLabel setBordered:false];
+  [selectionLabel setFont:ViewInventory.fontSelection()];
+  [selectionLabel setTextColor:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
+  [selectionLabel setDrawsBackground:false];
+  [selectionLabel setStringValue:placeHolderText];
+
+  return [pathLabel, selectionLabel]
+}
+
+
+ViewInventory.getMoreButtons = function() {
+  var moreButtonUnderImage = ViewInventory.addImage(ViewInventory.moreButton(), "toolbar/more")
+
+  var moreButton = NSPopUpButton.alloc().initWithFrame(ViewInventory.moreButton())
+  [[moreButton cell] setArrowPosition:false];
+  [moreButton setBordered:false];
+  [moreButton setImagePosition:NSImageOnly];
+  // [moreButton setImagePosition:NSImageOverlaps];
+  [[moreButton cell] setBackgroundColor:[NSColor redColor]];
+
+  var additionalActions = [["Add Selection to Pasteboard", "Copy Selection to Pasteboard"],["Rename Automatically"], ["Shown/hidden state"]]
+  for (var i = 0; i < additionalActions.length; i++) {
+      moreButton.addItemsWithTitles(additionalActions[i])
+      if (i != additionalActions.length - 1) { [[moreButton menu] addItem:[NSMenuItem separatorItem]] }
+  }
+
+  [[moreButton cell] setUsesItemFromMenu:false];
+
+  var item = [[NSMenuItem allocWithZone:nil] initWithTitle:"" action:nil keyEquivalent:""];
+  [item setImage:nil];
+  [item setOnStateImage:nil];
+  [item setState:NSOffState]
+  [item setMixedStateImage:nil];
+  [[moreButton cell] setMenuItem:item];
+  [moreButton setPreferredEdge:NSMinXEdge];
+  moreButton.selectItemAtIndex(-1)
+
+  moreButton.setCOSJSTargetFunction(function(sender){
+      ToolbarInventory.updateContext();
+
+      if (moreButton.indexOfSelectedItem() == 0) {
+          var selectionArray = FramerInventory.arrayDescribeSelection()
+
+          var myPasteboard  = [NSPasteboard generalPasteboard];
+          var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
+
+          if (myString == null) { myString = "" }
+          var pasteboardContent = myString + selectionArray
+          [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+          [currentDocument showMessage:"Added"]
+      }
+      else if (moreButton.indexOfSelectedItem() == 1) {
+          var selectionArray = FramerInventory.arrayDescribeSelection()
+          [[NSPasteboard generalPasteboard] setString:selectionArray forType:NSStringPboardType];
+          [currentDocument showMessage:"Replaced Pasteboard!"]
+      }
+      else if (moreButton.indexOfSelectedItem() == 3) {
+          [currentDocument showMessage:"Rename?"]
+      }
+      else if (moreButton.indexOfSelectedItem() == 5) {
+          // log("gonna try states")
+          ToolbarInventory.updateContext();
+          runReplicateLayers()
+
+          var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
+          var selectedLayers = selectionInventoryInstance.layers
+          if (selectedLayers == nil || selectedLayers.count() == 0) { return "" }
+
+          var layerBase = [selectedLayers firstObject]
+          var stateString = ""
+          stateString += GenerateInventory.clearName([layerBase name])
+          stateString += ".states =" + ln()
+          stateString += tln() + "\"shown\": { opacity: 1 }" + ln()
+          stateString+= tln() + "\"hidden\": { opacity: 0 }" + ln() + ln()
+          stateString += GenerateInventory.clearName([layerBase name])
+          stateString += ".stateSwitch(\"shown\")" + dln()
+
+          var myPasteboard  = [NSPasteboard generalPasteboard];
+          var myString = [myPasteboard  stringForType:NSPasteboardTypeString];
+
+          if (myString == null) { myString = "" }
+          var pasteboardContent = myString + stateString
+          [[NSPasteboard generalPasteboard] setString:pasteboardContent forType:NSStringPboardType];
+          [currentDocument showMessage:"Added"]
+      }
+
+      moreButton.selectItemAtIndex(-1)
+      // log(ToolbarInventory.toolbarMode())
+  })
+
+  return [moreButtonUnderImage, moreButton]
+}

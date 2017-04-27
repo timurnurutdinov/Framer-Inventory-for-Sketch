@@ -1,32 +1,32 @@
+@import 'lib.js'
+@import 'selection-changed-action.cocoascript'
+
 @import 'actions/order-inventory.cocoascript'
+// @import 'actions/statistics-inventory.cocoascript'
+@import 'actions/scale-inventory.cocoascript'
 
 @import 'actions/workers/action-replicate-layers.cocoascript'
+@import 'actions/workers/action-show-bar.cocoascript'
 @import 'actions/workers/action-generate-states.cocoascript'
 @import 'actions/workers/action-simulate-keynote.cocoascript'
+
 @import 'actions/workers/action-testing-environment.cocoascript'
 @import 'actions/workers/action-settings.cocoascript'
 
+@import 'actions/workers/modals/action-check-updates.cocoascript'
+@import 'actions/workers/modals/action-select-duplicated-artboards.cocoascript'
+@import 'actions/workers/modals/action-select-folder.cocoascript'
+@import 'actions/workers/modals/action-demo-expired.cocoascript'
+@import 'actions/workers/modals/action-enter-license.cocoascript'
+@import 'actions/workers/modals/action-remove-license.cocoascript'
+
+
 @import 'inventory/classes/layer.cocoascript'
 @import 'inventory/libs/pluginDefaults.js'
-// @import 'inventory/libs/search.js'
 
-var presets = {
-	myRetinaEnabled: 0,
-	myRetinaValue: 1,
-    myRetinaString: "retina",
-	myMobile: 1,
-	myMinimalExport: 1,
-	myAutoplay: 0
-}
 
-var pluginDomain = "com.addleimb.framer-inventory.retina"
-var userDefaults = initDefaults(pluginDomain, presets)
 
-var currentDocument = nil
 var usedStates = []
-
-var pluginPath = ""
-var methodStartTime = nil
 
 var pixelDensity = 1
 var phoneModel = 0
@@ -35,44 +35,25 @@ var exportPageRequired = false
 var exportPageName = "Export for Framer Inventory"
 
 var contextUserSelection = NSArray.new()
+var scaleInstance = nil
 
 
-var chooseAction = function(context, actionIdentifier, testing) {
-	pluginPath = context.scriptPath.substring(0, context.scriptPath.lastIndexOf("/"))
-	methodStartTime = [NSDate date]
-	
-	if (showLog) { log("Current document is initialised") }
-	FramerInventory.initCurrentDocument(context)
-
-	if (testing) {
-		if (showLog) { log("Starting Testing Environment...") }
-		runTestingEnvironment(context)
-	}
-	else {
-		if (actionIdentifier == 0) {
-			if (showLog) { log("Starting Replicating Layers...") }
-			runReplicateLayers(context)
-		}
-		else if (actionIdentifier == 1) {
-			if (showLog) { log("Starting Analysing States...") }
-			runGenerateStates(context)
-		}
-		else if (actionIdentifier == 2) {
-			if (showLog) { log("Starting Simulating Keynote...") }
-			runSimulateKeynote(context)
-		}
-		else if (actionIdentifier == 3) {
-			if (showLog) { log("Starting Settings...") }
-			runSettings(context)
-		}
-		else if (actionIdentifier == 4) {
-			FramerInventory.showDoneMessage()
-		}
-		else {
-			if (showLog) { log("ERROR: Action is undetermined") }
-		}
-	}
-}
+// var chooseAction = function(localDocument, localSelection, actionIdentifier) {
+// 	methodStartTime = [NSDate date]
+//
+// 	if (actionIdentifier == 0) { runReplicateLayers() }
+// 	else if (actionIdentifier == 1) { runGenerateStates() }
+// 	else if (actionIdentifier == 2) { runSimulateKeynote() }
+// 	else if (actionIdentifier == 3) { runSettings() }
+// 	else if (actionIdentifier == 4) { FramerInventory.showDoneMessage() }
+// 	else if (actionIdentifier == runShowProjectFolderIdentifier) { FramerInventory.runShowProjectFolder() }
+// 	else if (actionIdentifier == 6) { FramerInventory.runSelectProjectFolder() }
+// 	else if (actionIdentifier == 7) { FramerInventory.runRemoveProjectFolder() }
+// 	else if (actionIdentifier == 8) { ToolbarInventory.createUIBar() }
+// 	else if (actionIdentifier == runCheckUpdatesIdentifier) { runCheckUpdates()	}
+// 	else if (actionIdentifier == runTestingEnvironmentIdentifier) { runTestingEnvironment() }
+// 	else if (showLog) { log("ERROR: Action is undetermined") }
+// }
 
 
 
@@ -87,6 +68,10 @@ FramerInventory.initCurrentDocument = function(context) {
 	currentDocument = context.document
 }
 
+FramerInventory.initCurrentSelection = function(context) {
+	currentDocument = context.document.selectedLayers()
+}
+
 FramerInventory.getCurrentPage = function () {
 	return [currentDocument currentPage]
 }
@@ -94,6 +79,77 @@ FramerInventory.getCurrentPage = function () {
 FramerInventory.deselectLayers = function() {
 	[[currentDocument currentPage] deselectAllLayers]
 }
+
+FramerInventory.returnArtboardsScope = function() {
+		var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
+		var type = selectionInventoryInstance.type
+		if (type == 2 || type == 4) { return FramerInventory.orderArtboardsScope(selectionInventoryInstance.artboards) }
+		else if (type == 6) { return selectionInventoryInstance.artboards }
+		return FramerInventory.getCurrentPage().artboards()
+}
+
+FramerInventory.sameArtboards = function(artboard1, artboard2) {
+		if (![[artboard1 className] isEqualToString:[artboard2 className]]) { return false }
+		if (![[artboard1 name] isEqualToString:[artboard2 name]]) { return false }
+		if ([artboard1 hash] != [artboard2 hash]) { return false }
+		return true
+}
+
+FramerInventory.orderArtboardsScope = function(artboardsScope) {
+		// return artboardsScope
+		// TODO: IMPROVE TO CHECK BOTH: HASH & NAME
+
+		var artboards = FramerInventory.getCurrentPage().artboards()
+		var existanceMap = [,]
+		var orderedScope = NSMutableArray.new()
+
+		for (var i = 0; i < artboards.count(); i++) {
+				var currentArtboardName = [[artboards objectAtIndex:i] hash]
+				existanceMap[currentArtboardName] = 0
+		}
+
+		for (var i = 0; i < artboardsScope.count(); i++) {
+				var currentArtboardName = [[artboardsScope objectAtIndex:i] hash]
+				existanceMap[currentArtboardName] = 1
+		}
+
+		var index = 0
+		for (key in existanceMap) {
+			var value = existanceMap[key]
+			if (value > 0) { [orderedScope addObject:[artboards objectAtIndex:index]] }
+			index++
+		}
+
+		return orderedScope
+}
+
+FramerInventory.exportLayersFromExportPage = function(oldPage) {
+		if (userDefaults.exportFramerFolder == "") { return }
+		var framerInvetoryPage = FramerInventory.addExportPageAndReturn(oldPage)
+		currentDocument.setCurrentPage(framerInvetoryPage);
+
+		var exportPageLayers = [framerInvetoryPage layers]
+		for (var i = 0; i < [exportPageLayers count]; i++) {
+				var currentLayer = [exportPageLayers objectAtIndex: i]
+				var ancestry = MSImmutableLayerAncestry.ancestryWithMSLayer(currentLayer)
+    		var maybeRect = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
+
+				var request = MSExportRequest.new()
+    		request.rect = maybeRect
+				var exportSizes = [[[currentLayer exportOptions] exportFormats] firstObject]
+    		request.scale = exportSizes.scale()
+	    	request.includeArtboardBackground = false
+		    request.configureForLayer(ancestry)
+
+
+				var projectPath = [currentLayer name]
+				var fileName = "/" + GenerateInventory.removePath(projectPath) + ".png"
+				var imageExportPath = userDefaults.exportFramerFolder + "/images" + fileName
+				[currentDocument saveArtboardOrSlice:request toFile:imageExportPath]
+		}
+		currentDocument.setCurrentPage(oldPage);
+}
+
 
 FramerInventory.addExportPageAndReturn = function(oldPage) {
 	var newPage = nil
@@ -122,7 +178,7 @@ FramerInventory.addExportPageAndReturn = function(oldPage) {
 FramerInventory.cleanExportPage = function() {
 	var exportPage = FramerInventory.findPageWithName(exportPageName)
 	var exportableLayers = [exportPage exportableLayers]
-	
+
 	for (var i = 0; i < exportableLayers.count(); i++) {
 		[[exportableLayers objectAtIndex: i] removeFromParent]
 	}
@@ -131,12 +187,12 @@ FramerInventory.cleanExportPage = function() {
 FramerInventory.removePage = function(pageName) {
 	var oldPage = [currentDocument currentPage]
 	var pages = [currentDocument pages]
-	
+
 	for (var i = 0; i < pages.count(); i++) {
 		var page = [pages objectAtIndex: i]
 		if ([page name] == pageName) { [currentDocument removePage:page] }
 	}
-	
+
 	currentDocument.setCurrentPage(oldPage)
 }
 
@@ -151,20 +207,22 @@ FramerInventory.findPageWithName = function(pageName) {
 FramerInventory.returnDuplicatedArtboards = function(artboards) {
 	for (var i = 0; i < artboards.count(); i++) {
 		var current = [artboards objectAtIndex:i]
-		
+		var currentName = [current name]
+
 		for (var j = 0; j < i; j++) {
 			var comparableCurrent = [artboards objectAtIndex:j]
-			if ([current name] == [comparableCurrent name]) { return comparableCurrent }
+			var comparableName = [comparableCurrent name]
+			if ([currentName isEqualToString:comparableName]) { return comparableCurrent }
 		}
 	}
-	
+
 	return nil
 }
 
 FramerInventory.cleanLayer = function(layer, page) {
 	// var pageLayers = [[page layers] array]
 	var pageLayers = [page layers]
-	
+
 	for (var i = 0; i < pageLayers.count(); i++) {
 		var currentLayer = [pageLayers objectAtIndex: i]
 		var layerName = [currentLayer name]
@@ -176,6 +234,38 @@ FramerInventory.cleanLayer = function(layer, page) {
 }
 
 
+FramerInventory.cleanExportFolderPath = function(rawPath) {
+	var pathComps = rawPath.split("/");
+	var lastPart = pathComps.pop();
+	if (lastPart == "images") {
+			var realFolderPath = ""
+			for (var i = 0; i < pathComps.length; i++) {
+					if (pathComps[i] != "") { realFolderPath += ("/" + pathComps[i]) }
+			}
+			return realFolderPath
+	}
+	return rawPath
+}
+
+FramerInventory.getExportPath = function() {
+    // var filePath = userDefaults.exportFramerFolder
+    // var fileName = currentDocument.displayName().stringByDeletingPathExtension();
+    var openPanel = NSOpenPanel.openPanel();
+
+    openPanel.setTitle("Select Images Folder");
+    openPanel.setPrompt("Select Folder");
+    openPanel.setCanCreateDirectories(false);
+    openPanel.setCanChooseDirectories(true);
+		openPanel.setCanChooseFiles(false);
+    openPanel.setNameFieldStringValue("");
+
+    if (openPanel.runModal() != NSOKButton) { return false; }
+
+    userDefaults.exportFramerFolder = FramerInventory.cleanExportFolderPath(openPanel.URL().path())
+		saveDefaults(Status.userDomain(), userDefaults)
+		return true;
+}
+
 
 
 // selection based magic
@@ -183,24 +273,12 @@ FramerInventory.cleanLayer = function(layer, page) {
 FramerInventory.organiseSelection = function(userSelection) {
 	userSelection = OrderInventory.removeArtboardsFromSelection(userSelection)
 	if (userSelection.count() == 0) { return }
-	
-	FramerInventory.setUserSelection(userSelection)
-	
-	var page = FramerInventory.getCurrentPage()
-	var artboards = [page artboards]
-	
-	if ([[page artboards] firstObject] != nil) {
-		var frame = [[[artboards firstObject] frame] size]
-		FramerInventory.analyseMobile(frame.width)
-	}	
-	
+
 	OrderInventory.initSelection(userSelection)
-	
+
 	var unorderedLayers = OrderInventory.returnUnorderedLayers()
 	var orderedLayers = OrderInventory.analyseOrder(unorderedLayers)
-	
-	// FramerInventory.restoreSelection(userSelection)
-	
+
 	return orderedLayers
 }
 
@@ -211,7 +289,7 @@ FramerInventory.setUserSelection = function(userSelection) {
 FramerInventory.restoreSelection = function(selection) {
 	var currentPage = FramerInventory.getCurrentPage()
 	[currentPage deselectAllLayers]
-	
+
 	for (var i = 0; i < selection.count(); i++) {
 		[[selection objectAtIndex:i] select:true byExpandingSelection:true]
 	}
@@ -221,14 +299,29 @@ FramerInventory.createExportSelection = function() {
 	var exportPage = FramerInventory.findPageWithName(exportPageName)
 	if (exportPage == nil) { return }
 	[exportPage deselectAllLayers]
-	
+
 	var exportables = [exportPage exportableLayers]
 	for (var i = 0; i < exportables.count(); i++) {
 		[[exportables objectAtIndex:i] select:true byExpandingSelection:true]
 	}
 }
 
+FramerInventory.arrayDescribeSelection = function() {
+	var selectionInventoryInstance = SelectionInventory.analyseActionType(currentSelection)
+	var selectedLayers = selectionInventoryInstance.layers
+	if (selectedLayers == nil || selectedLayers.count() == 0) { return "" }
 
+	var result = "array = ["
+	for (var i = 0; i < selectedLayers.count(); i++) {
+			var currentLayer = [selectedLayers objectAtIndex:i]
+			result += GenerateInventory.clearName([currentLayer name])
+			if (i != selectedLayers.count() - 1) { result += ", " }
+	}
+	result += "]"
+	result += ln()
+
+	return result
+}
 
 
 
@@ -244,66 +337,26 @@ FramerInventory.addStateName = function(stateName) {
 
 FramerInventory.getUsedStatesNames = function() {
 	var page = FramerInventory.getCurrentPage()
-	var artboards = [page artboards]
+	var artboards = FramerInventory.returnArtboardsScope()
 	var usedArtboardsNames = []
-	
+
 	for (var i = 0; i < artboards.count(); i++) {
 		var currentArtboardName = [[artboards objectAtIndex: i] name]
 		if (FramerInventory.isUsed(currentArtboardName)) { usedArtboardsNames.push(currentArtboardName) }
 	}
-	
+
 	return usedArtboardsNames
 }
 
 FramerInventory.isUsed = function(artboardName) {
 	if (usedStates == nil) { return false }
-	
+
 	for (var i = 0; i < usedStates.length; i++) {
 		if (artboardName == usedStates[i]) { return true }
 	}
-	
+
 	return false
 }
-
-
-
-
-
-
-
-
-FramerInventory.analyseMobile = function(artboardWidth) {
-	FramerInventory.setRetinaValue(artboardWidth)
-	FramerInventory.setPhoneValue(artboardWidth)
-}
-
-FramerInventory.setPhoneValue = function(artboardWidth) {
-	if (userDefaults.myMobile == 0 || artboardWidth == nil) { phoneModel = 0 }
-	else if (artboardWidth == 320 || artboardWidth == 640) { phoneModel = 1 }
-	else if (artboardWidth == 375 || artboardWidth == 750) { phoneModel = 2 }
-	else if (artboardWidth == 414 || artboardWidth == 1242) { phoneModel = 3 }
-	else { phoneModel = 0 }
-}
-
-FramerInventory.getPhoneValue = function() {
-	return phoneModel
-}
-
-FramerInventory.setRetinaValue = function(artboardWidth) {
-	if (userDefaults.myMobile == 0 || artboardWidth == nil) { pixelDensity = 1 }
-	else if (artboardWidth == 640 || artboardWidth == 750 || artboardWidth == 1242) { pixelDensity = 1 }
-	else if (artboardWidth == 320 || artboardWidth == 375) { pixelDensity = 2 }
-	else if (artboardWidth == 414) { pixelDensity = 3 }
-	else {
-		if (showLog) { log("Pixel density is undetermined") }
-		pixelDensity = 1
-	}
-}
-
-FramerInventory.getRetinaValue = function() {
-	return pixelDensity
-}
-
 
 
 
@@ -320,23 +373,56 @@ FramerInventory.isExportPageRequired = function() {
 }
 
 FramerInventory.showDoneMessage = function() {
-	var message = "Done"
-	
-	if (OrderInventory.getWarnings() != "") { message += ". Warning: \"" + OrderInventory.getWarnings() + "\" has several types." }
-	
-	if (FramerInventory.isExportPageRequired()) { message = "Done. Export assets from \"" + exportPageName + "\" page" }
+	var message = ViewInventory.smileDone()
+
+	if (OrderInventory.getWarnings() != "") { message = ViewInventory.smileWarning() + "\"" + OrderInventory.getWarnings() + "\" has several types." }
+
+	if (FramerInventory.isExportPageRequired()) {
+			if (userDefaults.exportFramerFolder != "") {
+				FramerInventory.exportLayersFromExportPage(FramerInventory.getCurrentPage())
+				FramerInventory.removePage(exportPageName)
+			}
+			else { message = ViewInventory.smileDone() + "Export assets from \"" + exportPageName + "\" page" }
+	}
 	else { FramerInventory.removePage(exportPageName) }
-	
+
+	message += ViewInventory.actionsLeftMessage()
 	[currentDocument showMessage:message]
-	
+
 	FramerInventory.createExportSelection()
-	FramerInventory.restoreSelection(contextUserSelection)	
-	
+	FramerInventory.restoreSelection(contextUserSelection)
+
 	var methodFinishTime = [NSDate date]
 	var executionTime = [methodFinishTime timeIntervalSinceDate:methodStartTime]
 	if (showLog) { log("Completion time: " + executionTime) }
 }
 
 
+FramerInventory.runShowProjectFolder = function() {
+		if (userDefaults.exportFramerFolder == "") { [currentDocument showMessage:"Nothing selected " + ViewInventory.smileForget()] }
+		else { [currentDocument showMessage:"Selected: " + userDefaults.exportFramerFolder] }
+}
 
+FramerInventory.runSelectProjectFolder = function() {
+		var isPathSelected = FramerInventory.getExportPath()
 
+		var message = userDefaults.exportFramerFolder
+		if (!isPathSelected && message) { message = ViewInventory.smileWarning() + "Canceled. Previous Framer folder is selected" }
+		else if (!isPathSelected) { message = ViewInventory.smileWarning() + "Canceled. Framer folder is not selected" }
+		else { message = ViewInventory.smileDone() + "Selected folder: " + message }
+
+		ToolbarInventory.setContentView()
+		[currentDocument showMessage:message]
+}
+
+FramerInventory.runRemoveProjectFolder = function() {
+		if (userDefaults.exportFramerFolder == "") {
+				[currentDocument showMessage:ViewInventory.smileForget()]
+				return
+		}
+		userDefaults.exportFramerFolder = ""
+		saveDefaults(Status.userDomain(), userDefaults)
+
+		ToolbarInventory.setContentView()
+		[currentDocument showMessage:ViewInventory.smileForget()]
+}

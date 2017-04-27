@@ -1,15 +1,15 @@
 
 
-var kPluginDomain;
+// var kPluginDomain;
 
 var initDefaults = function(pluginDomain, initialValues) {
-	kPluginDomain = pluginDomain
+	// kPluginDomain = pluginDomain
 
-	var defaults = [[NSUserDefaults standardUserDefaults] objectForKey:kPluginDomain]
+	var defaults = [[NSUserDefaults standardUserDefaults] objectForKey:pluginDomain]
 	var defaultValues = {}
-    var dVal;
+  var dVal;
 
-    for (var key in defaults) {
+  for (var key in defaults) {
     	defaultValues[key] = defaults[key]
 	}
 
@@ -21,10 +21,9 @@ var initDefaults = function(pluginDomain, initialValues) {
 	return defaultValues
 }
 
-var saveDefaults = function(newValues) {
-	if (kPluginDomain) {
+var saveDefaults = function(pluginDomain, newValues) {
+	if (pluginDomain) {
 		var defaults = [NSUserDefaults standardUserDefaults]
-		[defaults setObject: newValues forKey: kPluginDomain];
+		[defaults setObject: newValues forKey: pluginDomain];
 	}
 }
-

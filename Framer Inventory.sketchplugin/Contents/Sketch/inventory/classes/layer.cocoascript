@@ -12,28 +12,29 @@
 function Layer (layerName) {
 	// name of layer
 	this.layerName = layerName;
+	this.relative = false
 	this.states = [];
-	
+
 	this.filterRequired = false
 	this.titleState = nil
-	
+
 	// active conditions
 	this.areOpacityActive = false
 	this.areCornersActive = false
 	this.areRotationsActive = false
-	
+
 	this.areShadowsActive = false
 	this.areInnersActive = false
 	this.areBordersActive = false
 	this.areBackgroundsActive = true // always export bg
-	
-	
+
+
 	// exportable conditions
 	this.areShadowsExportable = true
 	this.areInnersExportable = true
 	this.areBordersExportable = true
 	this.areBackgroundsExportable = true
-	
+
 	// if equals -> css-filter, else -> image
 	this.areAllShadowsEqual = true
 	this.areAllBackgroundsExist = true
@@ -66,20 +67,20 @@ Layer.prototype.updateConditions = function(state) {
 	this.areOpacityActive = this.areOpacityActive || state.opacityActive
 	this.areCornersActive = this.areCornersActive || state.cornerActive
 	this.areRotationsActive = this.areRotationsActive || state.rotationActive
-	
+
 	this.areShadowsActive = this.areShadowsActive || state.shadowsActive
 	this.areInnersActive = this.areInnersActive || state.innersActive
 	this.areBordersActive = this.areBordersActive || state.bordersActive
 	this.areBackgroundsActive = this.areBackgroundsActive || state.backgroundsActive
-	
-	
-	
+
+
+
 	// exportable
 	this.areShadowsExportable = this.areShadowsExportable && state.shadowsExportable
 	this.areInnersExportable = this.areInnersExportable && state.innersExportable
 	this.areBordersExportable = this.areBordersExportable && state.bordersExportable
 	this.areBackgroundsExportable = this.areBackgroundsExportable && state.backgroundsExportable
-	
+
 	// exportable for groups and images
 	this.areAllShadowsEqual = this.areAllShadowsEqual && this.compareShadows(state)
 	this.areAllBackgroundsExist = this.areAllBackgroundsExist && state.backgroundsActive
@@ -103,20 +104,25 @@ Layer.prototype.compareShadows = function(state) {
 
 Layer.prototype.describeState = function(currentState, imageRequired) {
 	if (imageRequired == nil) { imageRequired = false }
-	
+
 	var stateDescription = ""
-	stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	// stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	stateDescription += GenerateInventory.generateWidth(currentState.width)
+	stateDescription += GenerateInventory.generateHeight(currentState.height)
+	stateDescription += GenerateInventory.generateX(currentState.x)
+	stateDescription += GenerateInventory.generateY(currentState.y)
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateCorner(currentState.corner) }
-	
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateBackgrounds(currentState.composeBackgrounds()) }
-	
+
 	stateDescription += GenerateInventory.generateRotation(currentState.rotation)
-	
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateShadows(currentState.composeShadows()) }
 	if (!imageRequired) { stateDescription += GenerateInventory.generateBorders(currentState.composeBorders()) }
-	
+
 	stateDescription += GenerateInventory.generateOpacity(currentState.opacity)
-	
+
 	return stateDescription
 }
 
@@ -124,22 +130,27 @@ Layer.prototype.describeState = function(currentState, imageRequired) {
 Layer.prototype.describeLayerTitle = function(currentState, imageRequired) {
 	if (imageRequired == nil) { imageRequired = false }
 	currentState.cleanTitledDescriptionShadows()
-	
+
 	var stateDescription = GenerateInventory.returnLayerName(this.layerName)
-	stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	// stateDescription += GenerateInventory.generatePosition(currentState.composePosition())
+	stateDescription += GenerateInventory.generateWidth(currentState.width)
+	stateDescription += GenerateInventory.generateHeight(currentState.height)
+	stateDescription += GenerateInventory.generateX(currentState.x)
+	stateDescription += GenerateInventory.generateY(currentState.y)
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateCorner(currentState.corner) }
-	
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateBackgrounds(currentState.composeBackgrounds()) }
 	if (imageRequired) { stateDescription += GenerateInventory.generateImagePath(this.layerName) }
 
 	stateDescription += GenerateInventory.generateRotation(currentState.rotation)
-	
+
 	if (!imageRequired) { stateDescription += GenerateInventory.generateShadows(currentState.composeShadows()) }
 	if (imageRequired && this.filterRequired) { stateDescription += GenerateInventory.generateFilterShadows(currentState.composeShadows()) }
 	if (!imageRequired) { stateDescription += GenerateInventory.generateBorders(currentState.composeBorders()) }
-	
+
 	stateDescription += GenerateInventory.generateOpacity(currentState.opacity)
-	
+
 	return stateDescription.replace("Layer,", "Layer")
 }
 
@@ -193,12 +204,12 @@ Layer.prototype.printLayer = function() {
 
 Layer.prototype.generateFramerTitle = function(imageRequired) {
 	var titleState = new State()
-	
+
 	titleState.corner = this.analyseCorner()
 	titleState.rotation = this.analyseRotation()
-	
+
 	this.filterRequired = this.analyseFilterShadows(this.areShadowsExportable)
-	
+
 	var titleShadows = []
 	titleShadows.push(this.analyseShadowX())
 	titleShadows.push(this.analyseShadowY())
@@ -215,7 +226,7 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 	}
 	titleState.shadows = [titleShadows]
 
-	
+
 	var titleBorders = []
 	titleBorders.push(1)
 	titleBorders.push(this.analyseBorderWidth())
@@ -230,8 +241,8 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 		titleBorders.push(shadowColor[1])
 	}
 	titleState.borders = [titleBorders]
-	
-	
+
+
 	var titleBackgrounds = []
 	titleBackgrounds.push(0)
 	var backgroundColor = this.analyseBackgroundColor()
@@ -245,66 +256,66 @@ Layer.prototype.generateFramerTitle = function(imageRequired) {
 	}
 	titleState.backgrounds = [titleBackgrounds]
 
-	
+
 	titleState.opacity = this.analyseOpacity()
 
 	if (imageRequired) { this.updatePositionImage() }
-	
+
 	var titlePosition = []
 	titlePosition.push(this.analyseWidth())
 	titlePosition.push(this.analyseHeight())
 	titlePosition.push(this.analyseX())
 	titlePosition.push(this.analyseY())
 	titleState.position = titlePosition
-	
+
 	titleState.updateState()
 	this.titleState = titleState
-	
+
 	return titleState
 }
 
 
 Layer.prototype.generateFramerStates = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var layerType = this.analyseType()
 	var areAllGeneratable = this.areAllGeneratable()
 	var imageRequired = ((layerType == 2 || layerType == 3) && areAllGeneratable) ? false : true
 	if (imageRequired) { FramerInventory.requireExportPage() }
-	
+
 	var generatedStates = []
 	var statesDescriptions = []
 	var statesNames = []
-	
+
 	var prevState = nil
 	var maxSpace = 0
-	
+
 
 	var titleState = this.generateFramerTitle(imageRequired)
 	var titleDescription = this.describeLayerTitle(titleState, imageRequired)
-	
-	if (currentCommandIdentifier == 2 && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
-	
+
+	if (StatisticsInventory.getStatus() == Status.simulateID() && userDefaults.myMinimalExport == 1) { this.states = this.minimazeStates() }
+
 	for (var i = 0; i < this.states.length; i++) {
 		var currentState = this.states[i]
-		
-		if (currentState.isEqualToState(prevState)) {
+
+		if (currentState.isEqualToState(prevState) && userDefaults.myMinimalExport == 1) {
 			// if (showLog) { log("Skipping duplicated state: " + currentState.stateName) }
 			continue
 		}
 
 		var stateDescription = this.describeState(currentState, imageRequired)
-		
+
 		// if layer description has all properties
-		if (stateDescription != "") { 
+		if (stateDescription != "") {
 			statesDescriptions.push(stateDescription)
 			statesNames.push(currentState.stateName)
 			FramerInventory.addStateName(currentState.stateName)
-		}	
-		
+		}
+
 		prevState = currentState
 	}
-	
+
 	var switchStateDescription = ""
 	if (statesDescriptions.length > 1) {
 		for (var i = 0; i < statesDescriptions.length; i++) {
@@ -313,8 +324,10 @@ Layer.prototype.generateFramerStates = function() {
 		}
 		switchStateDescription = DescribeInventory.generateStateSwitchInstant(this.layerName, statesNames[0])
 	}
-	
-	return titleDescription + dln() + DescribeInventory.generateStateSection(this.layerName, generatedStates) + switchStateDescription
+
+	var statesAndSwitchString = DescribeInventory.generateStateSection(this.layerName, generatedStates) + switchStateDescription
+	if (statesAndSwitchString == "") { return titleDescription + dln() }
+	return titleDescription + dln() + statesAndSwitchString
 }
 
 
@@ -333,28 +346,28 @@ Layer.prototype.checkStates = function() {
 Layer.prototype.updatePositionImage = function() {
 	var maxSize = 0
 	var maxSizeNumber = -1
-	
+
 	for (var i = 0; i < this.states.length; i++) {
 		var layer = this.states[i].layer
 		var layerForPosition = [layer duplicate]
 		if (this.filterRequired) { Layer.cleanLayerShadows(layerForPosition) }
-		
-		this.states[i].position = getPlaceImage(layerForPosition)
+
+		this.states[i].position = getPlace(layerForPosition, true)
 		this.states[i].updateState()
-		
+
 		[layerForPosition removeFromParent]
-		
-		
+
+
 		var currentSize = this.states[i].width + this.states[i].height
 		if (currentSize > maxSize) {
 			maxSize = currentSize
 			maxSizeNumber = i
 		}
 	}
-	
+
 	if (maxSizeNumber != -1) {
 		var layerForPosition = this.states[maxSizeNumber].layer
-		
+
 		layerForPosition = Layer.returnLayerCopy(layerForPosition)
 		if (this.filterRequired) { Layer.cleanLayerShadows(layerForPosition) }
 		Layer.pasteLayer(layerForPosition)
@@ -384,21 +397,20 @@ Layer.pasteLayer = function(layer) {
 	if (![layer isVisible]) { [layer setIsVisible:true] }
 	// if ([[[layer style] contextSettings] opacity] == 0) { [[[layer style] contextSettings] setOpacity:1] }
 	[[[layer style] contextSettings] setOpacity:1]
-	
+
 	[framerInventoryPage addLayers: [layer]]
 }
 
 Layer.addExportOptions = function(layer) {
-	var scaleData = 1
-	if (userDefaults.myRetinaEnabled == 0) { scaleData = userDefaults.myRetinaValue }
-	if (FramerInventory.getPhoneValue() != 0) { scaleData = FramerInventory.getRetinaValue() }
-	
+	if (scaleInstance == nil) { scaleInstance = new ScaleInventory() }
+	var scaleData = scaleInstance.returnScaleExport()
+
 	var exportSizes = [[layer exportOptions] exportFormats]
 	[[layer exportOptions] setExportFormats:[]];
 
 	var size = [[layer exportOptions] addExportFormat]
-    [size setScale:scaleData]
-    [size setName:""]
+  [size setScale:scaleData]
+  [size setName:""]
 }
 
 
@@ -415,56 +427,56 @@ Layer.addExportOptions = function(layer) {
 
 Layer.prototype.analyseType = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultType = this.states[0].type
 	var isSameType = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultType != this.states[i].type) {
 			isSameType = false
 			if (showLog) { log("Warning: " + this.states[i].layerName + " has mixed type") }
 		}
 	}
-	
+
 	return defaultType
 }
 
 Layer.prototype.analyseFilterShadows = function(areExportable) {
 	if (!this.checkStates()) { return nil }
 	if (!areExportable) { return false }
-	
+
 	var defaultValue = this.states[0].shadows
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (!LogicInventory.compareMatrices(defaultValue, this.states[i].shadows)) {
 			return false
 		}
 	}
-	
+
 	if (defaultValue == nil) { return false}
 	return true
 }
 
 Layer.prototype.analyseOpacity = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultOpacity = this.states[0].opacity
 	var isSameOpacity = true
 	var opacityAbsolute = 1
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultOpacity != this.states[i].opacity) {
 			isSameOpacity = false
 			break
 		}
 	}
-	
+
 	if (isSameOpacity) {
 		for (var i = 0; i < this.states.length; i++) {
 			this.states[i].opacity = nil
 			this.states[i].opacityActive = false
 		}
-	
+
 		this.areOpacityActive = false
 		return defaultOpacity
 	}
@@ -476,31 +488,31 @@ Layer.prototype.analyseOpacity = function() {
 			}
 		}
 	}
-	
+
 	return nil
 }
 
 
 Layer.prototype.analyseCorner = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultCorner = this.states[0].corner
 	var isSameCorner = true
 	var cornerAbsolute = 0
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultCorner != this.states[i].corner) {
 			isSameCorner = false
 			break
 		}
 	}
-	
+
 	if (isSameCorner) {
 		for (var i = 0; i < this.states.length; i++) {
 			this.states[i].corner = nil
 			this.states[i].cornerActive = false
 		}
-	
+
 		this.areCornersActive = false
 		return defaultCorner
 	}
@@ -512,31 +524,31 @@ Layer.prototype.analyseCorner = function() {
 			}
 		}
 	}
-	
+
 	return nil
 }
 
 
 Layer.prototype.analyseRotation = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultRotation = this.states[0].rotation
 	var isSameRotation = true
 	var rotationAbsolute = 0
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultRotation != this.states[i].rotation) {
 			isSameRotation = false
 			break
 		}
 	}
-	
+
 	if (isSameRotation) {
 		for (var i = 0; i < this.states.length; i++) {
 			this.states[i].rotation = nil
 			this.states[i].rotationActive = false
 		}
-	
+
 		this.areRotationsActive = false
 		return defaultRotation
 	}
@@ -548,7 +560,7 @@ Layer.prototype.analyseRotation = function() {
 			}
 		}
 	}
-	
+
 	return nil
 }
 
@@ -557,17 +569,17 @@ Layer.prototype.analyseRotation = function() {
 
 Layer.prototype.analyseBorderWidth = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValue = this.states[0].borderWidth
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValue != this.states[i].borderWidth) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].borderWidth = nil }
 		if (defaultValue == 0) { return nil }
@@ -579,17 +591,17 @@ Layer.prototype.analyseBorderWidth = function() {
 				this.states[i].borderWidth = 0
 			}
 		}
-		
+
 		defaultValue = this.states[0].borderWidth
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValue != this.states[i].borderWidth) {
 				sameValue = false
 				break
 			}
 		}
-		
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) { this.states[i].borderWidth = nil }
 			return defaultValue
@@ -601,18 +613,18 @@ Layer.prototype.analyseBorderWidth = function() {
 
 Layer.prototype.analyseBorderColor = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValueOpacity = this.states[0].borderOpacity
 	var defaultValueHex = this.states[0].borderHex
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValueOpacity != this.states[i].borderOpacity || defaultValueHex != this.states[i].borderHex) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) {
 			this.states[i].borderOpacity = nil
@@ -630,18 +642,18 @@ Layer.prototype.analyseBorderColor = function() {
 				this.states[i].borderOpacity = suggestedBorders[0][3]
 			}
 		}
-		
+
 		defaultValueOpacity = this.states[0].borderOpacity
 		defaultValueHex = this.states[0].borderHex
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValueOpacity != this.states[i].borderOpacity || defaultValueHex != this.states[i].borderHex) {
 				sameValue = false
 				break
 			}
 		}
-		
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) {
 				this.states[i].borderOpacity = nil
@@ -662,18 +674,18 @@ Layer.prototype.analyseBorderColor = function() {
 
 Layer.prototype.analyseBackgroundColor = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValueOpacity = this.states[0].backgroundOpacity
 	var defaultValueHex = this.states[0].backgroundHex
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValueOpacity != this.states[i].backgroundOpacity || defaultValueHex != this.states[i].backgroundHex) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) {
 			this.states[i].backgroundOpacity = nil
@@ -689,25 +701,25 @@ Layer.prototype.analyseBackgroundColor = function() {
 		for (var i = 0; i < this.states.length; i++) {
 			if (this.states[i].backgroundHex == nil) {
 				this.states[i].opacity = 0
-				
+
 				var suggestedBackgrounds = this.suggestBackgrounds(i)
 				if (suggestedBackgrounds == nil) { log("ERROR: suggestedBackgrounds is nil") }
 				this.states[i].backgroundOpacity = suggestedBackgrounds[0][1]
 				this.states[i].backgroundHex = suggestedBackgrounds[0][2]
 			}
 		}
-		
+
 		defaultValueOpacity = this.states[0].backgroundOpacity
 		defaultValueHex = this.states[0].backgroundHex
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValueOpacity != this.states[i].backgroundOpacity || defaultValueHex != this.states[i].backgroundHex) {
 				sameValue = false
 				break
 			}
 		}
-		
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) {
 				this.states[i].backgroundOpacity = nil
@@ -731,85 +743,85 @@ Layer.prototype.analysePosition = function() {
 
 Layer.prototype.analyseWidth = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultWidth = this.states[0].width
 	var isSameWidth = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultWidth != this.states[i].width) {
 			isSameWidth = false
 			break
 		}
 	}
-	
+
 	if (isSameWidth) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].width = nil }
 		return defaultWidth
 	}
-	
+
 	return nil
 }
 
 Layer.prototype.analyseHeight = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultHeight = this.states[0].height
 	var isSameHeight = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultHeight != this.states[i].height) {
 			isSameHeight = false
 			break
 		}
 	}
-	
+
 	if (isSameHeight) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].height = nil }
 		return defaultHeight
 	}
-	
+
 	return nil
 }
 
 Layer.prototype.analyseX = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultX = this.states[0].x
 	var isSameX = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultX != this.states[i].x) {
 			isSameX = false
 			break
 		}
 	}
-	
+
 	if (isSameX) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].x = nil }
 		return defaultX
 	}
-	
+
 	return nil
 }
 
 Layer.prototype.analyseY = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultY = this.states[0].y
 	var isSameY = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultY != this.states[i].y) {
 			isSameY = false
 			break
 		}
 	}
-	
+
 	if (isSameY) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].y = nil }
 		return defaultY
 	}
-	
+
 	return nil
 }
 
@@ -822,17 +834,17 @@ Layer.prototype.analyseY = function() {
 
 Layer.prototype.analyseShadowX = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValue = this.states[0].shadowX
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValue != this.states[i].shadowX) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowX = nil }
 		if (defaultValue == 0) { return nil }
@@ -844,17 +856,17 @@ Layer.prototype.analyseShadowX = function() {
 				this.states[i].shadowX = 0
 			}
 		}
-		
+
 		defaultValue = this.states[0].shadowX
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValue != this.states[i].shadowX) {
 				sameValue = false
 				break
 			}
 		}
-		
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowX = nil }
 			return defaultValue
@@ -866,17 +878,17 @@ Layer.prototype.analyseShadowX = function() {
 
 Layer.prototype.analyseShadowY = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValue = this.states[0].shadowY
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValue != this.states[i].shadowY) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowY = nil }
 		if (defaultValue == 0) { return nil }
@@ -888,39 +900,39 @@ Layer.prototype.analyseShadowY = function() {
 				this.states[i].shadowY = 0
 			}
 		}
-		
+
 		defaultValue = this.states[0].shadowY
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValue != this.states[i].shadowY) {
 				sameValue = false
 				break
 			}
 		}
-		
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowY = nil }
 			return defaultValue
 		}
 	}
-	
+
 	return nil
 }
 
 Layer.prototype.analyseShadowBlur = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValue = this.states[0].shadowBlur
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValue != this.states[i].shadowBlur) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowBlur = nil }
 		if (defaultValue == 0) { return nil }
@@ -932,39 +944,39 @@ Layer.prototype.analyseShadowBlur = function() {
 				this.states[i].shadowBlur = 0
 			}
 		}
-		
+
 		defaultValue = this.states[0].shadowBlur
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValue != this.states[i].shadowBlur) {
 				sameValue = false
 				break
 			}
 		}
-		
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowBlur = nil }
 			return defaultValue
 		}
 	}
-	
+
 	return nil
 }
 
 Layer.prototype.analyseShadowSpread = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValue = this.states[0].shadowSpread
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValue != this.states[i].shadowSpread) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) { this.states[i].shadowSpread = nil }
 		if (defaultValue == 0) { return nil }
@@ -976,17 +988,17 @@ Layer.prototype.analyseShadowSpread = function() {
 				this.states[i].shadowSpread = 0
 			}
 		}
-		
+
 		defaultValue = this.states[0].shadowSpread
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValue != this.states[i].shadowSpread) {
 				sameValue = false
 				break
 			}
 		}
-		
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) { this.states[i].shadowSpread = nil }
 			return defaultValue
@@ -1003,18 +1015,18 @@ Layer.prototype.analyseShadowSpread = function() {
 
 Layer.prototype.analyseShadowColor = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var defaultValueOpacity = this.states[0].shadowOpacity
 	var defaultValueHex = this.states[0].shadowHex
 	var sameValue = true
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		if (defaultValueOpacity != this.states[i].shadowOpacity || defaultValueHex != this.states[i].shadowHex) {
 			sameValue = false
 			break
 		}
 	}
-	
+
 	if (sameValue) {
 		for (var i = 0; i < this.states.length; i++) {
 			this.states[i].shadowOpacity = nil
@@ -1032,18 +1044,18 @@ Layer.prototype.analyseShadowColor = function() {
 				this.states[i].shadowHex = suggestedShadows[0][5]
 			}
 		}
-		
+
 		defaultValueOpacity = this.states[0].shadowOpacity
 		defaultValueHex = this.states[0].shadowHex
 		sameValue = true
-		
+
 		for (var i = 1; i < this.states.length; i++) {
 			if (defaultValueOpacity != this.states[i].shadowOpacity || defaultValueHex != this.states[i].shadowHex) {
 				sameValue = false
 				break
 			}
 		}
-	
+
 		if (sameValue) {
 			for (var i = 0; i < this.states.length; i++) {
 				this.states[i].shadowOpacity = nil
@@ -1051,7 +1063,7 @@ Layer.prototype.analyseShadowColor = function() {
 			}
 			return [defaultValueOpacity, defaultValueHex]
 		}
-		
+
 	}
 	return nil
 }
@@ -1065,7 +1077,7 @@ Layer.prototype.analyseShadowColor = function() {
 
 
 Layer.prototype.suggestShadows = function(currentStateNumber) {
-	
+
 	for (var i = currentStateNumber; i < this.states.length; i++) {
 		if (this.states[i].shadowsActive && this.states[i].shadows != nil) {
 			return this.states[i].shadows
@@ -1078,11 +1090,11 @@ Layer.prototype.suggestShadows = function(currentStateNumber) {
 		}
 	}
 	return nil
-	
+
 }
 
 Layer.prototype.suggestBorders = function(currentStateNumber) {
-	
+
 	for (var i = currentStateNumber; i < this.states.length; i++) {
 		if (this.states[i].bordersActive && this.states[i].borders != nil) {
 			return this.states[i].borders
@@ -1094,11 +1106,11 @@ Layer.prototype.suggestBorders = function(currentStateNumber) {
 		}
 	}
 	return nil
-	
+
 }
 
 Layer.prototype.suggestBackgrounds = function(currentStateNumber) {
-	
+
 	for (var i = currentStateNumber; i < this.states.length; i++) {
 		if (this.states[i].backgroundsActive && this.states[i].backgrounds != nil) {
 			return this.states[i].backgrounds
@@ -1110,7 +1122,7 @@ Layer.prototype.suggestBackgrounds = function(currentStateNumber) {
 		}
 	}
 	return nil
-	
+
 }
 
 
@@ -1124,22 +1136,22 @@ Layer.prototype.suggestBackgrounds = function(currentStateNumber) {
 
 Layer.prototype.minimazeStates = function() {
 	if (!this.checkStates()) { return nil }
-	
+
 	var minimazedStates = []
 	minimazedStates.push(this.states[0])
-	
+
 	var baseState = nil
 	var currentState = nil
-	
+
 	for (var i = 1; i < this.states.length; i++) {
 		baseState = this.states[i - 1]
 		currentState = this.states[i]
-		
+
 		var cleanedState = baseState.getMinimalState(currentState)
 		cleanedState.stateName = currentState.stateName
 		minimazedStates.push(cleanedState)
 	}
-	
+
 	return minimazedStates
 }
 
@@ -1151,3 +1163,12 @@ Layer.prototype.minimazeStates = function() {
 var ln = function() { return "\n" }
 var dln = function() { return ln() + ln() }
 var tln = function() { return "\t" }
+
+var br = function() {
+	if (userDefaults.myDetailedNotation == 1) { return ln() + tln() }
+	else { return ", " }
+}
+var brf = function() {
+	if (userDefaults.myDetailedNotation == 1) { return tln() }
+	else { return " " }
+}

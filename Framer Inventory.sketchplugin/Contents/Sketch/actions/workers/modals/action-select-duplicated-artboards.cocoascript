@@ -1,0 +1,87 @@
+
+
+var selectDuplicatedArtboards = function(artboardName) {
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, ViewInventory.sizeModalWidth(), 252) display:false];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+
+	var imageView = ViewInventory.addImage(NSMakeRect(10, 98, 220, 132), "modals/artboards");
+	[[artboardsWindow contentView] addSubview:imageView];
+
+	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 208, 32)];
+	[showDuplicatesButton setTitle:"Rename Automatically"];
+	[showDuplicatesButton setBezelStyle:NSRoundedBezelStyle];
+	[showDuplicatesButton setFont:ViewInventory.fontActionButton()];
+	[showDuplicatesButton setKeyEquivalent:"\r"];
+	[showDuplicatesButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		fixArtboardsNames()
+		ToolbarInventory.updateContext()
+
+		if (StatisticsInventory.getStatus() == Status.simulateID()) { runSimulateKeynote() }
+		else if (StatisticsInventory.getStatus() == Status.replicateID()) { runReplicateLayers() }
+		else if (StatisticsInventory.getStatus() == Status.generateID()) { runGenerateStates() }
+	}];
+	[showDuplicatesButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:showDuplicatesButton];
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 208, 32)];
+	[cancelButton setTitle:"Show Duplicated Artboards"];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		selectArtboardsWithName(artboardName)
+
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}
+
+
+
+
+var selectArtboardsWithName = function(artboardName) {
+	FramerInventory.deselectLayers()
+	var artboards = FramerInventory.returnArtboardsScope()
+	for (var i = 0; i < artboards.count(); i++) {
+		var currentArtboard = [artboards objectAtIndex: i]
+		if ([currentArtboard name] == artboardName) { [currentArtboard select:true byExpandingSelection:true] }
+	}
+
+	[currentDocument showMessage:ViewInventory.smileWarning() + "Rename artboards and try again"]
+}
+
+
+var fixArtboardsNames = function() {
+		var artboards = FramerInventory.returnArtboardsScope()
+		var artboardNames = NSMutableArray.new()
+		var namesMap = [,]
+
+		for (var i = 0; i < artboards.count(); i++) {
+			 	var currentName = [[artboards objectAtIndex: i] name] + ""
+				currentName = currentName.replace(/\d+$/, "").trim()
+
+				if (namesMap[currentName] == nil) { namesMap[currentName] = 0 }
+				else {
+					namesMap[currentName] = namesMap[currentName] + 1
+					[[artboards objectAtIndex: i] setName: currentName + " " + (namesMap[currentName])]
+				}
+		}
+
+}

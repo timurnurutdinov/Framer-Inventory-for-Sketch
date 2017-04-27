@@ -1,0 +1,75 @@
+@import 'actions/view-inventory.cocoascript'
+
+
+var measureArtboardsPaddingLeft = 16
+var measureArtboardsWindowHeight = 252;
+var measureArtboardsWindowWidth = 240;
+
+
+var showExpiredModal = function(artboardName) {
+	StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(needLicenseRequest))
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setBackgroundColor(ViewInventory.colorWindow())
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight) display:false];
+
+	var imageView = ViewInventory.addImage(NSMakeRect(0, 0, measureArtboardsWindowWidth, measureArtboardsWindowHeight), "modals/expired");
+	[[artboardsWindow contentView] addSubview:imageView];
+
+
+
+
+	var showDuplicatesButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 58, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[showDuplicatesButton setTitle:"Get Unlimited PRO"];
+	[showDuplicatesButton setBezelStyle:NSRoundedBezelStyle];
+	[showDuplicatesButton setFont:ViewInventory.fontActionButton()];
+	[showDuplicatesButton setKeyEquivalent:"\r"];
+	[showDuplicatesButton setCOSJSTargetFunction:function(sender) {
+		// [artboardsWindow orderOut:nil]
+		// [NSApp stopModal]
+
+		var url = NSURL.URLWithString(StatisticsInventory.buyLicenseLinkDemo());
+		[[NSWorkspace sharedWorkspace] openURL:url]
+
+	}];
+	[showDuplicatesButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:showDuplicatesButton];
+
+
+	var licenseButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 32, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[licenseButton setTitle:"Enter License"];
+	[licenseButton setFont:ViewInventory.fontActionButton()];
+	[licenseButton setBezelStyle:NSRoundedBezelStyle];
+	[licenseButton setKeyEquivalent:"\033"]
+	[licenseButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		showEnterLicense()
+
+	}];
+	[licenseButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:licenseButton];
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(measureArtboardsPaddingLeft, 6, measureArtboardsWindowWidth - measureArtboardsPaddingLeft*2, 32)];
+	[cancelButton setTitle:"Close"];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}

@@ -1,13 +1,13 @@
 var getShadows = function(layer) {
 	if (layer == nil) { return nil }
-	
+
 	var collection = [[layer style] enabledShadows]
 	return getBothShadows(layer, collection)
 }
 
 var getInners = function(layer) {
 	if (layer == nil) { return nil }
-	
+
 	var collection = [[layer style] enabledInnerShadows]
 	return getBothShadows(layer, collection)
 }
@@ -15,13 +15,14 @@ var getInners = function(layer) {
 
 var getBothShadows = function(layer, shadowsCollection) {
 	var enabledShadows = []
-	
+
 	for (var s = shadowsCollection.count() - 1; s >= 0; s--) {
 		var localShadow = [shadowsCollection objectAtIndex: s]
-		var shadowParams = [[localShadow offsetX],[localShadow offsetY], [localShadow blurRadius], [localShadow spread], [[localShadow color] alpha], [[localShadow color] hexValue]]
+		var localHexValue = createHexString([[localShadow color] red], [[localShadow color] green], [[localShadow color] blue])
+		var shadowParams = [[localShadow offsetX],[localShadow offsetY], [localShadow blurRadius], [localShadow spread], [[localShadow color] alpha], localHexValue]
 		enabledShadows.push(shadowParams)
 	}
-	
+
 	if (enabledShadows == '') { return nil }
 	return enabledShadows
 }

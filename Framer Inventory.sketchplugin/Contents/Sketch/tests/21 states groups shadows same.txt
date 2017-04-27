@@ -1,8 +1,7 @@
 nice = new Layer image: "images/nice.png", style: {"-webkit-filter": "drop-shadow(0 calc(20px*" + retina + ") calc(20px*" + retina + ") " + "rgba(0,0,0,0.5))"}
 
-nice.states.add {
-	1: { width: 212*retina, height: 230*retina, x: 82*retina, y: 104*retina}
-	2: { width: 297*retina, height: 322*retina, x: 39*retina, y: 62*retina}
-}
-nice.states.switchInstant "1"
+nice.states =
+	"1": { width: 212*retina, height: 230*retina, x: 82*retina, y: 104*retina }
+	"2": { width: 297*retina, height: 322*retina, x: 39*retina, y: 62*retina }
 
+nice.stateSwitch("1")

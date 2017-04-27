@@ -7,44 +7,51 @@ var environmentPagesNames = []
 var runTests = true
 var testingSelection = NSMutableArray.array()
 
-var runTestingEnvironment = function(context) {
-	var doc = context.document
+var runTestingEnvironment = function() {
+	StatisticsInventory.startTesting()
+	duplicateCurrentDefaults()
+
+	var doc = currentDocument
 	var pages = [doc pages]
 	var runningPage = [doc currentPage]
-	
+
 	var resultingString = ""
 	resultingString += "|------------------------------------|\n"
 	resultingString += "|---------TESTING ENVIRONMENT--------|\n"
 	resultingString += "|------------------------------------|\n\n\n"
-	
+
 	var skippedPagesNames = 0
 	var skippedLayersNames = 0
-	
+
 	var pairs = generatePairs()
 	var answers = []
 	var errorAnswers = []
-	
+
 	for (var i = 0; i < pairs.length; i++) {
 		var answer = ""
 		testingSelection = NSMutableArray.array()
 		var pageName = pairs[i]
-		
+
 		var operatingPage = FramerInventory.findPageWithName(pageName)
 		if (showTestLog) { log("Running: " + pageName) }
-		
+
 		if (operatingPage != nil) {
+			// if (showTestLog) { log("Operation page is: " + operatingPage) }
 			doc.setCurrentPage(operatingPage)
 			[[doc currentPage] deselectAllLayers]
-			
+
 			testingSelection = [operatingPage exportableLayers]
-			answer = runGenerateStates(context, runTests)
+			answer = runGenerateStates()
 			answers.push(answer)
-			
+
 		}
-		else { skippedPagesNames++ }
+		else {
+			if (showTestLog) { log("Can't find " + pageName) }
+			skippedPagesNames++
+		}
 	}
-	
-	
+
+
 	resultingString += "Initialised " + pairs.length + " tests\n"
 	if (skippedPagesNames == 0) { resultingString += "All testing layers are found\n" }
 	resultingString += "\n\n\n\n"
@@ -54,7 +61,7 @@ var runTestingEnvironment = function(context) {
 		var readReferenceFromFile = pairs[i]
 		var diff = compareAnswer(answers[i], readReferenceFromFile)
 		resultingString += "" + readReferenceFromFile + "\n"
-		
+
 		if (showLog) {
 			if (diff == nil) {log((i + 1) + " OK")}
 			else { log((i + 1) + ": " + diff) }
@@ -63,23 +70,28 @@ var runTestingEnvironment = function(context) {
 		if (diff != nil) {
 			resultingString += diff
 			errorAnswers.push(i)
+			writeFailedTest(answers[i], i)
 		}
 		else { resultingString += "Passed" }
 		resultingString += "\n\n"
 	}
-	
-	
+
+
 	if (skippedPagesNames == 0 && skippedLayersNames == 0) {
 		[doc showMessage:"Passed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests"]
 	}
 	else {
 		[doc showMessage:"Warning: skipped " + skippedPagesNames + " pages & " + skippedLayersNames + " layers"]
 	}
-	
+
 	resultingString += "\n\nPassed " + (pairs.length - errorAnswers.length) + " of " + pairs.length + " tests\n"
-	
+
 	doc.setCurrentPage(runningPage)
 	writeTestingLog(resultingString)
+
+	StatisticsInventory.stopTesting()
+	restoreCurrentDefaults()
+	StatisticsInventory.setStatus(Status.waitingID())
 }
 
 
@@ -128,9 +140,9 @@ var compareTextsPhrase = function(text1, text2) {
 		else {
 			var text1Array = lines1[l].split(" ");
 			var text2Array = lines2[l].split(" ");
-			
+
 			var maxLength = (text1Array.length > text2Array.length) ? text2Array.length : text1Array.length
-			
+
 			for (var i = 0; i < maxLength; i++) {
 					if (text1Array[i] != text2Array[i]) {
 						var prev = ""
@@ -154,76 +166,94 @@ var compareTextsPhrase = function(text1, text2) {
 var generatePairs = function() {
 	var pairs = []
 	var testsPaths = pluginPath + "/tests"
-	
+
 	var dirFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:testsPaths error:nil]
 	for (var i = 0; i < dirFiles.count(); i++) {
 		var currentFile = [dirFiles objectAtIndex:i]
 		var fileName = currentFile.replace('.txt','')
 		pairs.push(fileName)
 	}
-	
+
 	/*
 	pairs.push("01 shapes")
-	
+
 	// check params
 	pairs.push("02 states predict opacity")
 	pairs.push("03 states predict no opacity")
-	
+
 	pairs.push("04 states predict rotation")
 	pairs.push("05 states predict no rotation")
-	
+
 	pairs.push("06 states predict corners")
 	pairs.push("07 states predict no corners")
-	
+
 	pairs.push("08 states predict borders")
 	pairs.push("09 states predict borders color")
 	pairs.push("10 states predict borders opacity")
 	pairs.push("11 states predict no borders")
-	
+
 	pairs.push("12 states predict shadows")
 	pairs.push("13 states predict shadows color")
 	pairs.push("14 states predict shadows opacity")
 	pairs.push("15 states predict no shadows")
-	
+
 	pairs.push("16 states predict backgrounds")
 	pairs.push("17 states predict backgrounds color")
 	pairs.push("18 states predict backgrounds opacity")
 	pairs.push("19 states predict no backgrounds")
-	
+
 	pairs.push("20 states unexportable rectangle")
-	
+
 	pairs.push("21 states groups shadows same")
 	pairs.push("22 states groups shadows same borders")
 	pairs.push("23 states groups shadows scaled")
-	
-	
-	
+
+
+
 	// check normalising
 	pairs.push("24 layer out artboard position")
 	pairs.push("25 layer out artboard position group")
 	pairs.push("26 layer out artboard position group shadow")
-	
-		
+
+
 	// check hierarhy
 	pairs.push("27 states hierarhy selection order 1")
 	pairs.push("28 states hierarhy selection order 2")
 	pairs.push("29 states hierarhy selection order 3")
 	pairs.push("30 states hierarhy selection order 4")
-	
+
 	// double check color composing
 	pairs.push("31 states predict borders color opacity round")
 	pairs.push("32 states predict borders color opacity")
 	pairs.push("33 states predict shadows color opacity")
 	pairs.push("34 states predict background color opacity")
-	
+
 	// check new symbols in Sketch 3.7+
 	pairs.push("35 symbols and groups main symbol")
 	pairs.push("36 symbols and groups main group")
-	
+
 	*/
-	
+
 	return pairs
 }
 
 
+var duplicateCurrentDefaults = function() {
+		if (StatisticsInventory.isTesting()) {
+			writeUserDefaults(userDefaults)
+			preTestingDefaults = userDefaults
 
+			var testingDefaults = userDefaults
+			testingDefaults.myRetinaEnabled = 1
+			testingDefaults.myRetinaString = "retina"
+			testingDefaults.myRelativeGroup = 0
+			testingDefaults.myDetailedNotation = 0
+			testingDefaults.myDevice = 0
+			testingDefaults.myMinimalExport = 0
+			saveDefaults(Status.userDomain(), testingDefaults)
+		}
+}
+
+var restoreCurrentDefaults = function() {
+	 if (StatisticsInventory.isTesting()) { saveDefaults(Status.userDomain(), preTestingDefaults) }
+}

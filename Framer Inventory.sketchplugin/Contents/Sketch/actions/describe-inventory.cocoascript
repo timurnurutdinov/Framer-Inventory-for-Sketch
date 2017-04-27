@@ -2,67 +2,85 @@
 function DescribeInventory () {}
 
 
+DescribeInventory.sectionView = function() { return "# View" + ln() }
+DescribeInventory.sectionModel = function() { return "# Model" + ln() }
+DescribeInventory.sectionCustom = function() { return "# Custom" + ln() }
 
-// states related
+
 
 DescribeInventory.generateStateSection = function(layerName, generatedStates) {
 	if (generatedStates == nil || generatedStates.length == 0) { return "" }
-	
-	var stateSectionName = GenerateInventory.clearName(layerName) + ".states.add {" + ln()
-	var stateBottomSection = "}" + ln()
-	
+
+	var stateSectionName = GenerateInventory.clearName(layerName) + ".states =" + ln()
+	var stateBottomSection = ln()
+
 	var states = ""
 	for (var i = 0; i < generatedStates.length; i++) {
-		var correctBeginString = generatedStates[i].replace("{,", "{")
+		var correctBeginString = generatedStates[i].replace(" {, ", "")
+		correctBeginString = correctBeginString.replace(" {", "")
+		correctBeginString = correctBeginString.replace("}", "")
+
+		if (userDefaults.myDetailedNotation == 1)	{
+			correctBeginString = correctBeginString.replace(/\t/g, tln() + tln())
+		}
+		else {
+			correctBeginString = correctBeginString.replace(/:/g, ": ")
+			correctBeginString = correctBeginString.replace(": ", ": { ")
+			correctBeginString = correctBeginString.replace(/:  /g, ": ")
+			correctBeginString += " }"
+		}
+
 		states += tln() + correctBeginString + ln()
 	}
-	
+
 	return stateSectionName + states + stateBottomSection
 }
 
 DescribeInventory.generateState = function(stateName, stateContent) {
 	if (stateContent == "" || stateContent == nil || stateContent == '') { return "" }
-	return GenerateInventory.clearName(stateName) + ": {" + stateContent + "}"
+	return "\"" + GenerateInventory.clearName(stateName) + "\"" + ": {" + stateContent + "}"
 }
 
 
 DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
-	return "" + GenerateInventory.clearName(layerName) + ".states.switchInstant \"" + GenerateInventory.clearName(stateName) + "\"" + dln()
+	return "" + GenerateInventory.clearName(layerName) + ".stateSwitch(\"" + GenerateInventory.clearName(stateName) + "\")" + dln()
 }
 
 DescribeInventory.generateRetinaVariable = function() {
 	if (userDefaults.myRetinaEnabled == 0) { return "" }
-	var chosenRetina = FramerInventory.getRetinaValue()
-	return userDefaults.myRetinaString + " = " + chosenRetina + ln()
+	if (scaleInstance == nil) { scaleInstance = new ScaleInventory() }
+	return userDefaults.myRetinaString + " = " + scaleInstance.returnScaleCode() + ln()
 }
 
 DescribeInventory.generatePhoneModel = function() {
-	var model = FramerInventory.getPhoneValue()
+	var model = userDefaults.myDevice
 	var modelDescription = ""
-	
-	if (model == 1 || model == 2 || model == 3) {
-		modelDescription += "# mobile" + ln()
-	} 
-	
-	if (model == 1) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-5s-spacegray\"" + ln()
-	}
-	else if (model == 2) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-6-spacegray\"" + ln()
-		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.853" + ln()
+
+	if (model == 2) {
+		modelDescription += "Framer.Device.deviceType = \"apple-iphone-5s-space-gray\"" + ln()
 	}
 	else if (model == 3) {
-		modelDescription += "Framer.Device.deviceType = \"iphone-6plus-spacegray\"" + ln()
-		modelDescription += "if Screen.width == 640" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.515" + ln()
-		modelDescription += "if Screen.width == 750" + ln()
-		modelDescription += tln() + "Framer.Device.contentScale = 0.604" + ln()
+		modelDescription += "Framer.Device.deviceType = \"apple-iphone-6s-space-gray\"" + ln()
 	}
-	return modelDescription
+	else if (model == 4) {
+		modelDescription += "Framer.Device.deviceType = \"apple-iphone-6s-plus-space-gray\"" + ln()
+	}
+	else if (model == 5) {
+		modelDescription += "Framer.Device.deviceType = \"google-nexus-5x\"" + ln()
+	}
+	else if (model == 6) {
+		modelDescription += "Framer.Device.deviceType = \"google-nexus-6p\"" + ln()
+	}
+	return modelDescription + getHelpers(model)
 }
 
 
+
+function getHelpers(model) {
+	var helpers = "Framer.Extras.Hints.disable()" + ln()
+	if (model == 0 || model == 1) { helpers += "document.body.style.cursor = \"auto\"" + ln() }
+	return helpers
+}
 
 function getButtonName() {
 	return "cycleButton"
@@ -91,7 +109,7 @@ DescribeInventory.generateCycleStates = function(states) {
 
 
 function getLayersArrayName() {
-	return "items"
+	return "sceneItems"
 }
 
 DescribeInventory.generateLayers = function(layers) {
@@ -103,7 +121,7 @@ DescribeInventory.generateLayers = function(layers) {
 	}
 	layersDescription += "]" + ln()
 	return layersDescription
-	
+
 }
 
 
@@ -122,30 +140,22 @@ function getFunctionName() {
 	return "runSimulation"
 }
 
+function getHandlerName() {
+	return "nextStateHandler"
+}
 
 DescribeInventory.generateHandler = function() {
 	var handlerDescription = ""
-	
-	if (userDefaults.myAutoplay == 0) {
-		handlerDescription = getButtonName() + ".on Events.Click, ->" + ln()
-		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
-		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
-		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
-		handlerDescription += tln() + tln() + "catch error" + dln()
-	}
-	else {
-		handlerDescription = getFunctionName() + " = () ->" + ln()
-		handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
-		handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
-		handlerDescription += tln() + tln() + "try" + ln()
-		handlerDescription += tln() + tln() + tln() + "item.states.switch(nextState)" + ln()
-		handlerDescription += tln() + tln() + "catch error" + ln()
-		handlerDescription += tln() + "Utils.delay 2, ->" + ln()
-		handlerDescription += tln() + tln() + getFunctionName() + "()" + dln()
-		
-		handlerDescription += getFunctionName() + "()"
-	}
+
+	handlerDescription += getHandlerName() + " = () ->" + ln()
+	handlerDescription += tln() + "nextState = " + getCyclerName() + "()" + ln()
+	handlerDescription += tln() + "for item in " + getLayersArrayName() + ln()
+	handlerDescription += tln() + tln() + "try" + ln()
+	handlerDescription += tln() + tln() + tln() + "item.animate(nextState, curve: Spring(damping: 1), time: 0.5)" + ln()
+	handlerDescription += tln() + tln() + "catch error" + dln()
+
+	handlerDescription += getButtonName() + ".on Events.Click, ->" + ln()
+	handlerDescription += tln() + getHandlerName() + "()"
+
 	return handlerDescription
 }
-

@@ -1,0 +1,92 @@
+
+function DemoInventory () {}
+
+
+// DemoInventory.datesKey = function() { return Status.datesDomain() }
+DemoInventory.maxActionNumber = function() { return 10 }
+DemoInventory.firstUseActionNumber = function() { return 50 }
+
+
+DemoInventory.returnTodayKey = function() {
+  var dateString = [NSDateFormatter localizedStringFromDate:[NSDate date] dateStyle:NSDateFormatterShortStyle timeStyle:NSDateFormatterFullStyle];
+  var today = [[dateString componentsSeparatedByString:","] firstObject]
+  return today
+}
+
+DemoInventory.returnDemoDates = function() {
+  var datesKey = Status.datesDomain()
+  var maxActionNumber = DemoInventory.maxActionNumber()
+
+  var defaults = [NSUserDefaults standardUserDefaults];
+  var dates = [defaults dictionaryForKey:datesKey];
+  var freshInstall = false
+
+  if (dates == nil) {
+    // first use
+    StatisticsInventory.sendRequest(StatisticsInventory.returnRequestURL(registeredUserRequest))
+
+    var actionDates = NSMutableDictionary.new()
+    [defaults setObject:actionDates forKey:datesKey]
+    dates = [defaults dictionaryForKey:datesKey];
+
+    freshInstall = true
+  }
+
+  var today = DemoInventory.returnTodayKey()
+  if ([dates objectForKey:today] == nil) {
+    // first use today
+    var updatedDates = [dates mutableCopy]
+
+    if (freshInstall) {
+      [updatedDates addObject:DemoInventory.firstUseActionNumber() forKey:today]
+
+      userDefaults.myRegisterDate = today
+  		saveDefaults(Status.userDomain(), userDefaults)
+    }
+    else { [updatedDates addObject:maxActionNumber forKey:today] }
+    [defaults setObject:updatedDates forKey:datesKey]
+  }
+
+  return [defaults dictionaryForKey:datesKey];
+}
+
+
+
+
+DemoInventory.isRegistered = function() {
+  var licenseChecker = FILicenseChecker.alloc().init();
+  if (licenseChecker.isRegisteredWithEmail_andLicense(userDefaults.myEmail, userDefaults.myLicense)) { return true }
+
+  return false
+}
+
+
+DemoInventory.actionUsed = function() {
+  var datesKey = Status.datesDomain()
+  var maxActionNumber = DemoInventory.maxActionNumber()
+
+  var dates = DemoInventory.returnDemoDates()
+  var today = DemoInventory.returnTodayKey()
+
+  var currentValue = [[dates objectForKey:today] firstObject]
+  if (currentValue > 0) { currentValue-- }
+
+  var updatedDates = [dates mutableCopy]
+  [updatedDates removeObjectForKey:today]
+  [updatedDates addObject:currentValue forKey:today]
+  [[NSUserDefaults standardUserDefaults] setObject:updatedDates forKey:datesKey]
+
+}
+
+DemoInventory.actionsLeft = function() {
+  var datesKey = Status.datesDomain()
+  var maxActionNumber = DemoInventory.maxActionNumber()
+
+  var dates = DemoInventory.returnDemoDates()
+  var today = DemoInventory.returnTodayKey()
+
+  var array = [dates objectForKey:today]
+  if (array != nil && array.count() > 0) { return [array firstObject] }
+
+  return 0
+}

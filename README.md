@@ -1,78 +1,45 @@
-# Framer Inventory 2.2 for Sketch
-#### Landing page with video: http://timurnurutdinov.github.io/framerinventory/
 
-<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/issues/43">Request Beta v3.0 for Sketch v41</a>
+# Framer Inventory 3.0
+### Semantic Export from Sketch into Framer
+<a href="https://timurnurutdinov.github.io/framerinventory/?utm_source=web&utm_medium=github">Watch Promo and Learn More</a>
 
-<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2.1">Download v2.2.1 for Sketch 3.9 & 4.0</a>
-
-<a href="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/releases/tag/v2.2">Download v2.2 for Sketch 3.8</a>
-
-
-
-
->Framer Inventory operates within the current Sketch page, handles FramerJS code generation & helps exporting assets manually from automatically generated page. The only tool to analyse the whole scene rather than separate screens.
-
-![Alt text](/../images-second-version/readme/window.png?raw=true “Framer Inventory plugin window”)
-
-## 1. Simulate Keynote
-This action mimics Keynote and its Magic Move transition. Artboards are similar to slides in presentation but you can animate layers on them. Preview your ideas just few seconds later you’ve done them in Sketch!
+![](/../images-third-version/readme/whiter@2x.png?raw=true "")
+![Import States](/../images-third-version/readme/import-states@2x.png?raw=true "Import States")
+## 1. Import States
+Import layers from Sketch to Framer with states.
+<a href="https://medium.com/@tilllur/import-states-with-framer-inventory-plugin-for-sketch-e9ad6ebfeae7?utm_source=web&utm_medium=github">Read More</a>
 
 #### How to use
-- Create a sequence of artboards in Sketch (aka slides in Keynote)
-- Mark necessary layers as “Exportable” to include them into a prototype (Note: plugin respects hierarchy)
-- Run **Simulate Keynote** action to get your FramerJS code
-- Paste from clipboard into Framer Studio 
-- Export assets from automatically generated page (sometimes no assets needed)
+Choose layers & run to import layers, selected states or all states. Paste generated code from clipboard.
 
-#### Features
-- Easy export: necessary assets are ready on "Export for Framer Inventory" page to be exported into _/your-prototype-name/images_
-- Normalising: dynamic properties are put into FramerJS states, static - into layer description
-- Pixels & Points support (New in 2.1)
-- iPhone prototyping: mobile optimisations for pixel density and Framer devices
-- Minimal export: generate clean states (delta between A & B)
-- Autoplay: loop the prototype and preview without any clicks
+#### Features:
+* Pixels & points support
+* Relative layers: get coordinates to parent Artboard or parent Group
+* Devices support: ready for Desktop/iOS/Android prototyping
 
+![](/../images-third-version/readme/whiter@2x.png?raw=true "")
+![Export Prototypes](/../images-third-version/readme/export-prototypes@2x.png?raw=true "Export Prototypes")
+## 2. Export Prototype
+Have you used a Keynote for prototyping? It’s quite the same but like you organize scene of slides in Sketch and create motion in Framer with a any logic you need.
+<a href="https://medium.com/@tilllur/export-prototypes-with-framer-inventory-plugin-for-sketch-2f10f9397193?utm_source=web&utm_medium=github">Read More</a>
 
+#### How to use
+* Include layers in Scene by marking them exportable
+* Generate scene for entire page or selected artboards
+* Paste code into Framer and save project
 
-
-## 2. Generate States
-Generates code for **selected layers** and detects their states. Similar to **Simulate Keynote** but let you write your own logic. Works great for high fidelity prototyping.
-
-
-## 3. Replicate Selected
-Generates code for **selected layers** without states. Works as a quick start for high fidelity prototyping without states (modulation, sliders & others)
+#### Features:
+* Custom code: expand generated prototypes with your own logic
+* Reimport: your Custom code will be saved on reimport
 
 
+![](/../images-third-version/readme/whiter@2x.png?raw=true "")
+## Prepare project
+* Create Framer project, *choose device type* and save it.
+* Open plugin’s panel via *Plugins/Framer Inventory/Show Panel*
+* Select *the same device type* on panel and you are ready!
 
 
-## 4. Settings
-![Alt text](/../images-second-version/readme/settings.png?raw=true “Settings window”)
-
-#### 4.1. Dimentions
-##### A. Pixels
-Choose multiplier and scale properties to get retina optimised prototype. Supports Auto Code.
-![Alt text](/../images-second-version/readme/modifier.png?raw=true “Settings window”)
-
-##### B. Points
-Choose variable name to scale properties in Framer. Choose if you like to measure in points.
-![Alt text](/../images-second-version/readme/variable.png?raw=true “Settings window”)
-
-
-#### 4.2. iPhone prototyping
-- Detects iPhone 5/6/6 Plus to show in Framer Studio
-- Scales properties for iPhone 5/6/6
-- Adds scaled export options on "Export for Framer Inventory" page
-![Alt text](/../images-second-version/readme/mobile.png?raw=true “Settings window”)
-
-#### 4.3. Minimal export for Simulate Keynote
-- Cleans states to generate minimal amount of code
-![Alt text](/../images-second-version/readme/minimal.png?raw=true “Settings window”)
-
-#### 4.4. Autoplay
-- Replaces onClick handler with an autoplay loop
-
-
-
-
-# Contact
-You are welcome to suggest ideas and report bugs (ideally with sketch files included). For better communication I suggest using Github issues but you can ping me on Twitter as well: @tilllur
+![](/../images-third-version/readme/whiter@2x.png?raw=true "")
+## Contact
+You are welcome to suggest ideas and report bugs (ideally with sketch files included). For better communication I suggest using Github issues but you can ping @framerinventory on Twitter as well.

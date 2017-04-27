@@ -1,0 +1,114 @@
+
+function ScaleInventory () {
+		this.popularWidth = ScaleInventory.returnMostPopularArtboardSize()
+		this.scale = ScaleInventory.returnScale(this.popularWidth)
+}
+
+
+
+ScaleInventory.prototype.returnScaleCode = function() {
+		if (this.scale == -1) { return 1 }
+		return this.scale
+}
+
+ScaleInventory.prototype.returnScaleExport = function() {
+		if (this.scale == -1) {
+			if (userDefaults.myDevice == 2 || userDefaults.myDevice == 3) { return 2 }
+			else if (userDefaults.myDevice == 4 || userDefaults.myDevice == 5) { return 3 }
+			else if (userDefaults.myDevice == 6) { return 4 }
+			return 2
+		}
+		return this.scale
+}
+
+
+
+
+ScaleInventory.returnMostPopularArtboardSize = function() {
+		var localArtboards = FramerInventory.returnArtboardsScope()
+		var widthArray = NSMutableArray.new()
+		for (var i = 0; i < localArtboards.count(); i++) {
+				var currentArtboard = [localArtboards objectAtIndex: i]
+				[widthArray addObject: currentArtboard.frame().width()]
+		}
+
+		var sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:true];
+		var widthSortedArray = [widthArray sortedArrayUsingDescriptors:[sortDescriptor]]
+
+		var previous = [widthSortedArray firstObject];
+	 	var popular = [widthSortedArray firstObject];
+	 	var count = 1;
+	 	var maxCount = 1;
+
+		for (var i = 1; i < widthSortedArray.count(); i++) {
+				if (previous == [widthSortedArray objectAtIndex: i]) { count++ }
+				else {
+						if (count > maxCount) {
+								popular = [widthSortedArray objectAtIndex: (i-1)];
+								maxCount = count;
+						}
+						previous = [widthSortedArray objectAtIndex: i];
+						count = 1;
+				}
+		}
+
+		return count > maxCount ? [widthSortedArray objectAtIndex:([widthSortedArray count] - 1)] : popular;
+		// return FramerInventory.returnArtboardsScope().firstObject().frame().width()
+}
+
+ScaleInventory.returnScale = function(originWidth) {
+		var selectedDevice = userDefaults.myDevice
+
+		if (selectedDevice == 0) { return 1 }
+		else if (selectedDevice == 1) { return 2 }
+		else if (selectedDevice == 2) {
+				if (originWidth == 320) { return 2 }
+				else if (originWidth == 320*2) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 3) {
+				if (originWidth == 375) { return 2 }
+				else if (originWidth == 375*2) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 4) {
+				if (originWidth == 414) { return 3 }
+				else if (originWidth == 414*3) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 5) {
+				if (originWidth == 360) { return 3 }
+				else if (originWidth == 360*3) { return 1 }
+				else { return -1 }
+		}
+		else if (selectedDevice == 6) {
+				if (originWidth == 360) { return 4 }
+				else if (originWidth == 360*2) { return 2 }
+				// else if (originWidth == 360*3) { return 4/3 }
+				else if (originWidth == 360*4) { return 1 }
+				else { return - 1 }
+		}
+
+		return -1
+}
+
+
+
+// Devices Magic
+ScaleInventory.returnDevices = function() {
+    return [["Canvas", "Canvas @2x"], ["iPhone 5S", "iPhone 7", "iPhone 7 Plus"], ["Nexus 5X", "Nexus 6P"]]
+}
+
+ScaleInventory.selectedDeviceIndex = function(selectedItemIndex) {
+    if (selectedItemIndex == 0 || selectedItemIndex == 1) { return selectedItemIndex }
+    else if (selectedItemIndex == 3 || selectedItemIndex == 4 || selectedItemIndex == 5) { return (selectedItemIndex - 1) }
+    else if (selectedItemIndex == 7 || selectedItemIndex == 8) { return (selectedItemIndex - 2) }
+    return 0
+}
+
+ScaleInventory.deviceToSelect = function(index) {
+    if (index == 0 || index == 1) { return index }
+    else if (index == 2 || index == 3 || index == 4) { return (index + 1) }
+    else if (index == 5 || index == 6) { return (index + 2) }
+    return 0
+}

@@ -19,4 +19,3 @@ selection_9 = new Layer width: 60*retina, height: 60*retina, x: 20*retina, y: 32
 oval_1 = new Layer width: 60*retina, height: 60*retina, x: 20*retina, y: 420*retina, borderRadius: 30*retina, backgroundColor: "rgba(144,19,254,1)", borderWidth: 1*retina, borderColor: "rgba(255,255,255,1)"
 
 oval_2 = new Layer width: 60*retina, height: 60*retina, x: 100*retina, y: 420*retina, borderRadius: "100%", backgroundColor: "rgba(144,19,254,1)", borderWidth: 1*retina, borderColor: "rgba(255,255,255,1)"
-

@@ -1,69 +1,135 @@
 {
   "name" : "Framer Inventory",
   "author" : "Timur Nurutdinov",
-  "authorEmail" : "addleimb@gmail.com",
-  "description": "Generate FramerJS prototypes from Sketch",
-  "homepage": "https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch",
-  "identifier": "com.tilllur.framer-inventory",
-  "version": "2.2.0",
-  "compatibleVersion": 3.7,
+  "authorEmail" : "framerinventory@gmail.com",
+  "description": "Import States & Export Prototypes from Sketch to Framer",
+  "homepage": "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=manifest",
+  "identifier": "com.addleimb.framer-inventory",
+  "version": "3.0.0",
+  "compatibleVersion": 4.3,
   "commands" : [
     {
-      "script" : "choose-replicate-layers.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onReplicateLayersRun",
       "shortcut" : "",
-      "name" : "◉   Replicate Layers",
-      "identifier" : "choose-replicate-layers"
+      "name" : "⊡   Import Layers",
+      "identifier" : "choose-replicate-layers",
+      "description" : "Generate Framer layers",
+      "icon" : "layers.png"
     },
     {
-      "script" : "choose-generate-states.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onGenerateStatesRun",
       "shortcut" : "",
-      "name" : "◉   Generate States",
-      "identifier" : "choose-generate-states"
+      "name" : "⧉   Import States",
+      "identifier" : "choose-generate-states",
+      "description" : "Generate Framer layers & states",
+      "icon" : "states.png"
     },
     {
-      "script" : "choose-simulate-keynote.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSimulateKeynoteRun",
       "shortcut" : "",
-      "name" : "◎   Simulate Keynote",
-      "identifier" : "choose-simulate-keynote"
+      "name" : "❖   Export Prototype",
+      "identifier" : "choose-simulate-keynote",
+      "description" : "Generate Framer scene for exportable layers",
+      "icon" : "scene.png"
     },
     {
-      "script" : "choose-testing-environment.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onTestingRun",
       "shortcut" : "",
       "name" : "Run testing environment",
       "identifier" : "choose-testing-environment"
     },
     {
-      "script" : "choose-settings.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSettingRun",
       "shortcut" : "",
-      "name" : "Settings",
+      "name" : "      Settings",
       "identifier" : "choose-settings"
     },
     {
-      "script" : "choose-remove-export-page.cocoascript",
-      "handler" : "onRun",
+      "script" : "run-actions.cocoascript",
+      "handler" : "onRemoveExportPageRun",
       "shortcut" : "",
       "name" : "Remove Export Page",
       "identifier" : "choose-remove-export-page"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onShowBarRun",
+      "shortcut" : "",
+      "name" : "      Show Toolbar",
+      "identifier" : "show-bar"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSelectProjectFolderRun",
+      "shortcut" : "",
+      "name" : "Select Framer Folder",
+      "identifier" : "choose-select-export-path"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onRemoveProjectFolderRun",
+      "shortcut" : "",
+      "name" : "Remove Framer Folder",
+      "identifier" : "choose-remove-export-path"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onShowProjectFolderRun",
+      "shortcut" : "",
+      "name" : "Show Framer Folder",
+      "identifier" : "choose-show-export-path"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onCheckUpdatesRun",
+      "shortcut" : "",
+      "name" : "Check for Updates",
+      "identifier" : "choose-check-updates"
+    },
+
+
+    {
+      "script" : "selection-changed-action.cocoascript",
+      "handlers" : {
+        "actions" : {
+           "SelectionChanged.finish" : "onSelectionChanged"
+           }
+          }
     }
   ],
   "menu": {
 	  "title": "Framer Inventory",
       "items": [
-		  "choose-simulate-keynote",
-		  "choose-generate-states",
-		  "choose-replicate-layers",
-		  {
-		         "title": "      Utils",
-		         "items": [
-				 	"choose-settings",
-					"choose-remove-export-page"
-		         ],
-		  }
+        "show-bar",
+        "-",
+  		  "choose-replicate-layers",
+        "choose-generate-states",
+        "-",
+        "choose-simulate-keynote",
+        "-",
+        {
+          "title": "      Framer Folder",
+          "items": [
+            "choose-show-export-path",
+            "-",
+            "choose-select-export-path",
+            "choose-remove-export-path"
+          ]
+        },
+  		  {
+  		         "title": "      Utils",
+  		         "items": [
+  					          "choose-remove-export-page",
+                      "choose-check-updates"
+  		          ]
+  		  },
+        "-",
+        "choose-settings"
       ]
     }
 }

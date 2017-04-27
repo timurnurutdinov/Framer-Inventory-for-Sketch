@@ -1,0 +1,6 @@
+framework module RegisterInventory {
+  umbrella header "RegisterInventory.h"
+
+  export *
+  module * { export * }
+}

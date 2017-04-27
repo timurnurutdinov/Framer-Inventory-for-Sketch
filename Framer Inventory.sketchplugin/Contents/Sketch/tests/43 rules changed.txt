@@ -1,0 +1,7 @@
+nice = new Layer width: 240*retina, height: 240*retina, image: "images/nice.png"
+
+nice.states =
+	"position_a": { x: 68*retina, y: 94*retina }
+	"position_b": { x: 0*retina, y: 0*retina }
+
+nice.stateSwitch("position_a")

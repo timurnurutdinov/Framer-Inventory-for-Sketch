@@ -1,0 +1,56 @@
+
+
+var selectFolder = function() {
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, ViewInventory.sizeModalSmall(), 240) display:false];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+
+	var imageView = ViewInventory.addImage(NSMakeRect(16, 103, 180, 123), "modals/folder");
+	[[artboardsWindow contentView] addSubview:imageView];
+
+	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 180, 32)];
+	[selectFolderButton setTitle:"Select Folder"];
+	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
+	[selectFolderButton setFont:ViewInventory.fontActionButton()];
+	[selectFolderButton setKeyEquivalent:"\r"];
+	[selectFolderButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		FramerInventory.runSelectProjectFolder()
+
+		if (userDefaults.exportFramerFolder != "") {
+			if (StatisticsInventory.getStatus() == Status.simulateID()) { runSimulateKeynote() }
+			else if (StatisticsInventory.getStatus() == Status.replicateID()) { runReplicateLayers() }
+			else if (StatisticsInventory.getStatus() == Status.generateID()) { runGenerateStates() }
+		}
+
+	}];
+	[selectFolderButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:selectFolderButton];
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 180, 32)];
+	[cancelButton setTitle:"Cancel"];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		[currentDocument showMessage:ViewInventory.selectFramerFolderMessage()]
+
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}
