@@ -23,7 +23,7 @@
       "shortcut" : "",
       "name" : "⧉   Import States",
       "identifier" : "choose-generate-states",
-      "description" : "Generate Framer layers & states",
+      "description" : "Generate Framer States",
       "icon" : "states.png"
     },
     {
@@ -32,7 +32,7 @@
       "shortcut" : "",
       "name" : "❖   Export Prototype",
       "identifier" : "choose-simulate-keynote",
-      "description" : "Generate Framer scene for exportable layers",
+      "description" : "Export Framer Prototype",
       "icon" : "scene.png"
     },
     {
