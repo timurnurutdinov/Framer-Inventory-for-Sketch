@@ -8,7 +8,8 @@ function ScaleInventory () {
 
 ScaleInventory.prototype.returnScaleCode = function() {
 		if (this.scale == -1) { return 1 }
-		return this.scale
+		// return this.scale
+		return 1
 }
 
 ScaleInventory.prototype.returnScaleExport = function() {
@@ -56,6 +57,7 @@ ScaleInventory.returnMostPopularArtboardSize = function() {
 		// return FramerInventory.returnArtboardsScope().firstObject().frame().width()
 }
 
+
 ScaleInventory.returnScale = function(originWidth) {
 		var selectedDevice = userDefaults.myDevice
 
@@ -90,6 +92,7 @@ ScaleInventory.returnScale = function(originWidth) {
 		}
 
 		return -1
+
 }
 
 
