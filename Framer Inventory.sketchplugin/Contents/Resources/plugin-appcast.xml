@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Framer Inventory for Sketch</title>
+    <link>https://raw.githubusercontent.com/timurnurutdinov/Framer-Inventory-for-Sketch/Framer Inventory.sketchplugin/Contents/Resources/plugin-appcast.xml</link>
+    <description>Import States & Export Prototypes</description>
+    <language>en</language>
+      <item>
+        <title>Version 3.0.2</title>
+        <description>
+          <![CDATA[
+            <ul>
+              <li>Test item</li>
+            </ul>
+          ]]>
+        </description>
+        <enclosure url="https://github.com/timurnurutdinov/Framer-Inventory-for-Sketch/archive/v3.0.zip" sparkle:version="1.3.1" />
+      </item>
+  </channel>
+</rss>
