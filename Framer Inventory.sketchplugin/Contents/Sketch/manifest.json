@@ -6,6 +6,7 @@
   "homepage": "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=manifest",
   "identifier": "com.addleimb.framer-inventory",
   "version": "3.0.1",
+  "appcast": "https://raw.githubusercontent.com/timurnurutdinov/tree/sketch-update-tool/Framer-Inventory-for-Sketch/plugin-appcast.xml",
   "compatibleVersion": 4.3,
   "commands" : [
     {
