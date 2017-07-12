@@ -5,7 +5,7 @@
   "description": "Import States & Export Prototypes from Sketch to Framer",
   "homepage": "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=manifest",
   "identifier": "com.addleimb.framer-inventory",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "compatibleVersion": 4.3,
   "commands" : [
     {
