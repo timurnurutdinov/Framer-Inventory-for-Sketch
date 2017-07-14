@@ -77,7 +77,7 @@ FramerInventory.getCurrentPage = function () {
 }
 
 FramerInventory.deselectLayers = function() {
-	[[currentDocument currentPage] deselectAllLayers]
+	[[currentDocument currentPage] changeSelectionBySelectingLayers:nil]
 }
 
 FramerInventory.returnArtboardsScope = function() {
@@ -288,7 +288,7 @@ FramerInventory.setUserSelection = function(userSelection) {
 
 FramerInventory.restoreSelection = function(selection) {
 	var currentPage = FramerInventory.getCurrentPage()
-	[currentPage deselectAllLayers]
+	[currentPage changeSelectionBySelectingLayers:nil]
 
 	for (var i = 0; i < selection.count(); i++) {
 		[[selection objectAtIndex:i] select:true byExpandingSelection:true]
@@ -298,7 +298,7 @@ FramerInventory.restoreSelection = function(selection) {
 FramerInventory.createExportSelection = function() {
 	var exportPage = FramerInventory.findPageWithName(exportPageName)
 	if (exportPage == nil) { return }
-	[exportPage deselectAllLayers]
+	[exportPage changeSelectionBySelectingLayers:nil]
 
 	var exportables = [exportPage exportableLayers]
 	for (var i = 0; i < exportables.count(); i++) {

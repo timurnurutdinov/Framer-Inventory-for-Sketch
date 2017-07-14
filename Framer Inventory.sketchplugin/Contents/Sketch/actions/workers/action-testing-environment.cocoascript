@@ -38,7 +38,7 @@ var runTestingEnvironment = function() {
 		if (operatingPage != nil) {
 			// if (showTestLog) { log("Operation page is: " + operatingPage) }
 			doc.setCurrentPage(operatingPage)
-			[[doc currentPage] deselectAllLayers]
+			[[doc currentPage] changeSelectionBySelectingLayers:nil]
 
 			testingSelection = [operatingPage exportableLayers]
 			answer = runGenerateStates()
