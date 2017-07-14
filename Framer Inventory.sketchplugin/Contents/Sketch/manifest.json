@@ -122,13 +122,6 @@
             "choose-remove-export-path"
           ]
         },
-  		  {
-  		         "title": "      Utils",
-  		         "items": [
-  					          "choose-remove-export-page",
-                      "choose-check-updates"
-  		          ]
-  		  },
         "-",
         "choose-settings"
       ]
