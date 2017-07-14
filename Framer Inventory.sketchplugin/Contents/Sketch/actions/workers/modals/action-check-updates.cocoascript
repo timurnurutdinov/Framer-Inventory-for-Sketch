@@ -92,7 +92,7 @@ var runCheckUpdates = function() {
 			// NSWorkspace.sharedWorkspace().openURL(websiteURL);
 	}
 	else {
-			currentDocument.showMessage(ViewInventory.smileDone() + "Latest version");
+			currentDocument.showMessage(ViewInventory.smileDone() + "Framer Inventory supports Sketch native update");
 	}
 
 }
