@@ -158,15 +158,15 @@ GenerateInventory.generateFilterShadows = function(values) {
 
 		var shadowVariable = ""
 		// BAD CODE: REFACTORING NEEDED
-		if (userDefaults.myRetinaEnabled == 0) {
+		// if (userDefaults.myRetinaEnabled == 0) {
 			var shadowVariable = br() + "style: {\"" + "-webkit-filter\"" + ": \"" + "drop-shadow" + '('
 			shadowVariable += vout(value[0]) + "px " + vout(value[1]) + "px "
 			shadowVariable += vout(value[2]) + "px " + color + ')' + "\"" + "}"
-		}
-		else {
-			shadowVariable = br() + "style: {\"-webkit-filter\": \"drop-shadow(" + calc(niceValue(value[0]))
-			shadowVariable += calc(niceValue(value[1])) + calc(niceValue(value[2])) + calcColor(color) + "}"
-		}
+		// }
+		// else {
+		// 	shadowVariable = br() + "style: {\"-webkit-filter\": \"drop-shadow(" + calc(niceValue(value[0]))
+		// 	shadowVariable += calc(niceValue(value[1])) + calc(niceValue(value[2])) + calcColor(color) + "}"
+		// }
 
 		return shadowVariable
 	}

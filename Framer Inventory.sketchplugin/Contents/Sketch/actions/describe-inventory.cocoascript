@@ -47,9 +47,10 @@ DescribeInventory.generateStateSwitchInstant = function(layerName, stateName) {
 }
 
 DescribeInventory.generateRetinaVariable = function() {
-	if (userDefaults.myRetinaEnabled == 0) { return "" }
-	if (scaleInstance == nil) { scaleInstance = new ScaleInventory() }
-	return userDefaults.myRetinaString + " = " + scaleInstance.returnScaleCode() + ln()
+	return ""
+	// if (userDefaults.myRetinaEnabled == 0) { return "" }
+	// if (scaleInstance == nil) { scaleInstance = new ScaleInventory() }
+	// return userDefaults.myRetinaString + " = " + scaleInstance.returnScaleCode() + ln()
 }
 
 DescribeInventory.generatePhoneModel = function() {

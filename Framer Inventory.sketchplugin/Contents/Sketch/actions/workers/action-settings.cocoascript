@@ -289,12 +289,13 @@ var createFirstLine = function() {
 	[[densityAccessory cell] setBezelStyle:NSTexturedRoundedBezelStyle];
 	var densityValues = ["Pixels", "Points"];
 	densityAccessory.addItemsWithTitles(densityValues)
-	densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
+	// densityAccessory.selectItemAtIndex(userDefaults.myRetinaEnabled)
+	densityAccessory.selectItemAtIndex(0)
 	[densityAccessory setFont:ViewInventory.fontAccessory()];
 
 	densityAccessory.setCOSJSTargetFunction(function(sender){
-			userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
-			saveDefaults(Status.userDomain(), userDefaults)
+			// userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
+			// saveDefaults(Status.userDomain(), userDefaults)
 	})
 
 
