@@ -19,12 +19,12 @@ var runSettings = function() {
 	exportWindow.setBackgroundColor(ViewInventory.colorWindow());
 	exportWindow.setTitleVisibility(NSWindowTitleHidden);
 	exportWindow.setTitlebarAppearsTransparent(true);
-	exportWindow.setFrame_display(NSMakeRect(0, 0, ViewInventory.sizeModalSettings(), measureSettingsHeight), false);
+	exportWindow.setFrame_display(NSMakeRect(0, 0, ViewInventory.sizeModalSettings(), measureSettingsHeight-50), false);
 	exportWindow.setMovableByWindowBackground(true);
 	exportWindow.setHasShadow(true);
 	exportWindow.setLevel(NSFloatingWindowLevel);
 
-	var topBreaker = ViewInventory.addImage(NSMakeRect(0, 440, ViewInventory.sizeModalSettings(), 1), "settings/breaker")
+	var topBreaker = ViewInventory.addImage(NSMakeRect(0, 440-50, ViewInventory.sizeModalSettings(), 1), "settings/breaker")
 	[[exportWindow contentView] addSubview:topBreaker]
 
 	var bottomBreaker = ViewInventory.addImage(NSMakeRect(0, 53, ViewInventory.sizeModalSettings(), 1), "settings/breaker")
@@ -33,13 +33,13 @@ var runSettings = function() {
 
 
 
-	var topImage = ViewInventory.addImage(NSMakeRect(68, 340, 164, 83), "settings/top")
+	var topImage = ViewInventory.addImage(NSMakeRect(68, 340-50, 164, 83), "settings/top")
 	[[exportWindow contentView] addSubview:topImage]
 
-	var groupsImage = ViewInventory.addImage(NSMakeRect(41, 134, 15, 39), "settings/groups")
-	[[exportWindow contentView] addSubview:groupsImage]
+	// var groupsImage = ViewInventory.addImage(NSMakeRect(41, 134, 15, 39), "settings/groups")
+	// [[exportWindow contentView] addSubview:groupsImage]
 
-	var menuImage = ViewInventory.addImage(NSMakeRect(0, 274, 300, 28), "settings/menu")
+	var menuImage = ViewInventory.addImage(NSMakeRect(0, 274-50-2, 300, 32), "settings/menu")
 	[[exportWindow contentView] addSubview:menuImage]
 
 
@@ -48,7 +48,7 @@ var runSettings = function() {
 	var headerViews = createHeader()
 	for (var i = 0; i < headerViews.length; i++) { [[exportWindow contentView] addSubview:headerViews[i]] }
 
-	var licenseButton = ViewInventory.addButton( NSMakeRect(228, 274, 69, 28), "settings/donate",
+	var licenseButton = ViewInventory.addButton( NSMakeRect(126+5+4, 274-50, 112, 28), "settings/donate",
 			function(sender){
 					var registeredState = DemoInventory.isRegistered()
 
@@ -65,9 +65,9 @@ var runSettings = function() {
 
 
 
-	var firstLineViews = createFirstLine()
-	for (var i = 0; i < firstLineViews.length; i++) { [[exportWindow contentView] addSubview:firstLineViews[i]] }
-	var retinaInput = firstLineViews[0]
+	// var firstLineViews = createFirstLine()
+	// for (var i = 0; i < firstLineViews.length; i++) { [[exportWindow contentView] addSubview:firstLineViews[i]] }
+	// var retinaInput = firstLineViews[0]
 
 
 
@@ -87,7 +87,7 @@ var runSettings = function() {
 				[NSApp stopModal]
 				ToolbarInventory.updateAccessoryControls()
 
-				var newRetinaValue = retinaInput.stringValue() + ""
+				// var newRetinaValue = retinaInput.stringValue() + ""
 				var trimmedRetinaValue = newRetinaValue.trim()
 				if (trimmedRetinaValue == "") { [currentDocument showMessage:"Scale variable can't be empty. Back to \"" + userDefaults.myRetinaString + "\""] }
 				else if (/^[a-zA-Z]+$/.test(trimmedRetinaValue)) {
@@ -111,13 +111,14 @@ var runSettings = function() {
 	})
 
 	[[exportWindow contentView] addSubview:learnButton];
-	[[exportWindow contentView] addSubview:createRadioGroupRelative()];
+	// [[exportWindow contentView] addSubview:createRadioGroupRelative()];
 	[[exportWindow contentView] addSubview:createRadioGroupStyle()];
+	[[exportWindow contentView] addSubview:createRadioGroupStyleCases()];
 
 
 
 
-	var registeredStatusText = [[NSTextField alloc] initWithFrame:NSMakeRect(6, 446, ViewInventory.sizeModalSettings() - 12, 17)];
+	var registeredStatusText = [[NSTextField alloc] initWithFrame:NSMakeRect(6, 446-50, ViewInventory.sizeModalSettings() - 12, 17)];
 	[registeredStatusText setEditable:false];
 	[registeredStatusText setBordered:false];
 	[registeredStatusText setFont:ViewInventory.fontInputControls()];
@@ -147,31 +148,31 @@ var runSettings = function() {
 
 	var textTitles = []
 
-	var scaleTypeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 244, 64, 12)];
-	[scaleTypeText setStringValue:"Scale type"];
-	textTitles.push(scaleTypeText)
+	// var scaleTypeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 244, 64, 12)];
+	// [scaleTypeText setStringValue:"Scale type"];
+	// textTitles.push(scaleTypeText)
+	//
+	// var pointsVariableText = [[NSTextField alloc] initWithFrame:NSMakeRect(88, 244, 64, 12)];
+	// [pointsVariableText setStringValue:"Points Variable"];
+	// textTitles.push(pointsVariableText)
+	//
+	// var deviceText = [[NSTextField alloc] initWithFrame:NSMakeRect(176, 244, 64, 12)];
+	// [deviceText setStringValue:"Device"];
+	// textTitles.push(deviceText)
 
-	var pointsVariableText = [[NSTextField alloc] initWithFrame:NSMakeRect(88, 244, 64, 12)];
-	[pointsVariableText setStringValue:"Points Variable"];
-	textTitles.push(pointsVariableText)
+	// var relativeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 183, 64, 12)];
+	// [relativeText setStringValue:"Position relative to parent"];
+	// textTitles.push(relativeText)
 
-	var deviceText = [[NSTextField alloc] initWithFrame:NSMakeRect(176, 244, 64, 12)];
-	[deviceText setStringValue:"Device"];
-	textTitles.push(deviceText)
-
-	var relativeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 183, 64, 12)];
-	[relativeText setStringValue:"Position relative to parent"];
-	textTitles.push(relativeText)
-
-	var styleText = [[NSTextField alloc] initWithFrame:NSMakeRect(176, 183, 64, 12)];
-	[styleText setStringValue:"Code style"];
+	var styleText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 183+4, 64, 12)];
+	[styleText setStringValue:"Configure generated code style"];
 	textTitles.push(styleText)
 
 	for (var i = 0; i < textTitles.length; i++) {
 		var currentTextView = textTitles[i]
 		[currentTextView setEditable:false];
 	  [currentTextView setBordered:false];
-		[currentTextView setFont:ViewInventory.fontSelection()];
+		[currentTextView setFont:ViewInventory.fontInputControls()];
 	  [currentTextView setTextColor:ViewInventory.colorTitle()];
 	  [currentTextView setDrawsBackground:false];
 	  [currentTextView sizeToFit];
@@ -186,19 +187,20 @@ var runSettings = function() {
 
 var createHeader = function() {
 
-	var supportButton = ViewInventory.addButton( NSMakeRect(12, 274, 104, 28), "settings/support",
+	var supportButton = ViewInventory.addButton( NSMakeRect(10+5, 274-50, 112, 28), "settings/support",
 			function(sender){
 				var url = [NSURL URLWithString:StatisticsInventory.getSupportLink()];
 				[[NSWorkspace sharedWorkspace] openURL:url]
 
 	})
 
-	var updatesButton = ViewInventory.addButton( NSMakeRect(116, 274, 113, 28), "settings/updates",
-			function(sender){
-				runCheckUpdates()
-	})
+	// var updatesButton = ViewInventory.addButton( NSMakeRect(116, 274, 113, 28), "settings/updates",
+	// 		function(sender){
+	// 			runCheckUpdates()
+	// })
 
-	return [supportButton, updatesButton]
+	// return [supportButton, updatesButton]
+	return [supportButton]
 }
 
 
@@ -238,6 +240,38 @@ var createRadioGroupRelative = function() {
 
 
 
+var createRadioGroupStyleCases = function() {
+
+		var prototype = [[NSButtonCell alloc] init];
+		[prototype setTitle:"Style Cases"];
+		[prototype setButtonType:NSRadioButton];
+		[prototype setFont:ViewInventory.fontRadioButton()];
+
+		var matrixRect = NSMakeRect(16, 130, 120, 48);
+		var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
+																											mode:NSRadioModeMatrix
+																								 prototype:prototype
+																							numberOfRows:2
+																					 numberOfColumns:1];
+
+		var cellArray = [myMatrix cells];
+		var cellTitle1 = " camelCase"
+		var cellTitle2 = " under_scores"
+		[[cellArray objectAtIndex:0] setTitle:cellTitle1];
+		[[cellArray objectAtIndex:1] setTitle:cellTitle2];
+		[myMatrix setCellSize:NSMakeSize(120, 24)]
+		if (userDefaults.myCodeStyle == 0) { [myMatrix selectCellAtRow:1 column:0] }
+		else { [myMatrix selectCellAtRow:0 column:0] }
+
+		[myMatrix setCOSJSTargetFunction:function(sender) {
+			var currentCellTitle = [[myMatrix selectedCell] title]
+			if ([currentCellTitle isEqualToString:cellTitle2]) { userDefaults.myCodeStyle = 0 }
+			else { userDefaults.myCodeStyle = 1 }
+			saveDefaults(Status.userDomain(), userDefaults)
+		}];
+
+		return myMatrix
+	}
 
 var createRadioGroupStyle = function() {
 
@@ -294,8 +328,8 @@ var createFirstLine = function() {
 	[densityAccessory setFont:ViewInventory.fontAccessory()];
 
 	densityAccessory.setCOSJSTargetFunction(function(sender){
-			// userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
-			// saveDefaults(Status.userDomain(), userDefaults)
+			userDefaults.myRetinaEnabled = densityAccessory.indexOfSelectedItem()
+			saveDefaults(Status.userDomain(), userDefaults)
 	})
 
 
@@ -348,7 +382,7 @@ var createCheckViews = function() {
 
 
 var createVersionView = function() {
-	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 319, measureSettingsWidth, measureSettingBlock)];
+	var titleVersion = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 319-50+4, measureSettingsWidth, measureSettingBlock)];
 	[titleVersion setEditable:false];
 	[titleVersion setBordered:false];
 	[titleVersion setFont:ViewInventory.fontCheckControls()];
