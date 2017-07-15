@@ -21,6 +21,7 @@ var userPresets = {
 	myDetailedNotation: 1,
 	exportFramerFolder: "",
 	myDevice: 0,
+	myCodeStyle: 0,
 
 	myRetinaValue: 1,
 	myMobile: 1,
