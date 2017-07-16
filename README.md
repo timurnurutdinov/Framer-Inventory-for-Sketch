@@ -13,7 +13,7 @@ Import layers from Sketch to Framer with states.
 Choose layers & run to import layers, selected states or all states. Paste generated code from clipboard.
 
 #### Features:
-* Pixels & points support
+* Support points for code & auto-exporting images with required pixel density
 * Relative layers: get coordinates to parent Artboard or parent Group
 * Devices support: ready for Desktop/iOS/Android prototyping
 
