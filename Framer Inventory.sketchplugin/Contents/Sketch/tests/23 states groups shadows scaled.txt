@@ -1,7 +1,7 @@
 nice = new Layer image: "images/nice.png"
 
 nice.states =
-	"1": { width: 252*retina, height: 270*retina, x: 62*retina, y: 104*retina }
-	"2": { width: 178*retina, height: 191*retina, x: 99*retina, y: 138*retina }
+	"1": { width: 252, height: 270, x: 62, y: 104 }
+	"2": { width: 178, height: 191, x: 99, y: 138 }
 
 nice.stateSwitch("1")

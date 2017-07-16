@@ -1,17 +1,17 @@
-bg = new Layer width: 178*retina, height: 197*retina, backgroundColor: "rgba(59,59,59,1)"
+bg = new Layer width: 178, height: 197, backgroundColor: "rgba(59,59,59,1)"
 
 bg.states =
-	"position_a": { x: 39*retina, y: 214*retina }
-	"position_b": { x: 37*retina, y: 209*retina }
+	"position_a": { x: 39, y: 214 }
+	"position_b": { x: 37, y: 209 }
 
 bg.stateSwitch("position_a")
 
 nice = new Layer image: "images/nice.png"
 
 nice.states =
-	"position_a": { width: 120*retina, height: 120*retina, x: 128*retina, y: 154*retina }
-	"position_b": { width: 240*retina, height: 240*retina, x: 68*retina, y: 94*retina }
+	"position_a": { width: 120, height: 120, x: 128, y: 154 }
+	"position_b": { width: 240, height: 240, x: 68, y: 94 }
 
 nice.stateSwitch("position_a")
 
-topper = new Layer width: 178*retina, height: 197*retina, x: 188*retina, y: 38*retina, backgroundColor: "rgba(216,216,216,1)"
+topper = new Layer width: 178, height: 197, x: 188, y: 38, backgroundColor: "rgba(216,216,216,1)"

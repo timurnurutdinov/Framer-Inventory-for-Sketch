@@ -1,4 +1,4 @@
-nice = new Layer width: 240*retina, height: 240*retina, x: 68*retina, y: 94*retina, backgroundColor: "rgba(74,144,226,1)", borderWidth: 10*retina
+nice = new Layer width: 240, height: 240, x: 68, y: 94, backgroundColor: "rgba(74,144,226,1)", borderWidth: 10
 
 nice.states =
 	"position_a": { borderColor: "rgba(126,211,33,1)" }

@@ -244,12 +244,13 @@ var duplicateCurrentDefaults = function() {
 			preTestingDefaults = userDefaults
 
 			var testingDefaults = userDefaults
-			testingDefaults.myRetinaEnabled = 1
-			testingDefaults.myRetinaString = "retina"
+			testingDefaults.myRetinaEnabled = 0
+			// testingDefaults.myRetinaString = "retina"
 			testingDefaults.myRelativeGroup = 0
 			testingDefaults.myDetailedNotation = 0
 			testingDefaults.myDevice = 0
 			testingDefaults.myMinimalExport = 0
+			testingDefaults.myCodeStyle = 1
 			saveDefaults(Status.userDomain(), testingDefaults)
 		}
 }

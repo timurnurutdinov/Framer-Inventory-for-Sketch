@@ -1,1 +1,1 @@
-nice = new Layer width: 200*retina, height: 200*retina, x: -288*retina, y: 100*retina, image: "images/nice.png"
+nice = new Layer width: 200, height: 200, x: -288, y: 100, image: "images/nice.png"
