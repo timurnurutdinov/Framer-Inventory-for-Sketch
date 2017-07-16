@@ -6,11 +6,12 @@
 ![](/../images-third-version/readme/whiter@2x.png?raw=true "")
 ![Import States](/../images-third-version/readme/import-states@2x.png?raw=true "Import States")
 ## 1. Import States
-Import layers from Sketch to Framer with states.
+Import layers from Sketch to Framer with states. Revolutionary way of semantic import makes iterations with Framer easy & productive.
 <a href="https://medium.com/@tilllur/import-states-with-framer-inventory-plugin-for-sketch-e9ad6ebfeae7?utm_source=web&utm_medium=github">Read More</a>
 
 #### How to use
-Choose layers & run to import layers, selected states or all states. Paste generated code from clipboard.
+* Choose layers & run to import Framer Layers with selected States (or all States).
+* Paste generated code from clipboard.
 
 #### Features:
 * Support points for code & auto-exporting images with required pixel density
