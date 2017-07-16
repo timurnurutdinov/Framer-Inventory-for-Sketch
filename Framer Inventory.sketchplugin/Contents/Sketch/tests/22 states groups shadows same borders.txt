@@ -1,7 +1,7 @@
-nice = new Layer image: "images/nice.png", style: {"-webkit-filter": "drop-shadow(0 calc(20px*" + retina + ") calc(20px*" + retina + ") " + "rgba(0,0,0,0.5))"}
+nice = new Layer image: "images/nice.png", style: {"-webkit-filter": "drop-shadow(0px 20px 20px rgba(0,0,0,0.5))"}
 
 nice.states =
-	"1": { width: 252*retina, height: 270*retina, x: 62*retina, y: 84*retina }
-	"2": { width: 328*retina, height: 351*retina, x: 24*retina, y: 44*retina }
+	"1": { width: 252, height: 270, x: 62, y: 84 }
+	"2": { width: 328, height: 351, x: 24, y: 44 }
 
 nice.stateSwitch("1")

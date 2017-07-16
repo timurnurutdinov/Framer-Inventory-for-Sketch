@@ -41,11 +41,11 @@ ViewInventory.colorBackground = function() { return [NSColor colorWithRed:0.15 g
 ViewInventory.colorTitle = function() { return [NSColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5] }
 ViewInventory.colorWindow = function() { return [NSColor colorWithRed:0.92 green:0.92 blue:0.92 alpha:1] }
 
-ViewInventory.fontCheckControls = function() { return [NSFont systemFontOfSize:12 weight:NSFontWeightRegular] }
-ViewInventory.fontInputControls = function() { return [NSFont systemFontOfSize:12 weight:NSFontWeightMedium] }
+ViewInventory.fontCheckControls = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightRegular] }
+ViewInventory.fontInputControls = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightMedium] }
 ViewInventory.fontAccessory = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightBold] }
 ViewInventory.fontActionButton = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightMedium] }
-ViewInventory.fontRadioButton = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightRegular] }
+ViewInventory.fontRadioButton = function() { return [NSFont systemFontOfSize:13 weight:NSFontWeightMedium] }
 ViewInventory.fontSelection = function() { return [NSFont systemFontOfSize:10 weight:NSFontWeightMedium] }
 
 

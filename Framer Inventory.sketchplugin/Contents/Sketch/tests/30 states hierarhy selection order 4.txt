@@ -1,13 +1,13 @@
-bg = new Layer width: 375*retina, height: 667*retina, x: 0*retina, y: 0*retina, backgroundColor: "rgba(74,144,226,1)"
+bg = new Layer width: 375, height: 667, x: 0, y: 0, backgroundColor: "rgba(74,144,226,1)"
 
-square = new Layer width: 200*retina, height: 200*retina, x: 100*retina, backgroundColor: "rgba(255,255,255,1)"
+square = new Layer width: 200, height: 200, x: 100, backgroundColor: "rgba(255,255,255,1)"
 
 square.states =
-	"s1": { y: 100*retina }
-	"s2": { y: 300*retina }
+	"s1": { y: 100 }
+	"s2": { y: 300 }
 
 square.stateSwitch("s1")
 
-nice = new Layer width: 90*retina, height: 90*retina, x: 155*retina, y: 355*retina, backgroundColor: "rgba(0,0,0,1)"
+nice = new Layer width: 90, height: 90, x: 155, y: 355, backgroundColor: "rgba(0,0,0,1)"
 
-oval = new Layer width: 100*retina, height: 100*retina, x: 200*retina, y: 200*retina, borderRadius: "100%", backgroundColor: "rgba(245,166,35,1)"
+oval = new Layer width: 100, height: 100, x: 200, y: 200, borderRadius: "100%", backgroundColor: "rgba(245,166,35,1)"

@@ -80,9 +80,22 @@ GenerateInventory.removePath = function(longPath) {
 	return longPath.replace(/^.*[\\\/]/, '').trim()
 }
 
+// GenerateInventory.clearName = function(longName) {
+// 	var clearedName = GenerateInventory.removePath(longName).trim().split(' ').join('_')
+// 	return clearedName.toLowerCase()
+// }
+
+
+
+
 GenerateInventory.clearName = function(longName) {
-	var clearedName = GenerateInventory.removePath(longName).trim().split(' ').join('_')
-	return clearedName.toLowerCase()
+  if (userDefaults.myCodeStyle == 0) {
+    return longName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
+      return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
+    }).replace(/\s+/g, '').trim();
+  }
+  else { return GenerateInventory.removePath(longName).trim().split(' ').join('_').toLowerCase() }
+
 }
 
 
@@ -145,15 +158,15 @@ GenerateInventory.generateFilterShadows = function(values) {
 
 		var shadowVariable = ""
 		// BAD CODE: REFACTORING NEEDED
-		if (userDefaults.myRetinaEnabled == 0) {
+		// if (userDefaults.myRetinaEnabled == 0) {
 			var shadowVariable = br() + "style: {\"" + "-webkit-filter\"" + ": \"" + "drop-shadow" + '('
 			shadowVariable += vout(value[0]) + "px " + vout(value[1]) + "px "
 			shadowVariable += vout(value[2]) + "px " + color + ')' + "\"" + "}"
-		}
-		else {
-			shadowVariable = br() + "style: {\"-webkit-filter\": \"drop-shadow(" + calc(niceValue(value[0]))
-			shadowVariable += calc(niceValue(value[1])) + calc(niceValue(value[2])) + calcColor(color) + "}"
-		}
+		// }
+		// else {
+		// 	shadowVariable = br() + "style: {\"-webkit-filter\": \"drop-shadow(" + calc(niceValue(value[0]))
+		// 	shadowVariable += calc(niceValue(value[1])) + calc(niceValue(value[2])) + calcColor(color) + "}"
+		// }
 
 		return shadowVariable
 	}

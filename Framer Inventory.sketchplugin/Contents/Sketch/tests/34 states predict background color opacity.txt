@@ -1,4 +1,4 @@
-nice = new Layer width: 200*retina, height: 200*retina, x: 88*retina, y: 134*retina
+nice = new Layer width: 200, height: 200, x: 88, y: 134
 
 nice.states =
 	"a": { backgroundColor: "rgba(216,216,216,0.5)" }
