@@ -1,12 +1,13 @@
 
 # Framer Inventory 3.0
-![Export Prototypes](/../images-third-version/readme/facebookshare.png?raw=true "Framer Inventory")
+![Export Prototypes](/../images-third-version/readme/facebook-share@2x.png?raw=true "Framer Inventory")
 ### Semantic Export from Sketch into Framer
 <a href="https://timurnurutdinov.github.io/framerinventory/?utm_source=web&utm_medium=github">Watch Promo and Learn More</a>
 
 ![](/../images-third-version/readme/whiter@2x.png?raw=true "")
 ## 1. Import States
 ![Import States](/../images-third-version/readme/import-states@2x.png?raw=true "Import States")
+![](/../images-third-version/readme/whiter-small@2x.png?raw=true "")
 Import layers from Sketch to Framer with states. Revolutionary way of semantic import makes iterations with Framer easy & productive.
 <a href="https://medium.com/@tilllur/import-states-with-framer-inventory-plugin-for-sketch-e9ad6ebfeae7?utm_source=web&utm_medium=github">Read More</a>
 
@@ -22,6 +23,7 @@ Import layers from Sketch to Framer with states. Revolutionary way of semantic i
 ![](/../images-third-version/readme/whiter@2x.png?raw=true "")
 ## 2. Export Prototype
 ![Export Prototypes](/../images-third-version/readme/export-prototypes@2x.png?raw=true "Export Prototypes")
+![](/../images-third-version/readme/whiter-small@2x.png?raw=true "")
 Have you used a Keynote for prototyping? It’s quite the same but like you organize scene of slides in Sketch and create motion in Framer with a any logic you need.
 <a href="https://medium.com/@tilllur/export-prototypes-with-framer-inventory-plugin-for-sketch-2f10f9397193?utm_source=web&utm_medium=github">Read More</a>
 
