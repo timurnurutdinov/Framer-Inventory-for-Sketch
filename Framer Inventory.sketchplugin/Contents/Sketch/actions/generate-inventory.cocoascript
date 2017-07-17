@@ -89,7 +89,7 @@ GenerateInventory.removePath = function(longPath) {
 
 
 GenerateInventory.clearName = function(longName) {
-  if (userDefaults.myCodeStyle == 0) {
+  if (userDefaults.myCodeStyle == 1) {
     return longName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
       return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
     }).replace(/\s+/g, '').trim();
