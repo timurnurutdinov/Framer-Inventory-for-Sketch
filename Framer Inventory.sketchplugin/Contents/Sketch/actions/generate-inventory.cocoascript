@@ -89,12 +89,13 @@ GenerateInventory.removePath = function(longPath) {
 
 
 GenerateInventory.clearName = function(longName) {
+  var removedPathName = GenerateInventory.removePath(longName)
   if (userDefaults.myCodeStyle == 1) {
-    return GenerateInventory.removePath(longName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
+    return removedPathName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
       return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
-    }).replace(/\s+/g, '').trim())
+    }).replace(/\s+/g, '').trim()
   }
-  else { return GenerateInventory.removePath(longName).trim().split(' ').join('_').toLowerCase() }
+  else { return removedPathName.trim().split(' ').join('_').toLowerCase() }
 
 }
 
