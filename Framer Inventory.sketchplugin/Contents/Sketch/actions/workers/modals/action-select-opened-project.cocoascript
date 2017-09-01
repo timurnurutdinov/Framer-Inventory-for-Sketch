@@ -9,6 +9,7 @@ var openedProjectCellHeight = 24
 
 var selectOpenedProject = function(openedFramerProjects) {
 
+	var exportFramerFolderBackup = userDefaults.exportFramerFolder
 	var openedProjectsArray = [openedFramerProjects allValues]
 
 
@@ -50,6 +51,8 @@ var selectOpenedProject = function(openedFramerProjects) {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
 
+		// ToolbarInventory.setContentView()
+
 
 	}];
 	[selectFolderButton setAction:"callAction:"];
@@ -66,7 +69,8 @@ var selectOpenedProject = function(openedFramerProjects) {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
 
-
+		userDefaults.exportFramerFolder = exportFramerFolderBackup
+		saveDefaults(Status.userDomain(), userDefaults)
 
 	}];
 	[cancelButton setAction:"callAction:"]
@@ -95,9 +99,7 @@ var createOpenedProjectsIcons = function(openedProjectsArray) {
 
 
 var createRadioGroupOpenedProjects = function(openedProjectsArray) {
-	// log("Selected: ")
-	// log(userDefaults.exportFramerFolder)
-	// log(openedProjectsArray)
+	var openedProjectsTitles = NSMutableArray.new()
 
 	var prototype = [[NSButtonCell alloc] init];
 	[prototype setTitle:"Opened projects"];
@@ -125,7 +127,9 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 		var currentOpenedProjectCleanPath = [[currentOpenedProjectPath componentsSeparatedByString:".framer"] firstObject]
 		var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
 
+
 		var currentCellTitle = "       " + currentOpenedProjectName
+		[openedProjectsTitles addObject:currentCellTitle]
 		[[cellArray objectAtIndex:i] setTitle:currentCellTitle];
 	}
 
@@ -140,7 +144,29 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 
 
 	[myMatrix setCOSJSTargetFunction:function(sender) {
-		// var currentCellTitle = [[myMatrix selectedCell] title]
+		var currentCellTitle = [[myMatrix selectedCell] title]
+		log("inside")
+		log(openedProjectsTitles.count())
+
+		for (var i = 0; i < openedProjectsTitles.count(); i++) {
+			var currentArrayTitle = [openedProjectsTitles objectAtIndex:i]
+			log("|" + currentCellTitle + "|")
+			log(currentArrayTitle)
+
+			if ([currentCellTitle isEqualToString:currentArrayTitle]) {
+				log("1: ")
+				log(log(userDefaults.exportFramerFolder))
+
+				userDefaults.exportFramerFolder = [openedProjectsArray objectAtIndex:i]
+				saveDefaults(Status.userDomain(), userDefaults)
+
+				log("2: ")
+				log(userDefaults.exportFramerFolder)
+
+				break
+			}
+		}
+
 		// if ([currentCellTitle isEqualToString:cellTitle2]) { userDefaults.myRelativeGroup = 1 }
 		// else { userDefaults.myRelativeGroup = 0 }
 		// saveDefaults(Status.userDomain(), userDefaults)
