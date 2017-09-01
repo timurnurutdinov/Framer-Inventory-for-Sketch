@@ -1,0 +1,165 @@
+@import 'actions/view-inventory.cocoascript'
+
+
+var openedProjectCellWidth = 240
+var openedProjectCellHeight = 24
+
+
+
+
+var selectOpenedProject = function(openedFramerProjects) {
+
+	var openedProjectsArray = [openedFramerProjects allValues]
+
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, 240, 96 + 16 + openedProjectCellHeight * openedProjectsArray.count() + 180) display:false];
+	// [artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+
+
+
+	var projectIcons = createOpenedProjectsIcons(openedProjectsArray)
+	for (var i = 0; i < projectIcons.count(); i++) {
+		[[artboardsWindow contentView] addSubview:[projectIcons objectAtIndex:i]]
+	}
+
+	var group = createRadioGroupOpenedProjects(openedProjectsArray)
+	[[artboardsWindow contentView] addSubview:group];
+
+
+
+	var titleOpenedProjects = [[NSView alloc] initWithFrame:NSMakeRect(0, 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 240, 180)];
+	[titleOpenedProjects setWantsLayer:true];
+	var tempLayer = titleOpenedProjects.layer()
+	[tempLayer setBackgroundColor:[[NSColor blueColor] CGColor]]];
+	[[artboardsWindow contentView] addSubview:titleOpenedProjects];
+
+
+
+	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 240-32, 32)];
+	[selectFolderButton setTitle:"Select Folder"];
+	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
+	// [selectFolderButton setFont:ViewInventory.fontActionButton()];
+	[selectFolderButton setKeyEquivalent:"\r"];
+	[selectFolderButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+
+	}];
+	[selectFolderButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:selectFolderButton];
+
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 240-32, 32)];
+	[cancelButton setTitle:"Cancel"];
+	// [cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+
+
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}
+
+
+
+
+var createOpenedProjectsIcons = function(openedProjectsArray) {
+	var projectIcons = NSMutableArray.new()
+	for (var i = 0; i < openedProjectsArray.count(); i++) {
+		// var currentProjectIcon = ViewInventory.addImage(NSMakeRect(24, 130 + 24*i, 24, 24), "modals/update")
+		var currentProjectIcon = [[NSView alloc] initWithFrame:NSMakeRect(36, 96 + (openedProjectCellHeight + 1) * i, 20, 20)];
+		[currentProjectIcon setWantsLayer:true];
+
+		var tempLayer = currentProjectIcon.layer()
+		[tempLayer setBackgroundColor:[[NSColor redColor] CGColor]]];
+		[projectIcons addObject:currentProjectIcon]
+	}
+	return projectIcons
+}
+
+
+var createRadioGroupOpenedProjects = function(openedProjectsArray) {
+	// log("Selected: ")
+	// log(userDefaults.exportFramerFolder)
+	// log(openedProjectsArray)
+
+	var prototype = [[NSButtonCell alloc] init];
+	[prototype setTitle:"Opened projects"];
+	[prototype setButtonType:NSRadioButton];
+	// [prototype setFont:ViewInventory.fontRadioButton()];
+
+	var matrixRect = NSMakeRect(16, 96, openedProjectCellWidth, openedProjectCellHeight * openedProjectsArray.count());
+	var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
+																										mode:NSRadioModeMatrix
+																							 prototype:prototype
+																						numberOfRows:openedProjectsArray.count()
+																				 numberOfColumns:1];
+
+	var cellArray = [myMatrix cells];
+
+
+	[myMatrix setWantsLayer:true];
+	var tempLayer = myMatrix.layer()
+	[tempLayer setBackgroundColor:[[NSColor greenColor] CGColor]]];
+
+
+
+	for (var i = 0; i < openedProjectsArray.count(); i++) {
+		var currentOpenedProjectPath = [openedProjectsArray objectAtIndex: i]
+		var currentOpenedProjectCleanPath = [[currentOpenedProjectPath componentsSeparatedByString:".framer"] firstObject]
+		var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
+
+		var currentCellTitle = "       " + currentOpenedProjectName
+		[[cellArray objectAtIndex:i] setTitle:currentCellTitle];
+	}
+
+	[myMatrix setCellSize:NSMakeSize(openedProjectCellWidth, openedProjectCellHeight)]
+
+	var selectedCellNumber = returnSelectedCellNumber(userDefaults.exportFramerFolder, openedProjectsArray)
+	if (selectedCellNumber > -1) { [myMatrix selectCellAtRow:selectedCellNumber column:0] }
+
+
+	// if (userDefaults.myRelativeGroup == 1) { [myMatrix selectCellAtRow:1 column:0] }
+	// else { [myMatrix selectCellAtRow:0 column:0] }
+
+
+	[myMatrix setCOSJSTargetFunction:function(sender) {
+		// var currentCellTitle = [[myMatrix selectedCell] title]
+		// if ([currentCellTitle isEqualToString:cellTitle2]) { userDefaults.myRelativeGroup = 1 }
+		// else { userDefaults.myRelativeGroup = 0 }
+		// saveDefaults(Status.userDomain(), userDefaults)
+	}];
+
+	return myMatrix
+}
+
+
+
+var returnSelectedCellNumber = function(currentlySelectedPath, openedProjectsArray) {
+
+	var currentlySelectedPathNSString = [NSString stringWithFormat:"%@", tempPath];
+
+	for (var i = 0; i < openedProjectsArray.count(); i++) {
+		// var currentPath = [NSString stringWithFormat:"%@", [openedProjectsArray objectAtIndex:i]];
+		var currentPath = [openedProjectsArray objectAtIndex:i]
+		if ([currentPath containsString:currentlySelectedPath]) { return i; }
+	}
+
+	return -1
+}

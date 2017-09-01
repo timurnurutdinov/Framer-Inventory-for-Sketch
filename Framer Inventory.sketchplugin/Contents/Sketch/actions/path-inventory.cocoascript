@@ -1,0 +1,43 @@
+function PathInventory () {}
+
+PathInventory.returnOpenedFramerProjects = function() {
+    var openedFramerProjects = NSMutableDictionary.new()
+    var relativePlistPath = NSHomeDirectory() + "/Library/Saved Application State/com.motif.framer.savedState/windows.plist"
+
+    var plistData = [NSData dataWithContentsOfFile:relativePlistPath];
+    if (!plistData) { return openedFramerProjects }
+
+    var plistRoot = nil
+    var plistSerializationError = nil;
+
+    id plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListMutableContainersAndLeaves format:nil error:plistSerializationError];
+
+
+    if (!plistSerializationError) { plistRoot = plist; }
+    else { return openedFramerProjects }
+
+    for (var i = 0; i < plistRoot.count(); i++) {
+        var currenPlistBlock = plistRoot[i]
+
+        if ([currenPlistBlock objectForKey:"NSRepresentedURL"]) {
+            var currentFramerProjectPath = currenPlistBlock["NSRepresentedURL"]
+            var cleanFramerProjectPath = currentFramerProjectPath.split("file://")[1]
+            openedFramerProjects[currentFramerProjectPath] = cleanFramerProjectPath
+        }
+    }
+
+    return openedFramerProjects
+}
+
+
+PathInventory.createPathModal = function() {
+  var openedFramerProjects = PathInventory.returnOpenedFramerProjects()
+
+  if (openedFramerProjects.count() == 0) {
+      log("Create emptyModal")
+  }
+  else {
+    log("Create Correct Modal")
+    selectOpenedProject(openedFramerProjects)
+  }
+}
