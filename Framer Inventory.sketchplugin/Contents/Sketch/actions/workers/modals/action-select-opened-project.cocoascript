@@ -7,6 +7,7 @@ var openedProjectCellHeight = 24
 
 
 
+
 var selectOpenedProject = function(openedFramerProjects) {
 
 	var exportFramerFolderBackup = userDefaults.exportFramerFolder
@@ -123,12 +124,12 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 
 
 	for (var i = 0; i < openedProjectsArray.count(); i++) {
-		var currentOpenedProjectPath = [openedProjectsArray objectAtIndex: i]
-		var currentOpenedProjectCleanPath = [[currentOpenedProjectPath componentsSeparatedByString:".framer"] firstObject]
-		var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
+		// var currentOpenedProjectPath = [openedProjectsArray objectAtIndex: i]
+		// var currentOpenedProjectCleanPath = [[currentOpenedProjectPath componentsSeparatedByString:".framer"] firstObject]
+		// var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
+		var currentCellTitle = "       " + PathInventory.returnProjectNameFromPath([openedProjectsArray objectAtIndex: i])
 
-
-		var currentCellTitle = "       " + currentOpenedProjectName
+		// var currentCellTitle = "       " + currentOpenedProjectName
 		[openedProjectsTitles addObject:currentCellTitle]
 		[[cellArray objectAtIndex:i] setTitle:currentCellTitle];
 	}
@@ -179,13 +180,74 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 
 var returnSelectedCellNumber = function(currentlySelectedPath, openedProjectsArray) {
 
-	var currentlySelectedPathNSString = [NSString stringWithFormat:"%@", tempPath];
-
 	for (var i = 0; i < openedProjectsArray.count(); i++) {
-		// var currentPath = [NSString stringWithFormat:"%@", [openedProjectsArray objectAtIndex:i]];
 		var currentPath = [openedProjectsArray objectAtIndex:i]
 		if ([currentPath containsString:currentlySelectedPath]) { return i; }
 	}
 
 	return -1
+}
+
+
+
+
+
+
+
+
+
+
+
+var selectProjectWithNoOpened = function() {
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, 240, 260) display:false];
+	// [artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+
+
+
+	var titleOpenedProjects = [[NSView alloc] initWithFrame:NSMakeRect(0, 80, 240, 180)];
+	[titleOpenedProjects setWantsLayer:true];
+	var tempLayer = titleOpenedProjects.layer()
+	[tempLayer setBackgroundColor:[[NSColor blueColor] CGColor]]];
+	[[artboardsWindow contentView] addSubview:titleOpenedProjects];
+
+
+
+	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 240-32, 32)];
+	[selectFolderButton setTitle:"Select Folder Manually"];
+	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
+	// [selectFolderButton setFont:ViewInventory.fontActionButton()];
+	// [selectFolderButton setKeyEquivalent:"\r"];
+	[selectFolderButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		FramerInventory.runSelectProjectFolder()
+
+	}];
+	[selectFolderButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:selectFolderButton];
+
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 240-32, 32)];
+	[cancelButton setTitle:"Cancel"];
+	// [cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
 }

@@ -1,5 +1,13 @@
 function PathInventory () {}
 
+
+PathInventory.returnProjectNameFromPath = function(projectPath) {
+  var currentOpenedProjectCleanPath = [[projectPath componentsSeparatedByString:".framer"] firstObject]
+  var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
+  return currentOpenedProjectName
+}
+
+
 PathInventory.returnOpenedFramerProjects = function() {
     var openedFramerProjects = NSMutableDictionary.new()
     var relativePlistPath = NSHomeDirectory() + "/Library/Saved Application State/com.motif.framer.savedState/windows.plist"
@@ -35,9 +43,20 @@ PathInventory.createPathModal = function() {
 
   if (openedFramerProjects.count() == 0) {
       log("Create emptyModal")
+      selectProjectWithNoOpened()
+  }
+  else if (openedFramerProjects.count() == 1) {
+      log("Selected the only opened project")
+
+      userDefaults.exportFramerFolder = [[openedFramerProjects allValues] firstObject]
+      saveDefaults(Status.userDomain(), userDefaults)
+
+      [currentDocument showMessage:ViewInventory.smileDone() + "Selected project: " + PathInventory.returnProjectNameFromPath([[openedFramerProjects allValues] firstObject])]
   }
   else {
     log("Create Correct Modal")
     selectOpenedProject(openedFramerProjects)
   }
+
+  ToolbarInventory.setContentView()
 }
