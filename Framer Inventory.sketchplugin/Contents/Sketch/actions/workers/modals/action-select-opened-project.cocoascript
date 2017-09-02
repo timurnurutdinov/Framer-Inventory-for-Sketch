@@ -21,37 +21,40 @@ var selectOpenedProject = function(openedFramerProjects) {
 	artboardsWindow.setTitlebarAppearsTransparent(true);
 	artboardsWindow.setMovableByWindowBackground(true);
 	[artboardsWindow setFrame:NSMakeRect(0, 0, 240, 96 + 16 + openedProjectCellHeight * openedProjectsArray.count() + 180) display:false];
-	// [artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
 
-
+	var titleImageView = ViewInventory.addImage(NSMakeRect(16, 73 + 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 208, 84), "modals/choose-framer");
+	[[artboardsWindow contentView] addSubview:titleImageView];
+	var titleImageDescriptionView = ViewInventory.addImage(NSMakeRect(16, 16 + 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 208, 54), "modals/choose-framer-some");
+	[[artboardsWindow contentView] addSubview:titleImageDescriptionView];
 
 	var projectIcons = createOpenedProjectsIcons(openedProjectsArray)
-	for (var i = 0; i < projectIcons.count(); i++) {
-		[[artboardsWindow contentView] addSubview:[projectIcons objectAtIndex:i]]
-	}
+	for (var i = 0; i < projectIcons.count(); i++) { [[artboardsWindow contentView] addSubview:[projectIcons objectAtIndex:i]] }
 
 	var group = createRadioGroupOpenedProjects(openedProjectsArray)
 	[[artboardsWindow contentView] addSubview:group];
 
 
+	var selectManuallyButton = ViewInventory.addButton(NSMakeRect(16, 32 + 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 148, 20), "modals/empty",
+			function(sender){
+				[artboardsWindow orderOut:nil]
+				[NSApp stopModal]
 
-	var titleOpenedProjects = [[NSView alloc] initWithFrame:NSMakeRect(0, 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 240, 180)];
-	[titleOpenedProjects setWantsLayer:true];
-	var tempLayer = titleOpenedProjects.layer()
-	[tempLayer setBackgroundColor:[[NSColor blueColor] CGColor]]];
-	[[artboardsWindow contentView] addSubview:titleOpenedProjects];
+				FramerInventory.runSelectProjectFolder()
+	})
+	[[artboardsWindow contentView] addSubview:selectManuallyButton];
 
 
-
-	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 240-32, 32)];
-	[selectFolderButton setTitle:"Select Folder"];
+	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(12, 34, 240-32+8, 32)];
+	[selectFolderButton setTitle:"Select Project"];
 	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
-	// [selectFolderButton setFont:ViewInventory.fontActionButton()];
+	[selectFolderButton setFont:ViewInventory.fontActionButton()];
 	[selectFolderButton setKeyEquivalent:"\r"];
 	[selectFolderButton setCOSJSTargetFunction:function(sender) {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
 
+		[currentDocument showMessage:ViewInventory.smileDone() + "Selected project: " + PathInventory.returnProjectNameFromPath([[openedFramerProjects allValues] firstObject])]
 		// ToolbarInventory.setContentView()
 
 
@@ -61,9 +64,9 @@ var selectOpenedProject = function(openedFramerProjects) {
 
 
 
-	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 240-32, 32)];
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(12, 8, 240-32+8, 32)];
 	[cancelButton setTitle:"Cancel"];
-	// [cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];
 	[cancelButton setKeyEquivalent:"\033"]
 	[cancelButton setCOSJSTargetFunction:function(sender) {
@@ -87,12 +90,7 @@ var selectOpenedProject = function(openedFramerProjects) {
 var createOpenedProjectsIcons = function(openedProjectsArray) {
 	var projectIcons = NSMutableArray.new()
 	for (var i = 0; i < openedProjectsArray.count(); i++) {
-		// var currentProjectIcon = ViewInventory.addImage(NSMakeRect(24, 130 + 24*i, 24, 24), "modals/update")
-		var currentProjectIcon = [[NSView alloc] initWithFrame:NSMakeRect(36, 96 + (openedProjectCellHeight + 1) * i, 20, 20)];
-		[currentProjectIcon setWantsLayer:true];
-
-		var tempLayer = currentProjectIcon.layer()
-		[tempLayer setBackgroundColor:[[NSColor redColor] CGColor]]];
+		var currentProjectIcon = ViewInventory.addImage(NSMakeRect(38, 96 + (openedProjectCellHeight + 1) * i, 20, 20), "modals/framer-folder");
 		[projectIcons addObject:currentProjectIcon]
 	}
 	return projectIcons
@@ -105,31 +103,18 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 	var prototype = [[NSButtonCell alloc] init];
 	[prototype setTitle:"Opened projects"];
 	[prototype setButtonType:NSRadioButton];
-	// [prototype setFont:ViewInventory.fontRadioButton()];
+	[prototype setFont:ViewInventory.fontRadioButton()];
 
 	var matrixRect = NSMakeRect(16, 96, openedProjectCellWidth, openedProjectCellHeight * openedProjectsArray.count());
 	var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
-																										mode:NSRadioModeMatrix
-																							 prototype:prototype
-																						numberOfRows:openedProjectsArray.count()
-																				 numberOfColumns:1];
+																						mode:NSRadioModeMatrix
+																			 prototype:prototype
+																		numberOfRows:openedProjectsArray.count()
+																 numberOfColumns:1];
 
 	var cellArray = [myMatrix cells];
-
-
-	[myMatrix setWantsLayer:true];
-	var tempLayer = myMatrix.layer()
-	[tempLayer setBackgroundColor:[[NSColor greenColor] CGColor]]];
-
-
-
 	for (var i = 0; i < openedProjectsArray.count(); i++) {
-		// var currentOpenedProjectPath = [openedProjectsArray objectAtIndex: i]
-		// var currentOpenedProjectCleanPath = [[currentOpenedProjectPath componentsSeparatedByString:".framer"] firstObject]
-		// var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
-		var currentCellTitle = "       " + PathInventory.returnProjectNameFromPath([openedProjectsArray objectAtIndex: i])
-
-		// var currentCellTitle = "       " + currentOpenedProjectName
+		var currentCellTitle = "        " + PathInventory.returnProjectNameFromPath([openedProjectsArray objectAtIndex: i])
 		[openedProjectsTitles addObject:currentCellTitle]
 		[[cellArray objectAtIndex:i] setTitle:currentCellTitle];
 	}
@@ -138,39 +123,25 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 
 	var selectedCellNumber = returnSelectedCellNumber(userDefaults.exportFramerFolder, openedProjectsArray)
 	if (selectedCellNumber > -1) { [myMatrix selectCellAtRow:selectedCellNumber column:0] }
-
-
-	// if (userDefaults.myRelativeGroup == 1) { [myMatrix selectCellAtRow:1 column:0] }
-	// else { [myMatrix selectCellAtRow:0 column:0] }
+	else {
+		userDefaults.exportFramerFolder = [openedProjectsArray firstObject]
+		saveDefaults(Status.userDomain(), userDefaults)
+	}
 
 
 	[myMatrix setCOSJSTargetFunction:function(sender) {
 		var currentCellTitle = [[myMatrix selectedCell] title]
-		log("inside")
-		log(openedProjectsTitles.count())
 
 		for (var i = 0; i < openedProjectsTitles.count(); i++) {
 			var currentArrayTitle = [openedProjectsTitles objectAtIndex:i]
-			log("|" + currentCellTitle + "|")
-			log(currentArrayTitle)
 
 			if ([currentCellTitle isEqualToString:currentArrayTitle]) {
-				log("1: ")
-				log(log(userDefaults.exportFramerFolder))
-
 				userDefaults.exportFramerFolder = [openedProjectsArray objectAtIndex:i]
 				saveDefaults(Status.userDomain(), userDefaults)
-
-				log("2: ")
-				log(userDefaults.exportFramerFolder)
-
 				break
 			}
 		}
 
-		// if ([currentCellTitle isEqualToString:cellTitle2]) { userDefaults.myRelativeGroup = 1 }
-		// else { userDefaults.myRelativeGroup = 0 }
-		// saveDefaults(Status.userDomain(), userDefaults)
 	}];
 
 	return myMatrix
@@ -207,22 +178,21 @@ var selectProjectWithNoOpened = function() {
 	artboardsWindow.setTitlebarAppearsTransparent(true);
 	artboardsWindow.setMovableByWindowBackground(true);
 	[artboardsWindow setFrame:NSMakeRect(0, 0, 240, 260) display:false];
-	// [artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
 
 
+	var titleImageView = ViewInventory.addImage(NSMakeRect(16, 154, 208, 84), "modals/choose-framer");
+	[[artboardsWindow contentView] addSubview:titleImageView];
 
-	var titleOpenedProjects = [[NSView alloc] initWithFrame:NSMakeRect(0, 80, 240, 180)];
-	[titleOpenedProjects setWantsLayer:true];
-	var tempLayer = titleOpenedProjects.layer()
-	[tempLayer setBackgroundColor:[[NSColor blueColor] CGColor]]];
-	[[artboardsWindow contentView] addSubview:titleOpenedProjects];
+	var titleImageDescriptionView = ViewInventory.addImage(NSMakeRect(16, 96, 208, 54), "modals/choose-framer-none");
+	[[artboardsWindow contentView] addSubview:titleImageDescriptionView];
 
 
 
 	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 240-32, 32)];
 	[selectFolderButton setTitle:"Select Folder Manually"];
 	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
-	// [selectFolderButton setFont:ViewInventory.fontActionButton()];
+	[selectFolderButton setFont:ViewInventory.fontActionButton()];
 	// [selectFolderButton setKeyEquivalent:"\r"];
 	[selectFolderButton setCOSJSTargetFunction:function(sender) {
 		[artboardsWindow orderOut:nil]
@@ -238,7 +208,7 @@ var selectProjectWithNoOpened = function() {
 
 	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 240-32, 32)];
 	[cancelButton setTitle:"Cancel"];
-	// [cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
 	[cancelButton setBezelStyle:NSRoundedBezelStyle];
 	[cancelButton setKeyEquivalent:"\033"]
 	[cancelButton setCOSJSTargetFunction:function(sender) {

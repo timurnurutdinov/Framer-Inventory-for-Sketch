@@ -234,25 +234,11 @@ ViewInventory.optimiseFramerPath = function() {
 
 
 ViewInventory.getEmptyToolbarViews = function() {
-    // var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(42, 16, 160, 32)];
-    // [saveButton setTitle:"Select Framer Folder"];
-    // [saveButton setBezelStyle:NSRoundedBezelStyle];
-    // [saveButton setKeyEquivalent:"\r"];
-    // [saveButton setCOSJSTargetFunction:function(sender) {
-    //     ToolbarInventory.updateContext();
-    //     FramerInventory.runSelectProjectFolder()
-    //     ToolbarInventory.setContentView()
-    // }];
-    // [saveButton setAction:"callAction:"];
-
 
     var saveButton = ViewInventory.addButton( NSMakeRect(28, 12, 140, 20), "toolbar/empty select",
         function(sender){
           ToolbarInventory.updateContext();
           PathInventory.createPathModal()
-
-          // FramerInventory.runSelectProjectFolder()
-          // ToolbarInventory.setContentView()
     })
 
     [[saveButton cell] setShowsStateBy:NSNoCellMask]
@@ -299,10 +285,6 @@ ViewInventory.getImportViews = function() {
           saveDefaults(Status.userDomain(), userDefaults)
           ToolbarInventory.updateAccessoryControls();
 
-          // if (currentDocument != nil) {
-          //   if (userDefaults.myRelativeGroup == 0) { [currentDocument showMessage:ViewInventory.toolbarMessageParentArtboard()] }
-          //   else { [currentDocument showMessage:ViewInventory.toolbarMessageParentGroup()] }
-          // }
     })
 
     [[relativeButton cell] setShowsStateBy:NSNoCellMask]
@@ -466,6 +448,8 @@ ViewInventory.getLabels = function(placeHolderText) {
   [pathLabel setTextColor:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
   [pathLabel setDrawsBackground:false];
   [pathLabel setStringValue:ViewInventory.placeHolderSelectPath()];
+
+  [[pathLabel cell] setLineBreakMode:NSLineBreakByTruncatingTail];
 
   var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(5, 23, 184, 16)];
   [selectionLabel setEditable:false];
