@@ -1,3 +1,5 @@
+@import 'actions/path-inventory.cocoascript'
+@import 'actions/workers/modals/action-select-opened-project.cocoascript'
 
 function ViewInventory () {}
 
@@ -247,8 +249,10 @@ ViewInventory.getEmptyToolbarViews = function() {
     var saveButton = ViewInventory.addButton( NSMakeRect(28, 12, 140, 20), "toolbar/empty select",
         function(sender){
           ToolbarInventory.updateContext();
-          FramerInventory.runSelectProjectFolder()
-          ToolbarInventory.setContentView()
+          PathInventory.createPathModal()
+
+          // FramerInventory.runSelectProjectFolder()
+          // ToolbarInventory.setContentView()
     })
 
     [[saveButton cell] setShowsStateBy:NSNoCellMask]
@@ -349,8 +353,10 @@ ViewInventory.getGeneralToolbarViews = function() {
     var addButton = ViewInventory.addButton( NSMakeRect(19, 74, 14, 15), "toolbar/add",
         function(sender){
             ToolbarInventory.updateContext();
-            FramerInventory.runSelectProjectFolder()
-            ToolbarInventory.setContentView()
+            PathInventory.createPathModal()
+
+            // FramerInventory.runSelectProjectFolder()
+            // ToolbarInventory.setContentView()
     })
     var removeButton = ViewInventory.addButton( NSMakeRect(5, 74, 15, 15), "toolbar/remove",
         function(sender){

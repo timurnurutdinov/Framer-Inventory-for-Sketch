@@ -13,7 +13,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onReplicateLayersRun",
       "shortcut" : "",
-      "name" : "⊡   Import Layers",
+      "name" : " ⊡   Import Layers",
       "identifier" : "choose-replicate-layers",
       "description" : "Generate Framer layers",
       "icon" : "layers.png"
@@ -22,7 +22,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onGenerateStatesRun",
       "shortcut" : "",
-      "name" : "⧉   Import States",
+      "name" : " ⧉   Import States",
       "identifier" : "choose-generate-states",
       "description" : "Generate Framer States",
       "icon" : "states.png"
@@ -31,7 +31,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onSimulateKeynoteRun",
       "shortcut" : "",
-      "name" : "❖   Export Prototype",
+      "name" : " ❖   Export Prototype",
       "identifier" : "choose-simulate-keynote",
       "description" : "Export Framer Prototype",
       "icon" : "scene.png"
@@ -47,7 +47,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onSettingRun",
       "shortcut" : "",
-      "name" : "      Settings",
+      "name" : "       Settings",
       "identifier" : "choose-settings"
     },
     {
@@ -61,28 +61,35 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onShowBarRun",
       "shortcut" : "",
-      "name" : "      Show Toolbar",
+      "name" : "▪️ Show Toolbar",
       "identifier" : "show-bar"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSelectOpenedProjectRun",
+      "shortcut" : "",
+      "name" : "Select Opened Project",
+      "identifier" : "choose-select-opened-project"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onSelectProjectFolderRun",
       "shortcut" : "",
-      "name" : "Select Framer Folder",
+      "name" : "Select Manually",
       "identifier" : "choose-select-export-path"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onRemoveProjectFolderRun",
       "shortcut" : "",
-      "name" : "Remove Framer Folder",
+      "name" : "Remove",
       "identifier" : "choose-remove-export-path"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onShowProjectFolderRun",
       "shortcut" : "",
-      "name" : "Show Framer Folder",
+      "name" : "Show Selected",
       "identifier" : "choose-show-export-path"
     },
     {
@@ -104,7 +111,7 @@
     }
   ],
   "menu": {
-	  "title": "Framer Inventory",
+	  "title": "◾️ Framer Inventory",
       "items": [
         "show-bar",
         "-",
@@ -114,11 +121,13 @@
         "choose-simulate-keynote",
         "-",
         {
-          "title": "      Framer Folder",
+          "title": "       Framer Project",
           "items": [
+            "choose-select-opened-project",
+            "choose-select-export-path",
+            "-",
             "choose-show-export-path",
             "-",
-            "choose-select-export-path",
             "choose-remove-export-path"
           ]
         },

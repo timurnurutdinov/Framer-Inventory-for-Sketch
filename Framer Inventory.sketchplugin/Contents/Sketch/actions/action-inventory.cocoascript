@@ -400,7 +400,7 @@ FramerInventory.showDoneMessage = function() {
 
 FramerInventory.runShowProjectFolder = function() {
 		if (userDefaults.exportFramerFolder == "") { [currentDocument showMessage:"Nothing selected " + ViewInventory.smileForget()] }
-		else { [currentDocument showMessage:"Selected: " + userDefaults.exportFramerFolder] }
+		else { [currentDocument showMessage:"Selected Project: " + PathInventory.returnProjectNameFromPath(userDefaults.exportFramerFolder)] }
 }
 
 FramerInventory.runSelectProjectFolder = function() {
@@ -409,7 +409,7 @@ FramerInventory.runSelectProjectFolder = function() {
 		var message = userDefaults.exportFramerFolder
 		if (!isPathSelected && message) { message = ViewInventory.smileWarning() + "Canceled. Previous Framer folder is selected" }
 		else if (!isPathSelected) { message = ViewInventory.smileWarning() + "Canceled. Framer folder is not selected" }
-		else { message = ViewInventory.smileDone() + "Selected folder: " + message }
+		else { message = ViewInventory.smileDone() + "Selected Project: " + PathInventory.returnProjectNameFromPath(message) }
 
 		ToolbarInventory.setContentView()
 		[currentDocument showMessage:message]
