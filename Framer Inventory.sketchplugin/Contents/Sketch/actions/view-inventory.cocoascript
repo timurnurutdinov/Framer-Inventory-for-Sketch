@@ -174,12 +174,12 @@ ViewInventory.adoptExpiredSelection = function(expiredView) {
 
 ViewInventory.adoptExpiredSceneNone = function(expiredView) {
     expiredView.frame = ViewInventory.expiredScenePlaceholderNone()
-    log(ViewInventory.expiredScenePlaceholderNone())
+    // log(ViewInventory.expiredScenePlaceholderNone())
 }
 
 ViewInventory.adoptExpiredScene = function(expiredView) {
     expiredView.frame = ViewInventory.expiredScenePlaceholder()
-    log(ViewInventory.expiredScenePlaceholder())
+    // log(ViewInventory.expiredScenePlaceholder())
 }
 
 

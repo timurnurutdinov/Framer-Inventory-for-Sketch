@@ -41,22 +41,14 @@ PathInventory.returnOpenedFramerProjects = function() {
 PathInventory.createPathModal = function() {
   var openedFramerProjects = PathInventory.returnOpenedFramerProjects()
 
-  if (openedFramerProjects.count() == 0) {
-      log("Create emptyModal")
-      selectProjectWithNoOpened()
-  }
+  if (openedFramerProjects.count() == 0) { selectProjectWithNoOpened() }
   else if (openedFramerProjects.count() == 1) {
-      log("Selected the only opened project")
-
       userDefaults.exportFramerFolder = [[openedFramerProjects allValues] firstObject]
       saveDefaults(Status.userDomain(), userDefaults)
 
       [currentDocument showMessage:ViewInventory.smileDone() + "Selected project: " + PathInventory.returnProjectNameFromPath([[openedFramerProjects allValues] firstObject])]
   }
-  else {
-    log("Create Correct Modal")
-    selectOpenedProject(openedFramerProjects)
-  }
+  else { selectOpenedProject(openedFramerProjects) }
 
   ToolbarInventory.setContentView()
 }
