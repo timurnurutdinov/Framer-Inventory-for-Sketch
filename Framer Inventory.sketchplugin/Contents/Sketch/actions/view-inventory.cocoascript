@@ -441,7 +441,7 @@ ViewInventory.getCloseToolbarViews = function() {
 }
 
 ViewInventory.getLabels = function(placeHolderText) {
-  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(38, 70, 120, 20)];
+  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(38, 71, 118, 20)];
   [pathLabel setEditable:false];
   [pathLabel setBordered:false];
   [pathLabel setFont:ViewInventory.fontCheckControls()];
