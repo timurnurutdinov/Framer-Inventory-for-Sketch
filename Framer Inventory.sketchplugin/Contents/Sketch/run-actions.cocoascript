@@ -6,6 +6,7 @@
 @import 'RegisterInventory.framework/HelloSketch.js'
 
 var methodStartTime = nil
+var debugFromCustomPluginPanel = false
 
 var pluginPath = ""
 var pluginVersion = ""

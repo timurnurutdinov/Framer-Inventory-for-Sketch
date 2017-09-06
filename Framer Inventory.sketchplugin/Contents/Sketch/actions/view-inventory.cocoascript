@@ -216,8 +216,13 @@ ViewInventory.addButton = function(rect, name, callAction) {
 
 ViewInventory.addImage = function(rect, name) {
     var view = NSImageView.alloc().initWithFrame(rect)
-    var image = ViewInventory.getImage(rect.size, name);
-    view.setImage(image);
+    if (!debugFromCustomPluginPanel) {
+      var image = ViewInventory.getImage(rect.size, name);
+      view.setImage(image);
+    }
+    else {
+      // Create Colored Views
+    }
     return view;
 }
 

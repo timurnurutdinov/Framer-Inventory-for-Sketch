@@ -1,9 +1,12 @@
+@import "actions/workers/modals/action-select-opened-project.cocoascript"
+
 function PathInventory () {}
 
 
 PathInventory.returnProjectNameFromPath = function(projectPath) {
   var currentOpenedProjectCleanPath = [[projectPath componentsSeparatedByString:".framer"] firstObject]
   var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
+  log("returned: " + currentOpenedProjectName)
   return currentOpenedProjectName
 }
 
@@ -29,8 +32,8 @@ PathInventory.returnOpenedFramerProjects = function() {
 
         if ([currenPlistBlock objectForKey:"NSRepresentedURL"]) {
             var currentFramerProjectPath = currenPlistBlock["NSRepresentedURL"]
-            var cleanFramerProjectPath = currentFramerProjectPath.split("file://")[1]
-            openedFramerProjects[currentFramerProjectPath] = cleanFramerProjectPath
+            var cleanFramerProjectPath = [[[currentFramerProjectPath componentsSeparatedByString:","] firstObject] stringByRemovingPercentEncoding]
+            if (cleanFramerProjectPath != "") { openedFramerProjects[currentFramerProjectPath] = cleanFramerProjectPath }
         }
     }
 
