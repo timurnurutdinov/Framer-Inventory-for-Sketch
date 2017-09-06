@@ -6,7 +6,6 @@ function PathInventory () {}
 PathInventory.returnProjectNameFromPath = function(projectPath) {
   var currentOpenedProjectCleanPath = [[projectPath componentsSeparatedByString:".framer"] firstObject]
   var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
-  log("returned: " + currentOpenedProjectName)
   return currentOpenedProjectName
 }
 
