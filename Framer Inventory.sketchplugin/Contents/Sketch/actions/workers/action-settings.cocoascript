@@ -148,22 +148,6 @@ var runSettings = function() {
 
 	var textTitles = []
 
-	// var scaleTypeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 244, 64, 12)];
-	// [scaleTypeText setStringValue:"Scale type"];
-	// textTitles.push(scaleTypeText)
-	//
-	// var pointsVariableText = [[NSTextField alloc] initWithFrame:NSMakeRect(88, 244, 64, 12)];
-	// [pointsVariableText setStringValue:"Points Variable"];
-	// textTitles.push(pointsVariableText)
-	//
-	// var deviceText = [[NSTextField alloc] initWithFrame:NSMakeRect(176, 244, 64, 12)];
-	// [deviceText setStringValue:"Device"];
-	// textTitles.push(deviceText)
-
-	// var relativeText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 183, 64, 12)];
-	// [relativeText setStringValue:"Position relative to parent"];
-	// textTitles.push(relativeText)
-
 	var styleText = [[NSTextField alloc] initWithFrame:NSMakeRect(19, 183+4, 64, 12)];
 	[styleText setStringValue:"Configure generated code style"];
 	textTitles.push(styleText)
@@ -194,12 +178,6 @@ var createHeader = function() {
 
 	})
 
-	// var updatesButton = ViewInventory.addButton( NSMakeRect(116, 274, 113, 28), "settings/updates",
-	// 		function(sender){
-	// 			runCheckUpdates()
-	// })
-
-	// return [supportButton, updatesButton]
 	return [supportButton]
 }
 

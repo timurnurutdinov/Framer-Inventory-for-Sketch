@@ -1,0 +1,223 @@
+@import 'actions/view-inventory.cocoascript'
+
+
+var openedProjectCellWidth = 240
+var openedProjectCellHeight = 24
+
+
+
+
+
+var selectOpenedProject = function(openedFramerProjects) {
+
+	var exportFramerFolderBackup = userDefaults.exportFramerFolder
+	var openedProjectsArray = [openedFramerProjects allValues]
+
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, 240, 96 + 16 + openedProjectCellHeight * openedProjectsArray.count() + 180) display:false];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+
+	var titleImageView = ViewInventory.addImage(NSMakeRect(16, 73 + 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 208, 84), "modals/choose-framer");
+	[[artboardsWindow contentView] addSubview:titleImageView];
+	var titleImageDescriptionView = ViewInventory.addImage(NSMakeRect(16, 16 + 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 208, 54), "modals/choose-framer-some");
+	[[artboardsWindow contentView] addSubview:titleImageDescriptionView];
+
+	var projectIcons = createOpenedProjectsIcons(openedProjectsArray)
+	for (var i = 0; i < projectIcons.count(); i++) { [[artboardsWindow contentView] addSubview:[projectIcons objectAtIndex:i]] }
+
+	var group = createRadioGroupOpenedProjects(openedProjectsArray)
+	[[artboardsWindow contentView] addSubview:group];
+
+
+	var selectManuallyButton = ViewInventory.addButton(NSMakeRect(16, 32 + 96 + 16 + openedProjectCellHeight * openedProjectsArray.count(), 148, 20), "modals/empty",
+			function(sender){
+				[artboardsWindow orderOut:nil]
+				[NSApp stopModal]
+
+				FramerInventory.runSelectProjectFolder()
+	})
+	[[artboardsWindow contentView] addSubview:selectManuallyButton];
+
+
+	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(12, 34, 240-32+8, 32)];
+	[selectFolderButton setTitle:"Select Project"];
+	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
+	[selectFolderButton setFont:ViewInventory.fontActionButton()];
+	[selectFolderButton setKeyEquivalent:"\r"];
+	[selectFolderButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		[currentDocument showMessage:ViewInventory.smileDone() + "Selected project: " + PathInventory.returnProjectNameFromPath([[openedFramerProjects allValues] firstObject])]
+		// ToolbarInventory.setContentView()
+
+
+	}];
+	[selectFolderButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:selectFolderButton];
+
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(12, 8, 240-32+8, 32)];
+	[cancelButton setTitle:"Cancel"];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		userDefaults.exportFramerFolder = exportFramerFolderBackup
+		saveDefaults(Status.userDomain(), userDefaults)
+
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}
+
+
+
+
+var createOpenedProjectsIcons = function(openedProjectsArray) {
+	var projectIcons = NSMutableArray.new()
+	for (var i = 0; i < openedProjectsArray.count(); i++) {
+		var currentProjectIcon = ViewInventory.addImage(NSMakeRect(38, 96 + (openedProjectCellHeight + 1) * i, 20, 20), "modals/framer-folder");
+		[projectIcons addObject:currentProjectIcon]
+	}
+	return projectIcons
+}
+
+
+var createRadioGroupOpenedProjects = function(openedProjectsArray) {
+	var openedProjectsTitles = NSMutableArray.new()
+
+	var prototype = [[NSButtonCell alloc] init];
+	[prototype setTitle:"Opened projects"];
+	[prototype setButtonType:NSRadioButton];
+	[prototype setFont:ViewInventory.fontRadioButton()];
+
+	var matrixRect = NSMakeRect(16, 96, openedProjectCellWidth, openedProjectCellHeight * openedProjectsArray.count());
+	var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
+																						mode:NSRadioModeMatrix
+																			 prototype:prototype
+																		numberOfRows:openedProjectsArray.count()
+																 numberOfColumns:1];
+
+	var cellArray = [myMatrix cells];
+	for (var i = 0; i < openedProjectsArray.count(); i++) {
+		var currentCellTitle = "        " + PathInventory.returnProjectNameFromPath([openedProjectsArray objectAtIndex: i])
+		[openedProjectsTitles addObject:currentCellTitle]
+		[[cellArray objectAtIndex:i] setTitle:currentCellTitle];
+	}
+
+	[myMatrix setCellSize:NSMakeSize(openedProjectCellWidth, openedProjectCellHeight)]
+
+	var selectedCellNumber = returnSelectedCellNumber(userDefaults.exportFramerFolder, openedProjectsArray)
+	if (selectedCellNumber > -1) { [myMatrix selectCellAtRow:selectedCellNumber column:0] }
+	else {
+		userDefaults.exportFramerFolder = [openedProjectsArray firstObject]
+		saveDefaults(Status.userDomain(), userDefaults)
+	}
+
+
+	[myMatrix setCOSJSTargetFunction:function(sender) {
+		var currentCellTitle = [[myMatrix selectedCell] title]
+
+		for (var i = 0; i < openedProjectsTitles.count(); i++) {
+			var currentArrayTitle = [openedProjectsTitles objectAtIndex:i]
+
+			if ([currentCellTitle isEqualToString:currentArrayTitle]) {
+				userDefaults.exportFramerFolder = [openedProjectsArray objectAtIndex:i]
+				saveDefaults(Status.userDomain(), userDefaults)
+				break
+			}
+		}
+
+	}];
+
+	return myMatrix
+}
+
+
+
+var returnSelectedCellNumber = function(currentlySelectedPath, openedProjectsArray) {
+
+	for (var i = 0; i < openedProjectsArray.count(); i++) {
+		var currentPath = [openedProjectsArray objectAtIndex:i]
+		if ([currentPath containsString:currentlySelectedPath]) { return i; }
+	}
+
+	return -1
+}
+
+
+
+
+
+
+
+
+
+
+
+var selectProjectWithNoOpened = function() {
+
+	var artboardsWindow = [[NSWindow alloc] init]
+	artboardsWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setTitleVisibility(NSWindowTitleHidden);
+	artboardsWindow.setTitlebarAppearsTransparent(true);
+	artboardsWindow.setMovableByWindowBackground(true);
+	[artboardsWindow setFrame:NSMakeRect(0, 0, 240, 260) display:false];
+	[artboardsWindow setBackgroundColor:ViewInventory.colorWindow()];
+
+
+	var titleImageView = ViewInventory.addImage(NSMakeRect(16, 154, 208, 84), "modals/choose-framer");
+	[[artboardsWindow contentView] addSubview:titleImageView];
+
+	var titleImageDescriptionView = ViewInventory.addImage(NSMakeRect(16, 96, 208, 54), "modals/choose-framer-none");
+	[[artboardsWindow contentView] addSubview:titleImageDescriptionView];
+
+
+
+	var selectFolderButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 34, 240-32, 32)];
+	[selectFolderButton setTitle:"Select Folder Manually"];
+	[selectFolderButton setBezelStyle:NSRoundedBezelStyle];
+	[selectFolderButton setFont:ViewInventory.fontActionButton()];
+	// [selectFolderButton setKeyEquivalent:"\r"];
+	[selectFolderButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+
+		FramerInventory.runSelectProjectFolder()
+
+	}];
+	[selectFolderButton setAction:"callAction:"];
+	[[artboardsWindow contentView] addSubview:selectFolderButton];
+
+
+
+	var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(16, 8, 240-32, 32)];
+	[cancelButton setTitle:"Cancel"];
+	[cancelButton setFont:ViewInventory.fontActionButton()];
+	[cancelButton setBezelStyle:NSRoundedBezelStyle];
+	[cancelButton setKeyEquivalent:"\033"]
+	[cancelButton setCOSJSTargetFunction:function(sender) {
+		[artboardsWindow orderOut:nil]
+		[NSApp stopModal]
+	}];
+	[cancelButton setAction:"callAction:"]
+	[[artboardsWindow contentView] addSubview:cancelButton];
+
+
+	[NSApp runModalForWindow:artboardsWindow];
+}

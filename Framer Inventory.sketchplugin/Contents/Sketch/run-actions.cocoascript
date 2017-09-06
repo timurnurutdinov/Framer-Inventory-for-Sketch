@@ -6,6 +6,7 @@
 @import 'RegisterInventory.framework/HelloSketch.js'
 
 var methodStartTime = nil
+var debugFromCustomPluginPanel = false
 
 var pluginPath = ""
 var pluginVersion = ""
@@ -129,8 +130,15 @@ var onShowBarRun = function(context) {
 	ToolbarInventory.createUIBar()
 }
 
+
+var onSelectOpenedProjectRun = function(context) {
+	if (showLog) { log("Running Select Opened Project...") }
+	decomposeContext(context)
+	PathInventory.createPathModal()
+}
+
 var onSelectProjectFolderRun = function(context) {
-	if (showLog) { log("Running Select Project Folder...") }
+	if (showLog) { log("Running Select Project Manually...") }
 	decomposeContext(context)
 	FramerInventory.runSelectProjectFolder()
 }

@@ -1,4 +1,4 @@
-
+@import 'actions/path-inventory.cocoascript'
 
 var selectFolder = function() {
 
@@ -23,7 +23,8 @@ var selectFolder = function() {
 		[artboardsWindow orderOut:nil]
 		[NSApp stopModal]
 
-		FramerInventory.runSelectProjectFolder()
+		PathInventory.createPathModal()
+		// FramerInventory.runSelectProjectFolder()
 
 		if (userDefaults.exportFramerFolder != "") {
 			if (StatisticsInventory.getStatus() == Status.simulateID()) { runSimulateKeynote() }

@@ -146,7 +146,7 @@ ToolbarInventory.updateSceneLabelStringValue = function(value) {
 ToolbarInventory.updatePathLabelStringValue = function() {
   var toolbar = ToolbarInventory.returnInstance()
   if (toolbar != nil) {
-    var localValue = ViewInventory.optimiseFramerPath()
+    var localValue = PathInventory.returnProjectNameFromPath(userDefaults.exportFramerFolder)
 
     var localLabel = toolbar.pathLabel
     [localLabel setStringValue:localValue]
