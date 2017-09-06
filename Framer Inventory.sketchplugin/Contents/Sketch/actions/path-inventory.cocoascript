@@ -1,0 +1,56 @@
+@import "actions/workers/modals/action-select-opened-project.cocoascript"
+
+function PathInventory () {}
+
+
+PathInventory.returnProjectNameFromPath = function(projectPath) {
+  var currentOpenedProjectCleanPath = [[projectPath componentsSeparatedByString:".framer"] firstObject]
+  var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
+  return currentOpenedProjectName
+}
+
+
+PathInventory.returnOpenedFramerProjects = function() {
+    var openedFramerProjects = NSMutableDictionary.new()
+    var relativePlistPath = NSHomeDirectory() + "/Library/Saved Application State/com.motif.framer.savedState/windows.plist"
+
+    var plistData = [NSData dataWithContentsOfFile:relativePlistPath];
+    if (!plistData) { return openedFramerProjects }
+
+    var plistRoot = nil
+    var plistSerializationError = nil;
+
+    id plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListMutableContainersAndLeaves format:nil error:plistSerializationError];
+
+
+    if (!plistSerializationError) { plistRoot = plist; }
+    else { return openedFramerProjects }
+
+    for (var i = 0; i < plistRoot.count(); i++) {
+        var currenPlistBlock = plistRoot[i]
+
+        if ([currenPlistBlock objectForKey:"NSRepresentedURL"]) {
+            var currentFramerProjectPath = currenPlistBlock["NSRepresentedURL"]
+            var cleanFramerProjectPath = [[[currentFramerProjectPath componentsSeparatedByString:","] firstObject] stringByRemovingPercentEncoding]
+            if (cleanFramerProjectPath != "") { openedFramerProjects[currentFramerProjectPath] = cleanFramerProjectPath }
+        }
+    }
+
+    return openedFramerProjects
+}
+
+
+PathInventory.createPathModal = function() {
+  var openedFramerProjects = PathInventory.returnOpenedFramerProjects()
+
+  if (openedFramerProjects.count() == 0) { selectProjectWithNoOpened() }
+  else if (openedFramerProjects.count() == 1) {
+      userDefaults.exportFramerFolder = [[openedFramerProjects allValues] firstObject]
+      saveDefaults(Status.userDomain(), userDefaults)
+
+      [currentDocument showMessage:ViewInventory.smileDone() + "Selected project: " + PathInventory.returnProjectNameFromPath([[openedFramerProjects allValues] firstObject])]
+  }
+  else { selectOpenedProject(openedFramerProjects) }
+
+  ToolbarInventory.setContentView()
+}

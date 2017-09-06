@@ -1,3 +1,5 @@
+@import 'actions/path-inventory.cocoascript'
+@import 'actions/workers/modals/action-select-opened-project.cocoascript'
 
 function ViewInventory () {}
 
@@ -172,12 +174,12 @@ ViewInventory.adoptExpiredSelection = function(expiredView) {
 
 ViewInventory.adoptExpiredSceneNone = function(expiredView) {
     expiredView.frame = ViewInventory.expiredScenePlaceholderNone()
-    log(ViewInventory.expiredScenePlaceholderNone())
+    // log(ViewInventory.expiredScenePlaceholderNone())
 }
 
 ViewInventory.adoptExpiredScene = function(expiredView) {
     expiredView.frame = ViewInventory.expiredScenePlaceholder()
-    log(ViewInventory.expiredScenePlaceholder())
+    // log(ViewInventory.expiredScenePlaceholder())
 }
 
 
@@ -201,9 +203,8 @@ ViewInventory.getImage = function(size, name) {
 
 ViewInventory.addButton = function(rect, name, callAction) {
     var button = NSButton.alloc().initWithFrame(rect);
-    var image = ViewInventory.getImage(rect.size, name);
+    if (!debugFromCustomPluginPanel) { button.setImage(ViewInventory.getImage(rect.size, name)); }
 
-    button.setImage(image);
     button.setBordered(false);
     button.sizeToFit();
     button.setButtonType(NSMomentaryChangeButton);
@@ -214,15 +215,19 @@ ViewInventory.addButton = function(rect, name, callAction) {
 
 ViewInventory.addImage = function(rect, name) {
     var view = NSImageView.alloc().initWithFrame(rect)
-    var image = ViewInventory.getImage(rect.size, name);
-    view.setImage(image);
+    if (!debugFromCustomPluginPanel) { view.setImage(ViewInventory.getImage(rect.size, name)); }
+    else {
+      // Create Colored Views
+    }
     return view;
 }
 
 
-ViewInventory.optimiseFramerPath = function() {
-    return userDefaults.exportFramerFolder.split("/").pop().split(".framer")[0]
-}
+// ViewInventory.optimiseFramerPath = function() {
+//     log(userDefaults.exportFramerFolder)
+//     log(userDefaults.exportFramerFolder.split("/").pop().split(".framer")[0])
+//     return userDefaults.exportFramerFolder.split("/").pop().split(".framer")[0]
+// }
 
 
 
@@ -232,23 +237,11 @@ ViewInventory.optimiseFramerPath = function() {
 
 
 ViewInventory.getEmptyToolbarViews = function() {
-    // var saveButton = [[NSButton alloc] initWithFrame:NSMakeRect(42, 16, 160, 32)];
-    // [saveButton setTitle:"Select Framer Folder"];
-    // [saveButton setBezelStyle:NSRoundedBezelStyle];
-    // [saveButton setKeyEquivalent:"\r"];
-    // [saveButton setCOSJSTargetFunction:function(sender) {
-    //     ToolbarInventory.updateContext();
-    //     FramerInventory.runSelectProjectFolder()
-    //     ToolbarInventory.setContentView()
-    // }];
-    // [saveButton setAction:"callAction:"];
-
 
     var saveButton = ViewInventory.addButton( NSMakeRect(28, 12, 140, 20), "toolbar/empty select",
         function(sender){
           ToolbarInventory.updateContext();
-          FramerInventory.runSelectProjectFolder()
-          ToolbarInventory.setContentView()
+          PathInventory.createPathModal()
     })
 
     [[saveButton cell] setShowsStateBy:NSNoCellMask]
@@ -295,10 +288,6 @@ ViewInventory.getImportViews = function() {
           saveDefaults(Status.userDomain(), userDefaults)
           ToolbarInventory.updateAccessoryControls();
 
-          // if (currentDocument != nil) {
-          //   if (userDefaults.myRelativeGroup == 0) { [currentDocument showMessage:ViewInventory.toolbarMessageParentArtboard()] }
-          //   else { [currentDocument showMessage:ViewInventory.toolbarMessageParentGroup()] }
-          // }
     })
 
     [[relativeButton cell] setShowsStateBy:NSNoCellMask]
@@ -349,8 +338,10 @@ ViewInventory.getGeneralToolbarViews = function() {
     var addButton = ViewInventory.addButton( NSMakeRect(19, 74, 14, 15), "toolbar/add",
         function(sender){
             ToolbarInventory.updateContext();
-            FramerInventory.runSelectProjectFolder()
-            ToolbarInventory.setContentView()
+            PathInventory.createPathModal()
+
+            // FramerInventory.runSelectProjectFolder()
+            // ToolbarInventory.setContentView()
     })
     var removeButton = ViewInventory.addButton( NSMakeRect(5, 74, 15, 15), "toolbar/remove",
         function(sender){
@@ -453,13 +444,15 @@ ViewInventory.getCloseToolbarViews = function() {
 }
 
 ViewInventory.getLabels = function(placeHolderText) {
-  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(38, 70, 120, 20)];
+  var pathLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(38, 71, 118, 20)];
   [pathLabel setEditable:false];
   [pathLabel setBordered:false];
   [pathLabel setFont:ViewInventory.fontCheckControls()];
   [pathLabel setTextColor:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
   [pathLabel setDrawsBackground:false];
   [pathLabel setStringValue:ViewInventory.placeHolderSelectPath()];
+
+  [[pathLabel cell] setLineBreakMode:NSLineBreakByTruncatingTail];
 
   var selectionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(5, 23, 184, 16)];
   [selectionLabel setEditable:false];
