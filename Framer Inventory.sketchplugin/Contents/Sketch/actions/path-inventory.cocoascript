@@ -9,6 +9,12 @@ PathInventory.returnProjectNameFromPath = function(projectPath) {
   return currentOpenedProjectName
 }
 
+PathInventory.returnProjectPathFromURLPath = function(projectPath) {
+    var cleanPath = projectPath
+    if ([[projectPath componentsSeparatedByString:"file://"] count] > 1) { cleanPath = [[projectPath componentsSeparatedByString:"file://"] lastObject] }
+    return [cleanPath stringByRemovingPercentEncoding]
+}
+
 
 PathInventory.returnOpenedFramerProjects = function() {
     var openedFramerProjects = NSMutableDictionary.new()
@@ -31,7 +37,7 @@ PathInventory.returnOpenedFramerProjects = function() {
 
         if ([currenPlistBlock objectForKey:"NSRepresentedURL"]) {
             var currentFramerProjectPath = currenPlistBlock["NSRepresentedURL"]
-            var cleanFramerProjectPath = [[[currentFramerProjectPath componentsSeparatedByString:","] firstObject] stringByRemovingPercentEncoding]
+            var cleanFramerProjectPath = PathInventory.returnProjectPathFromURLPath(currentFramerProjectPath)
             if (cleanFramerProjectPath != "") { openedFramerProjects[currentFramerProjectPath] = cleanFramerProjectPath }
         }
     }
