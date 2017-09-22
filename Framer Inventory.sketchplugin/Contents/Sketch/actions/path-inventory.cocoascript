@@ -1,4 +1,5 @@
 @import "Framer-Inventory-for-Sketch/Framer Inventory.sketchplugin/Contents/Sketch/inventory/libs/testing/logger.js"
+@import "actions/workers/modals/action-select-opened-project.cocoascript"
 
 function PathInventory () {}
 
@@ -7,6 +8,12 @@ PathInventory.returnProjectNameFromPath = function(projectPath) {
   var currentOpenedProjectCleanPath = [[projectPath componentsSeparatedByString:".framer"] firstObject]
   var currentOpenedProjectName = [[currentOpenedProjectCleanPath componentsSeparatedByString:"/"] lastObject]
   return currentOpenedProjectName
+}
+
+PathInventory.returnProjectPathFromURLPath = function(projectPath) {
+    var cleanPath = projectPath
+    if ([[projectPath componentsSeparatedByString:"file://"] count] > 1) { cleanPath = [[projectPath componentsSeparatedByString:"file://"] lastObject] }
+    return [cleanPath stringByRemovingPercentEncoding]
 }
 
 
@@ -31,8 +38,8 @@ PathInventory.returnOpenedFramerProjects = function() {
 
         if ([currenPlistBlock objectForKey:"NSRepresentedURL"]) {
             var currentFramerProjectPath = currenPlistBlock["NSRepresentedURL"]
-            var cleanFramerProjectPath = currentFramerProjectPath.split("file://")[1]
-            openedFramerProjects[currentFramerProjectPath] = cleanFramerProjectPath
+            var cleanFramerProjectPath = PathInventory.returnProjectPathFromURLPath(currentFramerProjectPath)
+            if (cleanFramerProjectPath != "") { openedFramerProjects[currentFramerProjectPath] = cleanFramerProjectPath }
         }
     }
 
