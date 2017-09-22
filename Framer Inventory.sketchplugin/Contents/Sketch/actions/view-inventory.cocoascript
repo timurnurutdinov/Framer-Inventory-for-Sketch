@@ -203,9 +203,8 @@ ViewInventory.getImage = function(size, name) {
 
 ViewInventory.addButton = function(rect, name, callAction) {
     var button = NSButton.alloc().initWithFrame(rect);
-    var image = ViewInventory.getImage(rect.size, name);
+    if (!debugFromCustomPluginPanel) { button.setImage(ViewInventory.getImage(rect.size, name)); }
 
-    button.setImage(image);
     button.setBordered(false);
     button.sizeToFit();
     button.setButtonType(NSMomentaryChangeButton);
@@ -216,15 +215,19 @@ ViewInventory.addButton = function(rect, name, callAction) {
 
 ViewInventory.addImage = function(rect, name) {
     var view = NSImageView.alloc().initWithFrame(rect)
-    var image = ViewInventory.getImage(rect.size, name);
-    view.setImage(image);
+    if (!debugFromCustomPluginPanel) { view.setImage(ViewInventory.getImage(rect.size, name)); }
+    else {
+      // Create Colored Views
+    }
     return view;
 }
 
 
-ViewInventory.optimiseFramerPath = function() {
-    return userDefaults.exportFramerFolder.split("/").pop().split(".framer")[0]
-}
+// ViewInventory.optimiseFramerPath = function() {
+//     log(userDefaults.exportFramerFolder)
+//     log(userDefaults.exportFramerFolder.split("/").pop().split(".framer")[0])
+//     return userDefaults.exportFramerFolder.split("/").pop().split(".framer")[0]
+// }
 
 
 
