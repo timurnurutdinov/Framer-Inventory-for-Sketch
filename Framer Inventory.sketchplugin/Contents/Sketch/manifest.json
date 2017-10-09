@@ -102,6 +102,22 @@
 
 
     {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSaveSelectionRun",
+      "shortcut" : "",
+      "name" : "       Save Selection",
+      "identifier" : "choose-save-selection"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onRestoreSelectionRun",
+      "shortcut" : "",
+      "name" : "       Restore Selection",
+      "identifier" : "choose-restore-selection"
+    },
+
+
+    {
       "script" : "selection-changed-action.cocoascript",
       "handlers" : {
         "actions" : {
@@ -129,6 +145,18 @@
             "choose-show-export-path",
             "-",
             "choose-remove-export-path"
+          ]
+        },
+        {
+          "title": "       Utils",
+          "items": [
+            {
+              "title": "Selection",
+              "items": [
+                "choose-save-selection",
+                "choose-restore-selection"
+              ]
+            }
           ]
         },
         "-",

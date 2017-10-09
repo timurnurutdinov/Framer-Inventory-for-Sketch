@@ -1,5 +1,6 @@
 @import 'actions/action-inventory.cocoascript'
 @import 'actions/view-inventory.cocoascript'
+@import 'actions/abstract-selection-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
 @import 'actions/demo-inventory.cocoascript'
 
@@ -159,6 +160,18 @@ var onCheckUpdatesRun = function(context) {
 	if (showLog) { log("Running Updates Checker") }
 	decomposeContext(context)
 	runCheckUpdates()
+}
+
+var onSaveSelectionRun = function(context) {
+	if (showLog) { log("Running Save Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.saveSelection(currentSelection)
+}
+
+var onRestoreSelectionRun = function(context) {
+	if (showLog) { log("Running Save Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.restoreSelection()
 }
 
 

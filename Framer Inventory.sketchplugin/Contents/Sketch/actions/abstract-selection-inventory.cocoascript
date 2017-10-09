@@ -1,0 +1,51 @@
+@import 'run-actions.cocoascript'
+
+
+function AbstractSelectionInventory () {}
+
+
+
+AbstractSelectionInventory.saveSelection = function(selection) {
+    var selectionStorageArray = NSMutableArray.new()
+
+    for (var i = 0; i < selection.count(); i++) {
+        var currentLayerID = [[selection objectAtIndex:i] objectID]
+        selectionStorageArray.addObject(currentLayerID)
+    }
+
+    AbstractSelectionInventory.updateInstance(selectionStorageArray)
+    [currentDocument showMessage:"SAVED"]
+}
+
+AbstractSelectionInventory.restoreSelection = function() {
+    var restoredArrayID = AbstractSelectionInventory.returnInstance()
+
+    for (var i = 0; i < restoredArrayID.count(); i++) {
+      var restoredLayerID = [restoredArrayID objectAtIndex:i]
+
+      currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
+      var layerWithID = currentDocument.documentData().layerWithID(restoredLayerID)
+      if (layerWithID != nil) { [layerWithID select:true byExpandingSelection:true] }
+    }
+
+    [currentDocument showMessage:"RESTORED"]
+}
+
+
+
+
+
+
+
+
+AbstractSelectionInventory.returnInstance = function() {
+    var threadIdentifier = "com.tilllur.framer-inventory.selection"
+    var threadDictionary = NSThread.mainThread().threadDictionary()
+    return threadDictionary[threadIdentifier]
+}
+
+AbstractSelectionInventory.updateInstance = function(arrayWithID) {
+    var threadIdentifier = "com.tilllur.framer-inventory.selection"
+    var threadDictionary = NSThread.mainThread().threadDictionary()
+    threadDictionary[threadIdentifier] = arrayWithID
+}
