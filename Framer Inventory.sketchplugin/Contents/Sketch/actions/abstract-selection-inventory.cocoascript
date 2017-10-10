@@ -1,37 +1,55 @@
 @import 'run-actions.cocoascript'
 
-
 function AbstractSelectionInventory () {}
 
 
 
 AbstractSelectionInventory.saveSelection = function(selection) {
-    var selectionStorageArray = NSMutableArray.new()
+    var selectionStorageDictionary = NSMutableDictionary.new()
 
     for (var i = 0; i < selection.count(); i++) {
+
         var currentLayerID = [[selection objectAtIndex:i] objectID]
-        selectionStorageArray.addObject(currentLayerID)
+        [selectionStorageDictionary setValue:currentLayerID forKey:currentLayerID]
     }
 
-    AbstractSelectionInventory.updateInstance(selectionStorageArray)
-    [currentDocument showMessage:"SAVED"]
+    AbstractSelectionInventory.updateInstance(selectionStorageDictionary)
+    [currentDocument showMessage:ViewInventory.abstractSelectionSaved()]
 }
 
 AbstractSelectionInventory.restoreSelection = function() {
-    var restoredArrayID = AbstractSelectionInventory.returnInstance()
+    FramerInventory.deselectLayers()
+    var restoredDictionary = AbstractSelectionInventory.returnInstance()
 
-    for (var i = 0; i < restoredArrayID.count(); i++) {
-      var restoredLayerID = [restoredArrayID objectAtIndex:i]
+    for(var key in restoredDictionary) {
+      var restoredLayerID = [restoredDictionary objectForKey:key];
 
       currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
       var layerWithID = currentDocument.documentData().layerWithID(restoredLayerID)
       if (layerWithID != nil) { [layerWithID select:true byExpandingSelection:true] }
     }
 
-    [currentDocument showMessage:"RESTORED"]
+    [currentDocument showMessage:ViewInventory.abstractSelectionRestored()]
 }
 
+AbstractSelectionInventory.addToSelection = function(selection) {
+    var restoredDictionary = AbstractSelectionInventory.returnInstance()
 
+    for (var i = 0; i < selection.count(); i++) {
+        var currentLayerID = [[selection objectAtIndex:i] objectID]
+        [restoredDictionary setValue:currentLayerID forKey:currentLayerID]
+    }
+
+    AbstractSelectionInventory.updateInstance(restoredDictionary)
+    [currentDocument showMessage:ViewInventory.abstractSelectionAdded()]
+}
+
+AbstractSelectionInventory.clearSelection = function() {
+    var emptyDictionary = NSMutableDictionary.new()
+    AbstractSelectionInventory.updateInstance(emptyDictionary)
+    FramerInventory.deselectLayers()
+    [currentDocument showMessage:ViewInventory.abstractSelectionCleared()]
+}
 
 
 

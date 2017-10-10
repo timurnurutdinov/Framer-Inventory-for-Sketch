@@ -168,6 +168,18 @@ var onSaveSelectionRun = function(context) {
 	AbstractSelectionInventory.saveSelection(currentSelection)
 }
 
+var onAddToSelectionRun = function(context) {
+	if (showLog) { log("Running Add to Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.addToSelection(currentSelection)
+}
+
+var onClearSelectionRun = function(context) {
+	if (showLog) { log("Running Clear Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.clearSelection()
+}
+
 var onRestoreSelectionRun = function(context) {
 	if (showLog) { log("Running Save Selection") }
 	decomposeContext(context)

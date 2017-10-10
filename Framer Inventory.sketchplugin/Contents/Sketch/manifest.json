@@ -105,14 +105,28 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onSaveSelectionRun",
       "shortcut" : "",
-      "name" : "       Save Selection",
+      "name" : "Save Selection",
       "identifier" : "choose-save-selection"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onAddToSelectionRun",
+      "shortcut" : "",
+      "name" : "Add to Selection",
+      "identifier" : "choose-add-to-selection"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onClearSelectionRun",
+      "shortcut" : "",
+      "name" : "Clear Selection",
+      "identifier" : "choose-clear-selection"
     },
     {
       "script" : "run-actions.cocoascript",
       "handler" : "onRestoreSelectionRun",
       "shortcut" : "",
-      "name" : "       Restore Selection",
+      "name" : "Restore Selection",
       "identifier" : "choose-restore-selection"
     },
 
@@ -154,6 +168,10 @@
               "title": "Selection",
               "items": [
                 "choose-save-selection",
+                "choose-add-to-selection",
+                "-",
+                "choose-clear-selection",
+                "-",
                 "choose-restore-selection"
               ]
             }
