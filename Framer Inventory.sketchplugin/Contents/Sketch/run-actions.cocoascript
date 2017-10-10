@@ -1,6 +1,6 @@
 @import 'actions/action-inventory.cocoascript'
 @import 'actions/view-inventory.cocoascript'
-@import 'actions/abstract-selection-inventory.cocoascript'
+@import 'actions/utils/abstract-selection-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
 @import 'actions/demo-inventory.cocoascript'
 

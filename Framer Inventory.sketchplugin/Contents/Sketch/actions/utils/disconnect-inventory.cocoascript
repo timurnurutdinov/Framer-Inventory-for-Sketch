@@ -1,0 +1,15 @@
+@import 'run-actions.cocoascript'
+
+function DisconnectInventory () {}
+
+
+DisconnectInventory.cleanCurrentLevel = function(layer) {
+  var type = [layer className]
+  if (TypeInventory.isGroupType(type) || TypeInventory.isArtboardType(type)) {
+    if (TypeInventory.isSymbolGroup(type)) { layer = layer.detachByReplacingWithGroup() }
+
+    var groupChildren = layer.layers()
+    for (var i = 0; i < groupChildren.count(); i++) { DisconnectInventory.cleanCurrentLevel([groupChildren objectAtIndex: i]) }
+  }
+
+}

@@ -132,6 +132,15 @@
 
 
     {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onDisconnectSymbols",
+      "shortcut" : "",
+      "name" : "Disconnect Symbols",
+      "identifier" : "choose-disconnect-symbols"
+    },
+
+
+    {
       "script" : "selection-changed-action.cocoascript",
       "handlers" : {
         "actions" : {
