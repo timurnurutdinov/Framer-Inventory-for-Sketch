@@ -6,6 +6,8 @@
 
 @import 'RegisterInventory.framework/HelloSketch.js'
 
+@import 'MochaJSDelegate.js'
+
 var methodStartTime = nil
 var debugFromCustomPluginPanel = false
 

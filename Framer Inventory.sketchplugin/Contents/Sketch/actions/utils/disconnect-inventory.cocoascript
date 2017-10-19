@@ -13,3 +13,178 @@ DisconnectInventory.cleanCurrentLevel = function(layer) {
   }
 
 }
+
+
+
+
+DisconnectInventory.createLayersPreviewPanel = function(titles) {
+  var scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 200, 380)];
+  [scrollView setBorderType:NSBezelBorder];
+  var myTableView = [[NSTableView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)];
+
+  var tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:"keys"]];
+  [tCol setWidth:360];
+  [[tCol headerCell] setStringValue:[NSString stringWithFormat:"Layers"]];
+  [myTableView addTableColumn:tCol];
+
+  [myTableView setUsesAlternatingRowBackgroundColors:true];
+  [myTableView setGridStyleMask:NSTableViewSolidVerticalGridLineMask];
+  [myTableView setGridColor:[NSColor redColor]];
+  [myTableView setRowHeight:23.0];
+  [myTableView setDelegate:self];
+  [myTableView setDataSource:self];
+  [myTableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
+  [myTableView setAutoresizesSubviews:true];
+
+  [scrollView setHasVerticalScroller:true];
+  [scrollView setHasHorizontalScroller:true];
+  [scrollView setAutoresizesSubviews:true];
+  [scrollView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+  [scrollView setDocumentView:myTableView];
+
+  [myTableView registerForDraggedTypes:titles];
+  return scrollView;
+
+}
+
+
+
+DisconnectInventory.makeTableView = function() {
+  // var rect = NSMakeRect(0, 0, 200, 400)
+  // var container = NSScrollView.alloc().init()
+  // container.frame = rect
+  //
+  // var tableView = NSTableView.alloc().init()
+  // // this.tableView = tableView
+  // tableView.frame = rect
+  //
+  // var column = NSTableColumn.alloc().initWithIdentifier("")
+  // column.width = 400
+  //
+  // tableView.addTableColumn(column)
+  // tableView.focusRingType = NSFocusRingTypeNone
+  //
+  //
+  //
+  // tableView.setDataSource_(manager.dataSource)
+  // tableView.setDelegate_(manager.delegate)
+  //
+  // // container.documentView = tableView
+  // // container.hasVerticalScroller = true
+  //
+  // // container.backgroundColor = NSColor.redColor()
+  //
+  //
+  //
+  //
+  //
+  // var tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:"keys"]];
+  // [tCol setWidth:360];
+  // [[tCol headerCell] setStringValue:[NSString stringWithFormat:"Layers"]];
+  // [tableView addTableColumn:tCol];
+  //
+  // return container
+
+
+  var scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 200, 380)];
+   [scrollView setBorderType:NSBezelBorder];
+   var myTableView = [[NSTableView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)];
+  //  [scrollView setDocumentView:myTableView];
+
+   var tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:"keys"]];
+   [tCol setWidth:360];
+   [[tCol headerCell] setStringValue:[NSString stringWithFormat:"Layers"]];
+   [myTableView addTableColumn:tCol];
+
+   [myTableView setUsesAlternatingRowBackgroundColors:true];
+   [myTableView setGridStyleMask:NSTableViewSolidVerticalGridLineMask];
+   [myTableView setGridColor:[NSColor redColor]];
+
+  //  [myTableView setRowHeight:23.0];
+  // //  [myTableView setDelegate:self];
+  // //  [myTableView setDataSource:self];
+  //  [myTableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
+  //  [myTableView setAutoresizesSubviews:true];
+  //
+  //  [scrollView setHasVerticalScroller:true];
+  //  [scrollView setHasHorizontalScroller:true];
+  //  [scrollView setAutoresizesSubviews:true];
+  //  [scrollView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+  //  [scrollView setDocumentView:myTableView];
+
+   [myTableView registerForDraggedTypes:titles];
+
+   return [scrollView, myTableView];
+
+}
+
+
+
+
+
+
+
+// var manager = {
+//   delegateClass: new MochaJSDelegate(),
+//   delegate: null,
+//   dataSourceClass: new MochaJSDelegate(),
+//   dataSource: null,
+//   items: ["one", "two", "three"],
+//
+//   setup: function() {
+//     // this.dataSourceClass.setHandlerForSelector("numberOfRowsInTableView:", function(tableView) {
+//     //   log("numberOfRowsInTableView?????")
+//     //   log("?" + tableView)
+//     //   return 10
+//     // })
+//     //
+//     // this.dataSourceClass.setHandlerForSelector("tableView:objectValueForTableColumn:row:", function(tableView, column, row) {
+//     //   log("objectValueForTableColumn")
+//     //   log(titles)
+//     //   // return "hello"
+//     // })
+//     //
+//     // this.delegateClass.setHandlerForSelector("tableView:didClickTableColumn:", function(tableView, column) {
+//     //   log("didClickTableColumn")
+//     // })
+//     //
+//     // this.delegateClass.setHandlerForSelector("tableView:rowViewForRow:", function(tableView, row) {
+//     //   log("didClickTableColumn")
+//     //   return NSTableRowView.alloc().init()
+//     // })
+//     //
+//     // this.delegate = this.delegateClass.getClassInstance()
+//     // this.dataSource = this.dataSourceClass.getClassInstance()
+//   }
+// }
+
+
+DisconnectInventory.returnModalView = function() {
+  var exportWindow = [[NSWindow alloc] init]
+  exportWindow.setFrame_display(NSMakeRect(0, 0, 400, 800), false);
+  // exportWindow.setStyleMask(NSTitledWindowMask + NSFullSizeContentViewWindowMask);
+  // exportWindow.setBackgroundColor(ViewInventory.colorWindow());
+  // exportWindow.setTitleVisibility(NSWindowTitleHidden);
+  // exportWindow.setTitlebarAppearsTransparent(true);
+  // exportWindow.setMovableByWindowBackground(true);
+  // exportWindow.setHasShadow(true);
+  // exportWindow.setLevel(NSFloatingWindowLevel);
+
+
+  // [[exportWindow contentView] addSubview:scrollView];
+
+
+
+  var cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(40, 40, 100, 40)];
+  [cancelButton setTitle:"Cancel"];
+  [cancelButton setKeyEquivalent:"\033"]
+  [cancelButton setCOSJSTargetFunction:function(sender) {
+      log("inside")
+      [exportWindow orderOut:nil]
+      [NSApp stopModal]
+  }];
+  [cancelButton setAction:"callAction:"]
+  [[exportWindow contentView] addSubview:cancelButton];
+
+  return exportWindow
+}

@@ -1,0 +1,25 @@
+@import 'run-actions.cocoascript'
+
+@import 'runtime.js'
+@import 'index.js'
+
+
+const MyClass = new ObjCClass({
+  // String values create ivar
+  _private: 'initial',
+
+  // This is a method on the class.
+  test() {
+    log("test: " + this._private);
+  },
+});
+
+// MyClass is now a real ObjC class as far as cocoascript is concerned:
+const obj = MyClass.new();
+
+// You can use setters for the ivars
+obj._private = "efgh";
+
+// And call methods
+[obj test];
+obj.test();
