@@ -105,7 +105,7 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 	[prototype setButtonType:NSRadioButton];
 	[prototype setFont:ViewInventory.fontRadioButton()];
 
-	var matrixRect = NSMakeRect(16, 96, openedProjectCellWidth, openedProjectCellHeight * openedProjectsArray.count());
+	var matrixRect = NSMakeRect(16, 96, openedProjectCellWidth - 32, 4 + openedProjectCellHeight * openedProjectsArray.count());
 	var myMatrix = [[NSMatrix alloc] initWithFrame:matrixRect
 																						mode:NSRadioModeMatrix
 																			 prototype:prototype
@@ -114,12 +114,15 @@ var createRadioGroupOpenedProjects = function(openedProjectsArray) {
 
 	var cellArray = [myMatrix cells];
 	for (var i = 0; i < openedProjectsArray.count(); i++) {
+		var currentCell = [cellArray objectAtIndex:i]
 		var currentCellTitle = "        " + PathInventory.returnProjectNameFromPath([openedProjectsArray objectAtIndex: i])
 		[openedProjectsTitles addObject:currentCellTitle]
-		[[cellArray objectAtIndex:i] setTitle:currentCellTitle];
+		[currentCell setLineBreakMode:NSLineBreakByTruncatingTail];
+		[myMatrix setToolTip:currentCellTitle forCell:currentCell]
+		[currentCell setTitle:currentCellTitle];
 	}
 
-	[myMatrix setCellSize:NSMakeSize(openedProjectCellWidth, openedProjectCellHeight)]
+	[myMatrix setCellSize:NSMakeSize(openedProjectCellWidth - 32, openedProjectCellHeight)]
 
 	var selectedCellNumber = returnSelectedCellNumber(userDefaults.exportFramerFolder, openedProjectsArray)
 	if (selectedCellNumber > -1) { [myMatrix selectCellAtRow:selectedCellNumber column:0] }
