@@ -135,8 +135,29 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onDisconnectSymbols",
       "shortcut" : "",
-      "name" : "Disconnect Symbols",
+      "name" : "Detatch Symbols in Selection",
       "identifier" : "choose-disconnect-symbols"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onAddLayersAsArray",
+      "shortcut" : "",
+      "name" : "Add to Pasteboard",
+      "identifier" : "choose-add-layers-as-array"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onCleanAndCopyLayersAsArray",
+      "shortcut" : "",
+      "name" : "Clear Pasteboard and Copy",
+      "identifier" : "choose-clean-and-copy-layers-as-array"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onCreateShownHiddenStates",
+      "shortcut" : "",
+      "name" : "Create Shown/Hidden States",
+      "identifier" : "choose-create-shown-hidden-states"
     },
 
 
@@ -183,7 +204,16 @@
                 "-",
                 "choose-restore-selection"
               ]
-            }
+            },
+            {
+              "title": "Framer Array from Selection",
+              "items": [
+                "choose-add-layers-as-array",
+                "choose-clean-and-copy-layers-as-array"
+              ]
+            },
+            "choose-disconnect-symbols",
+            "choose-create-shown-hidden-states"
           ]
         },
         "-",
