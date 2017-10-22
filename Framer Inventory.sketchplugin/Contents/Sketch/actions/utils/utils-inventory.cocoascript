@@ -114,11 +114,43 @@ UtilsInventory.createShownHiddenStates = function() {
     }
  }
 
- //
- // UtilsInventory.resetRulers = function() {
- //
- // }
- //
- // UtilsInventory.setRulers = function() {
- //
- // }
+
+ UtilsInventory.resetRulers = function() {
+   if (currentSelection.count() >= 1) {
+     var currentLayer = [currentSelection firstObject]
+
+     if (!TypeInventory.isArtboardType([currentLayer className])) {
+       currentLayer = TypeInventory.findParentArtboard(currentLayer)
+       if (!TypeInventory.isPageType([currentLayer className])) {
+         currentLayer.setRulerBase(CGPointMake(currentLayer.absoluteRect().x(), currentLayer.absoluteRect().y()));
+         [currentDocument reloadInspector];
+         [currentDocument showMessage:ViewInventory.smileForget() + "Reseted"];
+       }
+     }
+     else { [currentDocument showMessage:ViewInventory.smileWarning() + "Select Layer on Artboard"]; }
+   }
+ }
+
+ UtilsInventory.setRulers = function() {
+   if (currentSelection.count() == 1) {
+     var currentLayer = [currentSelection firstObject]
+
+     if (!TypeInventory.isArtboardType([currentLayer className])) {
+       var parentArtboard = TypeInventory.findParentArtboard(currentLayer)
+       if (!TypeInventory.isPageType([parentArtboard className])) {
+         var deltaX2 = currentLayer.absoluteRect().x() - parentArtboard.rulerBase().x.integerValue()
+         var deltaY2 = currentLayer.absoluteRect().y() - parentArtboard.rulerBase().y.integerValue()
+         parentArtboard.setRulerBase(CGPointMake(parentArtboard.absoluteRect().x() + deltaX2, parentArtboard.absoluteRect().y() + deltaY2));
+         [currentDocument reloadInspector];
+
+         if (deltaX2 == 0 && deltaY2 == 0) { [currentDocument showMessage:ViewInventory.smileForget() + "Reseted"]; }
+         else { [currentDocument showMessage:ViewInventory.smileDone() + "Rulers Changed"]; }
+       }
+       else { [currentDocument showMessage:ViewInventory.smileWarning() + "Select Layer on Artboard"]; }
+     }
+     else { [currentDocument showMessage:ViewInventory.smileWarning() + "Select Layer on Artboard"]; }
+  }
+  else {
+    [currentDocument showMessage:ViewInventory.smileWarning() + "Select One Layer"];
+  }
+ }

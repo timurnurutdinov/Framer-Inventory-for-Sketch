@@ -5,8 +5,8 @@
   "description": "Import States & Export Prototypes from Sketch to Framer",
   "homepage": "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=manifest",
   "identifier": "com.addleimb.framer-inventory",
-  "version": "3.1.8",
-  "appcast": "https://raw.githubusercontent.com/timurnurutdinov/framerinventory/gh-pages/plugin-appcast.xml",
+  "version": "3.2.0",
+  "appcast": "https://raw.githubusercontent.com/timurnurutdinov/framerinventory/master/plugin-appcast.xml",
   "compatibleVersion": 4.5,
   "commands" : [
     {
@@ -61,7 +61,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onShowBarRun",
       "shortcut" : "",
-      "name" : "▪️ Show Toolbar",
+      "name" : "💎 Show Toolbar",
       "identifier" : "show-bar"
     },
     {
@@ -159,6 +159,20 @@
       "name" : "Create Shown/Hidden States",
       "identifier" : "choose-create-shown-hidden-states"
     },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSetRulers",
+      "shortcut" : "",
+      "name" : "Set Rulers to Layer",
+      "identifier" : "choose-set-rulers-to-layer"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onResetRulers",
+      "shortcut" : "",
+      "name" : "Reset Rulers",
+      "identifier" : "choose-reset-rulers"
+    },
 
 
     {
@@ -171,7 +185,7 @@
     }
   ],
   "menu": {
-	  "title": "◾️ Framer Inventory",
+	  "title": "🚙 Framer Inventory",
       "items": [
         "show-bar",
         "-",
@@ -212,6 +226,14 @@
                 "choose-clean-and-copy-layers-as-array"
               ]
             },
+            {
+              "title": "Rulers",
+              "items": [
+                "choose-set-rulers-to-layer",
+                "choose-reset-rulers"
+              ]
+            },
+            "-",
             "choose-disconnect-symbols",
             "choose-create-shown-hidden-states"
           ]

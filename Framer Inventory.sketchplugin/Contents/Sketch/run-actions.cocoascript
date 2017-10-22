@@ -216,6 +216,20 @@ var onCreateShownHiddenStates = function(context) {
 
 
 
+var onSetRulers = function(context) {
+	if (showLog) { log("Set Rulers") }
+	decomposeContext(context)
+	UtilsInventory.setRulers()
+}
+
+var onResetRulers = function(context) {
+	if (showLog) { log("Reset Rulers") }
+	decomposeContext(context)
+	UtilsInventory.resetRulers()
+}
+
+
+
 var onTestingRun = function(context) {
 	if (showLog) { log("Running Testing Environment") }
 	// isTestingEnvironment = true
