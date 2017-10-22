@@ -18,6 +18,13 @@ ViewInventory.placeHolderImport = function() { return "" }
 ViewInventory.placeHolderScene = function() { return "Select Artboards with Exportables" }
 ViewInventory.placeHolderSelectPath = function() { return "Please, select Framer folder" }
 
+
+ViewInventory.abstractSelectionSaved = function() { return ViewInventory.smileDone() + "Saved" }
+ViewInventory.abstractSelectionAdded = function() { return ViewInventory.smileDone() + "Added" }
+ViewInventory.abstractSelectionRestored = function() { return ViewInventory.smileDone() + "Restored" }
+ViewInventory.abstractSelectionCleared = function() { return ViewInventory.smileForget() }
+
+
 ViewInventory.toolbarMessageParentGroup = function() { return "Relative to parent Group" }
 ViewInventory.toolbarMessageParentArtboard = function() { return "Relative to parent Artboard" }
 

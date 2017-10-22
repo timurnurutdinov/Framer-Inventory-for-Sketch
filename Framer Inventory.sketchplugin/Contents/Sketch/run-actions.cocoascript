@@ -1,5 +1,7 @@
 @import 'actions/action-inventory.cocoascript'
 @import 'actions/view-inventory.cocoascript'
+@import 'actions/utils/abstract-selection-inventory.cocoascript'
+@import 'actions/utils/utils-inventory.cocoascript'
 @import 'actions/statistics-inventory.cocoascript'
 @import 'actions/demo-inventory.cocoascript'
 
@@ -159,6 +161,71 @@ var onCheckUpdatesRun = function(context) {
 	if (showLog) { log("Running Updates Checker") }
 	decomposeContext(context)
 	runCheckUpdates()
+}
+
+var onSaveSelectionRun = function(context) {
+	if (showLog) { log("Running Save Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.saveSelection(currentSelection)
+}
+
+var onAddToSelectionRun = function(context) {
+	if (showLog) { log("Running Add to Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.addToSelection(currentSelection)
+}
+
+var onClearSelectionRun = function(context) {
+	if (showLog) { log("Running Clear Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.clearSelection()
+}
+
+var onRestoreSelectionRun = function(context) {
+	if (showLog) { log("Running Save Selection") }
+	decomposeContext(context)
+	AbstractSelectionInventory.restoreSelection()
+}
+
+
+
+
+var onDisconnectSymbols = function(context) {
+	if (showLog) { log("Disconnect Symbols") }
+	decomposeContext(context)
+	UtilsInventory.disconnectSymbols()
+}
+
+var onAddLayersAsArray = function(context) {
+	if (showLog) { log("Add Layer as Array") }
+	decomposeContext(context)
+	UtilsInventory.addSelectionArray()
+}
+
+var onCleanAndCopyLayersAsArray = function(context) {
+	if (showLog) { log("Clean and Copy Layers as Array") }
+	decomposeContext(context)
+	UtilsInventory.cleanAndCopySelection()
+}
+
+var onCreateShownHiddenStates = function(context) {
+	if (showLog) { log("Create shown/hidden states") }
+	decomposeContext(context)
+	UtilsInventory.createShownHiddenStates()
+}
+
+
+
+var onSetRulers = function(context) {
+	if (showLog) { log("Set Rulers") }
+	decomposeContext(context)
+	UtilsInventory.setRulers()
+}
+
+var onResetRulers = function(context) {
+	if (showLog) { log("Reset Rulers") }
+	decomposeContext(context)
+	UtilsInventory.resetRulers()
 }
 
 

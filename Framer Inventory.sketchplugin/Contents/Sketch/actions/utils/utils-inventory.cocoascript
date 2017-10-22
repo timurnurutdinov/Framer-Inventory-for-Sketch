@@ -1,0 +1,156 @@
+@import 'run-actions.cocoascript'
+
+function UtilsInventory () {}
+
+UtilsInventory.disconnectSymbols = function() {
+    for (var i = 0; i < currentSelection.count(); i++) {
+        UtilsInventory.cleanCurrentLevel([currentSelection objectAtIndex:i])
+    }
+}
+
+UtilsInventory.cleanCurrentLevel = function(layer) {
+  var type = [layer className]
+  if (TypeInventory.isGroupType(type) || TypeInventory.isArtboardType(type)) {
+    if (TypeInventory.isSymbolGroup(type)) { layer = layer.detachByReplacingWithGroup() }
+
+    var groupChildren = layer.layers()
+    for (var i = 0; i < groupChildren.count(); i++) { UtilsInventory.cleanCurrentLevel([groupChildren objectAtIndex: i]) }
+  }
+
+}
+
+
+
+UtilsInventory.arrayDescribeSelection = function() {
+
+  var result = ""
+  if (currentSelection.count() > 0) {
+    result = "array = ["
+  	for (var i = 0; i < currentSelection.count(); i++) {
+        result += GenerateInventory.clearName([[currentSelection objectAtIndex:i] name])
+  		  if (i != currentSelection.count() - 1) { result += ", " }
+  	}
+
+  	result += "]"
+  	result += ln()
+  }
+
+	return result
+}
+
+
+
+UtilsInventory.addSelectionArray = function() {
+  var stringWithSelectionArray = UtilsInventory.arrayDescribeSelection()
+
+  var pasteboard  = [NSPasteboard generalPasteboard];
+  var myString = [pasteboard stringForType:NSPasteboardTypeString];
+  [pasteboard clearContents];
+
+  if (myString == null) { myString = "" }
+  var pasteboardContent = myString + stringWithSelectionArray
+  [pasteboard setString:pasteboardContent forType:NSStringPboardType];
+
+  [currentDocument showMessage:ViewInventory.smileDone() + "Added"];
+}
+
+
+
+UtilsInventory.cleanAndCopySelection = function() {
+  var stringWithSelectionArray = UtilsInventory.arrayDescribeSelection()
+
+  var pasteboard = [NSPasteboard generalPasteboard];
+  [pasteboard clearContents];
+  [pasteboard setString:stringWithSelectionArray forType:NSStringPboardType];
+
+  [currentDocument showMessage:ViewInventory.smileDone() + "Replaced with Array"];
+}
+
+
+
+UtilsInventory.renameAutomatically = function() {
+
+}
+
+
+
+UtilsInventory.createShownHiddenStates = function() {
+    if (currentSelection.count() > 0) {
+      runReplicateLayers()
+
+      var stringWithSelectionArray = ""
+
+      for (var i = 0; i < currentSelection.count(); i++) {
+        var layerBase = [currentSelection objectAtIndex:i]
+
+        var currentOpacityvalue = getOpacity(layerBase)
+        var shownStateValue = (currentOpacityvalue != 0.0 && currentOpacityvalue != null) ? currentOpacityvalue : 1
+
+        var stateString = ""
+        stateString += GenerateInventory.clearName([layerBase name])
+        stateString += ".states =" + ln()
+        stateString += tln() + "\"shown\": { opacity: " + shownStateValue + " }" + ln()
+        stateString+= tln() + "\"hidden\": { opacity: 0 }" + ln() + ln()
+        stateString += GenerateInventory.clearName([layerBase name])
+
+        if(currentOpacityvalue == 0.0) { stateString += ".stateSwitch(\"hidden\")" + dln() }
+        else { stateString += ".stateSwitch(\"shown\")" + dln() }
+
+        stringWithSelectionArray += stateString
+      }
+
+      var pasteboard  = [NSPasteboard generalPasteboard];
+      var myString = [pasteboard stringForType:NSPasteboardTypeString];
+      [pasteboard clearContents];
+
+      if (myString == null) { myString = "" }
+      var pasteboardContent = myString + stringWithSelectionArray
+      [pasteboard setString:pasteboardContent forType:NSStringPboardType];
+
+      [currentDocument showMessage:ViewInventory.smileDone()];
+    }
+    else {
+      [currentDocument showMessage:ViewInventory.smileWarning() + "Select some layers"];
+    }
+ }
+
+
+ UtilsInventory.resetRulers = function() {
+   if (currentSelection.count() >= 1) {
+     var currentLayer = [currentSelection firstObject]
+
+     if (!TypeInventory.isArtboardType([currentLayer className])) {
+       currentLayer = TypeInventory.findParentArtboard(currentLayer)
+       if (!TypeInventory.isPageType([currentLayer className])) {
+         currentLayer.setRulerBase(CGPointMake(currentLayer.absoluteRect().x(), currentLayer.absoluteRect().y()));
+         [currentDocument reloadInspector];
+         [currentDocument showMessage:ViewInventory.smileForget() + "Reseted"];
+       }
+     }
+     else { [currentDocument showMessage:ViewInventory.smileWarning() + "Select Layer on Artboard"]; }
+   }
+ }
+
+ UtilsInventory.setRulers = function() {
+   if (currentSelection.count() == 1) {
+     var currentLayer = [currentSelection firstObject]
+
+     if (!TypeInventory.isArtboardType([currentLayer className])) {
+       var parentArtboard = TypeInventory.findParentArtboard(currentLayer)
+       if (!TypeInventory.isPageType([parentArtboard className])) {
+         var deltaX2 = currentLayer.absoluteRect().x() - parentArtboard.rulerBase().x.integerValue()
+         var deltaY2 = currentLayer.absoluteRect().y() - parentArtboard.rulerBase().y.integerValue()
+         parentArtboard.setRulerBase(CGPointMake(parentArtboard.absoluteRect().x() + deltaX2, parentArtboard.absoluteRect().y() + deltaY2));
+         [currentDocument reloadInspector];
+
+         if (deltaX2 == 0 && deltaY2 == 0) { [currentDocument showMessage:ViewInventory.smileForget() + "Reseted"]; }
+         else { [currentDocument showMessage:ViewInventory.smileDone() + "Rulers Changed"]; }
+       }
+       else { [currentDocument showMessage:ViewInventory.smileWarning() + "Select Layer on Artboard"]; }
+     }
+     else { [currentDocument showMessage:ViewInventory.smileWarning() + "Select Layer on Artboard"]; }
+  }
+  else {
+    [currentDocument showMessage:ViewInventory.smileWarning() + "Select One Layer"];
+  }
+ }

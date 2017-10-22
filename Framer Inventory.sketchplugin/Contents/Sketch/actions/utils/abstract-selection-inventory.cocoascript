@@ -1,0 +1,69 @@
+@import 'run-actions.cocoascript'
+
+function AbstractSelectionInventory () {}
+
+
+
+AbstractSelectionInventory.saveSelection = function(selection) {
+    var selectionStorageDictionary = NSMutableDictionary.new()
+
+    for (var i = 0; i < selection.count(); i++) {
+
+        var currentLayerID = [[selection objectAtIndex:i] objectID]
+        [selectionStorageDictionary setValue:currentLayerID forKey:currentLayerID]
+    }
+
+    AbstractSelectionInventory.updateInstance(selectionStorageDictionary)
+    [currentDocument showMessage:ViewInventory.abstractSelectionSaved()]
+}
+
+AbstractSelectionInventory.restoreSelection = function() {
+    FramerInventory.deselectLayers()
+    var restoredDictionary = AbstractSelectionInventory.returnInstance()
+
+    for(var key in restoredDictionary) {
+      var restoredLayerID = [restoredDictionary objectForKey:key];
+
+      currentDocument = NSDocumentController.sharedDocumentController().currentDocument()
+      var layerWithID = currentDocument.documentData().layerWithID(restoredLayerID)
+      if (layerWithID != nil) { [layerWithID select:true byExpandingSelection:true] }
+    }
+
+    [currentDocument showMessage:ViewInventory.abstractSelectionRestored()]
+}
+
+AbstractSelectionInventory.addToSelection = function(selection) {
+    var restoredDictionary = AbstractSelectionInventory.returnInstance()
+
+    for (var i = 0; i < selection.count(); i++) {
+        var currentLayerID = [[selection objectAtIndex:i] objectID]
+        [restoredDictionary setValue:currentLayerID forKey:currentLayerID]
+    }
+
+    AbstractSelectionInventory.updateInstance(restoredDictionary)
+    [currentDocument showMessage:ViewInventory.abstractSelectionAdded()]
+}
+
+AbstractSelectionInventory.clearSelection = function() {
+    var emptyDictionary = NSMutableDictionary.new()
+    AbstractSelectionInventory.updateInstance(emptyDictionary)
+    FramerInventory.deselectLayers()
+    [currentDocument showMessage:ViewInventory.abstractSelectionCleared()]
+}
+
+
+
+
+
+
+AbstractSelectionInventory.returnInstance = function() {
+    var threadIdentifier = "com.tilllur.framer-inventory.selection"
+    var threadDictionary = NSThread.mainThread().threadDictionary()
+    return threadDictionary[threadIdentifier]
+}
+
+AbstractSelectionInventory.updateInstance = function(arrayWithID) {
+    var threadIdentifier = "com.tilllur.framer-inventory.selection"
+    var threadDictionary = NSThread.mainThread().threadDictionary()
+    threadDictionary[threadIdentifier] = arrayWithID
+}

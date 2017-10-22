@@ -1,3 +1,4 @@
+@import "Framer-Inventory-for-Sketch/Framer Inventory.sketchplugin/Contents/Sketch/inventory/libs/testing/logger.js"
 @import "actions/workers/modals/action-select-opened-project.cocoascript"
 
 function PathInventory () {}
@@ -59,4 +60,81 @@ PathInventory.createPathModal = function() {
   else { selectOpenedProject(openedFramerProjects) }
 
   ToolbarInventory.setContentView()
+}
+
+
+
+PathInventory.readProjectCode = function(prototypePath) {
+  if (prototypePath == "") { return "" }
+  var codeFilePath = prototypePath + "/app.coffee"
+
+  if ([[NSFileManager defaultManager] fileExistsAtPath:codeFilePath]) {
+    var currentString = [NSString stringWithContentsOfFile:codeFilePath encoding:NSUTF8StringEncoding error:nil]
+    return currentString
+  }
+  return ""
+}
+
+PathInventory.replaceProjectCode = function(prototypePath, newCode) {
+  if (prototypePath == "") { return }
+
+  var codeFilePath = prototypePath + "/app.coffee"
+  writeTextToFile(newCode, codeFilePath)
+  return
+}
+
+
+PathInventory.updateFoldRanges = function(prototypePath, shiftBy, callback) {
+    const extractFirstNumber = /\d+/
+    const configFile = prototypePath + '/framer/config.json'
+    // const codeFilePath = prototypePath + "/app.coffee"
+
+    var data = [NSData dataWithContentsOfFile:configFile];
+    var configuration = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
+    log([configuration className])
+
+    var ranges = [configuration objectForKey:"foldedCodeRanges"]
+    log(ranges)
+
+
+    const newRange = []
+
+    for (var i = 0; i < ranges.count(); i++) {
+        var rangeString = [ranges objectAtIndex:i]
+
+        // var firstNumber = parseInt( extractFirstNumber.exec(range)[0] )
+        var matches = rangeString.match(/\d+/g)
+        var firstNumber = Number(matches[0])
+        var firstNumberShift = firstNumber + shiftBy
+        newRange.push(rangeString.replace(matches[0], firstNumberShift) )
+    }
+
+
+    /*
+    Configuration for code folds is an array of ranges (strings):
+    '{ startingCharacterNumber, numberOfCharactersInFold }'
+    e.g.:
+    "foldedCodeRanges": [
+        "{68, 1039}",
+        "{1108, 2066}"
+    ]
+    With every new require() command un/written to app.coffee, we need to shift
+    code fold ranges to maintain the folds in Framer Studio.
+    e.g. when writing require string that is 68 characters long,
+         '{1, 1039}' becomes '{69, 1039}'
+    */
+
+    // configuration.foldedCodeRanges.forEach(range => {
+       // const firstNumber = parseInt( extractFirstNumber.exec(range)[0] )
+       // const firstNumberShift = firstNumber + shiftBy
+
+        // newRange.push( range.replace(extractFirstNumber, firstNumberShift) )
+    //})
+
+    //configuration.foldedCodeRanges = newRange
+
+    [data writeToFile:configFile atomically:true];
+
+    return newRange
+
 }
