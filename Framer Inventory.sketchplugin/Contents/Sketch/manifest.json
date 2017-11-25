@@ -5,8 +5,8 @@
   "description": "Import States & Export Prototypes from Sketch to Framer",
   "homepage": "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=manifest",
   "identifier": "com.addleimb.framer-inventory",
-  "version": "3.1.8",
-  "appcast": "https://raw.githubusercontent.com/timurnurutdinov/framerinventory/gh-pages/plugin-appcast.xml",
+  "version": "3.2.0",
+  "appcast": "https://raw.githubusercontent.com/timurnurutdinov/framerinventory/master/plugin-appcast.xml",
   "compatibleVersion": 4.5,
   "commands" : [
     {
@@ -61,7 +61,7 @@
       "script" : "run-actions.cocoascript",
       "handler" : "onShowBarRun",
       "shortcut" : "",
-      "name" : "▪️ Show Toolbar",
+      "name" : "💎 Show Toolbar",
       "identifier" : "show-bar"
     },
     {
@@ -102,6 +102,80 @@
 
 
     {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSaveSelectionRun",
+      "shortcut" : "",
+      "name" : "Save Selection",
+      "identifier" : "choose-save-selection"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onAddToSelectionRun",
+      "shortcut" : "",
+      "name" : "Add to Selection",
+      "identifier" : "choose-add-to-selection"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onClearSelectionRun",
+      "shortcut" : "",
+      "name" : "Clear Selection",
+      "identifier" : "choose-clear-selection"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onRestoreSelectionRun",
+      "shortcut" : "",
+      "name" : "Restore Selection",
+      "identifier" : "choose-restore-selection"
+    },
+
+
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onDisconnectSymbols",
+      "shortcut" : "",
+      "name" : "Detatch Symbols in Selection",
+      "identifier" : "choose-disconnect-symbols"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onAddLayersAsArray",
+      "shortcut" : "",
+      "name" : "Add to Pasteboard",
+      "identifier" : "choose-add-layers-as-array"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onCleanAndCopyLayersAsArray",
+      "shortcut" : "",
+      "name" : "Clear Pasteboard and Copy",
+      "identifier" : "choose-clean-and-copy-layers-as-array"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onCreateShownHiddenStates",
+      "shortcut" : "",
+      "name" : "Create Shown/Hidden States",
+      "identifier" : "choose-create-shown-hidden-states"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onSetRulers",
+      "shortcut" : "",
+      "name" : "Set Rulers to Layer",
+      "identifier" : "choose-set-rulers-to-layer"
+    },
+    {
+      "script" : "run-actions.cocoascript",
+      "handler" : "onResetRulers",
+      "shortcut" : "",
+      "name" : "Reset Rulers",
+      "identifier" : "choose-reset-rulers"
+    },
+
+
+    {
       "script" : "selection-changed-action.cocoascript",
       "handlers" : {
         "actions" : {
@@ -111,7 +185,7 @@
     }
   ],
   "menu": {
-	  "title": "◾️ Framer Inventory",
+	  "title": "🚙 Framer Inventory",
       "items": [
         "show-bar",
         "-",
@@ -129,6 +203,39 @@
             "choose-show-export-path",
             "-",
             "choose-remove-export-path"
+          ]
+        },
+        {
+          "title": "       Utils",
+          "items": [
+            {
+              "title": "Selection",
+              "items": [
+                "choose-save-selection",
+                "choose-add-to-selection",
+                "-",
+                "choose-clear-selection",
+                "-",
+                "choose-restore-selection"
+              ]
+            },
+            {
+              "title": "Framer Array from Selection",
+              "items": [
+                "choose-add-layers-as-array",
+                "choose-clean-and-copy-layers-as-array"
+              ]
+            },
+            {
+              "title": "Rulers",
+              "items": [
+                "choose-set-rulers-to-layer",
+                "choose-reset-rulers"
+              ]
+            },
+            "-",
+            "choose-disconnect-symbols",
+            "choose-create-shown-hidden-states"
           ]
         },
         "-",

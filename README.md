@@ -1,6 +1,6 @@
 
-# Framer Inventory 3.0
-![Export Prototypes](/../images-third-version/readme/facebook-share@2x.png?raw=true "Framer Inventory")
+# Framer Inventory
+![Version](https://img.shields.io/github/release/timurnurutdinov/Framer-Inventory-for-Sketch.svg)
 ### Semantic Export from Sketch into Framer
 <a href="https://timurnurutdinov.github.io/framerinventory/?utm_source=web&utm_medium=github">Watch Promo and Learn More</a>
 
