@@ -64,15 +64,20 @@ PathInventory.createPathModal = function() {
 
 
 
+
+
+
+
+
 PathInventory.readProjectCode = function(prototypePath) {
-  if (prototypePath == "") { return "" }
+  if (prototypePath == "") { return [NSString stringWithFormat:"%@", ""]; }
   var codeFilePath = prototypePath + "/app.coffee"
 
   if ([[NSFileManager defaultManager] fileExistsAtPath:codeFilePath]) {
-    var currentString = [NSString stringWithContentsOfFile:codeFilePath encoding:NSUTF8StringEncoding error:nil]
-    return currentString
+    return [NSString stringWithContentsOfFile:codeFilePath encoding:NSUTF8StringEncoding error:nil]
   }
-  return ""
+
+  return [NSString stringWithFormat:"%@", ""];
 }
 
 PathInventory.replaceProjectCode = function(prototypePath, newCode) {
@@ -84,19 +89,44 @@ PathInventory.replaceProjectCode = function(prototypePath, newCode) {
 }
 
 
-PathInventory.updateFoldRanges = function(prototypePath, shiftBy, callback) {
-    const extractFirstNumber = /\d+/
-    const configFile = prototypePath + '/framer/config.json'
-    // const codeFilePath = prototypePath + "/app.coffee"
 
+PathInventory.returnNumberArrayFromString = function(taggedPointerString) {
+  var pair = NSMutableArray.new()
+
+  var removeSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"{} "];
+  var numberFormatter = [[NSNumberFormatter alloc] init];
+  numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+
+  var removedBracketsString = [[taggedPointerString componentsSeparatedByCharactersInSet:removeSet] componentsJoinedByString:""];
+  var stringParts = [removedBracketsString componentsSeparatedByString:","]
+  for (var i = 0; i < stringParts.count(); i++) { [pair addObject:[numberFormatter numberFromString:[stringParts objectAtIndex:i]]] }
+
+  return pair
+}
+
+PathInventory.readFoldRanges = function(prototypePath) {
+    const configFile = prototypePath + '/framer/config.json'
     var data = [NSData dataWithContentsOfFile:configFile];
     var configuration = [NSJSONSerialization JSONObjectWithData:data options:nil error:nil];
-    log([configuration className])
-
     var ranges = [configuration objectForKey:"foldedCodeRanges"]
-    log(ranges)
 
+    return ranges
+}
 
+PathInventory.returnFoldRangesArray = function(ranges) {
+  var rangesArray = NSMutableArray.new()
+
+  for (var i = 0; i < ranges.count(); i++) {
+    var currentRange = [ranges objectAtIndex: i]
+    var pair = PathInventory.returnNumberArrayFromString(currentRange)
+    [rangesArray addObject:pair]
+  }
+
+  return rangesArray
+}
+
+PathInventory.updateFoldRanges = function(prototypePath, shiftBy) {
+    var ranges = PathInventory.readFoldRanges(prototypePath)
     const newRange = []
 
     for (var i = 0; i < ranges.count(); i++) {
@@ -133,8 +163,96 @@ PathInventory.updateFoldRanges = function(prototypePath, shiftBy, callback) {
 
     //configuration.foldedCodeRanges = newRange
 
-    [data writeToFile:configFile atomically:true];
+    var newConfiguration = [configuration mutableCopy]
+    [newConfiguration setObject:newRange forKey:"foldedCodeRanges"]
+
+    var jsonData = [NSJSONSerialization dataWithJSONObject:newConfiguration options:nil error:nil];
+    log(jsonData)
+    // log([configuration className])
+
+    [jsonData writeToFile:configFile atomically:true];
 
     return newRange
 
+}
+
+
+PathInventory.isFoldRange = function(range, foldRanges) {
+    for (var i = 0; i < foldRanges.count(); i++) {
+      if ([range isEqualToArray:[foldRanges objectAtIndex:i]]) { return true; }
+    }
+    return false;
+}
+
+PathInventory.createAllFolds = function(readRanges, maxLength) {
+    var fileStartIndex = 0
+    var zeroLength = 0
+    var pairs = NSMutableArray.new()
+
+    var startIndex = 0
+    var lengthIndex = 1
+
+    var currentPair = NSMutableArray.new()
+    var nextPair = NSMutableArray.new()
+
+    [currentPair addObject:fileStartIndex]
+    [currentPair addObject:zeroLength]
+    [nextPair addObject:fileStartIndex]
+    [nextPair addObject:zeroLength]
+
+    for (var i = 0; i < readRanges.count(); i++) {
+        var currentRange = [readRanges objectAtIndex:i]
+        // log("----------------#######")
+        // log([[currentRange firstObject] intValue])
+        // log([[currentPair firstObject] intValue])
+
+        if ([[currentRange firstObject] intValue] == [[currentPair firstObject] intValue]) {
+          // log("1:")
+          [currentPair replaceObjectAtIndex:lengthIndex withObject:[currentRange lastObject]];
+          // log([currentPair firstObject] + [currentPair lastObject])
+          [nextPair replaceObjectAtIndex:startIndex withObject:[currentPair firstObject] + [currentPair lastObject]]
+          [pairs addObject:[currentPair copy]]
+          // log("Added: ")
+          // log(currentPair)
+        }
+
+        else {
+          // log("2:")
+          // log(currentPair)
+
+          [currentPair replaceObjectAtIndex:lengthIndex withObject:[currentRange firstObject] - [currentPair firstObject]];
+          [pairs addObject:[currentPair copy]]
+          // log("Added: ")
+          // log(currentPair)
+
+          [currentPair replaceObjectAtIndex:startIndex withObject:[currentRange firstObject]]
+          [currentPair replaceObjectAtIndex:lengthIndex withObject:[currentRange lastObject]]
+          // log("Next: ")
+          [nextPair replaceObjectAtIndex:startIndex withObject:[currentPair firstObject] + [currentPair lastObject]]
+          [pairs addObject:[currentPair copy]]
+          // log("Added: ")
+          // log(currentPair)
+
+        }
+
+        // log("Next Pair to Copy: ")
+        // log(nextPair)
+        currentPair = [nextPair mutableCopy]
+    }
+
+    // log("has some:")
+    // log([[currentRange firstObject] intValue] + [[currentRange lastObject] intValue])
+
+    if ([[currentRange firstObject] intValue] + [[currentRange lastObject] intValue] == maxLength) {
+      // log("ok")
+    }
+    else {
+      [currentPair replaceObjectAtIndex:lengthIndex withObject:maxLength - [currentPair firstObject]]
+      [pairs addObject:[currentPair copy]]
+      // log("Added: ")
+      // log(currentPair)
+    }
+
+
+    return pairs
 }

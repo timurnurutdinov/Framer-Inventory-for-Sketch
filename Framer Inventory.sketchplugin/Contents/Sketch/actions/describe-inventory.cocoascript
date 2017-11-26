@@ -2,9 +2,10 @@
 function DescribeInventory () {}
 
 
-DescribeInventory.sectionView = function() { return "# View" + ln() }
-DescribeInventory.sectionModel = function() { return "# Model" + ln() }
+// DescribeInventory.sectionView = function() { return "# View" + ln() }
+// DescribeInventory.sectionModel = function() { return "# Model" + ln() }
 DescribeInventory.sectionCustom = function() { return "# Custom" + ln() }
+DescribeInventory.sectionFramerInventory = function() { return [NSString stringWithFormat:"%@", "# Framer Inventory"]; }
 
 
 

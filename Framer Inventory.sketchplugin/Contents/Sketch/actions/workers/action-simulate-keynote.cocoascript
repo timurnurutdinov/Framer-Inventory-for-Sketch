@@ -84,21 +84,26 @@ var runSimulateKeynote = function() {
 		layers.push(layer)
 	}
 
-	pasteboardContent += DescribeInventory.generateRetinaVariable() + ln()
-	pasteboardContent += DescribeInventory.generatePhoneModel() + dln()
-	pasteboardContent += DescribeInventory.sectionView()
 
-	for (var i = 0; i < layers.length; i++) { pasteboardContent += layers[i].printLayer() }
 
 	pasteboardContent += ln()
-	pasteboardContent += DescribeInventory.sectionModel()
-	pasteboardContent += DescribeInventory.generateCycleButton()
 
-	var cycleStates = FramerInventory.getUsedStatesNames())
-	pasteboardContent += DescribeInventory.generateCycleStates(cycleStates)
+	var generatedSection = DescribeInventory.sectionFramerInventory() + ln()
+	for (var i = 0; i < layers.length; i++) { generatedSection += layers[i].printLayer() }
 
-	pasteboardContent += DescribeInventory.generateLayers(sortedSelection)
-	pasteboardContent += DescribeInventory.generateCycler() + ln()
+	generatedSection += DescribeInventory.generatePhoneModel() + ln()
+	generatedSection += DescribeInventory.generateCycleButton()
+	generatedSection += DescribeInventory.generateCycleStates(FramerInventory.getUsedStatesNames()))
+
+	generatedSection += DescribeInventory.generateLayers(sortedSelection)
+	generatedSection += DescribeInventory.generateCycler()
+
+	pasteboardContent += generatedSection
+	log("layers: " + generatedSection.length)
+
+
+
+
 	pasteboardContent += DescribeInventory.sectionCustom()
 
 	if (userDefaults.exportFramerFolder != "" && [[NSFileManager defaultManager] fileExistsAtPath:userDefaults.exportFramerFolder + "/app.coffee"]) {
