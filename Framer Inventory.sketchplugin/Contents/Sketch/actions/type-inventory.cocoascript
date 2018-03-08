@@ -48,14 +48,15 @@ TypeInventory.getShapeType = function(localLayer) {
 	if (!TypeInventory.isShapeGroupType([localLayer className])) { return -1 }
 	var magicLayers = localLayer.layers()
 	if (magicLayers.count() > 1) { return 5 }
-
 	var shape = magicLayers.firstObject()
+
+
 	if(shape && shape.isKindOfClass(MSOvalShape)) {
-		if ([[[shape path] points] count] != 4) { return 5 }
+		if ([[shape points] count] != 4) { return 5 }
 		return 3
 	}
 	else if(shape && shape.isKindOfClass(MSRectangleShape)) {
-		if ([[[shape path] points] count] != 4) { return 5 }
+		if ([[shape points] count] != 4) { return 5 }
 		return 2
 	}
 

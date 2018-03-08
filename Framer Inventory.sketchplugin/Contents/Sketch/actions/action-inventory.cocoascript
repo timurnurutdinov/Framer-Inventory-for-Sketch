@@ -132,14 +132,15 @@ FramerInventory.exportLayersFromExportPage = function(oldPage) {
 		for (var i = 0; i < [exportPageLayers count]; i++) {
 				var currentLayer = [exportPageLayers objectAtIndex: i]
 				var ancestry = MSImmutableLayerAncestry.ancestryWithMSLayer(currentLayer)
-    		var maybeRect = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
+    		// var maybeRect = MSSliceTrimming.trimmedRectForLayerAncestry(ancestry)
 
-				var request = MSExportRequest.new()
-    		request.rect = maybeRect
+				var request = MSExportRequest.exportRequestsFromLayerAncestry(ancestry).firstObject();
+
+    		// request.rect = maybeRect
 				var exportSizes = [[[currentLayer exportOptions] exportFormats] firstObject]
     		request.scale = exportSizes.scale()
 	    	request.includeArtboardBackground = false
-		    request.configureForLayer(ancestry)
+		    // request.configureForLayer(ancestry)
 
 
 				var projectPath = [currentLayer name]
