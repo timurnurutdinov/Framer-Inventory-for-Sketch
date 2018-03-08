@@ -1,7 +1,7 @@
 nice = new Layer image: "images/nice.png"
 
 nice.states =
-	"position_a": { width: 240, height: 240, x: 68, y: 94 }
-	"position_b": { width: 120, height: 120, x: 128, y: 154 }
+	"positionA": { width: 240, height: 240, x: 68, y: 94 }
+	"positionB": { width: 120, height: 120, x: 128, y: 154 }
 
-nice.stateSwitch("position_a")
+nice.stateSwitch("positionA")
