@@ -5,9 +5,9 @@
   "description": "Import States & Export Prototypes from Sketch to Framer",
   "homepage": "https://timurnurutdinov.github.io/framerinventory/?utm_source=plugin&utm_medium=manifest",
   "identifier": "com.addleimb.framer-inventory",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "appcast": "https://raw.githubusercontent.com/timurnurutdinov/framerinventory/master/plugin-appcast.xml",
-  "compatibleVersion": 4.5,
+  "compatibleVersion": 4.9,
   "commands" : [
     {
       "script" : "run-actions.cocoascript",
