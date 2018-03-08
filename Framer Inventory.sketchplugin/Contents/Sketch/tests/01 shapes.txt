@@ -1,21 +1,21 @@
-selection_1 = new Layer width: 60, height: 60, x: 20, y: 20, backgroundColor: "rgba(144,19,254,1)", borderWidth: 1, borderColor: "rgba(255,255,255,1)"
+selection1 = new Layer width: 60, height: 60, x: 20, y: 20, backgroundColor: "rgba(144,19,254,1)", borderWidth: 1, borderColor: "rgba(255,255,255,1)"
 
-selection_2 = new Layer width: 60, height: 60, x: 100, y: 20, image: "images/selection 2.png"
+selection2 = new Layer width: 60, height: 60, x: 100, y: 20, image: "images/selection 2.png"
 
-selection_3 = new Layer width: 60, height: 60, x: 180, y: 20, image: "images/selection 3.png"
+selection3 = new Layer width: 60, height: 60, x: 180, y: 20, image: "images/selection 3.png"
 
-selection_4 = new Layer width: 62, height: 62, x: 19, y: 119, image: "images/selection 4.png"
+selection4 = new Layer width: 62, height: 62, x: 19, y: 119, image: "images/selection 4.png"
 
-selection_5 = new Layer width: 62, height: 62, x: 99, y: 119, image: "images/selection 5.png"
+selection5 = new Layer width: 62, height: 62, x: 99, y: 119, image: "images/selection 5.png"
 
-selection_6 = new Layer width: 60, height: 60, x: 180, y: 120, image: "images/selection 6.png"
+selection6 = new Layer width: 60, height: 60, x: 180, y: 120, image: "images/selection 6.png"
 
-selection_7 = new Layer width: 60, height: 60, x: 20, y: 220, backgroundColor: "rgba(255,255,255,1)", shadowY: 20, shadowBlur: 10, shadowSpread: 1, shadowColor: "rgba(208,2,27,1)"
+selection7 = new Layer width: 60, height: 60, x: 20, y: 220, backgroundColor: "rgba(255,255,255,1)", shadowY: 20, shadowBlur: 10, shadowSpread: 1, shadowColor: "rgba(208,2,27,1)"
 
-selection_8 = new Layer width: 84, height: 88, x: 86, y: 206, image: "images/selection 8.png"
+selection8 = new Layer width: 84, height: 88, x: 86, y: 206, image: "images/selection 8.png"
 
-selection_9 = new Layer width: 60, height: 60, x: 20, y: 320, image: "images/selection 9.png"
+selection9 = new Layer width: 60, height: 60, x: 20, y: 320, image: "images/selection 9.png"
 
-oval_1 = new Layer width: 60, height: 60, x: 20, y: 420, borderRadius: 30, backgroundColor: "rgba(144,19,254,1)", borderWidth: 1, borderColor: "rgba(255,255,255,1)"
+oval1 = new Layer width: 60, height: 60, x: 20, y: 420, borderRadius: 30, backgroundColor: "rgba(144,19,254,1)", borderWidth: 1, borderColor: "rgba(255,255,255,1)"
 
-oval_2 = new Layer width: 60, height: 60, x: 100, y: 420, borderRadius: "100%", backgroundColor: "rgba(144,19,254,1)", borderWidth: 1, borderColor: "rgba(255,255,255,1)"
+oval2 = new Layer width: 60, height: 60, x: 100, y: 420, borderRadius: "100%", backgroundColor: "rgba(144,19,254,1)", borderWidth: 1, borderColor: "rgba(255,255,255,1)"

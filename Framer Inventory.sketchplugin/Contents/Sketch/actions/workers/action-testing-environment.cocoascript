@@ -56,10 +56,12 @@ var runTestingEnvironment = function() {
 	if (skippedPagesNames == 0) { resultingString += "All testing layers are found\n" }
 	resultingString += "\n\n\n\n"
 
-
+	if (showLog) { log("GOING TO CHECK ANSWERS") }
 	for (var i = 0; i < answers.length; i++) {
 		var readReferenceFromFile = pairs[i]
+		log(answers[i])
 		var diff = compareAnswer(answers[i], readReferenceFromFile)
+		log("------")
 		resultingString += "" + readReferenceFromFile + "\n"
 
 		if (showLog) {
@@ -111,6 +113,7 @@ TestingEnvironment.getTestingSelection = function() {
 var compareAnswer = function(answer, fileName) {
 	var readText = readFileForAnswer(fileName)
 	if (readText == nil) { return false }
+	log(readText)
 	return compareTextsPhrase(answer, "" + readText)
 }
 

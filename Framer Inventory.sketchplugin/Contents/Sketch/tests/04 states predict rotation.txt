@@ -1,8 +1,8 @@
 nice = new Layer backgroundColor: "rgba(245,166,35,1)"
 
 nice.states =
-	"position_a": { width: 240, height: 240, x: 68, y: 94, rotation: 0 }
-	"position_b": { width: 240, height: 240, x: 67, y: 133, rotation: -45 }
-	"position_c": { width: 200, height: 200, x: 88, y: 234, rotation: 0 }
+	"positionA": { width: 240, height: 240, x: 68, y: 94, rotation: 0 }
+	"positionB": { width: 240, height: 240, x: 67, y: 133, rotation: -45 }
+	"positionC": { width: 200, height: 200, x: 88, y: 234, rotation: 0 }
 
-nice.stateSwitch("position_a")
+nice.stateSwitch("positionA")
